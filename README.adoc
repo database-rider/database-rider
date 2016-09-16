@@ -156,10 +156,10 @@ There are a lot of examples that can also be used as documentation.
 
 The examples module which contains:
 
-* https://github.com/database-rider/database-rider/tree/master/examples/jpa-productivity-boosters[JPA productivity boosters^]
-* https://github.com/database-rider/database-rider/tree/master/examples/dbunit-tomee-appcomposer-sample[DBUnit Application Composer^]
-* https://github.com/database-rider/database-rider/tree/master/examples/jOOQ-DBUnit-flyway-example/[jOOQ Flyway DBUnit^]
-* https://github.com/database-rider/database-rider/tree/master/examples/spring-boot-dbunit-sample/[SpringBoot Data DBUnit^]
+* https://github.com/database-rider/database-rider/tree/master/rider-examples/jpa-productivity-boosters[JPA productivity boosters^]
+* https://github.com/database-rider/database-rider/tree/master/rider-examples/dbunit-tomee-appcomposer-sample[DBUnit Application Composer^]
+* https://github.com/database-rider/database-rider/tree/master/rider-examples/jOOQ-DBUnit-flyway-example/[jOOQ Flyway DBUnit^]
+* https://github.com/database-rider/database-rider/tree/master/rider-examples/spring-boot-dbunit-sample/[SpringBoot Data DBUnit^]
 
 And also each module contain a lot of tests that you can use as example.
 
@@ -654,10 +654,10 @@ Above JPA configuration depends on hsqldb (an in memory database) and eclipse li
 </dependency>
 ----
 
-NOTE: A hibernate entity manager config sample can be https://github.com/database-rider/database-rider/blob/master/examples/src/test/resources/META-INF/persistence.xml[found here^].
+NOTE: A hibernate entity manager config sample can be https://github.com/database-rider/database-rider/blob/master/rider-examples/src/test/resources/META-INF/persistence.xml[found here^].
 
 
-TIP: EntityManager provider utility also can be used in other contexts like a CDI producer, https://github.com/database-rider/database-rider/blob/master/rider-cdi/src/test/java/com/github/database/rider/EntityManagerProducer.java#L21[see here].
+TIP: EntityManager provider utility also can be used in other contexts like a CDI producer, https://github.com/database-rider/database-rider/blob/master/rider-cdi/src/test/java/com/github/database/rider/cdi/EntityManagerProducer.java#L21[see here].
 
 
 == CDI module
@@ -1033,7 +1033,7 @@ After above test execution all tables will be exported to a xml dataset.
 
 NOTE: *XML*, *YML*, *JSON*, *XLS* and *CSV* formats are supported.
 
-TIP: Full example above (and other related tests) can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/ExportDataSetIt.java#L35[found here^].
+TIP: Full example above (and other related tests) can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/exporter/ExportDataSetIt.java#L35[found here^].
 
 === Configuration
 
