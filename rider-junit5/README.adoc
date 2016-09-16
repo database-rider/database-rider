@@ -5,5 +5,5 @@
 :caution-caption: :fire:
 :warning-caption: :warning:
 
-This module brings `Database Rider` as a JUnit 5 extension, more details here: https://github.com/rmpestano/database-rider#rider-junit-5.
+This module brings `Database Rider` as a JUnit 5 extension, more details here: https://github.com/database-rider/database-rider#rider-junit-5.
 

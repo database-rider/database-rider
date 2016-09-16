@@ -175,7 +175,7 @@ This module is the basis for subsequent modules. It contains a JUnit rule (shown
 <dependency>
       <groupId>com.github.database-rider</groupId>
       <artifactId>database-rider</artifactId>
-      <version>0.15.0</version>
+      <version>1.0.0-RC1</version>
       <scope>test</scope>
 </dependency>
 ----
@@ -939,7 +939,7 @@ http://junit.org/junit5/[JUnit 5] is the new version of JUnit and comes with a n
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>junit5</artifactId>
-    <version>0.15.0</version>
+    <version>1.0.0-RC1</version>
     <scope>test</scope>
 </dependency>
 ----

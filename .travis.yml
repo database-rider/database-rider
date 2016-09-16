@@ -16,7 +16,7 @@ before_script:
 
 script:
 - mvn clean install jacoco:report coveralls:report -Pcoverage surefire-report:report-only
-- cd core && mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs
+- cd rider-core && mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs
 
 after_script:
 - cd .. && python html2text.py target/site/surefire-report.html
