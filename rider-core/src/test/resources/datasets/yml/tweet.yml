@@ -1,0 +1,4 @@
+tweet:
+  - id: abcdef12345
+    content: "dbunit rules again!"
+    user_id: 1

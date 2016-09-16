@@ -1,0 +1,47 @@
+# Eclipse
+
+.project
+
+.classpath
+
+.settings/
+
+
+
+# IntelliJ
+
+*.iml
+
+*.ipr
+
+*.iws
+
+.idea
+
+.settings
+
+
+
+# Maven
+
+target/
+
+
+
+#Gradle
+
+.gradle
+
+
+
+# TestNG
+
+test-output/
+
+
+
+
+*.log
+
+#linux te files
+*~

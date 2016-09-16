@@ -1,0 +1,3 @@
+= DBUnit / ApplicationComposer Sample
+
+This sample shows how to mix `ApplicationComposer` and `Database Rider` to test efficiently and quickly your persistence layer.

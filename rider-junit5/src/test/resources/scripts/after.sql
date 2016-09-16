@@ -1,0 +1,2 @@
+DELETE FROM User;
+INSERT INTO USER VALUES (99,'user-after');

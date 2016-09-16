@@ -1,0 +1,10 @@
+user:
+  - id: 1
+    name: "@realpestano"
+  - id: 2
+    name: "@dbunit"
+tweet:
+  - id: abcdef12345
+    content: "dbunit rules!"
+    date: "[DAY,NOW]"
+    user_id: 1

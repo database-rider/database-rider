@@ -1,0 +1,4 @@
+DELETE FROM Follower;
+DELETE FROM Tweet;
+DELETE FROM User;
+INSERT INTO USER VALUES (99,'user-after');

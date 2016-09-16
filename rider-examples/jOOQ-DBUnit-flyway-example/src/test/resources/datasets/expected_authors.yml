@@ -1,0 +1,13 @@
+flyway_test.author:
+  - id: "regex:\\d+"
+    first_name: Erich
+    last_name: Gamma
+    date_of_birth: "1903-06-25"
+    year_of_birth: 1900
+    address: null
+  - id: "regex:\\d+"
+    first_name: Richard
+    last_name: Helm
+    date_of_birth: regex:^(?:[0-9]{2})?[0-9]{2}-[0-3]?[0-9]-[0-3]?[0-9]$
+    year_of_birth: 1900
+    address: null

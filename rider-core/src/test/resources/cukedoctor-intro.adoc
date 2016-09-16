@@ -1,0 +1,42 @@
+= *Introduction*
+
+*Database Rider* aims for bringing http://dbunit.sourceforge.net/[DBUnit^] closer to your JUnit tests. Here are the main features:
+
+* https://github.com/junit-team/junit4/wiki/Rules[JUnit rule] to integrate with DBUnit via annotations:
++
+[source,java]
+----
+    @Rule
+    public DBUnitRule dbUnitRule = DBUnitRule.instance(jdbcConnection);//<1>
+
+    @Test
+    @DataSet(value = "datasets/yml/users.yml")
+    public void shouldSeedDataSet(){
+        //database is seed with users.yml dataset
+    }
+----
+<1> The rule depends on a JDBC connection.
++
+* https://github.com/rmpestano/dbunit-rules#cdi-module[CDI integration^] via interceptor to seed database without rule instantiation;
+* JSON, YAML, XML, XLS, and CSV support;
+* https://github.com/rmpestano/dbunit-rules#configuration[Configuration^] via annotations or yml files;
+* https://github.com/rmpestano/dbunit-rules#cucumber-module[Cucumber^] integration;
+* Multiple database support;
+* Date/time support in datasets;
+* Scriptable datasets with groovy and javascript;
+* Regular expressions in expected datasets;
+* https://github.com/rmpestano/dbunit-rules#junit-5[JUnit 5^] integration;
+* https://github.com/rmpestano/dbunit-rules#export-datasets[DataSet export^];
+* https://github.com/rmpestano/dbunit-rules#8-leak-hunter[Connection leak detection^];
+* Lot of https://github.com/rmpestano/dbunit-rules#examples[examples^].
+
+
+The project is composed by 5 modules:
+
+* https://github.com/rmpestano/dbunit-rules/tree/master/core[Core^]: Contains the dataset executor and JUnit rule;
+* https://github.com/rmpestano/dbunit-rules/tree/master/cdi[CDI^]: provides the DBUnit interceptor;
+* https://github.com/rmpestano/dbunit-rules/tree/master/cucumber[Cucumber^]: a CDI aware cucumber runner;
+* https://github.com/rmpestano/dbunit-rules/tree/master/junit5[JUnit5^]: Comes with an http://junit.org/junit5/docs/current/user-guide/#extensions[extension^] for JUnit5.
+* https://github.com/rmpestano/dbunit-rules/tree/master/examples[Examples module^].
+
+

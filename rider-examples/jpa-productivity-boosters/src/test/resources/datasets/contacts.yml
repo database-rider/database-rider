@@ -1,0 +1,25 @@
+contact:
+  - id: 1
+    name: "deltaspike"
+    email: "users@deltaspike.apache.org"
+    company_id: 1
+  - id: 2
+    name: "querydsl"
+    email: "info@mysema.com"
+    company_id: 2
+  - id: 3
+    name: "Spring"
+    email: "spring@pivotal.io"
+    company_id: 3
+
+company:
+  - id: 1
+    name: "Apache"
+  - id: 2
+    name: "Mysema"
+  - id: 3
+    name: "Pivotal"
+  - id: 4
+    name: "Google"
+
+

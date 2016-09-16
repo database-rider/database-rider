@@ -1,0 +1,1095 @@
+= Database Rider
+:page-layout: base
+:source-language: java
+:icons: font
+:linkattrs:
+:sectanchors:
+:sectlink:
+:numbered:
+:doctype: book
+:toc: preamble
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+
+[quote]
+____
+So you can ride the database in your JUnit tests!
+____
+
+
+image:https://travis-ci.org/database-rider/database-rider.svg[Build Status (Travis CI), link=https://travis-ci.org/database-rider/database-rider]
+image:https://coveralls.io/repos/database-rider/database-rider/badge.png[Coverage, link=https://coveralls.io/r/database-rider/database-rider]
+image:https://maven-badges.herokuapp.com/maven-central/com.github.database-rider/rider-core/badge.svg["Maven Central",link="http://search.maven.org/#search|ga|1|database-rider"]
+
+
+
+This project aims for bringing http://dbunit.sourceforge.net/[DBUnit] closer to your JUnit tests *so database testing will feel like a breeze!*
+
+
+A lot of this work is based on https://github.com/arquillian/arquillian-extension-persistence/[Arquillian persistence extension] and focus on simplicity (one dependency - dbunit). If you need a more robust and reliable solution (tests closer to production), I'd suggest arquillian persistence.
+
+
+== Introduction
+
+Consider the following (jpa) entities:
+
+[source, java]
+----
+@Entity
+public class User {
+
+    @Id
+    @GeneratedValue
+    private long id;
+
+    private String name;
+
+    @OneToMany(mappedBy = "user")
+    private List<Tweet> tweets;
+
+    @OneToMany(mappedBy = "followedUser")
+    private List<Follower> followers;
+
+    //getters/setters
+
+ }
+
+@Entity
+public class Tweet {
+
+    @Id
+    @GeneratedValue
+    private String id;
+
+    @Size(min = 1, max = 140)
+    private String content;
+
+    private Integer likes;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date date;
+
+    @ManyToOne
+    private User user;
+}
+
+@Entity
+public class Follower {
+
+    @Id
+    @GeneratedValue
+    private long id;
+
+    @JoinColumn(name = "follower_id")
+    private User followerUser;
+
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User followedUser;
+
+}
+
+----
+
+and the following dbunit yaml dataset:
+
+.src/test/resources/datasets/users.yml
+----
+user:
+  - id: 1
+    name: "@realpestano"
+  - id: 2
+    name: "@dbunit"
+tweet:
+  - id: abcdef12345
+    content: "dbunit rules!"
+    user_id: 1
+follower:
+  - id: 1
+    user_id: 1
+    follower_id: 2
+----
+
+You should be able to prepare your database before test execution, like below:
+
+[source,java]
+----
+@RunWith(JUnit4.class)
+public class UserIt {
+
+   @Rule
+   public EntityManagerProvider emProvider = EntityManagerProvider.instance("rules-it");
+
+   @Rule
+   public DBUnitRule dbUnitRule = DBUnitRule.instance(emProvider.getConnection());
+
+   @Test
+   @DataSet(value = "datasets/yml/users.yml")
+   public void shouldLoadUserFollowers() {
+        User user = (User) emProvider.em().createQuery("select u from User u left join fetch u.followers where u.id = 1").getSingleResult();
+        assertThat(user).isNotNull();
+        assertThat(user.getId()).isEqualTo(1);
+        assertThat(user.getTweets()).hasSize(1);
+        assertEquals(user.getTweets().get(0).getContent(), "dbunit rules!");
+        assertThat(user.getFollowers()).isNotNull().hasSize(1);
+        Follower expectedFollower = new Follower(2,1);
+        assertThat(user.getFollowers()).contains(expectedFollower);
+   }
+----
+
+NOTE: <<EntityManagerProvider>> is a simple JUnit rule that creates a JPA entityManager (and caches it) for each test. DBunit rule don't depend on EntityManagerProvider, it only needs a *JDBC connection*;
+
+
+== Documentation
+
+A getting started guide can be found here http://database-rider.github.io/database-rider-sample/database-rider.html.
+
+For main features overview see project living documentation: http://database-rider.github.io/database-rider/documentation.html.
+
+=== Examples
+
+There are a lot of examples that can also be used as documentation.
+
+The examples module which contains:
+
+* https://github.com/database-rider/database-rider/tree/master/examples/jpa-productivity-boosters[JPA productivity boosters^]
+* https://github.com/database-rider/database-rider/tree/master/examples/dbunit-tomee-appcomposer-sample[DBUnit Application Composer^]
+* https://github.com/database-rider/database-rider/tree/master/examples/jOOQ-DBUnit-flyway-example/[jOOQ Flyway DBUnit^]
+* https://github.com/database-rider/database-rider/tree/master/examples/spring-boot-dbunit-sample/[SpringBoot Data DBUnit^]
+
+And also each module contain a lot of tests that you can use as example.
+
+== Rider Core
+
+This module is the basis for subsequent modules. It contains a JUnit rule (shown above), the api for dataset and DBunit configuration and *DataSetExecutor* which is responsible for dataset creation.
+
+=== Adding Database Rider core to your project
+
+
+[source, xml]
+----
+<dependency>
+      <groupId>com.github.database-rider</groupId>
+      <artifactId>database-rider</artifactId>
+      <version>0.15.0</version>
+      <scope>test</scope>
+</dependency>
+----
+
+[NOTE]
+====
+It will bring the following (transitive) dependencies to your test classpath:
+
+[source,xml]
+----
+<dependency>
+      <groupId>org.dbunit</groupId>
+      <artifactId>dbunit</artifactId>
+</dependency>
+<dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+</dependency>
+<dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-mapper-lgpl</artifactId>
+</dependency>
+----
+====
+
+=== DataSet executor
+A DataSet executor is a component which creates DBUnit datasets. Datasets are "sets" of data (tables and rows) that represent the *state of the database*. DataSets are defined as textual files in *YAML*, *XML*, *JSON*, *CSV* or *XLS* format, https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/resources/datasets/[see examples here^].
+
+As in DBUnit Rule, `dataset executor` just needs a JDBC connection to be instantiated:
+
+
+[source,java]
+----
+import static com.github.database.rider.util.EntityManagerProvider.em;
+import static com.github.database.rider.util.EntityManagerProvider.instance;
+
+@RunWith(JUnit4.class)
+public class DataSetExecutorIt {
+
+    public EntityManagerProvider emProvider = instance("executor-it");
+
+    private static DataSetExecutorImpl executor;
+
+    @BeforeClass
+    public static void setup() {
+        executor = DataSetExecutorImpl.instance(new ConnectionHolderImpl(emProvider.getConnection()));
+    }
+
+    @Test
+    public void shouldSeedUserDataSetUsingExecutor() {
+         DataSetConfig dataSetConfig = new DataSetConfig("datasets/yml/users.yml");<1>
+         executor.createDataSet(dataSetConfig);<2>
+         User user = (User) em().createQuery("select u from User u where u.id = 1").getSingleResult();
+         assertThat(user).isNotNull();
+         assertThat(user.getId()).isEqualTo(1);
+      }
+}
+----
+<1> As we are not using @Rule, which is responsible for reading @DataSet annotation, we have to provide *DataSetConfig* so executor can create the dataset.
+<2> this is done implicitly by *@Rule DBUnitRule*.
+
+DataSet executor setup and logic is `hidden` by DBUnit @Rule and @DataSet annotation:
+
+[source, java]
+----
+import static com.github.database.rider.util.EntityManagerProvider.em;
+import static org.assertj.core.api.Assertions.assertThat;
+
+@RunWith(JUnit4.class)
+public class ConnectionHolderIt {
+
+    @Rule
+    public EntityManagerProvider emProvider = EntityManagerProvider.instance("rules-it");
+
+    @Rule
+    public DBUnitRule dbUnitRule = DBUnitRule.
+        instance(() -> emProvider.getConnection());
+
+    @Test
+    @DataSet("yml/users.yml")
+    public void shouldListUsers() {
+        List<User> users = em().createQuery("select u from User u").getResultList();
+    	assertThat(users).isNotNull().isNotEmpty().hasSize(2);
+    }
+}
+----
+
+=== Configuration
+
+There are two types of configuration in Database Rider: `DataSet` and `DBUnit`.
+
+DataSet Configuration:: this basically setup the `dataset` which will be used. The only way to configure a dataset is using *@DataSet* annotation.
++
+It can be used at *class* or *method* level:
++
+[source,java]
+----
+     @Test
+     @DataSet(value ="users.yml", strategy = SeedStrategy.UPDATE,
+            disableConstraints = true,cleanAfter = true,transactional = true)
+     public void shouldLoadDataSetConfigFromAnnotation(){
+
+      }
+----
++
+Here are possible values:
++
+[cols="3*", options="header"]
+|===
+|Name | Description | Default
+|value| Dataset file name using test resources folder as root directory. Multiple, comma separated, dataset file names can be provided.| ""
+|executorId| Name of dataset executor for the given dataset.| DataSetExecutorImpl.DEFAULT_EXECUTOR_ID
+|strategy| DataSet seed strategy. Possible values are: CLEAN_INSERT, INSERT, REFRESH and UPDATE.| CLEAN_INSERT, meaning that DBUnit will clean and then insert data in tables present in provided dataset.
+|useSequenceFiltering| If true dbunit will look at constraints and dataset to try to determine the correct ordering for the SQL statements.| true
+|tableOrdering| A list of table names used to reorder DELETE operations to prevent failures due to circular dependencies.| ""
+|disableConstraints| Disable database constraints.| false
+|cleanBefore| If true Database Rider will try to delete database before test in a smart way by using table ordering and brute force.| false
+|cleanAfter| If true Database Rider will try to delete database after test in a smart way by using table ordering and brute force.| false
+|transactional| If true a transaction will be started before test and committed after test execution. | false
+|executeStatementsBefore| A list of jdbc statements to execute before test.| {}
+|executeStatementsAfter| A list of jdbc statements to execute after test.| {}
+|executeScriptsBefore| A list of sql script files to execute before test. Note that commands inside sql file must be separated by `;`.| {}
+|executeScriptsAfter| A list of sql script files to execute after test. Note that commands inside sql file must be separated by `;`.| {}
+|===
+
+DBUnit Configuration:: this basically setup `DBUnit` itself. It can be configured by *@DBUnit* annotation (class or method level) and *dbunit.yml* file present in test resources folder.
++
+[source,java]
+----
+    @Test
+    @DBUnit(cacheConnection = true, cacheTableNames = false, allowEmptyFields = true,batchSize = 50)
+    public void shouldLoadDBUnitConfigViaAnnotation() {
+
+    }
+----
++
+Here is a dbunit.yml example, also the default values:
++
+.src/test/resources/dbunit.yml
+----
+cacheConnection: true
+cacheTableNames: true
+leakHunter: false
+properties:
+  batchedStatements:  false
+  qualifiedTableNames: false
+  caseSensitiveTableNames: false
+  batchSize: 100
+  fetchSize: 100
+  allowEmptyFields: false
+  escapePattern:
+connectionConfig:
+  driver: ""
+  url: ""
+  user: ""
+  password: ""
+----
++
+NOTE: `@DBUnit` annotation takes precedence over `dbunit.yml` global configuration which will be used only if the annotation is not present.
+
+
+TIP: Both configuration mechanisms work for all Database Rider modules.
+
+=== JDBC Connection
+
+As seen in examples above `DBUnit` needs a JDBC connection to be instantiated. To avoid creating connection for each test you can define it in *dbunit.yml* for all tests or define in *@DBUnit* on each test.
+
+NOTE: `@DBUnit` annotation takes precedence over dbunit.yml global configuration.
+
+==== Example
+
+[source, java, linenums]
+----
+@RunWith(JUnit4.class)
+@DBUnit(url = "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1", driver = "org.hsqldb.jdbcDriver", user = "sa") <1>
+public class ConnectionConfigIt {
+
+    @Rule
+    public DBUnitRule dbUnitRule = DBUnitRule.instance(); <2>
+
+
+
+    @BeforeClass
+    public static void initDB(){
+        //trigger db creation
+        EntityManagerProvider.instance("rules-it");
+    }
+
+    @Test
+    @DataSet(value = "datasets/yml/user.yml")
+    public void shouldSeedFromDeclaredConnection() {
+        User user = (User) em().createQuery("select u from User u where u.id = 1").getSingleResult();
+        assertThat(user).isNotNull();
+        assertThat(user.getId()).isEqualTo(1);
+    }
+}
+----
+<1> driver class can be ommited in new JDBC drivers since version 4.
+<2> Note that the rule instantiation doesn't need a connection anymore.
+
+IMPORTANT: As CDI module depends on a produced entity manager, connection configuration will be ignored.
+
+=== Rule chaining
+
+DBUnit Rule can be https://github.com/junit-team/junit4/wiki/rules#rulechain[chained with other rules^] so you can define execution order among rules.
+
+In example below <<EntityManagerProvider rule>> executes *before* `DBUnit rule`:
+
+[source,java,linenums]
+----
+ EntityManagerProvider emProvider = EntityManagerProvider.instance("rules-it");
+
+   @Rule
+   public TestRule theRule = RuleChain.outerRule(emProvider).
+            around(DBUnitRule.instance(emProvider.connection()));
+----
+
+
+=== Multiple Databases
+Each executor has a JDBC connection so multiple databases can be handled by using multiple dataset executors:
+
+[source, java]
+----
+import static com.github.database.rider.util.EntityManagerProvider.instance;
+
+@RunWith(JUnit4.class)
+public class MultipleExecutorsIt {
+
+
+    private static List<DataSetExecutorImpl> executors = new ArrayList<>;
+
+    @BeforeClass
+    public static void setup() { <1>
+        executors.add(DataSetExecutorImpl.instance("executor1", new ConnectionHolderImpl(instance("executor1-pu").getConnection())));
+        executors.add(DataSetExecutorImpl.instance("executor2", new ConnectionHolderImpl(instance("executor2-pu").getConnection())));
+    }
+
+    @Test
+    public void shouldSeedUserDataSet() {
+         for (DataSetExecutorImpl executor : executors) {
+             DataSetConfig dataSetConfig = new DataSetConfig("datasets/yml/users.yml");
+             executor.createDataSet(dataSetConfig);
+                User user = (User) EntityManagerProvider.instance(executor.getId() + "-pu").em().createQuery("select u from User u where u.id = 1").getSingleResult();
+                assertThat(user).isNotNull();
+                assertThat(user.getId()).isEqualTo(1);
+            }
+        }
+
+}
+
+----
+<1> As you can see each executor is responsible for a database, in case a JPA persistence unit
+
+
+Also note that the same can be done using @Rule but pay attention that you must provide executor id in *@DataSet annotation*.
+
+[source, java]
+----
+    @Rule
+    public EntityManagerProvider emProvider1 = EntityManagerProvider.instance("dataset1-pu");
+
+    @Rule
+    public EntityManagerProvider emProvider2 = EntityManagerProvider.instance("dataset2-pu");
+
+    @Rule
+    public DBUnitRule exec1Rule = DBUnitRule.instance("exec1",emProvider1.getConnection());<1>
+
+    @Rule
+    public DBUnitRule exec2Rule = DBUnitRule.instance("exec2",emProvider2.getConnection());
+
+    @Test
+    @DataSet(value = "datasets/yml/users.yml",disableConstraints = true, executorId = "exec1") <2>
+    public void shouldSeedDataSetDisablingContraints() {
+        User user = (User) emProvider1.em().createQuery("select u from User u where u.id = 1").getSingleResult();
+        assertThat(user).isNotNull();
+        assertThat(user.getId()).isEqualTo(1);
+     }
+
+    @Test
+    @DataSet(value = "datasets/yml/users.yml",disableConstraints = true, executorId = "exec2")
+    public void shouldSeedDataSetDisablingContraints2() {
+        User user = (User) emProvider2.em().createQuery("select u from User u where u.id = 1").getSingleResult();
+        assertThat(user).isNotNull();
+        assertThat(user.getId()).isEqualTo(1);
+     }
+----
+
+<1> *exec1* is the id of executor reponsible for dataset1-pu
+<2> executorId must match id provided in @Rule annotation
+
+=== Expected DataSet
+Using `@ExpectedDataSet` annotation you can specify the database state you expect after test execution, example:
+
+----
+user:
+  - id: 1
+    name: "expected user1"
+  - id: 2
+    name: "expected user2"
+----
+
+[source, java]
+----
+    @Test
+    @ExpectedDataSet(value = "yml/expectedUsers.yml",ignoreCols = "id")
+    public void shouldMatchExpectedDataSet() {
+        User u = new User();
+        u.setName("expected user1");
+        User u2 = new User();
+        u2.setName("expected user2");
+        emProvider.tx().begin();
+        emProvider.em().persist(u);
+        emProvider.em().persist(u2);
+        emProvider.tx().commit();
+    }
+----
+
+NOTE: As you probably noticed, there is no need for assertions in the test itself.
+
+Now with an assertion error:
+
+[source, java]
+----
+    @Test
+    @ExpectedDataSet(value = "yml/expectedUsers.yml",ignoreCols = "id")
+    public void shouldMatchExpectedDataSet() {
+        User u = new User();
+        u.setName("non expected user1");
+        User u2 = new User();
+        u2.setName("non expected user2");
+        emProvider.tx().begin();
+        emProvider.em().persist(u);
+        emProvider.em().persist(u2);
+        emProvider.tx().commit();
+    }
+----
+And here is how the error is shown in JUnit console:
+
+----
+Expected :expected user1
+Actual   :non expected user1
+ <Click to see difference>
+	at org.dbunit.assertion.JUnitFailureFactory.createFailure(JUnitFailureFactory.java:39)
+	at org.dbunit.assertion.DefaultFailureHandler.createFailure(DefaultFailureHandler.java:97)
+	at org.dbunit.assertion.DefaultFailureHandler.handle(DefaultFailureHandler.java:223)
+	at com.github.database.rider.assertion.DataSetAssert.compareData(DataSetAssert.java:94)
+----
+
+[TIP]
+====
+You can also use `regular expressions` in expected DataSet, for that just prepend column value with `regex:`:
+
+----
+user:
+  - id: "regex:\\d+" #any number
+    name: regex:^expected user.*  #starts with regex
+  - id: "regex:\\d+"
+    name: regex:.*user2$   #ends with example
+----
+
+The test remains the same as above but without the need to `ignore id column`.
+====
+
+=== Transactional Tests
+
+In case of `ExpectedDataSet` you'll usually need a transaction to modify database in order to match expected dataset. In such case you can use a *transactional* test:
+
+[source, java, subs="quotes"]
+----
+    @Test
+    @DataSet(*transactional=true*)
+    @ExpectedDataSet(value = "yml/expectedUsers.yml",ignoreCols = "id")
+    public void shouldMatchExpectedDataSet() {
+        User u = new User();
+        u.setName("non expected user1");
+        User u2 = new User();
+        u2.setName("non expected user2");
+        emProvider.em().persist(u);
+        emProvider.em().persist(u2);
+    }
+----
+
+Note that Database Rider will start a transaction before test and commit the transaction *after* test execution but *before* expected dataset comparison.
+
+Below is a pure JDBC example where commented code is not needed because the test is transactional:
+
+[source, java, linenums]
+----
+    @Test
+    @DataSet(cleanBefore = true, transactional = true)
+    @ExpectedDataSet(value = "usersInserted.yml")
+    public void shouldInserUsers() throws SQLException {
+        Connection connection = flyway.getDataSource().getConnection();
+        //connection.setAutoCommit(false); //transactional=true
+        java.sql.Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_UPDATABLE);
+
+        statement.addBatch("INSERT INTO User VALUES (1, 'user1')");
+        statement.addBatch("INSERT INTO User VALUES (2, 'user2')");
+        statement.addBatch("INSERT INTO User VALUES (3, 'user3')");
+        statement.executeBatch();
+        //connection.commit();
+        //connection.setAutoCommit(false);
+    }
+----
+TIP: Above example code (which uses JUnit5 and Flyway) can be https://github.com/database-rider/database-rider/blob/master/rider-junit5/src/test/java/com/github/database/rider/junit5/FlywayIt.java#L26[found here^].
+
+=== EntityManagerProvider
+
+It is a component which holds JPA entity managers for your tests. To activate it just use the EntityManagerProvider rule in your test use:
+
+[source,java]
+----
+@RunWith(JUnit4.class)
+public class DBUnitRulesIt {
+
+    @Rule
+    public EntityManagerProvider emProvider = EntityManagerProvider.instance("PU-NAME");<1>
+
+}
+----
+<1> It will retrieve the entity manager based on a test persistence.xml and store in into EntityManagerProvider which can hold multiple entity managers.
+
+NOTE: You can use @BeforeClass instead of junit rule to instantiate the provider.
+
+IMPORTANT: EntityManagerProvider will cache entity manager instance to avoid creating database multiple times, you just need to be careful with JPA first level cache between tests (EntityManagerProvider Rule and <<DBUnit Interceptor,CDI interceptor>> clears first level cache before each test).
+
+Now you can use emProvider.getConnection() to retrieve jdbc connection and emProvider.em() to retrieve underlying entityManager.
+
+*PU-NAME* refers to test persistence.xml unit name:
+
+.src/test/resources/META-INF/persistence.xml
+[source,java]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+
+    <persistence-unit name="PU-NAME" transaction-type="RESOURCE_LOCAL">
+
+    <class>com.github.database.rider.model.User</class>
+    <class>com.github.database.rider.model.Tweet</class>
+    <class>com.github.database.rider.model.Follower</class>
+
+    <properties>
+        <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1"/>
+        <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver"/>
+        <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+        <property name="javax.persistence.jdbc.user" value="sa"/>
+        <property name="javax.persistence.jdbc.password" value=""/>
+        <property name="eclipselink.logging.level" value="INFO"/>
+        <property name="eclipselink.logging.level.sql" value="FINE"/>
+        <property name="eclipselink.logging.parameters" value="false"/>
+    </properties>
+
+    </persistence-unit>
+
+</persistence>
+----
+NOTE: It will only work with *transaction-type="RESOURCE_LOCAL"* because internally it uses Persistence.createEntityManagerFactory(unitName) to get entityManager instance.
+
+Above JPA configuration depends on hsqldb (an in memory database) and eclipse link (JPA provider):
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.eclipse.persistence</groupId>
+    <artifactId>eclipselink</artifactId>
+    <version>2.5.2</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.hsqldb</groupId>
+    <artifactId>hsqldb</artifactId>
+    <version>2.3.3</version>
+    <scope>test</scope>
+</dependency>
+----
+
+NOTE: A hibernate entity manager config sample can be https://github.com/database-rider/database-rider/blob/master/examples/src/test/resources/META-INF/persistence.xml[found here^].
+
+
+TIP: EntityManager provider utility also can be used in other contexts like a CDI producer, https://github.com/database-rider/database-rider/blob/master/rider-cdi/src/test/java/com/github/database/rider/EntityManagerProducer.java#L21[see here].
+
+
+== CDI module
+
+If you use CDI in your tests then you should give a try in Database Rider https://github.com/database-rider/database-rider/tree/master/rider-cdi[CDI module^]:
+
+[source,xml]
+----
+<dependency>
+    <groupId>com.github.database-rider</groupId>
+    <artifactId>rider-cdi</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <scope>test</scope>
+</dependency>
+----
+
+=== DBUnit Interceptor
+
+CDI module main component is a CDI interceptor which configures datasets before your tests. To enable DBUnit interceptor you'll need
+configure it in you test beans.xml:
+
+.src/test/resources/META-INF/beans.xml
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://java.sun.com/xml/ns/javaee"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/beans_1_0.xsd">
+
+       <interceptors>
+              <class>com.github.database.rider.cdi.DBUnitInterceptorImpl</class>
+       </interceptors>
+</beans>
+
+----
+
+and then enable it in your tests by using *@DBUnitInterceptor* annotation (class or method level):
+
+[source,java]
+----
+@RunWith(CdiTestRunner.class)
+@DBUnitInterceptor
+public class DeltaspikeUsingInterceptorIt {
+
+    @Inject
+    DeltaSpikeContactService contactService;
+
+
+    @Test
+    @DataSet("datasets/contacts.yml")
+    public void shouldQueryAllCompanies() {
+        assertNotNull(contactService);
+        assertThat(contactService.findCompanies()).hasSize(4);
+    }
+}
+----
+
+[IMPORTANT]
+====
+Make sure the test class itself is a CDI bean so it can be intercepted by `DBUnitInterceptor`. If you're using https://deltaspike.apache.org/documentation/test-control.html[Deltaspike test control^] just enable the following
+property in test/resources/META-INF/apache-deltaspike.properties:
+----
+   deltaspike.testcontrol.use_test_class_as_cdi_bean=true
+----
+====
+
+== Cucumber module
+
+this module brings a Cucumber runner which is CDI aware.
+
+NOTE: If you don't use CDI you need to <<Programmatically creating datasets, create datasets Programmatically>> because Cucumber `official` runner https://github.com/cucumber/cucumber-jvm/issues/393[doesn't support JUnit rules^].
+
+
+[source,xml]
+----
+<dependency>
+    <groupId>com.github.database-rider</groupId>
+    <artifactId>rider-cucumber</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <scope>test</scope>
+</dependency>
+----
+
+Now you just need to use *CdiCucumberTestRunner*.
+
+=== Examples
+
+.feature file (src/test/resources/features/contacts.feature)
+----
+Feature: Contacts test
+  As a user of contacts repository
+  I want to crud contacts
+  So that I can expose contacts service
+
+
+  Scenario Outline: search contacts
+    Given we have a list of constacts
+    When we search contacts by name "<name>"
+    Then we should find <result> contacts
+
+  Examples: examples1
+  | name     | result |
+  | delta    | 1      |
+  | sp       | 2      |
+  | querydsl | 1      |
+  | abcd     | 0      |
+
+
+  Scenario: delete a contact
+
+    Given we have a list of contacts
+    When we delete contact by id 1
+    Then we should not find contact 1
+----
+
+.Cucumber cdi runner
+[source,java]
+----
+package com.github.database.rider.examples.cucumber;
+
+import com.github.database.rider.cucumber.CdiCucumberTestRunner;
+import cucumber.api.CucumberOptions;
+import org.junit.runner.RunWith;
+
+
+@RunWith(CdiCucumberTestRunner.class)
+@CucumberOptions(
+        features = {"src/test/resources/features/contacts.feature"},
+        plugin = {"json:target/cucumber.json"}
+        //glue = "com.github.database.rider.examples.glues" <1>
+)
+public class ContactFeature {
+}
+----
+
+<1> You can use glues so step definitions and the runner can be in different packages for reuse between features.
+
+.Step definitions
+[source,java]
+----
+package com.github.database.rider.examples.cucumber; //<1>
+
+import com.github.database.rider.api.dataset.DataSet;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import org.example.jpadomain.Contact;
+import org.example.jpadomain.Contact_;
+import org.example.service.deltaspike.ContactRepository;
+
+import javax.inject.Inject;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+@DBUnitInterceptor <2>
+public class ContactSteps {
+
+    @Inject
+    ContactRepository contactRepository;
+
+    Long count;
+
+    @Given("^we have a list of contacts")
+    @DataSet("datasets/contacts.yml") //<2>
+    public void given() {
+        assertEquals(contactRepository.count(), new Long(3));
+    }
+
+    @When("^^we search contacts by name \"([^\"]*)\"$")
+    public void we_search_contacts_by_name_(String name) throws Throwable {
+        Contact contact = new Contact();
+        contact.setName(name);
+        count = contactRepository.countLike(contact, Contact_.name);
+    }
+
+
+    @Then("^we should find (\\d+) contacts$")
+    public void we_should_find_result_contacts(Long result) throws Throwable {
+        assertEquals(result,count);
+    }
+
+
+    @When("^we delete contact by id (\\d+)$")
+    public void we_delete_contact_by_id(long id) throws Throwable {
+        contactRepository.remove(contactRepository.findBy(id));
+    }
+
+    @Then("^we should not find contact (\\d+)$")
+    public void we_should_not_find_contacts_in_database(long id) throws Throwable {
+        assertNull(contactRepository.findBy(id));
+    }
+}
+----
+
+<1> Step definitions must be in the same package of the runner. To use different package you can use *glues* as commented above.
+<2> Activates DBUnit CDI interceptor which will read @DataSet annotation in cucumber steps to prepare the database.
+
+== Programmatic creating datasets
+
+You can create datasets without JUnit Rule or CDI as we saw above, here is a pure cucumber example (for the same <<Examples,feature above>>):
+
+[source,java,linenums]
+----
+@RunWith(Cucumber.class)
+@CucumberOptions(
+        features = {"src/test/resources/features/contacts-without-cdi.feature"},
+        plugin = {"json:target/cucumber.json"}
+        //glue = "com.github.database.rider.examples.glues"
+)
+public class ContactFeatureWithoutCDI {
+}
+----
+
+And here are the step definitions:
+
+[source,java,linenums]
+----
+public class ContactStepsWithoutCDI {
+
+
+    EntityManagerProvider entityManagerProvider = EntityManagerProvider.newInstance("customerDB");
+
+    DataSetExecutor dbunitExecutor;
+
+    Long count;
+
+
+    @Before
+    public void setUp(){
+        dbunitExecutor = DataSetExecutorImpl.instance(new ConnectionHolderImpl(entityManagerProvider.connection()));
+        em().clear();//important to clear JPA first level cache between scenarios
+    }
+
+
+    @Given("^we have a list of contacts2$")
+    public void given() {
+        dbunitExecutor.createDataSet(new DataSetConfig("contacts.yml"));
+        assertEquals(em().createQuery("select count(c.id) from Contact c").getSingleResult(), new Long(3));
+    }
+
+    @When("^^we search contacts by name \"([^\"]*)\"2$")
+    public void we_search_contacts_by_name_(String name) throws Throwable {
+        Contact contact = new Contact();
+        contact.setName(name);
+        Query query =  em().createQuery("select count(c.id) from Contact c where UPPER(c.name) like :name");
+        query.setParameter("name","%"+name.toUpperCase()+"%");
+        count = (Long) query.getSingleResult();
+    }
+
+
+    @Then("^we should find (\\d+) contacts2$")
+    public void we_should_find_result_contacts(Long result) throws Throwable {
+        assertEquals(result,count);
+    }
+
+
+
+    @When("^we delete contact by id (\\d+) 2$")
+    public void we_delete_contact_by_id(long id) throws Throwable {
+        tx().begin();
+        em().remove(em().find(Contact.class,id));
+        tx().commit();
+    }
+
+    @Then("^we should not find contact (\\d+) 2$")
+    public void we_should_not_find_contacts_in_database(long id) throws Throwable {
+        assertNull(em().find(Contact.class,id));
+    }
+}
+----
+
+== JUnit 5
+
+http://junit.org/junit5/[JUnit 5] is the new version of JUnit and comes with a new extension model, so instead of *rules* you will use extensions in your tests. See example below:
+
+[source,xml]
+----
+<dependency>
+    <groupId>com.github.database-rider</groupId>
+    <artifactId>junit5</artifactId>
+    <version>0.15.0</version>
+    <scope>test</scope>
+</dependency>
+----
+
+
+[source,java,linenums]
+----
+@ExtendWith(DBUnitExtension.class)
+@RunWith(JUnitPlatform.class)
+public class DBUnitJUnit5Test {
+
+    private ConnectionHolder connectionHolder = () -> instance("junit5-pu").connection(); <1>
+
+    @Test
+    @DataSet("users.yml")
+    public void shouldListUsers() {
+        List<User> users = em().createQuery("select u from User u").getResultList();
+        assertThat(users).isNotNull().isNotEmpty().hasSize(2);
+    }
+----
+<1> DBUnit extension will get JDBC connection by reflection so you need to declare a *field* or *method* with `ConnectionHolder` as return type.
+
+TIP: You can configure JDBC connection using @DBUnit annotation or dbunit.yml, see <<JDBC Connection>>.
+
+== Leak Hunter
+
+Leak hunter is a component based on https://vladmihalcea.com/2016/07/12/the-best-way-to-detect-database-connection-leaks/[this blog post^] which counts open jdbc connections before and after test execution.
+
+To enable it just use *leakHunter = true* in `@DBUnit` annotation, example:
+
+[source, java, linenums]
+----
+@RunWith(JUnit4.class)
+@DBUnit(leakHunter = true)
+public class LeakHunterIt {
+
+    @Rule
+    public DBUnitRule dbUnitRule = DBUnitRule.instance(new ConnectionHolderImpl(getConnection()));
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+
+    @Test
+    @DataSet("yml/user.yml")
+    public void shouldFindConnectionLeak() {
+         exception.expect(LeakHunterException.class); <1>
+         exception.expectMessage("Execution of method shouldFindConnectionLeak left 1 open connection(s).");
+         createLeak();
+     }
+
+     @Test
+     @DataSet("yml/user.yml")
+     public void shouldFindTwoConnectionLeaks()  {
+         exception.expect(LeakHunterException.class);
+         exception.expectMessage("Execution of method shouldFindTwoConnectionLeaks left 2 open connection(s).");
+         createLeak();
+         createLeak();
+     }
+
+     @Test
+     @DataSet("yml/user.yml")
+     @DBUnit(leakHunter = false)
+     public void shouldNotFindConnectionLeakWhenHunterIsDisabled() {
+           createLeak();
+     }
+
+}
+----
+<1> If number of connections after test execution are greater than before then a *LeakHunterException* will be raised.
+
+TIP: Complete source code of example above can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/LeakHunterIt.java[found here^].
+
+== Export DataSets
+
+Manual creation of datasets is a very error prone task. In order to export database state *after test* execution into datasets files one can use *@ExportDataSet* Annotation or use DataSetExporter component.
+
+=== Example
+
+[source, java, linenums]
+----
+    @Test
+    @DataSet("datasets/yml/users.yml")
+    @ExportDataSet(format = DataSetFormat.XML,outputName="target/exported/xml/allTables.xml")
+    public void shouldExportAllTablesInXMLFormat() {
+       //data inserted inside method can be exported
+    }
+----
+
+After above test execution all tables will be exported to a xml dataset.
+
+
+NOTE: *XML*, *YML*, *JSON*, *XLS* and *CSV* formats are supported.
+
+TIP: Full example above (and other related tests) can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/ExportDataSetIt.java#L35[found here^].
+
+=== Configuration
+
+Following table shows all exporter configuration options:
+
+[cols="3*", options="header"]
+|===
+|Name | Description | Default
+|format| Exported dataset file format.| YML
+|includeTables| A list of table names to include in exported dataset.| Default is empty which means *ALL tables*.
+|queryList| A list of select statements which the result will used in exported dataset.| {}
+|dependentTables| If true will bring dependent tables of declared includeTables.| false
+|outputName| Name (and path) of output file.| ""
+|===
+
+
+=== Programatic export
+
+You can also export DataSets without `@ExportDataSet` by using DataSetExporter component programmatically:
+
+[source,java,linenums]
+----
+    @Test
+    @DataSet(cleanBefore=true)
+    public void shouldExportYMLDataSetWithoutAnnotations() throws SQLException, DatabaseUnitException{
+    	tx().begin();
+    	User u1 = new User();
+    	u1.setName("u1");
+    	em().persist(u1);//just insert a user and assert it is present in exported dataset
+    	tx().commit();
+    	DataSetExporter.getInstance().export(emProvider.connection(),
+    	new DataSetExportConfig().outputFileName("target/user.yml"));
+    	File ymlDataSet = new File("target/user.yml");
+        assertThat(ymlDataSet).exists();
+        assertThat(contentOf(ymlDataSet)).
+               contains("USER:"+NEW_LINE +
+                  "  - ID: 1"+NEW_LINE +
+                  "    NAME: \"u1\""+NEW_LINE);
+
+    }
+----
+
+
+
+== Snapshots
+
+Snapshots are available in maven central, to use it just add the following snippet in your pom.xml:
+
+[source,xml]
+----
+<repositories>
+    <repository>
+        <snapshots/>
+        <id>snapshots</id>
+        <name>libs-snapshot</name>
+        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </repository>
+</repositories>
+----

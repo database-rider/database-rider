@@ -1,0 +1,16 @@
+cacheConnection: true
+cacheTableNames: true
+leakHunter: false
+properties:
+  batchedStatements:  false
+  qualifiedTableNames: false
+  caseSensitiveTableNames: false
+  batchSize: 100
+  fetchSize: 100
+  allowEmptyFields: false
+  escapePattern: ""
+connectionConfig:
+  driver: ""
+  url: ""
+  user: ""
+  password: ""

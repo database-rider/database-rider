@@ -1,0 +1,158 @@
+= Database Rider CDI
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+
+This module brings `Database Rider` as a CDI interceptor so you can easily prepare database state in your CDI based tests.
+
+[source,xml]
+----
+<dependency>
+    <groupId>com.github.database-rider</groupId>
+    <artifactId>rider-cdi</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <scope>test</scope>
+</dependency>
+----
+
+
+== Pre requisites
+
+. CDI must be enabled in your tests;
++
+[NOTE]
+====
+Make sure the test class itself is a CDI bean, if you're using https://deltaspike.apache.org/documentation/test-control.html[Deltaspike test control^] just enable the following
+property in test/resources/META-INF/apache-deltaspike.properties:
+----
+   deltaspike.testcontrol.use_test_class_as_cdi_bean=true
+----
+====
+. A jpa entity manager produced via CDI, see https://deltaspike.apache.org/documentation/jpa.html[this example^];
+. Enable the following interceptor in your test beans.xml:
++
+[source,xml]
+----
+<beans xmlns="http://java.sun.com/xml/ns/javaee"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/beans_1_0.xsd">
+
+       <interceptors>
+              <class>com.github.database.rider.cdi.DBUnitInterceptorImpl</class>
+       </interceptors>
+</beans>
+----
+
+== Example
+
+[source,java]
+----
+@RunWith(CdiTestRunner.class)
+@DBUnitInterceptor <1>
+public class ContactServiceIt {
+
+    @Inject
+    DeltaSpikeContactService contactService;
+
+
+    @Test
+    @DataSet("datasets/contacts.yml")
+    public void shouldQueryAllCompanies() {
+        assertNotNull(contactService);
+        assertThat(contactService.findCompanies()).hasSize(4);
+    }
+}
+----
+<1> Activates the CDI interceptor which will seed database based on @DataSet annotation.
+
+.contacts.yml
+----
+contact:
+  - id: 1
+    name: "deltaspike"
+    email: "users@deltaspike.apache.org"
+    company_id: 1
+  - id: 2
+    name: "querydsl"
+    email: "info@mysema.com"
+    company_id: 2
+  - id: 3
+    name: "Spring"
+    email: "spring@pivotal.io"
+    company_id: 3
+
+company:
+  - id: 1
+    name: "Apache"
+  - id: 2
+    name: "Mysema"
+  - id: 3
+    name: "Pivotal"
+  - id: 4
+    name: "Google"
+----
+
+Entity manager producer:
+
+[source,java]
+----
+@Specializes
+@ApplicationScoped
+public class CdiTestConfig extends CdiConfig { <1>
+
+   private EntityManager em;
+
+
+    @Produces
+    public EntityManager produce(){
+      synchronized (this){
+        return EntityManagerProvider.instance("customerDB").em();
+      }
+    }
+
+}
+
+----
+<1> CdiTestConfig extends CdiConfig which produces "real" entityManager
+
+JPA persistence unit config:
+
+.src/test/resources/META-INF/persistence.xml
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+    <persistence-unit name="customerDB" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+
+        <class>org.example.jpadomain.Company</class>
+        <class>org.example.jpadomain.Contact</class>
+
+        <properties>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect" />
+            <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1" />
+            <property name="javax.persistence.jdbc.user" value="sa" />
+            <property name="javax.persistence.jdbc.password" value="" />
+            <property name="hibernate.hbm2ddl.auto" value="create-drop" />
+            <property name="hibernate.show_sql" value="true" />
+
+        </properties>
+
+    </persistence-unit>
+</persistence>
+----
+
+[TIP]
+====
+If you use different transaction strategies between your application and tests (eg: JTA for application and Non JTA in tests) you can use the following property in *apache-deltaspike.properties*:
+
+----
+ globalAlternatives.org.apache.deltaspike.jpa.spi.transaction.TransactionStrategy =org.apache.deltaspike.jpa.impl.transaction.EnvironmentAwareTransactionStrategy
+----
+
+====
+
+For more examples see full https://github.com/database-rider/database-rider/blob/master/rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/DeltaspikeUsingInterceptorIt.java#L25[sample here] and https://github.com/database-rider/database-rider/tree/master/cdi/src/test/java/com/github/database/rider[cdi module tests^].

@@ -1,0 +1,14 @@
+= Database Rider Examples
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+
+Gathers some example applications that use Database Rider for testing the database layer.
+
+* https://github.com/database-rider/database-rider/tree/master/rider-examples/jpa-productivity-boosters[JPA productivity boosters^]
+* https://github.com/database-rider/database-rider/tree/master/rider-examples/dbunit-tomee-appcomposer-sample[DBUnit Application Composer^]
+* https://github.com/database-rider/database-rider/tree/master/rider-examples/jOOQ-DBUnit-flyway-example/[jOOQ Flyway DBUnit^]
+* https://github.com/database-rider/database-rider/tree/master/rider-examples/spring-boot-dbunit-sample/[SpringBoot Data DBUnit^]
+

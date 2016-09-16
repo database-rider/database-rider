@@ -1,0 +1,9 @@
+= SpringBoot DBUnit Sample
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+
+A simple SpringBoot (with JPA and Data modules) example application using Database Rider for testing JPA repositories.
+

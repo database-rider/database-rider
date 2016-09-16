@@ -1,0 +1,6 @@
+<dataset>
+    <USER id="1" name="@realpestano" />
+    <USER id="2" name="@dbunit" />
+    <TWEET id="abcdef12345" content="dbunit rules flat xml example" user_id="1"/>
+    <FOLLOWER id="1" user_id="1" follower_id="2"/>
+</dataset>

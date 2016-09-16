@@ -1,0 +1,27 @@
+tweet:
+  - id: "1"
+    content: "dbunit rules!"
+    date: "[DAY,NOW]"
+    user_id: 1
+  - id: "2"
+    content: "dbunit rules!"
+    date: "[DAY,YESTERDAY]"
+    user_id: 1
+  - id: "3"
+    content: "dbunit rules!"
+    date: "[DAY,TOMORROW]"
+    user_id: 1
+  - id: "4"
+    content: "dbunit rules!"
+    date: "[DAY,YEAR_AFTER]"
+    user_id: 1
+  - id: "5"
+    content: "dbunit rules!"
+    date: "[DAY,YEAR_BEFORE]"
+    user_id: 1
+  - id: "6"
+    content: "dbunit rules!"
+    date: "[HOUR,PLUS_ONE]"
+    user_id: 1
+
+

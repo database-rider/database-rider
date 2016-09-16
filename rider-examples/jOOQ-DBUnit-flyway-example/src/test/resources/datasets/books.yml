@@ -1,0 +1,13 @@
+flyway_test.book:
+  - id: 1
+    author_id: 1
+    title: "1984"
+  - id: 2
+    author_id: 1
+    title: Animal Farm
+  - id: 3
+    author_id: 2
+    title: O Alquimista
+  - id: 4
+    author_id: 2
+    title: Brida
