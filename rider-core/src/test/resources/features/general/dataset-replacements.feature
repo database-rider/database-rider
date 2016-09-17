@@ -42,7 +42,7 @@ include::../../../core/src/test/resources/datasets/yml/groovy-with-date-replacem
 """
 [source,java,indent=0,linenums]
 ----
-include::../../../core/src/test/java/com/github/dbunit/rules/ScriptReplacementsIt.java[tags=groovy]
+include::../../../core/src/test/java/com/github/database/rider/ScriptReplacementsIt.java[tags=groovy]
 ----
 """
     Then Dataset script should be interpreted while seeding the database
@@ -67,7 +67,7 @@ include::../../../core/src/test/resources/datasets/yml/js-with-calc-replacements
 """
 [source,java,linenums,indent=0]
 ----
-include::../../../core/src/test/java/com/github/dbunit/rules/ScriptReplacementsIt.java[tags=javascript-likes]
+include::../../../core/src/test/java/com/github/database/rider/ScriptReplacementsIt.java[tags=javascript-likes]
 ----
 """
     Then Dataset script should be interpreted while seeding the database

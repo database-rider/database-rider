@@ -12,9 +12,9 @@
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-parent</artifactId>
     <packaging>pom</packaging>
-    <!-- tag::version[] -->
-    <version>1.0.0-SNAPSHOT</version>
-    <!-- end::version[] -->
+   <!-- tag::version[] -->
+   <version>1.0.0-SNAPSHOT</version>
+   <!-- end::version[] -->
 
     <modules>
         <module>rider-core</module>
@@ -264,7 +264,7 @@
                         <artifactId>coveralls-maven-plugin</artifactId>
                         <version>4.1.0</version>
                         <configuration>
-                            <repoToken>FyLUCzLpMxNyRwV6c3iyYGLnKb68PLAYW</repoToken>
+                            <repoToken>GSuxXhAxdIzxXZOUi0tMw2ORBdMcdORG2</repoToken>
                         </configuration>
                     </plugin>
                     <plugin>

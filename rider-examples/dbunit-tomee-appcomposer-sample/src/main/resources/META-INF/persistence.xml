@@ -7,7 +7,7 @@
     <persistence-unit name="user">
         <jta-data-source>jdbc/user</jta-data-source>
         <non-jta-data-source>jdbc/user-unmanaged</non-jta-data-source>
-        <class>com.github.database.rider.example.User</class>
+        <class>com.github.database.rider.core.example.User</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>

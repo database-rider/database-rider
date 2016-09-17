@@ -1,7 +1,7 @@
-import com.github.database.rider.DBUnitRule;
-import com.github.database.rider.api.dataset.DataSet;
-import com.github.database.rider.api.dataset.ExpectedDataSet;
-import com.github.database.rider.api.configuration.DBUnit;
+import com.github.database.rider.core.DBUnitRule;
+import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.ExpectedDataSet;
+import com.github.database.rider.core.api.configuration.DBUnit;
 
 import org.flywaydb.core.Flyway;
 import org.jooq.DSLContext;

@@ -35,8 +35,8 @@ To use this module just add the following maven dependency:
 [source,xml,indent=0]
 ----
 <dependency>
-     <groupId>com.github.dbunit-rules</groupId>
-     <artifactId>cdi</artifactId>
+     <groupId>com.github.database-rider</groupId>
+     <artifactId>rider-cdi</artifactId>
 include::../../../pom.xml[tags=version]
      <scope>test</scope>
 </dependency>
@@ -83,13 +83,13 @@ include::../../../cdi/src/test/resources/datasets/yml/users.yml[]
 ----
  """
 
-#{TIP: Source code of the above example can be https://github.com/rmpestano/dbunit-rules/blob/master/cdi/src/test/java/com/github/dbunit/rules/cdi/DBUnitCDIIt.java#L74[found here^].}
+#{TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/cdi/src/test/java/com/github/database/rider/cdi/DBUnitCDIIt.java#L74[found here^].}
 #cukedoctor-discrete
 When The following test is executed:
  """
 [source,java]
 ----
-include::../../../cdi/src/test/java/com/github/dbunit/rules/cdi/DBUnitCDIIt.java[tags=seedDatabase]
+include::../../../cdi/src/test/java/com/github/database/rider/cdi/DBUnitCDIIt.java[tags=seedDatabase]
 ----
  """
 

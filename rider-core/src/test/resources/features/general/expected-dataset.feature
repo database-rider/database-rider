@@ -25,7 +25,7 @@ include::../../../core/src/test/resources/datasets/yml/expectedUsers.yml[]
 """
 [source,java,indent=0,linenums]
 ----
-include::../../../core/src/test/java/com/github/dbunit/rules/ExpectedDataSetIt.java[tags=expectedDeclaration;expected]
+include::../../../core/src/test/java/com/github/database/rider/ExpectedDataSetIt.java[tags=expectedDeclaration;expected]
 ----
 <1> Clear database before to avoid conflict with other tests.
 """
@@ -47,7 +47,7 @@ include::../../../core/src/test/resources/datasets/yml/expectedUsersRegex.yml[]
 """
 [source,java,indent=0,linenums]
 ----
-include::../../../core/src/test/java/com/github/dbunit/rules/ExpectedDataSetIt.java[tags=expectedRegex]
+include::../../../core/src/test/java/com/github/database/rider/ExpectedDataSetIt.java[tags=expectedRegex]
 ----
 """
     Then Test must pass because database state is as in expected dataset.
@@ -76,7 +76,7 @@ include::../../../core/src/test/resources/datasets/yml/expectedUser.yml[]
 """
 [source,java,indent=0,linenums]
 ----
-include::../../../core/src/test/java/com/github/dbunit/rules/ExpectedDataSetIt.java[tags=expectedWithSeeding]
+include::../../../core/src/test/java/com/github/database/rider/ExpectedDataSetIt.java[tags=expectedWithSeeding]
 ----
 """
     Then Test must pass because database state is as in expected dataset.
@@ -97,7 +97,7 @@ include::../../../core/src/test/resources/datasets/yml/expectedUsers.yml[]
 """
 [source,java,indent=0,linenums]
 ----
-include::../../../core/src/test/java/com/github/dbunit/rules/ExpectedDataSetIt.java[tags=faillingExpected]
+include::../../../core/src/test/java/com/github/database/rider/ExpectedDataSetIt.java[tags=faillingExpected]
 ----
 """
 
@@ -124,7 +124,7 @@ include::../../../core/src/test/resources/datasets/yml/expectedUsersRegex.yml[]
 """
 [source,java,indent=0,linenums]
 ----
-include::../../../core/src/test/java/com/github/dbunit/rules/TransactionIt.java[tags=transaction]
+include::../../../core/src/test/java/com/github/database/rider/TransactionIt.java[tags=transaction]
 ----
 """
     Then Test must pass because inserted users are commited to database and database state matches expected dataset.

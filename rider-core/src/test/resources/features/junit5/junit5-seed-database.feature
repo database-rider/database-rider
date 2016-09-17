@@ -39,14 +39,14 @@ include::../../../junit5/src/test/resources/datasets/users.yml[]
 ----
  """
 
-#{TIP: Source code of the above example can be https://github.com/rmpestano/dbunit-rules/blob/master/junit5/src/test/java/com/github/dbunit/junit5/DBUnitJUnit5It.java/#L22[found here^].}
+#{TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/junit5/src/test/java/com/github/dbunit/junit5/DBUnitJUnit5It.java/#L22[found here^].}
 #cukedoctor-discrete
 When The following junit5 test is executed
 
  """
 [source,java,linenums]
 ----
-include::../../../junit5/src/test/java/com/github/dbunit/rules/junit5/DBUnitJUnit5It.java[tags=declaration;connectionField;test]
+include::../../../junit5/src/test/java/com/github/database/rider/junit5/DBUnitJUnit5It.java[tags=declaration;connectionField;test]
 ----
 <1> Enables DBUnit;
 <2> JUnit 5 runner;

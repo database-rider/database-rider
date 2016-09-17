@@ -1,6 +1,6 @@
 = *Introduction*
 
-*Database Rider* aims for bringing http://dbunit.sourceforge.net/[DBUnit^] closer to your JUnit tests. Here are the main features:
+*Database Rider* aims for bringing http://dbunit.sourceforge.net/[DBUnit^] closer to your JUnit tests so *database testing will feel like a breeze!*. Here are the main features:
 
 * https://github.com/junit-team/junit4/wiki/Rules[JUnit rule] to integrate with DBUnit via annotations:
 +
@@ -17,26 +17,26 @@
 ----
 <1> The rule depends on a JDBC connection.
 +
-* https://github.com/rmpestano/dbunit-rules#cdi-module[CDI integration^] via interceptor to seed database without rule instantiation;
+* https://github.com/database-rider/database-rider#cdi-module[CDI integration^] via interceptor to seed database without rule instantiation;
 * JSON, YAML, XML, XLS, and CSV support;
-* https://github.com/rmpestano/dbunit-rules#configuration[Configuration^] via annotations or yml files;
-* https://github.com/rmpestano/dbunit-rules#cucumber-module[Cucumber^] integration;
+* https://github.com/database-rider/database-rider#configuration[Configuration^] via annotations or yml files;
+* https://github.com/database-rider/database-rider#cucumber-module[Cucumber^] integration;
 * Multiple database support;
 * Date/time support in datasets;
 * Scriptable datasets with groovy and javascript;
 * Regular expressions in expected datasets;
-* https://github.com/rmpestano/dbunit-rules#junit-5[JUnit 5^] integration;
-* https://github.com/rmpestano/dbunit-rules#export-datasets[DataSet export^];
-* https://github.com/rmpestano/dbunit-rules#8-leak-hunter[Connection leak detection^];
-* Lot of https://github.com/rmpestano/dbunit-rules#examples[examples^].
+* https://github.com/database-rider/database-rider#junit-5[JUnit 5^] integration;
+* https://github.com/database-rider/database-rider#export-datasets[DataSet export^];
+* https://github.com/database-rider/database-rider#8-leak-hunter[Connection leak detection^];
+* Lot of https://github.com/database-rider/database-rider#examples[examples^].
 
 
 The project is composed by 5 modules:
 
-* https://github.com/rmpestano/dbunit-rules/tree/master/core[Core^]: Contains the dataset executor and JUnit rule;
-* https://github.com/rmpestano/dbunit-rules/tree/master/cdi[CDI^]: provides the DBUnit interceptor;
-* https://github.com/rmpestano/dbunit-rules/tree/master/cucumber[Cucumber^]: a CDI aware cucumber runner;
-* https://github.com/rmpestano/dbunit-rules/tree/master/junit5[JUnit5^]: Comes with an http://junit.org/junit5/docs/current/user-guide/#extensions[extension^] for JUnit5.
-* https://github.com/rmpestano/dbunit-rules/tree/master/examples[Examples module^].
+* https://github.com/database-rider/database-rider/tree/master/rider-core[Core^]: Contains the dataset executor and JUnit rule;
+* https://github.com/database-rider/database-rider/tree/master/rider-cdi[CDI^]: provides the DBUnit interceptor;
+* https://github.com/database-rider/database-rider/tree/master/rider-cucumber[Cucumber^]: a CDI aware cucumber runner;
+* https://github.com/database-rider/database-rider/tree/master/rider-junit5[JUnit5^]: Comes with an http://junit.org/junit5/docs/current/user-guide/#extensions[extension^] for JUnit5.
+* https://github.com/database-rider/database-rider/tree/master/rider-examples[Examples module^].
 
 

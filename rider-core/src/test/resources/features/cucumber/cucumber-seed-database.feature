@@ -15,11 +15,11 @@ This runner just starts CDI within your BDD tests so you just have to use <<Mana
 
 [source,java]
 ----
-include::../../src/test/java/com/github/dbunit/rules/bdd/DBUnitRulesBdd.java[]
+include::../../src/test/java/com/github/database/rider/bdd/DBUnitRulesBdd.java[]
 ----
 
 
-IMPORTANT: As cucumber doesn't work with JUnit Rules, see https://github.com/cucumber/cucumber-jvm/issues/393[this issue^], you won't be able to use Cucumber runner with _Database Rider Core_ because its based on JUnit rules, but you can use DataSetExecutor in `@Before`, see https://github.com/rmpestano/dbunit-rules/tree/master/examples/jpa-productivity-boosters/src/test/java/com/github/dbunit/rules/examples/cucumber/withoutcdi[example here^].
+IMPORTANT: As cucumber doesn't work with JUnit Rules, see https://github.com/cucumber/cucumber-jvm/issues/393[this issue^], you won't be able to use Cucumber runner with _Database Rider Core_ because its based on JUnit rules, but you can use DataSetExecutor in `@Before`, see https://github.com/database-rider/database-rider/tree/master/examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/withoutcdi[example here^].
 
 [discrete]
 === *Dependencies*
@@ -84,17 +84,17 @@ And The following Cucumber test
  """
 [source,java,linenums]
 ----
-include::../../../examples/jpa-productivity-boosters/src/test/java/com/github/dbunit/rules/examples/cucumber/ContactFeature.java[]
+include::../../../examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactFeature.java[]
 ----
  """
 
-#{TIP: Source code for the example above can be https://github.com/rmpestano/dbunit-rules/blob/master/examples/jpa-productivity-boosters/src/test/java/com/github/dbunit/rules/examples/cucumber/ContactSteps.java#L16[found here^].}
+#{TIP: Source code for the example above can be https://github.com/database-rider/database-rider/blob/master/examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactSteps.java#L16[found here^].}
 #cukedoctor-discrete
 When The following cucumber steps are executed
  """
 [source,java,linenums]
 ----
-include::../../../examples/jpa-productivity-boosters/src/test/java/com/github/dbunit/rules/examples/cucumber/ContactSteps.java[]
+include::../../../examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactSteps.java[]
 ----
 <1> As the Cucumber cdi runner enables CDI, you can use injection into your Cucumber steps.
 <2> Here we use the Database Rider CDI interceptor to seed the database before step execution.

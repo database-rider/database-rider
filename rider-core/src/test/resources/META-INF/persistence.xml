@@ -3,9 +3,9 @@
 
     <persistence-unit name="rules-it" transaction-type="RESOURCE_LOCAL">
 
-    <class>com.github.database.rider.model.User</class>
-    <class>com.github.database.rider.model.Tweet</class>
-    <class>com.github.database.rider.model.Follower</class>
+    <class>com.github.database.rider.core.model.User</class>
+    <class>com.github.database.rider.core.model.Tweet</class>
+    <class>com.github.database.rider.core.model.Follower</class>
 
         <properties>
             <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1"/>
@@ -22,9 +22,9 @@
 
     <persistence-unit name="conn-it" transaction-type="RESOURCE_LOCAL">
 
-        <class>com.github.database.rider.model.User</class>
-        <class>com.github.database.rider.model.Tweet</class>
-        <class>com.github.database.rider.model.Follower</class>
+        <class>com.github.database.rider.core.model.User</class>
+        <class>com.github.database.rider.core.model.Tweet</class>
+        <class>com.github.database.rider.core.model.Follower</class>
 
         <properties>
             <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:conn;DB_CLOSE_DELAY=-1"/>
@@ -41,9 +41,9 @@
 
     <persistence-unit name="executor-it" transaction-type="RESOURCE_LOCAL">
 
-        <class>com.github.database.rider.model.User</class>
-        <class>com.github.database.rider.model.Tweet</class>
-        <class>com.github.database.rider.model.Follower</class>
+        <class>com.github.database.rider.core.model.User</class>
+        <class>com.github.database.rider.core.model.Tweet</class>
+        <class>com.github.database.rider.core.model.Follower</class>
 
         <properties>
             <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:exec;DB_CLOSE_DELAY=-1"/>
@@ -60,9 +60,9 @@
 
     <persistence-unit name="executor1-pu" transaction-type="RESOURCE_LOCAL">
 
-        <class>com.github.database.rider.model.User</class>
-        <class>com.github.database.rider.model.Tweet</class>
-        <class>com.github.database.rider.model.Follower</class>
+        <class>com.github.database.rider.core.model.User</class>
+        <class>com.github.database.rider.core.model.Tweet</class>
+        <class>com.github.database.rider.core.model.Follower</class>
 
         <properties>
             <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:exec1;DB_CLOSE_DELAY=-1"/>
@@ -79,9 +79,9 @@
 
     <persistence-unit name="executor2-pu" transaction-type="RESOURCE_LOCAL">
 
-        <class>com.github.database.rider.model.User</class>
-        <class>com.github.database.rider.model.Tweet</class>
-        <class>com.github.database.rider.model.Follower</class>
+        <class>com.github.database.rider.core.model.User</class>
+        <class>com.github.database.rider.core.model.Tweet</class>
+        <class>com.github.database.rider.core.model.Follower</class>
 
         <properties>
             <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:exec2;DB_CLOSE_DELAY=-1"/>
@@ -98,9 +98,9 @@
 
     <persistence-unit name="executor3-pu" transaction-type="RESOURCE_LOCAL">
 
-        <class>com.github.database.rider.model.User</class>
-        <class>com.github.database.rider.model.Tweet</class>
-        <class>com.github.database.rider.model.Follower</class>
+        <class>com.github.database.rider.core.model.User</class>
+        <class>com.github.database.rider.core.model.Tweet</class>
+        <class>com.github.database.rider.core.model.Follower</class>
 
         <properties>
             <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:exec3;DB_CLOSE_DELAY=-1"/>
