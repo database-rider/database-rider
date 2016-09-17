@@ -96,7 +96,7 @@
                         <version>1.0.4</version>
                         <configuration>
                             <outputFileName>documentation</outputFileName>
-                            <outputDir>docs</outputDir>
+                            <outputDir>docs/${project.parent.version}</outputDir>
                             <!--pdf and html5 -->
                             <format>all</format>
 							<hide-summary-section>true</hide-summary-section>
