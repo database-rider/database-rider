@@ -1,0 +1,16 @@
+1 - add bintray server to settings.xml
+<servers>
+	<server>
+	  <id>bintray</id>
+	  <username>rmpestano</username>
+	  <password>bintrayapikey</password>
+	</server>
+</servers>
+
+2 - create the new version at https://bintray.com/rmpestano/database-rider/database-rider
+
+3 - mvn release:prepare -Prelease -Darguments="-DskipTests" -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+
+4 - mvn release:prepare -Prelease -Darguments="-DskipTests" -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dmaven.jarsigner.skip=true
+
+5 - sync with maven central at https://bintray.com/rmpestano/database-rider/database-rider/NEW_VERSION
