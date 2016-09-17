@@ -15,7 +15,7 @@
 
 = *Living Documentation*
 
-include::/home/pestano/projects/database-rider/rider-core/target/test-classes/cukedoctor-intro.adoc[leveloffset=+1]
+include::/home/travis/build/database-rider/database-rider/rider-core/target/test-classes/cukedoctor-intro.adoc[leveloffset=+1]
 
 == *Summary*
 [cols="12*^m", options="header,footer"]
@@ -60,7 +60,7 @@ include::/home/pestano/projects/database-rider/rider-core/target/test-classes/cu
 |0
 |0
 |4
-|268ms
+|01s 310ms
 |[green]#*passed*#
 
 12+^|*<<Manage-database-with-Database-Rider-Cucumber>>*
@@ -116,10 +116,10 @@ include::/home/pestano/projects/database-rider/rider-core/target/test-classes/cu
 |0
 |0
 |16
-|000ms
+|001ms
 |[green]#*passed*#
 12+^|*Totals*
-|11|0|11|39|0|0|0|0|0|39 2+|269ms
+|11|0|11|39|0|0|0|0|0|39 2+|01s 313ms
 |===
 
 == *Features*
@@ -147,8 +147,8 @@ To use it just add the following maven dependency:
 [source,xml,indent=0]
 ----
 <dependency>
-   <groupId>com.github.dbunit-rules</groupId>
-   <artifactId>core</artifactId>
+   <groupId>com.github.database-rider</groupId>
+   <artifactId>rider-core</artifactId>
 include::../../../pom.xml[tags=version]
    <scope>test</scope>
 </dependency>
@@ -168,11 +168,11 @@ The following junit rules icon:thumbs-up[role="green",title="Passed"] [small rig
 ----
 @RunWith(JUnit4.class)
 public class DBUnitRulesIt {
-include::../../src/test/java/com/github/dbunit/rules/DBUnitRulesIt.java[tags=rules]
+include::../../src/test/java/com/github/database/rider/core/DBUnitRulesIt.java[tags=rules]
 }
 ----
 [discrete]
-<1> https://github.com/rmpestano/dbunit-rules/blob/master/jpa/src/main/java/com/github/dbunit/rules/jpa/EntityManagerProvider.java[EntityManagerProvider^] is a simple Junit rule that creates a JPA entityManager for each test. DBUnit rule don’t depend on EntityManagerProvider, it only needs a JDBC connection.
+<1> https://github.com/database-rider/database-rider/blob/master/rider-core/src/main/java/com/github/database/rider/core/util/EntityManagerProvider.java[EntityManagerProvider^] is a simple Junit rule that creates a JPA entityManager for each test. DBUnit rule don’t depend on EntityManagerProvider, it only needs a *JDBC connection*.
 [discrete]
 <2> DBUnit rule responsible for reading `@DataSet` annotation and prepare the database for each test.
 
@@ -203,13 +203,13 @@ The following test is executed: icon:thumbs-up[role="green",title="Passed"] [sma
 [discrete]
 [source,java]
 ----
-include::../../src/test/java/com/github/dbunit/rules/DBUnitRulesIt.java[tags=seedDatabase]
+include::../../src/test/java/com/github/database/rider/core/DBUnitRulesIt.java[tags=seedDatabase]
 ----
 
 
 ******
 
-TIP: Source code of the above example can be https://github.com/rmpestano/dbunit-rules/blob/master/core/src/test/java/com/github/dbunit/rules/DBUnitRulesIt.java/#L31[found here^].
+TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/core/src/test/java/com/github/database/rider/core/DBUnitRulesIt.java/#L31[found here^].
 
 =====
 Then ::
@@ -257,8 +257,8 @@ To use this module just add the following maven dependency:
 [source,xml,indent=0]
 ----
 <dependency>
-   <groupId>com.github.dbunit-rules</groupId>
-   <artifactId>cdi</artifactId>
+   <groupId>com.github.database-rider</groupId>
+   <artifactId>rider-cdi</artifactId>
 include::../../../pom.xml[tags=version]
    <scope>test</scope>
 </dependency>
@@ -270,7 +270,7 @@ include::../../../pom.xml[tags=version]
 ****
 Given ::
 =====
-DBUnit interceptor is enabled in your test beans.xml: icon:thumbs-up[role="green",title="Passed"] [small right]#(267ms)#
+DBUnit interceptor is enabled in your test beans.xml: icon:thumbs-up[role="green",title="Passed"] [small right]#(01s 310ms)#
 ******
 
 [discrete]
@@ -325,13 +325,13 @@ The following test is executed: icon:thumbs-up[role="green",title="Passed"] [sma
 [discrete]
 [source,java]
 ----
-include::../../../cdi/src/test/java/com/github/dbunit/rules/cdi/DBUnitCDIIt.java[tags=seedDatabase]
+include::../../../cdi/src/test/java/com/github/database/rider/cdi/DBUnitCDIIt.java[tags=seedDatabase]
 ----
 
 
 ******
 
-TIP: Source code of the above example can be https://github.com/rmpestano/dbunit-rules/blob/master/cdi/src/test/java/com/github/dbunit/rules/cdi/DBUnitCDIIt.java#L74[found here^].
+TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/cdi/src/test/java/com/github/database/rider/cdi/DBUnitCDIIt.java#L74[found here^].
 
 =====
 Then ::
@@ -359,11 +359,11 @@ This runner just starts CDI within your BDD tests so you just have to use <<Mana
 
 [source,java]
 ----
-include::../../src/test/java/com/github/dbunit/rules/bdd/DBUnitRulesBdd.java[]
+include::../../src/test/java/com/github/database/rider/bdd/DBUnitRulesBdd.java[]
 ----
 
 
-IMPORTANT: As cucumber doesn't work with JUnit Rules, see https://github.com/cucumber/cucumber-jvm/issues/393[this issue^], you won't be able to use Cucumber runner with _Database Rider Core_ because its based on JUnit rules, but you can use DataSetExecutor in `@Before`, see https://github.com/rmpestano/dbunit-rules/tree/master/examples/jpa-productivity-boosters/src/test/java/com/github/dbunit/rules/examples/cucumber/withoutcdi[example here^].
+IMPORTANT: As cucumber doesn't work with JUnit Rules, see https://github.com/cucumber/cucumber-jvm/issues/393[this issue^], you won't be able to use Cucumber runner with _Database Rider Core_ because its based on JUnit rules, but you can use DataSetExecutor in `@Before`, see https://github.com/database-rider/database-rider/tree/master/examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/withoutcdi[example here^].
 
 [discrete]
 === *Dependencies*
@@ -440,7 +440,7 @@ The following Cucumber test icon:thumbs-up[role="green",title="Passed"] [small r
 [discrete]
 [source,java,linenums]
 ----
-include::../../../examples/jpa-productivity-boosters/src/test/java/com/github/dbunit/rules/examples/cucumber/ContactFeature.java[]
+include::../../../examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactFeature.java[]
 ----
 
 
@@ -455,7 +455,7 @@ The following cucumber steps are executed icon:thumbs-up[role="green",title="Pas
 [discrete]
 [source,java,linenums]
 ----
-include::../../../examples/jpa-productivity-boosters/src/test/java/com/github/dbunit/rules/examples/cucumber/ContactSteps.java[]
+include::../../../examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactSteps.java[]
 ----
 [discrete]
 <1> As the Cucumber cdi runner enables CDI, you can use injection into your Cucumber steps.
@@ -465,7 +465,7 @@ include::../../../examples/jpa-productivity-boosters/src/test/java/com/github/db
 
 ******
 
-TIP: Source code for the example above can be https://github.com/rmpestano/dbunit-rules/blob/master/examples/jpa-productivity-boosters/src/test/java/com/github/dbunit/rules/examples/cucumber/ContactSteps.java#L16[found here^].
+TIP: Source code for the example above can be https://github.com/database-rider/database-rider/blob/master/examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactSteps.java#L16[found here^].
 
 =====
 Then ::
@@ -531,7 +531,7 @@ The following junit5 test is executed icon:thumbs-up[role="green",title="Passed"
 [discrete]
 [source,java,linenums]
 ----
-include::../../../junit5/src/test/java/com/github/dbunit/rules/junit5/DBUnitJUnit5It.java[tags=declaration;connectionField;test]
+include::../../../junit5/src/test/java/com/github/database/rider/junit5/DBUnitJUnit5It.java[tags=declaration;connectionField;test]
 ----
 [discrete]
 <1> Enables DBUnit;
@@ -545,7 +545,7 @@ include::../../../junit5/src/test/java/com/github/dbunit/rules/junit5/DBUnitJUni
 
 ******
 
-TIP: Source code of the above example can be https://github.com/rmpestano/dbunit-rules/blob/master/junit5/src/test/java/com/github/dbunit/junit5/DBUnitJUnit5It.java/#L22[found here^].
+TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/junit5/src/test/java/com/github/dbunit/junit5/DBUnitJUnit5It.java/#L22[found here^].
 
 =====
 Then ::
@@ -614,7 +614,7 @@ The following test is executed: icon:thumbs-up[role="green",title="Passed"] [sma
 [discrete]
 [source,java,indent=0,linenums]
 ----
-include::../../../core/src/test/java/com/github/dbunit/rules/ScriptReplacementsIt.java[tags=groovy]
+include::../../../core/src/test/java/com/github/database/rider/ScriptReplacementsIt.java[tags=groovy]
 ----
 
 
@@ -655,7 +655,7 @@ The following test is executed: icon:thumbs-up[role="green",title="Passed"] [sma
 [discrete]
 [source,java,linenums,indent=0]
 ----
-include::../../../core/src/test/java/com/github/dbunit/rules/ScriptReplacementsIt.java[tags=javascript-likes]
+include::../../../core/src/test/java/com/github/database/rider/ScriptReplacementsIt.java[tags=javascript-likes]
 ----
 
 
@@ -708,7 +708,7 @@ The following test is executed: icon:thumbs-up[role="green",title="Passed"] [sma
 [discrete]
 [source,java,indent=0,linenums]
 ----
-include::../../../core/src/test/java/com/github/dbunit/rules/ExpectedDataSetIt.java[tags=expectedDeclaration;expected]
+include::../../../core/src/test/java/com/github/database/rider/ExpectedDataSetIt.java[tags=expectedDeclaration;expected]
 ----
 [discrete]
 <1> Clear database before to avoid conflict with other tests.
@@ -749,7 +749,7 @@ The following test is executed: icon:thumbs-up[role="green",title="Passed"] [sma
 [discrete]
 [source,java,indent=0,linenums]
 ----
-include::../../../core/src/test/java/com/github/dbunit/rules/ExpectedDataSetIt.java[tags=expectedRegex]
+include::../../../core/src/test/java/com/github/database/rider/ExpectedDataSetIt.java[tags=expectedRegex]
 ----
 
 
@@ -803,7 +803,7 @@ The following test is executed: icon:thumbs-up[role="green",title="Passed"] [sma
 [discrete]
 [source,java,indent=0,linenums]
 ----
-include::../../../core/src/test/java/com/github/dbunit/rules/ExpectedDataSetIt.java[tags=expectedWithSeeding]
+include::../../../core/src/test/java/com/github/database/rider/ExpectedDataSetIt.java[tags=expectedWithSeeding]
 ----
 
 
@@ -842,7 +842,7 @@ The following test is executed: icon:thumbs-up[role="green",title="Passed"] [sma
 [discrete]
 [source,java,indent=0,linenums]
 ----
-include::../../../core/src/test/java/com/github/dbunit/rules/ExpectedDataSetIt.java[tags=faillingExpected]
+include::../../../core/src/test/java/com/github/database/rider/ExpectedDataSetIt.java[tags=faillingExpected]
 ----
 
 
@@ -889,7 +889,7 @@ The following test is executed: icon:thumbs-up[role="green",title="Passed"] [sma
 [discrete]
 [source,java,indent=0,linenums]
 ----
-include::../../../core/src/test/java/com/github/dbunit/rules/TransactionIt.java[tags=transaction]
+include::../../../core/src/test/java/com/github/database/rider/TransactionIt.java[tags=transaction]
 ----
 
 
