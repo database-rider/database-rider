@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @ExtendWith(DBUnitExtension.class)
 @RunWith(JUnitPlatform.class)
-@DataSet("users.yml")
+@DataSet("usersWithTweet.yml")
 public class TestLevelIt {
 
     private ConnectionHolder connectionHolder = () -> //<3>
