@@ -31,6 +31,7 @@ public class CleanBeforeAfterIt {
     @BeforeAll
     public static void before(){
         EntityManagerProvider.em("junit5-pu").getTransaction().begin();
+        EntityManagerProvider.em().createNativeQuery("DELETE FROM TWEET").executeUpdate();
         EntityManagerProvider.em().createNativeQuery("DELETE FROM USER").executeUpdate();
         EntityManagerProvider.em().createNativeQuery("INSERT INTO USER VALUES (6,'user6')").executeUpdate();
         EntityManagerProvider.em().flush();
@@ -50,7 +51,7 @@ public class CleanBeforeAfterIt {
 
 
     @Test
-    @DataSet(value = "users.yml", cleanBefore = true, cleanAfter = true)
+    @DataSet(value = "usersWithTweet.yml", cleanBefore = true, cleanAfter = true)
     public void shouldCleanDatabaseBefore() {
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
         assertThat(users).isNotNull().hasSize(2);//dataset has 2 users, user inserted in @Before must not be present

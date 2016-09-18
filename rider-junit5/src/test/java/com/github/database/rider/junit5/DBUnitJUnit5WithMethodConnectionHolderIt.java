@@ -29,7 +29,7 @@ public class DBUnitJUnit5WithMethodConnectionHolderIt {
     }
 
     @Test
-    @DataSet(value = "users.yml",cleanBefore = true)
+    @DataSet(value = "usersWithTweet.yml")
     public void shouldListUsers() {
         List<User> users = em().createQuery("select u from User u").getResultList();
         assertThat(users).isNotNull().isNotEmpty().hasSize(2);
@@ -50,7 +50,7 @@ public class DBUnitJUnit5WithMethodConnectionHolderIt {
     }
 
     @Test
-    @DataSet("users.yml") //no need for clean before because DBUnit uses CLEAN_INSERT seeding strategy which clears involved tables before seeding
+    @DataSet("usersWithTweet.yml") //no need for clean before because DBUnit uses CLEAN_INSERT seeding strategy which clears involved tables before seeding
     public void shouldUpdateUser() {
         User user = (User) em().createQuery("select u from User u  where u.id = 1").getSingleResult();
         assertThat(user).isNotNull();
