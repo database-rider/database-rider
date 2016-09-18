@@ -8,7 +8,7 @@ before_script:
 - git config --global user.name rmpestano
 - git config --global user.email rmpestano@gmail.com
 script:
-- mvn -U clean install jacoco:report coveralls:report -Pcoverage surefire-report:report-only
+- mvn clean install jacoco:report coveralls:report -Pcoverage surefire-report:report-only
 - cd rider-core && mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs
 after_script:
 - cd .. && python html2text.py target/site/surefire-report.html

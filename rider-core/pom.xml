@@ -99,8 +99,8 @@
                             <outputDir>docs/${project.parent.version}</outputDir>
                             <!--pdf and html5 -->
                             <format>all</format>
-							<hideSummarySection>true</hideSummarySection>
-							<hideFeaturesSection>true</hideFeaturesSection>
+                            <hideSummarySection>true</hideSummarySection>
+                            <hideFeaturesSection>true</hideFeaturesSection>
                             <toc>center</toc>
                             <numbered>true</numbered>
                             <docVersion>${project.version}</docVersion>

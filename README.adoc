@@ -148,7 +148,9 @@ NOTE: <<EntityManagerProvider>> is a simple JUnit rule that creates a JPA entity
 
 A getting started guide can be found here http://database-rider.github.io/database-rider-sample/database-rider.html.
 
-For main features overview see project living documentation: http://database-rider.github.io/database-rider/documentation.html.
+For main features overview see project living documentation (of each project version):
+
+http://database-rider.github.io/database-rider/index.html.
 
 === Examples
 
