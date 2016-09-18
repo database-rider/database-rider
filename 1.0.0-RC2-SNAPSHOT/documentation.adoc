@@ -43,7 +43,7 @@ To use it just add the following maven dependency:
 <dependency>
    <groupId>com.github.database-rider</groupId>
    <artifactId>rider-core</artifactId>
-include::../../../pom.xml[tags=version]
+include::../../../../pom.xml[tags=version]
    <scope>test</scope>
 </dependency>
 ----
@@ -62,7 +62,7 @@ The following junit rules icon:thumbs-up[role="green",title="Passed"] [small rig
 ----
 @RunWith(JUnit4.class)
 public class DatabaseRiderIt {
-include::../../src/test/java/com/github/database/rider/core/DatabaseRiderIt.java[tags=rules]
+include::../../../src/test/java/com/github/database/rider/core/DatabaseRiderIt.java[tags=rules]
 }
 ----
 [discrete]
@@ -164,7 +164,7 @@ include::../../../pom.xml[tags=version]
 ****
 Given ::
 =====
-DBUnit interceptor is enabled in your test beans.xml: icon:thumbs-up[role="green",title="Passed"] [small right]#(824ms)#
+DBUnit interceptor is enabled in your test beans.xml: icon:thumbs-up[role="green",title="Passed"] [small right]#(01s 038ms)#
 ******
 
 [discrete]
@@ -528,7 +528,7 @@ NOTE: Javascript engine comes within JDK so no additional classpath dependency i
 ****
 Given ::
 =====
-The following dataset icon:thumbs-up[role="green",title="Passed"] [small right]#(003ms)#
+The following dataset icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
 ******
 
 ----
