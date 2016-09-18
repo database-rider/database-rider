@@ -21,7 +21,7 @@ To use it just add the following maven dependency:
 <dependency>
      <groupId>com.github.database-rider</groupId>
      <artifactId>rider-core</artifactId>
-include::../../../pom.xml[tags=version]
+include::../../../../pom.xml[tags=version]
      <scope>test</scope>
 </dependency>
 ----
@@ -35,7 +35,7 @@ include::../../../pom.xml[tags=version]
 ----
 @RunWith(JUnit4.class)
 public class DatabaseRiderIt {
-include::../../src/test/java/com/github/database/rider/core/DatabaseRiderIt.java[tags=rules]
+include::../../../src/test/java/com/github/database/rider/core/DatabaseRiderIt.java[tags=rules]
 }
 ----
 <1> https://github.com/database-rider/database-rider/blob/master/rider-core/src/main/java/com/github/database/rider/core/util/EntityManagerProvider.java[EntityManagerProvider^] is a simple Junit rule that creates a JPA entityManager for each test. DBUnit rule don’t depend on EntityManagerProvider, it only needs a *JDBC connection*.
