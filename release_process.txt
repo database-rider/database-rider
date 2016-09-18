@@ -9,7 +9,7 @@
 
 2 - create the new version at https://bintray.com/rmpestano/database-rider/database-rider
 
-3 - mvn release:prepare -Prelease -Darguments="-DskipTests" -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+3 - mvn release:prepare -Prelease -Darguments="-DskipTests" -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dmaven.jarsigner.skip=true
 
 4 - mvn release:perform -Prelease -Darguments="-DskipTests" -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dmaven.jarsigner.skip=true
 
