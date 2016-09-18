@@ -79,17 +79,17 @@ And The following dataset
  """
 .src/test/resources/dataset/yml/users.yml
 ----
-include::../../../cdi/src/test/resources/datasets/yml/users.yml[]
+include::../../../rider-cdi/src/test/resources/datasets/yml/users.yml[]
 ----
  """
 
-#{TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/cdi/src/test/java/com/github/database/rider/cdi/DBUnitCDIIt.java#L74[found here^].}
+#{TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/rider-cdi/src/test/java/com/github/database/rider/cdi/DBUnitCDIIt.java#L74[found here^].}
 #cukedoctor-discrete
 When The following test is executed:
  """
 [source,java]
 ----
-include::../../../cdi/src/test/java/com/github/database/rider/cdi/DBUnitCDIIt.java[tags=seedDatabase]
+include::../../../rider-cdi/src/test/java/com/github/database/rider/cdi/DBUnitCDIIt.java[tags=seedDatabase]
 ----
  """
 

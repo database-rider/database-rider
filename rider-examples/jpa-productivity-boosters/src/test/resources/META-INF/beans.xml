@@ -5,6 +5,6 @@
 
     <interceptors>
         <class>org.apache.deltaspike.jpa.impl.transaction.TransactionalInterceptor</class>
-        <class>com.github.database.rider.core.cdi.DBUnitInterceptorImpl</class>
+        <class>com.github.database.rider.cdi.DBUnitInterceptorImpl</class>
     </interceptors>
 </beans>

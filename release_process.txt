@@ -11,6 +11,6 @@
 
 3 - mvn release:prepare -Prelease -Darguments="-DskipTests" -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
 
-4 - mvn release:prepare -Prelease -Darguments="-DskipTests" -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dmaven.jarsigner.skip=true
+4 - mvn release:perform -Prelease -Darguments="-DskipTests" -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dmaven.jarsigner.skip=true
 
 5 - sync with maven central at https://bintray.com/rmpestano/database-rider/database-rider/NEW_VERSION

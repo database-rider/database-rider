@@ -34,8 +34,8 @@ include::../../../pom.xml[tags=version]
 [source,java]
 ----
 @RunWith(JUnit4.class)
-public class DBUnitRulesIt {
-include::../../src/test/java/com/github/database/rider/core/DBUnitRulesIt.java[tags=rules]
+public class DatabaseRiderIt {
+include::../../src/test/java/com/github/database/rider/core/DatabaseRiderIt.java[tags=rules]
 }
 ----
 <1> https://github.com/database-rider/database-rider/blob/master/rider-core/src/main/java/com/github/database/rider/core/util/EntityManagerProvider.java[EntityManagerProvider^] is a simple Junit rule that creates a JPA entityManager for each test. DBUnit rule don’t depend on EntityManagerProvider, it only needs a *JDBC connection*.
@@ -54,12 +54,12 @@ include::../../src/test/resources/datasets/yml/users.yml[]
  """
 
 #cukedoctor-discrete
-#{TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/core/src/test/java/com/github/database/rider/core/DBUnitRulesIt.java/#L31[found here^].}
+#{TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/DatabaseRiderIt.java/#L31[found here^].}
     When The following test is executed:
  """
 [source,java]
 ----
-include::../../src/test/java/com/github/database/rider/core/DBUnitRulesIt.java[tags=seedDatabase]
+include::../../src/test/java/com/github/database/rider/core/DatabaseRiderIt.java[tags=seedDatabase]
 ----
  """
     Then The database should be seeded with the dataset content before test execution

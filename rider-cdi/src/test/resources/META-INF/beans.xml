@@ -4,6 +4,6 @@
        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/beans_1_0.xsd">
 
        <interceptors>
-              <class>com.github.database.rider.core.cdi.DBUnitInterceptorImpl</class>
+              <class>com.github.database.rider.cdi.DBUnitInterceptorImpl</class>
        </interceptors>
 </beans>

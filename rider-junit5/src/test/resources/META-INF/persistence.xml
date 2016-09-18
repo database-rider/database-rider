@@ -4,8 +4,8 @@
     <persistence-unit name="junit5-pu" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
-        <class>com.github.database.rider.core.junit5.model.User</class>
-		<class>com.github.database.rider.core.junit5.model.Tweet</class>
+        <class>com.github.database.rider.junit5.model.User</class>
+		<class>com.github.database.rider.junit5.model.Tweet</class>
 
 
         <properties>

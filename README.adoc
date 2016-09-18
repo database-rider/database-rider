@@ -590,7 +590,7 @@ It is a component which holds JPA entity managers for your tests. To activate it
 [source,java]
 ----
 @RunWith(JUnit4.class)
-public class DBUnitRulesIt {
+public class DatabaseRiderIt {
 
     @Rule
     public EntityManagerProvider emProvider = EntityManagerProvider.instance("PU-NAME");<1>

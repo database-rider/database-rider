@@ -15,7 +15,7 @@ This runner just starts CDI within your BDD tests so you just have to use <<Mana
 
 [source,java]
 ----
-include::../../src/test/java/com/github/database/rider/bdd/DBUnitRulesBdd.java[]
+include::../../src/test/java/com/github/database/rider/bdd/DatabaseRiderBdd.java[]
 ----
 
 
