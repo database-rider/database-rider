@@ -1,0 +1,804 @@
+:toc: center
+:backend: pdf
+:doctitle: Living Documentation
+:doctype: book
+:icons: font
+:numbered:
+:!linkcss:
+:sectanchors:
+:sectlink:
+:docinfo:
+:source-highlighter: highlightjs
+:toclevels: 3
+:revnumber: 1.0.0-RC1
+:hardbreaks:
+
+= *Living Documentation*
+
+include::/home/travis/build/database-rider/database-rider/rider-core/target/test-classes/cukedoctor-intro.adoc[leveloffset=+1]
+
+
+[[Manage-database-with-Database-Rider-Core, Manage database with Database Rider Core]]
+== *Manage database with Database Rider Core*
+
+****
+====
+[quote]
+____
+In order to manage database state in JUnit tests
+As a developer
+I want to use DBUnit in my tests.
+____
+====
+
+Database Rider Core module brings http://dbunit.sourceforge.net/[DBunit^] to your unit tests via https://github.com/junit-team/junit4/wiki/Rules[JUnit rules^].
+
+[discrete]
+=== *Dependencies*
+
+To use it just add the following maven dependency:
+
+[source,xml,indent=0]
+----
+<dependency>
+   <groupId>com.github.database-rider</groupId>
+   <artifactId>rider-core</artifactId>
+include::../../../../pom.xml[tags=version]
+   <scope>test</scope>
+</dependency>
+----
+****
+
+=== Scenario: Seed database using yml dataset
+
+****
+Given ::
+=====
+The following junit rules icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+[source,java]
+----
+@RunWith(JUnit4.class)
+public class DatabaseRiderIt {
+include::../../../src/test/java/com/github/database/rider/core/DatabaseRiderIt.java[tags=rules]
+}
+----
+[discrete]
+<1> https://github.com/database-rider/database-rider/blob/master/rider-core/src/main/java/com/github/database/rider/core/util/EntityManagerProvider.java[EntityManagerProvider^] is a simple Junit rule that creates a JPA entityManager for each test. DBUnit rule don’t depend on EntityManagerProvider, it only needs a *JDBC connection*.
+[discrete]
+<2> DBUnit rule responsible for reading `@DataSet` annotation and prepare the database for each test.
+
+
+******
+
+=====
+And ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+.src/test/resources/dataset/yml/users.yml
+----
+include::../../../src/test/resources/datasets/yml/users.yml[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+[source,java]
+----
+include::../../../src/test/java/com/github/database/rider/core/DatabaseRiderIt.java[tags=seedDatabase]
+----
+
+
+******
+
+TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/DatabaseRiderIt.java/#L31[found here^].
+
+=====
+Then ::
+=====
+The database should be seeded with the dataset content before test execution icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+=====
+****
+
+[[Manage-database-with-Database-Rider-CDI, Manage database with Database Rider CDI]]
+== *Manage database with Database Rider CDI*
+
+****
+====
+[quote]
+____
+In order to manage database state in *CDI* based tests
+As a developer
+I want to use DBUnit in a CDI test environment.
+____
+====
+
+DBUnit CDI integration is done through a https://docs.jboss.org/weld/reference/latest/en-US/html_single/#interceptors[CDI interceptor^] which reads `@DataSet` to prepare database for CDI based tests.
+
+[IMPORTANT]
+=====
+CDI must be enabled in your test, see the following example:
+
+[source, java]
+----
+@RunWith(CdiTestRunner.class) <1>
+@DBUnitInterceptor <2>
+public class DBUnitCDITest {
+
+}
+----
+<1> https://deltaspike.apache.org/documentation/test-control.html[CdiTestRunner^] is provided by https://deltaspike.apache.org[Apache Deltaspike^] but you should be able to use other CDI test runners.
+<2> Needed to activate DBUnit interceptor
+=====
+
+[discrete]
+=== *Dependencies*
+
+To use this module just add the following maven dependency:
+
+[source,xml,indent=0]
+----
+<dependency>
+   <groupId>com.github.database-rider</groupId>
+   <artifactId>rider-cdi</artifactId>
+include::../../../../pom.xml[tags=version]
+   <scope>test</scope>
+</dependency>
+----
+****
+
+=== Scenario: Seed database using yml dataset
+
+****
+Given ::
+=====
+DBUnit interceptor is enabled in your test beans.xml: icon:thumbs-up[role="green",title="Passed"] [small right]#(817ms)#
+******
+
+[discrete]
+.src/test/resources/META-INF/beans.xml
+[discrete]
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://java.sun.com/xml/ns/javaee"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/beans_1_0.xsd">
+     <interceptors>
+            <class>com.github.database.rider.cdi.DBUnitInterceptorImpl</class>
+     </interceptors>
+</beans>
+----
+
+
+******
+
+[IMPORTANT]
+======
+
+Your test itself must be a CDI bean to be intercepted. if you’re using https://deltaspike.apache.org/documentation/test-control.html[Deltaspike test control^] just enable the following property in `test/resources/META-INF/apache-deltaspike.properties`:
+----
+
+deltaspike.testcontrol.use_test_class_as_cdi_bean=true
+----
+======
+
+=====
+And ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+.src/test/resources/dataset/yml/users.yml
+----
+include::../../../../rider-cdi/src/test/resources/datasets/yml/users.yml[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+[source,java]
+----
+include::../../../../rider-cdi/src/test/java/com/github/database/rider/cdi/DBUnitCDIIt.java[tags=seedDatabase]
+----
+
+
+******
+
+TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/rider-cdi/src/test/java/com/github/database/rider/cdi/DBUnitCDIIt.java#L74[found here^].
+
+=====
+Then ::
+=====
+The database should be seeded with the dataset content before test execution icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+=====
+****
+
+[[Manage-database-with-Database-Rider-Cucumber, Manage database with Database Rider Cucumber]]
+== *Manage database with Database Rider Cucumber*
+
+****
+====
+[quote]
+____
+In order to manage database state in `BDD` tests
+As a BDD developer
+I want to use DBUnit along side my BDD tests.
+____
+====
+
+DBUnit enters the BDD world through a dedicated JUNit runner which is based on https://cucumber.io/[Cucumber^] and https://deltaspike.apache.org/[Apache DeltaSpike^].
+
+This runner just starts CDI within your BDD tests so you just have to use <<Manage database with Database Rider CDI,Database Rider CDI interceptor>> on Cucumber steps, here is the so called Cucumber CDI runner declaration:
+
+[source,java]
+----
+include::../../../src/test/java/com/github/database/rider/core/bdd/DatabaseRiderBdd.java[]
+----
+
+
+IMPORTANT: As cucumber doesn't work with JUnit Rules, see https://github.com/cucumber/cucumber-jvm/issues/393[this issue^], you won't be able to use Cucumber runner with _Database Rider Core_ because its based on JUnit rules, but you can use DataSetExecutor in `@Before`, see https://github.com/database-rider/database-rider/tree/master/examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/withoutcdi[example here^].
+
+[discrete]
+=== *Dependencies*
+Here is a set of maven dependencies needed by Database Rider Cucumber:
+
+NOTE: Most of the dependencies, except CDI container implementation, are bring by Database Rider Cucumber module transitively.
+
+[source,xml,indent=0]
+----
+<dependency>
+   <groupId>com.github.database-rider</groupId>
+   <artifactId>rider-cucumber</artifactId>
+include::../../../../pom.xml[tags=version]
+   <scope>test</scope>
+</dependency>
+----
+
+.Cucumber dependencies
+[source,xml,indent=0]
+----
+include::../../../pom.xml[tags=cucumber-deps]
+----
+<1> You don't need to declare because it comes with Database Rider Cucumber module dependency.
+
+.DeltaSpike and CDI dependency
+[source,xml,indent=0]
+----
+include::../../../../rider-cdi/pom.xml[tags=deltaspike-cdi-deps]
+----
+<2> Also comes with DBUit Rules Cucumber.
+<3> You can use CDI implementation of your choice.
+****
+
+=== Scenario: Seed database using Database Rider in Cucumber tests
+
+****
+Given ::
+=====
+The following feature icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+----
+include::../../../../rider-examples/jpa-productivity-boosters/src/test/resources/features/contacts.feature[]
+----
+
+
+******
+
+=====
+And ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+----
+include::../../../../rider-examples/jpa-productivity-boosters/src/test/resources/datasets/contacts.yml[]
+----
+
+
+******
+
+=====
+And ::
+=====
+The following Cucumber test icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+[source,java,linenums]
+----
+include::../../../../rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactFeature.java[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following cucumber steps are executed icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+[source,java,linenums]
+----
+include::../../../../rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactSteps.java[]
+----
+[discrete]
+<1> As the Cucumber cdi runner enables CDI, you can use injection into your Cucumber steps.
+[discrete]
+<2> Dataset is prepared before step execution by `@DBUnitInterceptor`.
+
+
+******
+
+TIP: Source code for the example above can be https://github.com/database-rider/database-rider/blob/master/rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactSteps.java#L17[found here^].
+
+=====
+Then ::
+=====
+The database should be seeded with the dataset content before step execution icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+=====
+****
+
+[[Manage-database-with-Database-Rider-and-JUnit-5, Manage database with Database Rider and JUnit 5]]
+== *Manage database with Database Rider and JUnit 5*
+
+****
+====
+[quote]
+____
+In order to manage database state in http://junit.org/junit5/[JUnit 5^] integration tests
+As a developer
+I want to use DBUnit along side my JUnit 5 tests.
+____
+====
+
+DBUnit is enabled in JUnit 5 tests through an http://junit.org/junit5/docs/current/user-guide/#extensions[extension^] named *DBUnitExtension*.
+
+[discrete]
+=== *Dependencies*
+
+To use the extension just add the following maven dependency:
+
+[source,xml,indent=0]
+----
+<dependency>
+   <groupId>com.github.dbunit-rules</groupId>
+   <artifactId>junit5</artifactId>
+include::../../../../pom.xml[tags=version]
+   <scope>test</scope>
+</dependency>
+----
+****
+
+=== Scenario: Seed database using Database Rider in JUnit5 tests
+
+****
+Given ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+.src/test/resources/dataset/users.yml
+----
+include::../../../../rider-junit5/src/test/resources/datasets/users.yml[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following junit5 test is executed icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+[source,java,linenums]
+----
+include::../../../../rider-junit5/src/test/java/com/github/database/rider/junit5/DBUnitJUnit5It.java[tags=declaration;connectionField;test]
+----
+[discrete]
+<1> Enables DBUnit;
+[discrete]
+<2> JUnit 5 runner;
+[discrete]
+<3> As JUnit5 requires *Java8* you can use lambdas in your tests;
+[discrete]
+<4> DBUnitExtension will get connection by reflection so just declare a field or a method with `ConnectionHolder` as return type.
+
+
+******
+
+TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/rider-junit5/src/test/java/com/github/database/rider/junit5/DBUnitJUnit5It.java/#L24[found here^].
+
+=====
+Then ::
+=====
+The database should be seeded with the dataset content before test execution icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+=====
+****
+
+[[Dynamic-data-using-scritable-datasets, Dynamic data using scritable datasets]]
+== *Dynamic data using scritable datasets*
+
+****
+====
+[quote]
+____
+In order to have dynamic data in datasets
+As a developer
+I want to use scripts in DBUnit datasets.
+____
+====
+
+Scritable datasets are backed by JSR 223.footnote:[Scripting for the Java Platform, for more information access the official https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/prog_guide/api.html[docs here^]].
+
+Complete source code of examples below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java#L18[found here^].
+****
+
+=== Scenario: Seed database with groovy script in dataset
+
+****
+Given ::
+=====
+Groovy script engine is on test classpath icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+[source,xml,indent=0]
+----
+<dependency>
+    <groupId>org.codehaus.groovy</groupId>
+    <artifactId>groovy-all</artifactId>
+    <version>2.4.6</version>
+    <scope>test</scope>
+</dependency>
+----
+
+
+******
+
+=====
+And ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+----
+include::../../../src/test/resources/datasets/yml/groovy-with-date-replacements.yml[]
+----
+[discrete]
+<1> Groovy scripting is enabled by `groovy:` string.
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+[source,java,indent=0,linenums]
+----
+include::../../../src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java[tags=groovy]
+----
+
+
+******
+
+TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java#L55[found here^].
+
+=====
+Then ::
+=====
+Dataset script should be interpreted while seeding the database icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+=====
+****
+
+=== Scenario: Seed database with javascript in dataset
+
+NOTE: Javascript engine comes within JDK so no additional classpath dependency is necessary.
+
+****
+Given ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+----
+include::../../../src/test/resources/datasets/yml/js-with-calc-replacements.yml[]
+----
+[discrete]
+<1> Javascript scripting is enabled by `js:` string.
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+[source,java,linenums,indent=0]
+----
+include::../../../src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java[tags=javascript-likes]
+----
+
+
+******
+
+TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java#L44[found here^].
+
+=====
+Then ::
+=====
+Dataset script should be interpreted while seeding the database icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+=====
+****
+
+[[Database-assertion-using-expected-datasets, Database assertion using expected datasets]]
+== *Database assertion using expected datasets*
+
+****
+====
+[quote]
+____
+In order to verify database state after test execution
+As a developer
+I want to assert database state with datasets.
+____
+
+====
+Complete source code of examples below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ExpectedDataSetIt.java#L23[found here^].
+****
+
+=== Scenario: Database assertion with yml dataset
+
+****
+Given ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+.expectedUsers.yml
+----
+include::../../../src/test/resources/datasets/yml/expectedUsers.yml[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+[source,java,indent=0,linenums]
+----
+include::../../../src/test/java/com/github/database/rider/core/ExpectedDataSetIt.java[tags=expectedDeclaration;expected]
+----
+[discrete]
+<1> Clear database before to avoid conflict with other tests.
+
+
+******
+
+=====
+Then ::
+=====
+Test must pass because database state is as in expected dataset. icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+=====
+****
+
+=== Scenario: Database assertion with regular expression in expected dataset
+
+****
+Given ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+.expectedUsersRegex.yml
+----
+include::../../../src/test/resources/datasets/yml/expectedUsersRegex.yml[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+[source,java,indent=0,linenums]
+----
+include::../../../src/test/java/com/github/database/rider/core/ExpectedDataSetIt.java[tags=expectedRegex]
+----
+
+
+******
+
+=====
+Then ::
+=====
+Test must pass because database state is as in expected dataset. icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+=====
+****
+
+=== Scenario: Database assertion with seeding before test execution
+
+****
+Given ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+.user.yml
+----
+include::../../../src/test/resources/datasets/yml/user.yml[]
+----
+
+
+******
+
+=====
+And ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+.expectedUser.yml
+----
+include::../../../src/test/resources/datasets/yml/expectedUser.yml[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+[source,java,indent=0,linenums]
+----
+include::../../../src/test/java/com/github/database/rider/core/ExpectedDataSetIt.java[tags=expectedWithSeeding]
+----
+
+
+******
+
+=====
+Then ::
+=====
+Test must pass because database state is as in expected dataset. icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+=====
+****
+
+=== Scenario: Failling database assertion
+
+****
+Given ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+.expectedUsers.yml
+----
+include::../../../src/test/resources/datasets/yml/expectedUsers.yml[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+[source,java,indent=0,linenums]
+----
+include::../../../src/test/java/com/github/database/rider/core/ExpectedDataSetIt.java[tags=faillingExpected]
+----
+
+
+******
+
+=====
+Then ::
+=====
+Test must fail with following error: icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+IMPORTANT: junit.framework.ComparisonFailure: value (table=USER, row=0, col=name) expected:<[]expected user1> but was:<[non ]expected user1>  at org.dbunit.assertion.JUnitFailureFactory.createFailure(JUnitFailureFactory.java:39) at org.dbunit.assertion.DefaultFailureHandler.createFailure(DefaultFailureHandler.java:97) at org.dbunit.assertion.DefaultFailureHandler.handle(DefaultFailureHandler.java:223) at ...
+
+
+******
+
+=====
+****
+
+=== Scenario: Database assertion using automatic transaction
+
+****
+Given ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+.expectedUsersRegex.yml
+----
+include::../../../src/test/resources/datasets/yml/expectedUsersRegex.yml[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+******
+
+[discrete]
+[source,java,indent=0,linenums]
+----
+include::../../../src/test/java/com/github/database/rider/core/TransactionIt.java[tags=transaction]
+----
+
+
+******
+
+NOTE: `Transactional` attribute will make Database Rider start a transaction before test and commit the transaction *after* test execution but *before* expected dataset comparison.
+
+=====
+Then ::
+=====
+Test must pass because inserted users are commited to database and database state matches expected dataset. icon:thumbs-up[role="green",title="Passed"] [small right]#(000ms)#
+=====
+****
+
