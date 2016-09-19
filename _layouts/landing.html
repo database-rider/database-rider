@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="{{ site.description }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{% if page.excerpt %}{{ page.excerpt | strip_html | strip_newlines | truncate: 160 }}{% else %}{{ site.description }}{% endif %}">
+  <title>{{ site.title }}</title>
+
+  <!-- CDN asssets -->
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,400,400italic,700,700italic">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/milligram/1.1.0/milligram.min.css">
+  <link rel="stylesheet" href="{{site.baseurl}}/css/main.css" media="screen" title="no title" charset="utf-8">
+
+</head>
+<body>
+  <div class="header landing">
+    <div class="container centered">
+      <div class="icons">
+        <span class="mega-octicon octicon-issue-opened"></span><span class="mega-octicon octicon-star"></span>
+        <h1>
+          <span class="mega-octicon octicon-git-compare"></span>
+          <a href="{{site.baseurl}}">Database Rider</a>
+          <span class="mega-octicon octicon-search"></span>
+        </h1>
+        <span class="mega-octicon octicon-repo-forked"></span><span class="mega-octicon octicon-radio-tower"></span>
+      </div>
+    </div>
+  </div>
+  <div class="container landing" style="min-height: 70vh;">
+    {{ content }}
+  </div>
+  <div class="footer centered">
+    &copy; 2016 - {{site.time | date: "%Y"}},
+    Rafael Pestanor (<a href="//substance.io">Development Seed</a>) and
+    <a href="//github.com/">Community</a>.
+  </div>
+  {% include scripts.html %}
+</body>
+</html>
