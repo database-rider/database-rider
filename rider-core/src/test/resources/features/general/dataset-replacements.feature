@@ -11,12 +11,15 @@ ____
 
 Scritable datasets are backed by JSR 223.footnote:[Scripting for the Java Platform, for more information access the official https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/prog_guide/api.html[docs here^]].
 
+Complete source code of examples below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java#L18[found here^].
+
 
   Scenario: Seed database with groovy script in dataset
 
      #cukedoctor-discrete
     Given Groovy script engine is on test classpath
 """
+[source,xml,indent=0]
 ----
 <dependency>
     <groupId>org.codehaus.groovy</groupId>
@@ -31,18 +34,18 @@ Scritable datasets are backed by JSR 223.footnote:[Scripting for the Java Platfo
     And The following dataset
 """
 ----
-include::../../../core/src/test/resources/datasets/yml/groovy-with-date-replacements.yml[]
+include::../../../src/test/resources/datasets/yml/groovy-with-date-replacements.yml[]
 ----
 <1> Groovy scripting is enabled by `groovy:` string.
 """
 
-
+#{TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java#L55[found here^].}
 #cukedoctor-discrete
     When The following test is executed:
 """
 [source,java,indent=0,linenums]
 ----
-include::../../../core/src/test/java/com/github/database/rider/ScriptReplacementsIt.java[tags=groovy]
+include::../../../src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java[tags=groovy]
 ----
 """
     Then Dataset script should be interpreted while seeding the database
@@ -56,18 +59,18 @@ include::../../../core/src/test/java/com/github/database/rider/ScriptReplacement
     Given The following dataset
 """
 ----
-include::../../../core/src/test/resources/datasets/yml/js-with-calc-replacements.yml[]
+include::../../../src/test/resources/datasets/yml/js-with-calc-replacements.yml[]
 ----
 <1> Javascript scripting is enabled by `js:` string.
 """
 
-
+#{TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java#L44[found here^].}
 #cukedoctor-discrete
     When The following test is executed:
 """
 [source,java,linenums,indent=0]
 ----
-include::../../../core/src/test/java/com/github/database/rider/ScriptReplacementsIt.java[tags=javascript-likes]
+include::../../../src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java[tags=javascript-likes]
 ----
 """
     Then Dataset script should be interpreted while seeding the database

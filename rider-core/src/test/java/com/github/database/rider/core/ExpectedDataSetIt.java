@@ -100,9 +100,9 @@ public class ExpectedDataSetIt {
     @DataSet(value = "yml/user.yml", disableConstraints = true)
     @ExpectedDataSet(value = "yml/expectedUser.yml", ignoreCols = "id")
     public void shouldMatchExpectedDataSetAfterSeedingDataBase() {
-        EntityManagerProvider.tx().begin();
-        EntityManagerProvider.em().remove(EntityManagerProvider.em().find(User.class,1L));
-        EntityManagerProvider.tx().commit();
+        tx().begin();
+        em().remove(EntityManagerProvider.em().find(User.class,1L));
+        tx().commit();
     }
     // end::expectedWithSeeding[]
 

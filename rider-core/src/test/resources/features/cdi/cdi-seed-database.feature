@@ -37,7 +37,7 @@ To use this module just add the following maven dependency:
 <dependency>
      <groupId>com.github.database-rider</groupId>
      <artifactId>rider-cdi</artifactId>
-include::../../../pom.xml[tags=version]
+include::../../../../pom.xml[tags=version]
      <scope>test</scope>
 </dependency>
 ----
@@ -79,7 +79,7 @@ And The following dataset
  """
 .src/test/resources/dataset/yml/users.yml
 ----
-include::../../../rider-cdi/src/test/resources/datasets/yml/users.yml[]
+include::../../../../rider-cdi/src/test/resources/datasets/yml/users.yml[]
 ----
  """
 
@@ -89,7 +89,7 @@ When The following test is executed:
  """
 [source,java]
 ----
-include::../../../rider-cdi/src/test/java/com/github/database/rider/cdi/DBUnitCDIIt.java[tags=seedDatabase]
+include::../../../../rider-cdi/src/test/java/com/github/database/rider/cdi/DBUnitCDIIt.java[tags=seedDatabase]
 ----
  """
 

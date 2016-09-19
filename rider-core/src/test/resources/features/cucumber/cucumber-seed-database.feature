@@ -15,7 +15,7 @@ This runner just starts CDI within your BDD tests so you just have to use <<Mana
 
 [source,java]
 ----
-include::../../src/test/java/com/github/database/rider/bdd/DatabaseRiderBdd.java[]
+include::../../../src/test/java/com/github/database/rider/core/bdd/DatabaseRiderBdd.java[]
 ----
 
 
@@ -30,9 +30,9 @@ NOTE: Most of the dependencies, except CDI container implementation, are bring b
 [source,xml,indent=0]
 ----
 <dependency>
-     <groupId>com.github.dbunit-rules</groupId>
-     <artifactId>cucumber</artifactId>
-include::../../../pom.xml[tags=version]
+     <groupId>com.github.database-rider</groupId>
+     <artifactId>rider-cucumber</artifactId>
+include::../../../../pom.xml[tags=version]
      <scope>test</scope>
 </dependency>
 ----
@@ -40,31 +40,26 @@ include::../../../pom.xml[tags=version]
 .Cucumber dependencies
 [source,xml,indent=0]
 ----
-include::../../../cucumber/pom.xml[tags=cucumber-deps]
+include::../../../pom.xml[tags=cucumber-deps]
 ----
 <1> You don't need to declare because it comes with Database Rider Cucumber module dependency.
 
 .DeltaSpike and CDI dependency
 [source,xml,indent=0]
 ----
-include::../../../cucumber/pom.xml[tags=deltaspike-cdi-deps]
+include::../../../../rider-cdi/pom.xml[tags=deltaspike-cdi-deps]
 ----
 <2> Also comes with DBUit Rules Cucumber.
 <3> You can use CDI implementation of your choice.
 
 
-To use this module just add the following maven dependency:
-
-
-=====
-
-Scenario: Seed database using Database Rider in Cucumber tests
+  Scenario: Seed database using Database Rider in Cucumber tests
 
 #cukedoctor-discrete
 Given The following feature
   """
 ----
-include::../../../examples/jpa-productivity-boosters/src/test/resources/features/contacts.feature[]
+include::../../../../rider-examples/jpa-productivity-boosters/src/test/resources/features/contacts.feature[]
 ----
   """
 
@@ -74,7 +69,7 @@ And The following dataset
 
  """
 ----
-include::../../../examples/jpa-productivity-boosters/src/test/resources/datasets/contacts.yml[]
+include::../../../../rider-examples/jpa-productivity-boosters/src/test/resources/datasets/contacts.yml[]
 ----
  """
 
@@ -84,20 +79,20 @@ And The following Cucumber test
  """
 [source,java,linenums]
 ----
-include::../../../examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactFeature.java[]
+include::../../../../rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactFeature.java[]
 ----
  """
 
-#{TIP: Source code for the example above can be https://github.com/database-rider/database-rider/blob/master/examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactSteps.java#L16[found here^].}
+#{TIP: Source code for the example above can be https://github.com/database-rider/database-rider/blob/master/rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactSteps.java#L17[found here^].}
 #cukedoctor-discrete
 When The following cucumber steps are executed
  """
 [source,java,linenums]
 ----
-include::../../../examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactSteps.java[]
+include::../../../../rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactSteps.java[]
 ----
 <1> As the Cucumber cdi runner enables CDI, you can use injection into your Cucumber steps.
-<2> Here we use the Database Rider CDI interceptor to seed the database before step execution.
+<2> Dataset is prepared before step execution by `@DBUnitInterceptor`.
  """
 
 Then The database should be seeded with the dataset content before step execution

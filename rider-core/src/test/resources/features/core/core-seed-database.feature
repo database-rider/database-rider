@@ -49,7 +49,7 @@ include::../../../src/test/java/com/github/database/rider/core/DatabaseRiderIt.j
  """
 .src/test/resources/dataset/yml/users.yml
 ----
-include::../../src/test/resources/datasets/yml/users.yml[]
+include::../../../src/test/resources/datasets/yml/users.yml[]
 ----
  """
 
@@ -59,7 +59,7 @@ include::../../src/test/resources/datasets/yml/users.yml[]
  """
 [source,java]
 ----
-include::../../src/test/java/com/github/database/rider/core/DatabaseRiderIt.java[tags=seedDatabase]
+include::../../../src/test/java/com/github/database/rider/core/DatabaseRiderIt.java[tags=seedDatabase]
 ----
  """
     Then The database should be seeded with the dataset content before test execution
