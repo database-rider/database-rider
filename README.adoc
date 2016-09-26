@@ -1068,7 +1068,7 @@ You can also export DataSets without `@ExportDataSet` by using DataSetExporter c
 
 === DBUnit addon
 
-You can export datasets using https://forge.jboss.org/[JBoss forge addon^], see https://github.com/dbunit-addon/[DBUnit Addon^].
+You can export datasets using https://forge.jboss.org/[JBoss forge^], see https://github.com/database-rider/dbunit-addon/[DBUnit Addon^].
 
 
 == Examples
