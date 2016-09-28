@@ -67,12 +67,17 @@ public class YMLWriter implements IDataSetConsumer {
     public void row(Object[] values) throws DataSetException {
         try {
             for (int i = 0; i < values.length; i++) {
+
+                if(values[i] == null){
+                    continue;
+                }
+
                 if (i == 0) {
                     out.write(DOUBLE_SPACES + "- ");
                 } else{
                     out.write(DOUBLE_SPACES + DOUBLE_SPACES);
                 }
-
+                
                 Column currentColumn = metaData.getColumns()[i];
                 out.write(metaData.getColumns()[i].getColumnName()+": ");
                 boolean isNumber = currentColumn.getDataType().isNumber();

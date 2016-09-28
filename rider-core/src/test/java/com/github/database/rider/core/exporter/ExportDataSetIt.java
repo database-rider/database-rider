@@ -2,13 +2,13 @@ package com.github.database.rider.core.exporter;
 
 import com.github.database.rider.core.DBUnitRule;
 import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.DataSetFormat;
 import com.github.database.rider.core.api.expoter.DataSetExportConfig;
 import com.github.database.rider.core.api.expoter.ExportDataSet;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
-import com.github.database.rider.core.util.EntityManagerProvider;
-import com.github.database.rider.core.api.dataset.DataSetFormat;
 import com.github.database.rider.core.model.User;
+import com.github.database.rider.core.util.EntityManagerProvider;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConnection;
 import org.junit.AfterClass;
@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
 
-import static com.github.database.rider.core.util.EntityManagerProvider.em;
 import static com.github.database.rider.core.util.EntityManagerProvider.tx;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.contentOf;
@@ -70,11 +69,11 @@ public class ExportDataSetIt {
     @Test
     @DataSet(cleanBefore=true)
     public void shouldExportYMLDataSetProgrammatically() throws SQLException, DatabaseUnitException{
-    	EntityManagerProvider.tx().begin();
+    	tx().begin();
     	User u1 = new User();
     	u1.setName("u1");
     	EntityManagerProvider.em().persist(u1);
-    	EntityManagerProvider.tx().commit();
+    	tx().commit();
     	DataSetExporter.getInstance().export(new DatabaseConnection(emProvider.connection()), new DataSetExportConfig().outputFileName("target/user.yml"));
     	File ymlDataSet = new File("target/user.yml");
           assertThat(ymlDataSet).exists();
@@ -88,11 +87,11 @@ public class ExportDataSetIt {
     @Test
     @DataSet(cleanBefore=true)
     public void shouldExportJSONDataSetProgrammatically() throws SQLException, DatabaseUnitException, FileNotFoundException {
-        EntityManagerProvider.tx().begin();
+        tx().begin();
         User u1 = new User();
         u1.setName("u1");
         EntityManagerProvider.em().persist(u1);
-        EntityManagerProvider.tx().commit();
+        tx().commit();
         DataSetExporter.getInstance().export(emProvider.connection(), new DataSetExportConfig().
                 outputFileName("target/user.json").dataSetFormat(DataSetFormat.JSON));
         File jsonDataSet = new File("target/user.json");
@@ -283,4 +282,5 @@ public class ExportDataSetIt {
                         "    USER_ID: 1"+NEW_LINE +
                         "    FOLLOWER_ID: 2");
     }
+    
 }

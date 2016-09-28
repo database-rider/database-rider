@@ -77,7 +77,7 @@ public class EntityManagerProvider implements TestRule {
             log.debug("creating emf for unit "+unitName);
             emf = Persistence.createEntityManagerFactory(unitName);
             em = emf.createEntityManager();
-            this.tx = this.em.getTransaction();
+            tx = em.getTransaction();
             if (isHibernateOnClasspath() && em.getDelegate() instanceof Session) {
                 conn = ((SessionImpl) em.unwrap(Session.class)).connection();
             } else{
