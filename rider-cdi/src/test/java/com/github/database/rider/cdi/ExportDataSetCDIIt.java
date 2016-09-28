@@ -167,18 +167,12 @@ public class ExportDataSetCDIIt {
 				contains("TWEET:"+NEW_LINE +
 						"  - ID: \"abcdef12233\""+NEW_LINE +
 						"    CONTENT: \"dbunit rules!\""+NEW_LINE +
-						"    DATE: \"\""+NEW_LINE +
-						"    LIKES: "+NEW_LINE +
 						"    USER_ID: 2"+NEW_LINE +
 						"  - ID: \"abcdef12345\""+NEW_LINE +
 						"    CONTENT: \"dbunit rules!\""+NEW_LINE +
-						"    DATE: \"\""+NEW_LINE +
-						"    LIKES: "+NEW_LINE +
 						"    USER_ID: 1"+NEW_LINE +
 						"  - ID: \"abcdef1343\""+NEW_LINE +
 						"    CONTENT: \"CDI for the win!\""+NEW_LINE +
-						"    DATE: \"\""+NEW_LINE +
-						"    LIKES: "+NEW_LINE +
 						"    USER_ID: 2");
 
 
@@ -202,18 +196,12 @@ public class ExportDataSetCDIIt {
 				contains("TWEET:"+NEW_LINE +
 						"  - ID: \"abcdef12233\""+NEW_LINE +
 						"    CONTENT: \"dbunit rules!\""+NEW_LINE +
-						"    DATE: \"\""+NEW_LINE +
-						"    LIKES: "+NEW_LINE +
 						"    USER_ID: 2"+NEW_LINE +
 						"  - ID: \"abcdef12345\""+NEW_LINE +
 						"    CONTENT: \"dbunit rules!\""+NEW_LINE +
-						"    DATE: \"\""+NEW_LINE +
-						"    LIKES: "+NEW_LINE +
 						"    USER_ID: 1"+NEW_LINE +
 						"  - ID: \"abcdef1343\""+NEW_LINE +
 						"    CONTENT: \"CDI for the win!\""+NEW_LINE +
-						"    DATE: \"\""+NEW_LINE +
-						"    LIKES: "+NEW_LINE +
 						"    USER_ID: 2");
 
 		assertThat(contentOf(ymlDependentTablesDataSet)).
