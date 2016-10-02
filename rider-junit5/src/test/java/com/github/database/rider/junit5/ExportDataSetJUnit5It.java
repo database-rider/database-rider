@@ -3,7 +3,7 @@ package com.github.database.rider.junit5;
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetFormat;
-import com.github.database.rider.core.api.expoter.ExportDataSet;
+import com.github.database.rider.core.api.exporter.ExportDataSet;
 import com.github.database.rider.core.util.EntityManagerProvider;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;

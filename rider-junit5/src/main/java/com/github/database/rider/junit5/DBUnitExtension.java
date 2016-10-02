@@ -2,13 +2,13 @@ package com.github.database.rider.junit5;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetExecutor;
-import com.github.database.rider.core.api.expoter.DataSetExportConfig;
+import com.github.database.rider.core.api.exporter.DataSetExportConfig;
 import com.github.database.rider.core.api.leak.LeakHunter;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
-import com.github.database.rider.core.api.expoter.ExportDataSet;
+import com.github.database.rider.core.api.exporter.ExportDataSet;
 import com.github.database.rider.core.configuration.ConnectionConfig;
 import com.github.database.rider.core.connection.ConnectionHolderImpl;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;

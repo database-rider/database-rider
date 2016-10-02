@@ -1,7 +1,7 @@
 package com.github.database.rider.core.exporter;
 
 import com.github.database.rider.core.api.dataset.DataSetFormat;
-import com.github.database.rider.core.api.expoter.DataSetExportConfig;
+import com.github.database.rider.core.api.exporter.DataSetExportConfig;
 import com.github.database.rider.core.model.User;
 import com.github.database.rider.core.util.EntityManagerProvider;
 import org.dbunit.DatabaseUnitException;

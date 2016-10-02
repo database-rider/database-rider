@@ -1,4 +1,4 @@
-package com.github.database.rider.core.api.expoter;
+package com.github.database.rider.core.api.exporter;
 
 import com.github.database.rider.core.api.dataset.DataSetFormat;
 

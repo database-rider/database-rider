@@ -1,6 +1,6 @@
 package com.github.database.rider.core.exporter;
 
-import com.github.database.rider.core.api.expoter.DataSetExportConfig;
+import com.github.database.rider.core.api.exporter.DataSetExportConfig;
 import com.github.database.rider.core.dataset.writer.JSONWriter;
 import com.github.database.rider.core.dataset.writer.YMLWriter;
 import org.dbunit.DatabaseUnitException;
@@ -179,7 +179,8 @@ public class DataSetExporter {
                 dataSet.addTable(targetTable);
             }
             for (String query : queryList) {
-                Matcher m = TABLE_MATCH_PATTERN.matcher(query);
+                //gets the first select to extract table
+                Matcher m = TABLE_MATCH_PATTERN.matcher(query.split("(?i)select")[1]);
                 if (!m.matches()) {
                     log.warning("Unable to parse query. Ignoring '" + query + "'.");
                 } else {

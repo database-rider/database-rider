@@ -1,8 +1,8 @@
 package com.github.database.rider.cdi;
 
 import com.github.database.rider.core.api.dataset.DataSetExecutor;
-import com.github.database.rider.core.api.expoter.DataSetExportConfig;
-import com.github.database.rider.core.api.expoter.ExportDataSet;
+import com.github.database.rider.core.api.exporter.DataSetExportConfig;
+import com.github.database.rider.core.api.exporter.ExportDataSet;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.connection.ConnectionHolderImpl;

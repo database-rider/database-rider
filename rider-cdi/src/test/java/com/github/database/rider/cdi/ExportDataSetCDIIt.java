@@ -4,7 +4,7 @@ import com.github.database.rider.cdi.api.DBUnitInterceptor;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetFormat;
-import com.github.database.rider.core.api.expoter.ExportDataSet;
+import com.github.database.rider.core.api.exporter.ExportDataSet;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import org.apache.deltaspike.testcontrol.api.junit.CdiTestRunner;
 import org.junit.AfterClass;
