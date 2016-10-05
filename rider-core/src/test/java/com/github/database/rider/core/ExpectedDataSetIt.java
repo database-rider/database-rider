@@ -3,6 +3,9 @@ package com.github.database.rider.core;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
+import com.github.database.rider.core.api.dataset.SeedStrategy;
+import com.github.database.rider.core.model.Follower;
+import com.github.database.rider.core.model.Tweet;
 import com.github.database.rider.core.util.EntityManagerProvider;
 import com.github.database.rider.core.model.User;
 import org.junit.Ignore;
@@ -125,5 +128,21 @@ public class ExpectedDataSetIt {
     }
 
 
+    @Test
+    @DataSet(cleanBefore = true,transactional = true)
+    @ExpectedDataSet(value = {"yml/user.yml","yml/tweet.yml"}, ignoreCols = {"id","user_id"})
+    public void shouldMatchMultipleDataSets(){
+        User u = new User();
+        u.setName("@realpestano");
+        User u2 = new User();
+        u2.setName("@dbunit");
+        em().persist(u);
+        em().persist(u2);
+
+        Tweet t = new Tweet();
+        t.setContent("dbunit rules again!");
+        em().persist(t);
+
+    }
 
 }
