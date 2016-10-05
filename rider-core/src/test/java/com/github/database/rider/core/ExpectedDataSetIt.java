@@ -110,7 +110,7 @@ public class ExpectedDataSetIt {
     // end::expectedWithSeeding[]
 
     @Test
-    @DataSet(value = "yml/user.yml", disableConstraints = true)
+    @DataSet(value = "yml/user.yml", disableConstraints = true, cleanBefore = true)
     @ExpectedDataSet(value = "yml/empty.yml")
     public void shouldMatchEmptyYmlDataSet() {
         EntityManagerProvider.tx().begin();
