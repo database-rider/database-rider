@@ -24,6 +24,8 @@ public interface DataSetExecutor{
 
     IDataSet loadDataSet(String name) throws DataSetException, IOException;
 
+    IDataSet loadDataSets(String[] datasets) throws DataSetException, IOException;
+
     ConnectionHolder getConnectionHolder();
 
     void setConnectionHolder(ConnectionHolder connectionHolder);
@@ -37,8 +39,9 @@ public interface DataSetExecutor{
     String getExecutorId();
 
     /**
-     * compares dataset from executor's databse connection with a given dataset
+     * compares dataset from executor's database connection with a given dataset
      * @param expected configuration
+     * @param ignoreCols name of column to ignore
      * @throws DatabaseUnitException if current dataset is not equal current dataset
      */
     void compareCurrentDataSetWith(DataSetConfig expected, String[] ignoreCols) throws DatabaseUnitException;

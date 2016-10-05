@@ -136,8 +136,21 @@ public class DatabaseRiderIt {
     }
 
     @Test
-    @DataSet(strategy = SeedStrategy.INSERT, value = "yml/user.yml, yml/tweet.yml, yml/follower.yml",  executeStatementsBefore = {"DELETE FROM FOLLOWER","DELETE FROM TWEET","DELETE FROM USER"})
+    @DataSet(strategy = SeedStrategy.INSERT, value = {"yml/user.yml","yml/tweet.yml","yml/follower.yml"},  executeStatementsBefore = {"DELETE FROM FOLLOWER","DELETE FROM TWEET","DELETE FROM USER"})
     public void shouldLoadDataFromMultipleDataSets(){
+        User user = (User) EntityManagerProvider.em("rules-it").createQuery("select u from User u join fetch u.tweets join fetch u.followers left join fetch u.followers where u.id = 1").getSingleResult();
+        assertThat(user).isNotNull();
+        assertThat(user.getId()).isEqualTo(1);
+        assertThat(user.getTweets()).hasSize(1);
+        Assert.assertEquals("dbunit rules again!", user.getTweets().get(0).getContent());
+        assertThat(user.getFollowers()).isNotNull().hasSize(1);
+        Follower expectedFollower = new Follower(2,1);
+        assertThat(user.getFollowers()).contains(expectedFollower);
+    }
+
+    @Test
+    @DataSet(strategy = SeedStrategy.INSERT, value = "yml/user.yml, yml/tweet.yml, yml/follower.yml",  executeStatementsBefore = {"DELETE FROM FOLLOWER","DELETE FROM TWEET","DELETE FROM USER"})
+    public void shouldLoadDataFromMultipleDataSetsUsingCommaToSeparateNames(){
         User user = (User) EntityManagerProvider.em("rules-it").createQuery("select u from User u join fetch u.tweets join fetch u.followers left join fetch u.followers where u.id = 1").getSingleResult();
         assertThat(user).isNotNull();
         assertThat(user.getId()).isEqualTo(1);

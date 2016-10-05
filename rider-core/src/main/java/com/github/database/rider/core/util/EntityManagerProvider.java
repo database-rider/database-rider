@@ -59,6 +59,7 @@ public class EntityManagerProvider implements TestRule {
     /**
      * @param unitName unit name
      * clear entities on underlying context
+     * @return a clean EntityManagerProvider
      */
     public static synchronized EntityManagerProvider newInstance(String unitName) {
         instance =  new EntityManagerProvider();

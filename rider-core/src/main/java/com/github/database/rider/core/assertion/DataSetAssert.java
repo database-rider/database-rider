@@ -25,7 +25,7 @@ public class DataSetAssert extends DbUnitAssert {
      * @param actualTable current table
      * @param comparisonCols columnName
      * @param failureHandler handler
-     * @throws DataSetException
+     * @throws DataSetException if datasets does not match
      */
     @Override
     protected void compareData(ITable expectedTable, ITable actualTable, ComparisonColumn[] comparisonCols, FailureHandler failureHandler) throws DataSetException {

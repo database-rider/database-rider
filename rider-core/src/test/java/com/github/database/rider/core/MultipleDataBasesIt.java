@@ -23,7 +23,7 @@ import org.junit.runners.JUnit4;
  */
 
 @RunWith(JUnit4.class)
-public class MultipleDataSetsIt {
+public class MultipleDataBasesIt {
 
     @Rule
     public EntityManagerProvider emProvider = EntityManagerProvider.instance("executor1-pu");

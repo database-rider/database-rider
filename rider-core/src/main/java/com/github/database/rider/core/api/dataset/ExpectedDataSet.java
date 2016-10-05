@@ -14,7 +14,7 @@ public @interface ExpectedDataSet {
   /**
    * @return dataset file name using resources folder as root directory
    */
-  String value();
+  String[] value();
 
   /**
    *

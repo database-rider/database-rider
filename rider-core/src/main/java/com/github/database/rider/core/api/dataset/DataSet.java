@@ -14,10 +14,10 @@ import java.lang.annotation.*;
 public @interface DataSet {
 
   /**
-   * @return dataset file name using resources folder as root directory.
-   * Multiple, comma separated, dataset file names can be provided.
+   * @return list of dataset file names using resources folder as root directory.
+   * Single dataset with multiple comma separated dataset file names can also be provided.
    */
-  String value() default "";
+  String[] value() default "";
 
   /**
    *
@@ -28,7 +28,7 @@ public @interface DataSet {
   String executorId() default DataSetExecutorImpl.DEFAULT_EXECUTOR_ID;
 
   /**
-   * DataSet seed strategy. Default is CLEAN_INSERT, meaning that DBUnit will clean and then insert data in tables present in provided dataset.
+   * @return DataSet seed strategy. Default is CLEAN_INSERT, meaning that DBUnit will clean and then insert data in tables present in provided dataset.
    */
   SeedStrategy strategy() default SeedStrategy.CLEAN_INSERT;
 

@@ -153,8 +153,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     }
                 }
 
-                if (dataSetConfig.getName() != null && !"".equals(dataSetConfig.getName())) {
-                    IDataSet resultingDataSet = loadDataSet(dataSetConfig.getName());
+                if (dataSetConfig.hasDatasets()) {
+                    IDataSet resultingDataSet = loadDataSets(dataSetConfig.getDatasets());
 
                     resultingDataSet = performSequenceFiltering(dataSetConfig, resultingDataSet);
 
@@ -222,6 +222,16 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         }
 
         return new CompositeDataSet(dataSets.toArray(new IDataSet[dataSets.size()]));
+    }
+
+    public IDataSet loadDataSets(String[] datasets) throws DataSetException, IOException {
+        List<IDataSet> dataSetList = new ArrayList<>();
+
+        for (String name : datasets) {
+            dataSetList.add(loadDataSet(name));
+        }
+
+        return new CompositeDataSet(dataSetList.toArray(new IDataSet[dataSetList.size()]));
     }
 
     @Override
@@ -398,7 +408,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     /**
-     * @throws SQLException
+     * @throws SQLException if clean up cannot be performed
      */
     public void clearDatabase(DataSetConfig dataset) throws SQLException {
         Connection connection = connectionHolder.getConnection();
@@ -542,7 +552,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 initDatabaseConnection();
             }
             current = databaseConnection.createDataSet();
-            expected = loadDataSet(expectedDataSetConfig.getName());
+            expected = loadDataSets(expectedDataSetConfig.getDatasets());
         } catch (Exception e) {
             throw new RuntimeException("Could not create dataset to compare.", e);
         }

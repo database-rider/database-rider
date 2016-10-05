@@ -9,7 +9,7 @@ import com.github.database.rider.core.dataset.DataSetExecutorImpl;
  */
 public class DataSetConfig {
 
-    private String name;
+    private String[] datasets;
     private String executorId = DataSetExecutorImpl.DEFAULT_EXECUTOR_ID;
     private SeedStrategy strategy = SeedStrategy.CLEAN_INSERT;
     private boolean useSequenceFiltering = true;
@@ -28,12 +28,16 @@ public class DataSetConfig {
         //loadDefaultConfiguration();
     }
 
-    public DataSetConfig(String name) {
-        this.name = name;
+    public DataSetConfig(String dataset) {
+        this.datasets = new String[]{dataset};
     }
 
-    public DataSetConfig name(String name) {
-        this.name = name;
+    public DataSetConfig(String[] datasets) {
+        this.datasets = datasets;
+    }
+
+    public DataSetConfig name(String[] datasets) {
+        this.datasets = datasets;
         return this;
     }
 
@@ -126,8 +130,8 @@ public class DataSetConfig {
     }
 
 
-    public String getName() {
-        return name;
+    public String[] getDatasets() {
+        return datasets;
     }
 
     public SeedStrategy getstrategy() {
@@ -204,6 +208,27 @@ public class DataSetConfig {
 
     @Override
     public String toString() {
-        return name;
+        StringBuilder sb = new StringBuilder();
+        for (String dataset : datasets) {
+            sb.append(dataset).append(",");
+        }
+        if(sb.toString().contains(",")){
+            sb.deleteCharAt(sb.lastIndexOf(","));
+        }
+        return sb.toString().trim();
+    }
+
+    public boolean hasDatasets() {
+        if(datasets == null || datasets.length == 0){
+            return false;
+        }
+
+        for (String dataset : datasets) {
+            if(dataset != null && !"".equals(dataset.trim())){
+                return true;
+            }
+        }
+        return false;
+
     }
 }
