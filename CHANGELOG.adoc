@@ -1,0 +1,225 @@
+= Database Rider Changelog
+:uri-database-rider: https://database-rider.github.io/database-rider
+:uri-repo: https://github.com/database-rider/database-rider
+:icons: font
+:star: icon:star[role=red]
+ifndef::icons[]
+:star: &#9733;
+endif::[]
+
+Below is an overview of what has changed on each `Database Rider` version.
+
+
+== https://github.com/database-rider/database-rider/releases/tag/1.0.0-RC2[1.0.0-RC2 (2016-10-05)^]
+
+
+Enhancements::
+
+    * *@DataSet* now supports array of datasets (https://github.com/database-rider/database-rider/issues/6[#6^])
+    * Support subselects in export queries (https://github.com/database-rider/database-rider/issues/8[#8^])
+
+Bug fixes::
+
+    * Yaml exports nulls as empty strings (https://github.com/database-rider/database-rider/issues/7[#7^])
+
+== https://github.com/database-rider/database-rider/releases/tag/1.0.0-RC1[1.0.0-RC1 (2016-09-18)^]
+
+Infrastructure::
+
+* Migration of DBUnit Rules project to `Database Rider` organization (https://github.com/database-rider/database-rider/issues/4[#4^])
+* Github Pages are now based on Jekyll to allow dynamic content (mainly documentation history) (https://github.com/database-rider/database-rider/issues/2[#2^])
+
+Enhancements::
+
+* Updates living documentation (mainly links and code references) (https://github.com/database-rider/database-rider/issues/1[#1^])
+
+== https://github.com/rmpestano/dbunit-rules/releases/tag/0.15.1[0.15.1 (2016-09-15)^]
+
+Bug fixes::
+
+* Execute statements and scripts before not working in `JUnit 5` module (https://github.com/rmpestano/dbunit-rules/issues/55[#55^])
+
+== https://github.com/rmpestano/dbunit-rules/releases/tag/0.15.0[0.15.0 (2016-09-13)^]
+
+Enhancements::
+
+* JDBC connection configuration (https://github.com/rmpestano/dbunit-rules/issues/50[#50^])
+* Transactional tests now work on pure JDBC connections (https://github.com/rmpestano/dbunit-rules/issues/51[#51])
+* Adds SpringBoot sample (https://github.com/rmpestano/dbunit-rules/issues/52[#52^]).
+
+== https://github.com/rmpestano/dbunit-rules/releases/tag/0.14.0[0.14.0 (2016-09-12)]
+
+Enhancements::
+
+* DataSet exporter component (https://github.com/rmpestano/dbunit-rules/issues/47[#47^])
+* Moved living BDD tests to core (https://github.com/rmpestano/dbunit-rules/issues/49[#49^])
+
+Improvements::
+
+*  Removed @UsingDataSet in CDI module in favor of @DataSet (https://github.com/rmpestano/dbunit-rules/issues/48[#48^])
+
+== https://github.com/rmpestano/dbunit-rules/releases/tag/0.13.2[0.13.2 (2016-09-09)]
+
+Enhancements::
+
+* Renamed leakHunter attribute (https://github.com/rmpestano/dbunit-rules/issues/44[#44^])
+* Typo in GlobalConfig (https://github.com/rmpestano/dbunit-rules/issues/45[#45^])
+
+Bug fixes::
+
+* Configuration tests failing on windows (https://github.com/rmpestano/dbunit-rules/issues/46[#46^])
+
+== https://github.com/rmpestano/dbunit-rules/releases/tag/0.13.1[0.13.1 (2016-09-08)]
+
+Enhancements::
+
+* Missing features on JUnit 5 module (https://github.com/rmpestano/dbunit-rules/issues/43[#43^]).
+
+== https://github.com/rmpestano/dbunit-rules/releases/tag/0.13.0[0.13.0 (2016-09-07)]
+
+Enhancements::
+
+* Adds Leak Hunter component (https://github.com/rmpestano/dbunit-rules/issues/42[#42^])
+
+== https://github.com/rmpestano/dbunit-rules/releases/tag/0.12.0[0.12.0 (2016-09-07)]
+
+Enhancements::
+
+* Database connection caching (https://github.com/rmpestano/dbunit-rules/issues/39[#39^])
+* Table names caching to avoid reading connection metadata on every execution (https://github.com/rmpestano/dbunit-rules/issues/40[#40^])
+* Configuration mechanism, both per execution (via annotation) and global (via configuration file) (https://github.com/rmpestano/dbunit-rules/issues/41[#41^]).
+
+== https://github.com/rmpestano/dbunit-rules/releases/tag/0.11.0[0.11.0 (2016-08-28)]
+
+Enhancements::
+
+* JUnit5 support (https://github.com/rmpestano/dbunit-rules/issues/29[#29^])
+* DBUnit DatasetFactory setup (https://github.com/rmpestano/dbunit-rules/issues/34[#34^])
+* H2 support (disable constraints and datatype factory setup) (https://github.com/rmpestano/dbunit-rules/issues/36[#36^])
+* Qualified table names (schema support) (https://github.com/rmpestano/dbunit-rules/issues/37[#37^])
+* Organized example projects (https://github.com/rmpestano/dbunit-rules/issues/38[#38^])
+
+== https://github.com/rmpestano/dbunit-rules/releases/tag/0.10.0[0.10.0 (2016-08-21)]
+
+Enhancements::
+
+* Tomee applicatin composer integration example (https://github.com/rmpestano/dbunit-rules/issues/30[#30^])
+* DBUnit as a test rule (instead of method rule) (https://github.com/rmpestano/dbunit-rules/issues/31[#31^])
+* Empty datasets support (https://github.com/rmpestano/dbunit-rules/issues/32[#32^])
+* Dataset creation at statement level instead of eager creation on rule instantiation level (https://github.com/rmpestano/dbunit-rules/issues/33[#33^])
+
+
+== https://github.com/rmpestano/dbunit-rules/releases/tag/0.9.0[0.9.0 (2016-06-23)]
+
+Enhancements::
+
+* Transactional tests (https://github.com/rmpestano/dbunit-rules/issues/27[#27^])
+
+Bug fixes::
+
+* Script loading issue (https://github.com/rmpestano/dbunit-rules/issues/28[#28^])
+
+== https://github.com/rmpestano/dbunit-rules/releases/tag/0.8.0[0.8.0 (2016-06-19)]
+
+Enhancements::
+
+* DataSet assertion via ExpectedDataSets (https://github.com/rmpestano/dbunit-rules/issues/1[#1^])
+* EntityManagerProvider refactoring (https://github.com/rmpestano/dbunit-rules/issues/23[#23^])
+* Allow empty Datasets names (https://github.com/rmpestano/dbunit-rules/issues/25[#25^])
+
+Improvements::
+
+* Better exception handling (https://github.com/rmpestano/dbunit-rules/issues/24[#24^])
+
+Bug fixes::
+
+* Avoid sequence table clearing (https://github.com/rmpestano/dbunit-rules/issues/26[#26]).
+
+== https://github.com/rmpestano/dbunit-rules/releases/tag/0.7.0[0.7.0 (2016-04-30)]
+
+Enhancements::
+
+* Creates living documentation foundation (https://github.com/rmpestano/dbunit-rules/issues/19[#19^])
+* Scriptable datasets using `JSR 223` (https://github.com/rmpestano/dbunit-rules/issues/20[#23^]).
+
+== https://github.com/rmpestano/dbunit-rules/releases/tag/0.6.1[0.6.1 (2016-04-10)]
+
+Enhancements::
+
+* Cdi module should leverage core features instead of logic duplication (https://github.com/rmpestano/dbunit-rules/issues/17[#17^])
+
+Improvements::
+
+* Use `class.getResource` instead of `ContextClassloader` (https://github.com/rmpestano/dbunit-rules/issues/18[#18^])
+
+
+== https://github.com/rmpestano/dbunit-rules/releases/tag/0.6.0[0.6.0 (2016-03-04)]
+
+Enhancements::
+
+* @DataSet for the whole test class (https://github.com/rmpestano/dbunit-rules/issues/13[#13^])
+* Execute raw sql scripts (https://github.com/rmpestano/dbunit-rules/issues/14[#14^])
+* Clean database after and before (https://github.com/rmpestano/dbunit-rules/issues/15[#15^])
+
+Bug fixes::
+
+* Fix date replacements tests (https://github.com/rmpestano/dbunit-rules/issues/16[#16^])
+
+== https://github.com/rmpestano/dbunit-rules/releases/tag/0.5.1[0.5.1 (2016-02-16)]
+
+Improvements::
+
+* Cucumber module must only depend on test control api (https://github.com/rmpestano/dbunit-rules/issues/12[#12^])
+
+== https://github.com/rmpestano/dbunit-rules/releases/tag/0.5.0[0.5.0 (2016-02-13)]
+
+Enhancements::
+
+* Cucumber support (https://github.com/rmpestano/dbunit-rules/issues/10[#10^])
+
+Bug fixes::
+
+* Do not clear em during PU initialization in CDI module (https://github.com/rmpestano/dbunit-rules/issues/11[#11^])
+
+== https://github.com/rmpestano/dbunit-rules/releases/tag/0.4.2[0.4.2 (2016-02-11)]
+
+Improvements::
+
+* Moved EntityManagerProvider from test to util package in cdi module (https://github.com/rmpestano/dbunit-rules/issues/9[#9^])
+
+== https://github.com/rmpestano/dbunit-rules/releases/tag/0.4.1[0.4.1 (2015-10-09)]
+
+Enhancements::
+
+* Adds clean after feature to CDI module (https://github.com/rmpestano/dbunit-rules/issues/8[#8^])
+
+Bug fixes::
+
+* Clear database should take table ordering into account (https://github.com/rmpestano/dbunit-rules/issues/7[#7^])
+
+== https://github.com/rmpestano/dbunit-rules/releases/tag/0.4.0[0.4.0 (2015-10-08)]
+
+Improvements::
+
+* CDI module refactory
+
+== https://github.com/rmpestano/dbunit-rules/releases/tag/0.3.0[0.3.0 (2015-08-20)]
+
+Enhancements::
+
+* Allow multiple datasets (https://github.com/rmpestano/dbunit-rules/issues/5[#5^])
+
+Improvements::
+
+* core module refactory
+
+== https://github.com/rmpestano/dbunit-rules/releases/tag/0.2.0[0.2.0 (2015-08-02)]
+
+Enhancements::
+
+* Allow multiple database connections (https://github.com/rmpestano/dbunit-rules/issues/3[#3^])
+* Injectable DataSet Executors in CDI module (https://github.com/rmpestano/dbunit-rules/issues/4[#4^])
+
+== https://github.com/rmpestano/dbunit-rules/releases/tag/0.1.0[0.1.0 (2015-07-27)]
+
+Prof of concept

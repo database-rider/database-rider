@@ -1084,6 +1084,10 @@ The examples module which contains:
 
 And also each module contain a lot of tests that you can use as example.
 
+== Changelog
+
+See project release https://github.com/database-rider/database-rider/blob/master/CHANGELOG.adoc[changelog here^].
+
 == Snapshots
 
 Snapshots are available in maven central, to use it just add the following snippet in your pom.xml:
