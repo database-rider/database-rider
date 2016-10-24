@@ -93,13 +93,16 @@
                     <plugin>
                         <groupId>com.github.cukedoctor</groupId>
                         <artifactId>cukedoctor-maven-plugin</artifactId>
-                        <version>1.0.5</version>
+                        <version>1.0.6</version>
                         <configuration>
                             <outputFileName>documentation</outputFileName>
                             <outputDir>docs/${project.parent.version}</outputDir>
                             <!--pdf and html5 -->
                             <format>all</format>
                             <hideSummarySection>true</hideSummarySection>
+			    <hideScenarioKeyword>true</hideScenarioKeyword>
+ 			    <hideStepTime>true</hideStepTime>
+                            <hideTags>true</hideTags>
                             <hideFeaturesSection>true</hideFeaturesSection>
                             <toc>center</toc>
                             <numbered>true</numbered>
