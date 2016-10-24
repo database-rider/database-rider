@@ -436,32 +436,32 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
      <li><a href="#__strong_introduction_strong">1. <strong>Introduction</strong></a></li> 
      <li><a href="#Manage-database-with-Database-Rider-Core">2. <strong>Manage database with Database Rider Core</strong></a> 
       <ul class="sectlevel2"> 
-       <li><a href="#_scenario_seed_database_using_yml_dataset">2.1. Scenario: Seed database using yml dataset</a></li> 
+       <li><a href="#_seed_database_using_yml_dataset">2.1. Seed database using yml dataset</a></li> 
       </ul> </li> 
      <li><a href="#Manage-database-with-Database-Rider-CDI">3. <strong>Manage database with Database Rider CDI</strong></a> 
       <ul class="sectlevel2"> 
-       <li><a href="#_scenario_seed_database_using_yml_dataset_2">3.1. Scenario: Seed database using yml dataset</a></li> 
+       <li><a href="#_seed_database_using_yml_dataset_2">3.1. Seed database using yml dataset</a></li> 
       </ul> </li> 
      <li><a href="#Manage-database-with-Database-Rider-Cucumber">4. <strong>Manage database with Database Rider Cucumber</strong></a> 
       <ul class="sectlevel2"> 
-       <li><a href="#_scenario_seed_database_using_database_rider_in_cucumber_tests">4.1. Scenario: Seed database using Database Rider in Cucumber tests</a></li> 
+       <li><a href="#_seed_database_using_database_rider_in_cucumber_tests">4.1. Seed database using Database Rider in Cucumber tests</a></li> 
       </ul> </li> 
      <li><a href="#Manage-database-with-Database-Rider-and-JUnit-5">5. <strong>Manage database with Database Rider and JUnit 5</strong></a> 
       <ul class="sectlevel2"> 
-       <li><a href="#_scenario_seed_database_using_database_rider_in_junit5_tests">5.1. Scenario: Seed database using Database Rider in JUnit5 tests</a></li> 
+       <li><a href="#_seed_database_using_database_rider_in_junit5_tests">5.1. Seed database using Database Rider in JUnit5 tests</a></li> 
       </ul> </li> 
      <li><a href="#Dynamic-data-using-scritable-datasets">6. <strong>Dynamic data using scritable datasets</strong></a> 
       <ul class="sectlevel2"> 
-       <li><a href="#_scenario_seed_database_with_groovy_script_in_dataset">6.1. Scenario: Seed database with groovy script in dataset</a></li> 
-       <li><a href="#_scenario_seed_database_with_javascript_in_dataset">6.2. Scenario: Seed database with javascript in dataset</a></li> 
+       <li><a href="#_seed_database_with_groovy_script_in_dataset">6.1. Seed database with groovy script in dataset</a></li> 
+       <li><a href="#_seed_database_with_javascript_in_dataset">6.2. Seed database with javascript in dataset</a></li> 
       </ul> </li> 
      <li><a href="#Database-assertion-using-expected-datasets">7. <strong>Database assertion using expected datasets</strong></a> 
       <ul class="sectlevel2"> 
-       <li><a href="#_scenario_database_assertion_with_yml_dataset">7.1. Scenario: Database assertion with yml dataset</a></li> 
-       <li><a href="#_scenario_database_assertion_with_regular_expression_in_expected_dataset">7.2. Scenario: Database assertion with regular expression in expected dataset</a></li> 
-       <li><a href="#_scenario_database_assertion_with_seeding_before_test_execution">7.3. Scenario: Database assertion with seeding before test execution</a></li> 
-       <li><a href="#_scenario_failling_database_assertion">7.4. Scenario: Failling database assertion</a></li> 
-       <li><a href="#_scenario_database_assertion_using_automatic_transaction">7.5. Scenario: Database assertion using automatic transaction</a></li> 
+       <li><a href="#_database_assertion_with_yml_dataset">7.1. Database assertion with yml dataset</a></li> 
+       <li><a href="#_database_assertion_with_regular_expression_in_expected_dataset">7.2. Database assertion with regular expression in expected dataset</a></li> 
+       <li><a href="#_database_assertion_with_seeding_before_test_execution">7.3. Database assertion with seeding before test execution</a></li> 
+       <li><a href="#_failling_database_assertion">7.4. Failling database assertion</a></li> 
+       <li><a href="#_database_assertion_using_automatic_transaction">7.5. Database assertion using automatic transaction</a></li> 
       </ul> </li> 
     </ul> 
    </div> 
@@ -565,7 +565,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_scenario_seed_database_using_yml_dataset"><a class="anchor" href="#_scenario_seed_database_using_yml_dataset"></a>2.1. Scenario: Seed database using yml dataset</h3> 
+      <h3 id="_seed_database_using_yml_dataset"><a class="anchor" href="#_seed_database_using_yml_dataset"></a>2.1. Seed database using yml dataset</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -578,7 +578,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following junit rules <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following junit rules <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -623,7 +623,7 @@ public class DatabaseRiderIt {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -662,7 +662,7 @@ follower:
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -707,7 +707,7 @@ follower:
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The database should be seeded with the dataset content before test execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The database should be seeded with the dataset content before test execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
          </div> 
         </div> 
@@ -790,7 +790,7 @@ public class DBUnitCDITest {
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_scenario_seed_database_using_yml_dataset_2"><a class="anchor" href="#_scenario_seed_database_using_yml_dataset_2"></a>3.1. Scenario: Seed database using yml dataset</h3> 
+      <h3 id="_seed_database_using_yml_dataset_2"><a class="anchor" href="#_seed_database_using_yml_dataset_2"></a>3.1. Seed database using yml dataset</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -803,7 +803,7 @@ public class DBUnitCDITest {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>DBUnit interceptor is enabled in your test beans.xml: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(01s 188ms)</span></p> 
+           <p>DBUnit interceptor is enabled in your test beans.xml: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -854,7 +854,7 @@ public class DBUnitCDITest {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -898,7 +898,7 @@ follower:
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -942,7 +942,7 @@ follower:
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The database should be seeded with the dataset content before test execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The database should be seeded with the dataset content before test execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
          </div> 
         </div> 
@@ -1121,7 +1121,7 @@ public class DatabaseRiderBdd {
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_scenario_seed_database_using_database_rider_in_cucumber_tests"><a class="anchor" href="#_scenario_seed_database_using_database_rider_in_cucumber_tests"></a>4.1. Scenario: Seed database using Database Rider in Cucumber tests</h3> 
+      <h3 id="_seed_database_using_database_rider_in_cucumber_tests"><a class="anchor" href="#_seed_database_using_database_rider_in_cucumber_tests"></a>4.1. Seed database using Database Rider in Cucumber tests</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -1134,7 +1134,7 @@ public class DatabaseRiderBdd {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following feature <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following feature <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -1180,7 +1180,7 @@ public class DatabaseRiderBdd {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -1225,7 +1225,7 @@ company:
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following Cucumber test <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following Cucumber test <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -1262,7 +1262,7 @@ public class ContactFeature {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following cucumber steps are executed <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following cucumber steps are executed <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -1361,7 +1361,7 @@ public class ContactSteps {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The database should be seeded with the dataset content before step execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The database should be seeded with the dataset content before step execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
          </div> 
         </div> 
@@ -1408,7 +1408,7 @@ public class ContactSteps {
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_scenario_seed_database_using_database_rider_in_junit5_tests"><a class="anchor" href="#_scenario_seed_database_using_database_rider_in_junit5_tests"></a>5.1. Scenario: Seed database using Database Rider in JUnit5 tests</h3> 
+      <h3 id="_seed_database_using_database_rider_in_junit5_tests"><a class="anchor" href="#_seed_database_using_database_rider_in_junit5_tests"></a>5.1. Seed database using Database Rider in JUnit5 tests</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -1421,7 +1421,7 @@ public class ContactSteps {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -1451,7 +1451,7 @@ public class ContactSteps {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following junit5 test is executed <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following junit5 test is executed <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -1519,7 +1519,7 @@ public class DBUnitJUnit5It {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The database should be seeded with the dataset content before test execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The database should be seeded with the dataset content before test execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
          </div> 
         </div> 
@@ -1555,7 +1555,7 @@ public class DBUnitJUnit5It {
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_scenario_seed_database_with_groovy_script_in_dataset"><a class="anchor" href="#_scenario_seed_database_with_groovy_script_in_dataset"></a>6.1. Scenario: Seed database with groovy script in dataset</h3> 
+      <h3 id="_seed_database_with_groovy_script_in_dataset"><a class="anchor" href="#_seed_database_with_groovy_script_in_dataset"></a>6.1. Seed database with groovy script in dataset</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -1568,7 +1568,7 @@ public class DBUnitJUnit5It {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>Groovy script engine is on test classpath <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>Groovy script engine is on test classpath <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -1596,7 +1596,7 @@ public class DBUnitJUnit5It {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -1633,7 +1633,7 @@ public class DBUnitJUnit5It {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -1673,7 +1673,7 @@ public void shouldReplaceDateUsingGroovyInDataset() {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>Dataset script should be interpreted while seeding the database <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>Dataset script should be interpreted while seeding the database <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
          </div> 
         </div> 
@@ -1681,7 +1681,7 @@ public void shouldReplaceDateUsingGroovyInDataset() {
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_scenario_seed_database_with_javascript_in_dataset"><a class="anchor" href="#_scenario_seed_database_with_javascript_in_dataset"></a>6.2. Scenario: Seed database with javascript in dataset</h3> 
+      <h3 id="_seed_database_with_javascript_in_dataset"><a class="anchor" href="#_seed_database_with_javascript_in_dataset"></a>6.2. Seed database with javascript in dataset</h3> 
       <div class="admonitionblock note"> 
        <table> 
         <tbody> 
@@ -1704,7 +1704,7 @@ public void shouldReplaceDateUsingGroovyInDataset() {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -1741,7 +1741,7 @@ public void shouldReplaceDateUsingGroovyInDataset() {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -1780,7 +1780,7 @@ public void shouldReplaceLikesUsingJavaScriptInDataset() {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>Dataset script should be interpreted while seeding the database <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>Dataset script should be interpreted while seeding the database <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
          </div> 
         </div> 
@@ -1813,7 +1813,7 @@ public void shouldReplaceLikesUsingJavaScriptInDataset() {
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_scenario_database_assertion_with_yml_dataset"><a class="anchor" href="#_scenario_database_assertion_with_yml_dataset"></a>7.1. Scenario: Database assertion with yml dataset</h3> 
+      <h3 id="_database_assertion_with_yml_dataset"><a class="anchor" href="#_database_assertion_with_yml_dataset"></a>7.1. Database assertion with yml dataset</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -1826,7 +1826,7 @@ public void shouldReplaceLikesUsingJavaScriptInDataset() {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -1856,7 +1856,7 @@ public void shouldReplaceLikesUsingJavaScriptInDataset() {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -1913,7 +1913,7 @@ public class ExpectedDataSetIt {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>Test must pass because database state is as in expected dataset. <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>Test must pass because database state is as in expected dataset. <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
          </div> 
         </div> 
@@ -1921,7 +1921,7 @@ public class ExpectedDataSetIt {
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_scenario_database_assertion_with_regular_expression_in_expected_dataset"><a class="anchor" href="#_scenario_database_assertion_with_regular_expression_in_expected_dataset"></a>7.2. Scenario: Database assertion with regular expression in expected dataset</h3> 
+      <h3 id="_database_assertion_with_regular_expression_in_expected_dataset"><a class="anchor" href="#_database_assertion_with_regular_expression_in_expected_dataset"></a>7.2. Database assertion with regular expression in expected dataset</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -1934,7 +1934,7 @@ public class ExpectedDataSetIt {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -1964,7 +1964,7 @@ public class ExpectedDataSetIt {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -1999,7 +1999,7 @@ public void shouldMatchExpectedDataSetUsingRegex() {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>Test must pass because database state is as in expected dataset. <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>Test must pass because database state is as in expected dataset. <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
          </div> 
         </div> 
@@ -2007,7 +2007,7 @@ public void shouldMatchExpectedDataSetUsingRegex() {
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_scenario_database_assertion_with_seeding_before_test_execution"><a class="anchor" href="#_scenario_database_assertion_with_seeding_before_test_execution"></a>7.3. Scenario: Database assertion with seeding before test execution</h3> 
+      <h3 id="_database_assertion_with_seeding_before_test_execution"><a class="anchor" href="#_database_assertion_with_seeding_before_test_execution"></a>7.3. Database assertion with seeding before test execution</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2020,7 +2020,7 @@ public void shouldMatchExpectedDataSetUsingRegex() {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -2050,7 +2050,7 @@ public void shouldMatchExpectedDataSetUsingRegex() {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -2078,7 +2078,7 @@ public void shouldMatchExpectedDataSetUsingRegex() {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -2108,7 +2108,7 @@ public void shouldMatchExpectedDataSetAfterSeedingDataBase() {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>Test must pass because database state is as in expected dataset. <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>Test must pass because database state is as in expected dataset. <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
          </div> 
         </div> 
@@ -2116,7 +2116,7 @@ public void shouldMatchExpectedDataSetAfterSeedingDataBase() {
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_scenario_failling_database_assertion"><a class="anchor" href="#_scenario_failling_database_assertion"></a>7.4. Scenario: Failling database assertion</h3> 
+      <h3 id="_failling_database_assertion"><a class="anchor" href="#_failling_database_assertion"></a>7.4. Failling database assertion</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2129,7 +2129,7 @@ public void shouldMatchExpectedDataSetAfterSeedingDataBase() {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -2159,7 +2159,7 @@ public void shouldMatchExpectedDataSetAfterSeedingDataBase() {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -2193,7 +2193,7 @@ public void shouldNotMatchExpectedDataSet() {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>Test must fail with following error: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>Test must fail with following error: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -2215,7 +2215,7 @@ public void shouldNotMatchExpectedDataSet() {
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_scenario_database_assertion_using_automatic_transaction"><a class="anchor" href="#_scenario_database_assertion_using_automatic_transaction"></a>7.5. Scenario: Database assertion using automatic transaction</h3> 
+      <h3 id="_database_assertion_using_automatic_transaction"><a class="anchor" href="#_database_assertion_using_automatic_transaction"></a>7.5. Database assertion using automatic transaction</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2228,7 +2228,7 @@ public void shouldNotMatchExpectedDataSet() {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -2258,7 +2258,7 @@ public void shouldNotMatchExpectedDataSet() {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
           <div class="sidebarblock"> 
            <div class="content"> 
@@ -2302,7 +2302,7 @@ public void shouldManageTransactionAutomatically() {
         <div class="exampleblock"> 
          <div class="content"> 
           <div class="paragraph"> 
-           <p>Test must pass because inserted users are commited to database and database state matches expected dataset. <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span> <span class="small right">(000ms)</span></p> 
+           <p>Test must pass because inserted users are commited to database and database state matches expected dataset. <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </div> 
          </div> 
         </div> 
@@ -2321,8 +2321,8 @@ public void shouldManageTransactionAutomatically() {
   </div> 
   <div id="footer" style="color:gray;font-size:11px">
     Generated by 
-   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.5</a> - Oct 10, 2016 3:17:48 AM 
-   <span style="float:right;font-size:11px"> Execution time: 12.789 seconds</span> 
+   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.6</a> - Oct 24, 2016 11:23:09 AM 
+   <span style="float:right;font-size:11px"> Execution time: 8.389 seconds</span> 
   </div> 
   <style>  
 
