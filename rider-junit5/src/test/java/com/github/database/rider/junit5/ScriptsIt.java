@@ -29,8 +29,8 @@ public class ScriptsIt {
 
     @BeforeAll
     public static void before() {
-        EntityManagerProvider provider = EntityManagerProvider.instance("junit5-pu");
-        EntityManagerProvider.tx().begin();
+        EntityManagerProvider.tx("junit5-pu").begin();
+        EntityManagerProvider.em().createNativeQuery("DELETE FROM TWEET").executeUpdate();
         EntityManagerProvider.em().createNativeQuery("DELETE FROM USER").executeUpdate();
         EntityManagerProvider.em().createNativeQuery("INSERT INTO USER VALUES (6,'user6')").executeUpdate();
         EntityManagerProvider.em().flush();

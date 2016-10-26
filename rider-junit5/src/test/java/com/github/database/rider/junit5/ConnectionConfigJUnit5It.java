@@ -30,7 +30,7 @@ public class ConnectionConfigJUnit5It {
     }
 
     @Test
-    @DataSet(value = "users.yml")
+    @DataSet(value = "users.yml", cleanBefore = true)
     public void shouldSeedFromDeclaredConnection() {
         User user = (User) EntityManagerProvider.em().createQuery("select u from User u where u.id = 1").getSingleResult();
         assertThat(user).isNotNull();
