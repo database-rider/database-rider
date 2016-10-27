@@ -9,7 +9,11 @@ I want to easily use DBUnit in JUnit tests.
 ____
 ====
 
-Database Rider brings http://dbunit.sourceforge.net/[DBunit^] to your http://junit.org/junit4/[JUnit tests] via https://github.com/junit-team/junit4/wiki/Rules[JUnit rules^] (in JUnit4), through a https://docs.jboss.org/weld/reference/latest/en-US/html_single/#interceptors[CDI interceptor^] (in `CDI` based tests) or by an http://junit.org/junit5/docs/current/user-guide/#extensions[extension^] (in case of `JUnit5` tests).
+Database Rider brings http://dbunit.sourceforge.net/[DBunit^] to your http://junit.org/junit4/[JUnit tests] by means of:
+
+* https://github.com/junit-team/junit4/wiki/Rules[JUnit rules^] (in JUnit4);
+* https://docs.jboss.org/weld/reference/latest/en-US/html_single/#interceptors[CDI interceptor^] (in `CDI` based tests)
+* http://junit.org/junit5/docs/current/user-guide/#extensions[extension^] (in case of `JUnit5`).
  
 
   Scenario: Seed database in a JUnit 4 test
