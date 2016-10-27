@@ -100,10 +100,11 @@
                             <!--pdf and html5 -->
                             <format>all</format>
                             <hideSummarySection>true</hideSummarySection>
-			    <hideScenarioKeyword>true</hideScenarioKeyword>
- 			    <hideStepTime>true</hideStepTime>
-                            <hideTags>true</hideTags>
+			                <hideScenarioKeyword>true</hideScenarioKeyword>
+                            <hideStepTime>true</hideStepTime>
                             <hideFeaturesSection>true</hideFeaturesSection>
+                            <hideTags>true</hideTags>
+                            <sourceHighlighter>coderay</sourceHighlighter>
                             <toc>center</toc>
                             <numbered>true</numbered>
                             <docVersion>${project.version}</docVersion>

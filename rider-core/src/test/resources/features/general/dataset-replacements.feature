@@ -43,7 +43,7 @@ include::../../../src/test/resources/datasets/yml/groovy-with-date-replacements.
 #cukedoctor-discrete
     When The following test is executed:
 """
-[source,java,indent=0,linenums]
+[source,java,indent=0]
 ----
 include::../../../src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java[tags=groovy]
 ----
@@ -68,7 +68,7 @@ include::../../../src/test/resources/datasets/yml/js-with-calc-replacements.yml[
 #cukedoctor-discrete
     When The following test is executed:
 """
-[source,java,linenums,indent=0]
+[source,java,indent=0]
 ----
 include::../../../src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java[tags=javascript-likes]
 ----

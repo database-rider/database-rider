@@ -25,7 +25,7 @@ include::../../../src/test/resources/datasets/yml/expectedUsers.yml[]
 #cukedoctor-discrete
     When The following test is executed:
 """
-[source,java,indent=0,linenums]
+[source,java,indent=0]
 ----
 include::../../../src/test/java/com/github/database/rider/core/ExpectedDataSetIt.java[tags=expectedDeclaration;expected]
 ----
@@ -47,7 +47,7 @@ include::../../../src/test/resources/datasets/yml/expectedUsersRegex.yml[]
   #cukedoctor-discrete
     When The following test is executed:
 """
-[source,java,indent=0,linenums]
+[source,java,indent=0]
 ----
 include::../../../src/test/java/com/github/database/rider/core/ExpectedDataSetIt.java[tags=expectedRegex]
 ----
@@ -76,7 +76,7 @@ include::../../../src/test/resources/datasets/yml/expectedUser.yml[]
   #cukedoctor-discrete
     When The following test is executed:
 """
-[source,java,indent=0,linenums]
+[source,java,indent=0]
 ----
 include::../../../src/test/java/com/github/database/rider/core/ExpectedDataSetIt.java[tags=expectedWithSeeding]
 ----
@@ -97,7 +97,7 @@ include::../../../src/test/resources/datasets/yml/expectedUsers.yml[]
   #cukedoctor-discrete
     When The following test is executed:
 """
-[source,java,indent=0,linenums]
+[source,java,indent=0]
 ----
 include::../../../src/test/java/com/github/database/rider/core/ExpectedDataSetIt.java[tags=faillingExpected]
 ----
@@ -124,7 +124,7 @@ include::../../../src/test/resources/datasets/yml/expectedUsersRegex.yml[]
     #{NOTE: `Transactional` attribute will make Database Rider start a transaction before test and commit the transaction *after* test execution but *before* expected dataset comparison.}
     When The following test is executed:
 """
-[source,java,indent=0,linenums]
+[source,java,indent=0]
 ----
 include::../../../src/test/java/com/github/database/rider/core/TransactionIt.java[tags=transaction]
 ----

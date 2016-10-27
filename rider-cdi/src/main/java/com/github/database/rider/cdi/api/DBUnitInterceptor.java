@@ -1,5 +1,7 @@
 package com.github.database.rider.cdi.api;
 
+import com.github.database.rider.core.api.dataset.DataSet;
+
 import javax.interceptor.InterceptorBinding;
 import java.lang.annotation.*;
 

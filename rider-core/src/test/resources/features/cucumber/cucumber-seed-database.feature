@@ -77,7 +77,7 @@ include::../../../../rider-examples/jpa-productivity-boosters/src/test/resources
 And The following Cucumber test
 
  """
-[source,java,linenums]
+[source,java]
 ----
 include::../../../../rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactFeature.java[]
 ----
@@ -87,7 +87,7 @@ include::../../../../rider-examples/jpa-productivity-boosters/src/test/java/com/
 #cukedoctor-discrete
 When The following cucumber steps are executed
  """
-[source,java,linenums]
+[source,java]
 ----
 include::../../../../rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactSteps.java[]
 ----

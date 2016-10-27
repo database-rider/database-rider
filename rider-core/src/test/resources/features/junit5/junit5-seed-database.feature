@@ -44,7 +44,7 @@ include::../../../../rider-junit5/src/test/resources/datasets/users.yml[]
 When The following junit5 test is executed
 
  """
-[source,java,linenums]
+[source,java]
 ----
 include::../../../../rider-junit5/src/test/java/com/github/database/rider/junit5/DBUnitJUnit5It.java[tags=declaration;connectionField;test]
 ----

@@ -1,11 +1,11 @@
-package com.github.database.rider.core.bdd.core;
+package com.github.database.rider.core.bdd.seeding;
 
 import cucumber.api.java.en.Given;
 
 /**
  * Created by rafael-pestano on 09/10/2015.
  */
-public class CoreSeedDatabaseStepdefs {
+public class SeedingDatabaseStepdefs {
 
 
     @Given("^The following junit rules$")
