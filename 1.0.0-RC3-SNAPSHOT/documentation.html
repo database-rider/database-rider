@@ -527,32 +527,26 @@ table.CodeRay td.code>pre{padding:0}
      <li><a href="#__strong_introduction_strong">1. <strong>Introduction</strong></a></li> 
      <li><a href="#Seeding-database">2. <strong>Seeding database</strong></a> 
       <ul class="sectlevel2"> 
-       <li><a href="#_seed_database_in_a_junit_4_test">2.1. Seed database in a JUnit 4 test</a></li> 
+       <li><a href="#_seeding_database_with_code_dbunit_rule_code">2.1. Seeding database with <code>DBUnit Rule</code></a></li> 
+       <li><a href="#_seed_database_with_code_dbunit_interceptor_code">2.2. Seed database with <code>DBUnit Interceptor</code></a></li> 
+       <li><a href="#_seed_database_with_code_junit_5_extension_code">2.3. Seed database with <code>JUnit 5 extension</code></a></li> 
       </ul> </li> 
-     <li><a href="#Manage-database-with-Database-Rider-CDI">3. <strong>Manage database with Database Rider CDI</strong></a> 
+     <li><a href="#Manage-database-with-Database-Rider-Cucumber">3. <strong>Manage database with Database Rider Cucumber</strong></a> 
       <ul class="sectlevel2"> 
-       <li><a href="#_seed_database_using_yml_dataset">3.1. Seed database using yml dataset</a></li> 
+       <li><a href="#_seed_database_using_database_rider_in_cucumber_tests">3.1. Seed database using Database Rider in Cucumber tests</a></li> 
       </ul> </li> 
-     <li><a href="#Manage-database-with-Database-Rider-Cucumber">4. <strong>Manage database with Database Rider Cucumber</strong></a> 
+     <li><a href="#Dynamic-data-using-scritable-datasets">4. <strong>Dynamic data using scritable datasets</strong></a> 
       <ul class="sectlevel2"> 
-       <li><a href="#_seed_database_using_database_rider_in_cucumber_tests">4.1. Seed database using Database Rider in Cucumber tests</a></li> 
+       <li><a href="#_seed_database_with_groovy_script_in_dataset">4.1. Seed database with groovy script in dataset</a></li> 
+       <li><a href="#_seed_database_with_javascript_in_dataset">4.2. Seed database with javascript in dataset</a></li> 
       </ul> </li> 
-     <li><a href="#Manage-database-with-Database-Rider-and-JUnit-5">5. <strong>Manage database with Database Rider and JUnit 5</strong></a> 
+     <li><a href="#Database-assertion-using-expected-datasets">5. <strong>Database assertion using expected datasets</strong></a> 
       <ul class="sectlevel2"> 
-       <li><a href="#_seed_database_using_database_rider_in_junit5_tests">5.1. Seed database using Database Rider in JUnit5 tests</a></li> 
-      </ul> </li> 
-     <li><a href="#Dynamic-data-using-scritable-datasets">6. <strong>Dynamic data using scritable datasets</strong></a> 
-      <ul class="sectlevel2"> 
-       <li><a href="#_seed_database_with_groovy_script_in_dataset">6.1. Seed database with groovy script in dataset</a></li> 
-       <li><a href="#_seed_database_with_javascript_in_dataset">6.2. Seed database with javascript in dataset</a></li> 
-      </ul> </li> 
-     <li><a href="#Database-assertion-using-expected-datasets">7. <strong>Database assertion using expected datasets</strong></a> 
-      <ul class="sectlevel2"> 
-       <li><a href="#_database_assertion_with_yml_dataset">7.1. Database assertion with yml dataset</a></li> 
-       <li><a href="#_database_assertion_with_regular_expression_in_expected_dataset">7.2. Database assertion with regular expression in expected dataset</a></li> 
-       <li><a href="#_database_assertion_with_seeding_before_test_execution">7.3. Database assertion with seeding before test execution</a></li> 
-       <li><a href="#_failling_database_assertion">7.4. Failling database assertion</a></li> 
-       <li><a href="#_database_assertion_using_automatic_transaction">7.5. Database assertion using automatic transaction</a></li> 
+       <li><a href="#_database_assertion_with_yml_dataset">5.1. Database assertion with yml dataset</a></li> 
+       <li><a href="#_database_assertion_with_regular_expression_in_expected_dataset">5.2. Database assertion with regular expression in expected dataset</a></li> 
+       <li><a href="#_database_assertion_with_seeding_before_test_execution">5.3. Database assertion with seeding before test execution</a></li> 
+       <li><a href="#_failling_database_assertion">5.4. Failling database assertion</a></li> 
+       <li><a href="#_database_assertion_using_automatic_transaction">5.5. Database assertion using automatic transaction</a></li> 
       </ul> </li> 
     </ul> 
    </div> 
@@ -641,24 +635,31 @@ table.CodeRay td.code>pre{padding:0}
        </div> 
        <div class="ulist"> 
         <ul> 
-         <li> <p><a href="https://github.com/junit-team/junit4/wiki/Rules" target="_blank">JUnit rules</a> (in JUnit4);</p> </li> 
+         <li> <p><a href="https://github.com/junit-team/junit4/wiki/Rules" target="_blank">JUnit rules</a> (in JUnit4 tests);</p> </li> 
          <li> <p><a href="https://docs.jboss.org/weld/reference/latest/en-US/html_single/#interceptors" target="_blank">CDI interceptor</a> (in <code>CDI</code> based tests)</p> </li> 
-         <li> <p><a href="http://junit.org/junit5/docs/current/user-guide/#extensions" target="_blank">extension</a> (in case of <code>JUnit5</code>).</p> </li> 
+         <li> <p><a href="http://junit.org/junit5/docs/current/user-guide/#extensions" target="_blank">JUnit5 extension</a>.</p> </li> 
         </ul> 
        </div> 
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_seed_database_in_a_junit_4_test"><a class="anchor" href="#_seed_database_in_a_junit_4_test"></a>2.1. Seed database in a JUnit 4 test</h3> 
+      <h3 id="_seeding_database_with_code_dbunit_rule_code"><a class="anchor" href="#_seeding_database_with_code_dbunit_rule_code"></a>2.1. Seeding database with <code>DBUnit Rule</code></h3> 
       <div class="paragraph"> 
-       <p>JUnit4 is integrated with DBUnit by means of a <a href="https://github.com/junit-team/junit4/wiki/Rules" target="_blank">JUnit rule</a> called <code>DBUnitRule</code> which just needs a <a href="https://docs.oracle.com/javase/tutorial/jdbc/" target="_blank">JDBC</a> connection in order to be created.</p> 
+       <p>JUnit4 integrates with DBUnit through a <a href="https://github.com/junit-team/junit4/wiki/Rules" target="_blank">JUnit rule</a> called <code>DBUnitRule</code> which reads <strong>@Dataset</strong> annotations in order to prepare the database state using DBUnit behind the scenes.</p> 
       </div> 
-      <div class="paragraph"> 
-       <p>This rule just reads <strong>@Dataset</strong> annotation in order to prepare the database state using DBUnit behind the scenes.</p> 
+      <div class="admonitionblock note"> 
+       <table> 
+        <tbody> 
+         <tr> 
+          <td class="icon"> <i class="fa icon-note" title="Note"></i> </td> 
+          <td class="content"> The rule just needs a <a href="https://docs.oracle.com/javase/tutorial/jdbc/" target="_blank">JDBC</a> connection in order to be created. </td> 
+         </tr> 
+        </tbody> 
+       </table> 
       </div> 
       <h3 id="__strong_dependencies_strong" class="discrete"><strong>Dependencies</strong></h3> 
       <div class="paragraph"> 
-       <p>To use it just add the following maven dependency:</p> 
+       <p>To use it add the following maven dependency:</p> 
       </div> 
       <div class="listingblock"> 
        <div class="content"> 
@@ -708,7 +709,7 @@ table.CodeRay td.code>pre{padding:0}
                </tr> 
                <tr> 
                 <td><i class="conum" data-value="2"></i><b>2</b></td> 
-                <td>DBUnit rule responsible for reading <code>@DataSet</code> annotation and prepare the database for each test.</td> 
+                <td>DBUnit rule is responsible for reading <code>@DataSet</code> annotation and prepare the database for each test.</td> 
                </tr> 
               </tbody> 
              </table> 
@@ -818,83 +819,25 @@ follower:
        </div> 
       </div> 
      </div> 
-    </div> 
-   </div> 
-   <div class="sect1"> 
-    <h2 id="Manage-database-with-Database-Rider-CDI"><a class="anchor" href="#Manage-database-with-Database-Rider-CDI"></a>3. <strong>Manage database with Database Rider CDI</strong></h2> 
-    <div class="sectionbody"> 
-     <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('Manage-database-with-Database-Rider-CDI');document.getElementById('hidden-Manage-database-with-Database-Rider-CDI').style.display = 'inline';this.style.display = 'none'"> </span> 
-     <span id="hidden-Manage-database-with-Database-Rider-CDI" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('Manage-database-with-Database-Rider-CDI');this.style.display = 'none'"> </span> 
-     <div class="sidebarblock"> 
-      <div class="content"> 
-       <div class="exampleblock"> 
-        <div class="content"> 
-         <div class="quoteblock"> 
-          <blockquote> 
-           <div class="paragraph"> 
-            <p>In order to manage database state in <strong>CDI</strong> based tests<br> As a developer<br> I want to use DBUnit in a CDI test environment.</p> 
-           </div> 
-          </blockquote> 
-         </div> 
-        </div> 
-       </div> 
-       <div class="paragraph"> 
-        <p>DBUnit CDI integration is done through a <a href="https://docs.jboss.org/weld/reference/latest/en-US/html_single/#interceptors" target="_blank">CDI interceptor</a> which reads <code>@DataSet</code> to prepare database for CDI based tests.</p> 
-       </div> 
-       <div class="admonitionblock important"> 
-        <table> 
-         <tbody> 
-          <tr> 
-           <td class="icon"> <i class="fa icon-important" title="Important"></i> </td> 
-           <td class="content"> 
-            <div class="paragraph"> 
-             <p>CDI must be enabled in your test, see the following example:</p> 
-            </div> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(CdiTestRunner.class) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@DBUnitInterceptor</span> <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="directive">public</span> <span class="type">class</span> <span class="class">DBUnitCDITest</span> {
-
-}</code></pre> 
-             </div> 
-            </div> 
-            <div class="colist arabic"> 
-             <table> 
-              <tbody> 
-               <tr> 
-                <td><i class="conum" data-value="1"></i><b>1</b></td> 
-                <td><a href="https://deltaspike.apache.org/documentation/test-control.html" target="_blank">CdiTestRunner</a> is provided by <a href="https://deltaspike.apache.org" target="_blank">Apache Deltaspike</a> but you should be able to use other CDI test runners.</td> 
-               </tr> 
-               <tr> 
-                <td><i class="conum" data-value="2"></i><b>2</b></td> 
-                <td>Needed to activate DBUnit interceptor</td> 
-               </tr> 
-              </tbody> 
-             </table> 
-            </div> </td> 
-          </tr> 
-         </tbody> 
-        </table> 
-       </div> 
-       <h3 id="__strong_dependencies_strong_2" class="discrete"><strong>Dependencies</strong></h3> 
-       <div class="paragraph"> 
-        <p>To use this module just add the following maven dependency:</p> 
-       </div> 
-       <div class="listingblock"> 
-        <div class="content"> 
-         <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
-   <span class="tag">&lt;groupId&gt;</span>com.github.database-rider<span class="tag">&lt;/groupId&gt;</span>
-   <span class="tag">&lt;artifactId&gt;</span>rider-cdi<span class="tag">&lt;/artifactId&gt;</span>
+     <div class="sect2"> 
+      <h3 id="_seed_database_with_code_dbunit_interceptor_code"><a class="anchor" href="#_seed_database_with_code_dbunit_interceptor_code"></a>2.2. Seed database with <code>DBUnit Interceptor</code></h3> 
+      <div class="paragraph"> 
+       <p>DBUnit CDI<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</sup> integration is done through a <a href="https://docs.jboss.org/weld/reference/latest/en-US/html_single/#interceptors" target="_blank">CDI interceptor</a> which reads <code>@DataSet</code> to prepare database in CDI tests.</p> 
+      </div> 
+      <h3 id="__strong_dependencies_strong_2" class="discrete"><strong>Dependencies</strong></h3> 
+      <div class="paragraph"> 
+       <p>To use this module just add the following maven dependency:</p> 
+      </div> 
+      <div class="listingblock"> 
+       <div class="content"> 
+        <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
+ <span class="tag">&lt;groupId&gt;</span>com.github.database-rider<span class="tag">&lt;/groupId&gt;</span>
+ <span class="tag">&lt;artifactId&gt;</span>rider-cdi<span class="tag">&lt;/artifactId&gt;</span>
    <span class="tag">&lt;version&gt;</span>1.0.0-RC3-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
-   <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+ <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
-        </div> 
        </div> 
       </div> 
-     </div> 
-     <div class="sect2"> 
-      <h3 id="_seed_database_using_yml_dataset"><a class="anchor" href="#_seed_database_using_yml_dataset"></a>3.1. Seed database using yml dataset</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -1008,7 +951,10 @@ follower:
            <div class="content"> 
             <div class="listingblock"> 
              <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java">    <span class="annotation">@Test</span>
+              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(CdiTestRunner.class) <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="annotation">@DBUnitInterceptor</span> <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">DBUnitCDIIt</span> {
+    <span class="annotation">@Test</span>
     <span class="annotation">@DataSet</span>(<span class="string"><span class="delimiter">"</span><span class="content">yml/users.yml</span><span class="delimiter">"</span></span>)
     <span class="directive">public</span> <span class="type">void</span> shouldSeedUserDataSetUsingCdiInterceptor() {
         <span class="predefined-type">List</span>&lt;User&gt; users = em.createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u order by u.id asc</span><span class="delimiter">"</span></span>).getResultList();
@@ -1021,6 +967,20 @@ follower:
         assertThat(tweetsUser1).isNotNull().hasSize(<span class="integer">1</span>).contains(tweetUser1);
     }</code></pre> 
              </div> 
+            </div> 
+            <div class="colist arabic"> 
+             <table> 
+              <tbody> 
+               <tr> 
+                <td><i class="conum" data-value="1"></i><b>1</b></td> 
+                <td><a href="https://deltaspike.apache.org/documentation/test-control.html" target="_blank">CdiTestRunner</a> is provided by <a href="https://deltaspike.apache.org" target="_blank">Apache Deltaspike</a> but you should be able to use other CDI test runners.</td> 
+               </tr> 
+               <tr> 
+                <td><i class="conum" data-value="2"></i><b>2</b></td> 
+                <td>Needed to activate DBUnit interceptor</td> 
+               </tr> 
+              </tbody> 
+             </table> 
             </div> 
            </div> 
           </div> 
@@ -1053,10 +1013,187 @@ follower:
        </div> 
       </div> 
      </div> 
+     <div class="sect2"> 
+      <h3 id="_seed_database_with_code_junit_5_extension_code"><a class="anchor" href="#_seed_database_with_code_junit_5_extension_code"></a>2.3. Seed database with <code>JUnit 5 extension</code></h3> 
+      <div class="paragraph"> 
+       <p>DBUnit is enabled in JUnit 5 tests through an <a href="http://junit.org/junit5/docs/current/user-guide/#extensions" target="_blank">extension</a> named <strong>DBUnitExtension</strong>.</p> 
+      </div> 
+      <h3 id="__strong_dependencies_strong_3" class="discrete"><strong>Dependencies</strong></h3> 
+      <div class="paragraph"> 
+       <p>To use the extension just add the following maven dependency:</p> 
+      </div> 
+      <div class="listingblock"> 
+       <div class="content"> 
+        <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
+   <span class="tag">&lt;groupId&gt;</span>com.github.dbunit-rules<span class="tag">&lt;/groupId&gt;</span>
+   <span class="tag">&lt;artifactId&gt;</span>junit5<span class="tag">&lt;/artifactId&gt;</span>
+   <span class="tag">&lt;version&gt;</span>1.0.0-RC3-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+   <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+<span class="tag">&lt;/dependency&gt;</span></code></pre> 
+       </div> 
+      </div> 
+      <div class="sidebarblock"> 
+       <div class="content"> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Given 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="title">
+               src/test/resources/dataset/users.yml 
+             </div> 
+             <div class="content"> 
+              <pre>user:
+  - id: 1
+    name: "@realpestano"
+  - id: 2
+    name: "@dbunit"</pre> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            When 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following junit5 test is executed <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="content"> 
+              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@ExtendWith</span>(DBUnitExtension.class) <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="annotation">@RunWith</span>(JUnitPlatform.class) <i class="conum" data-value="2"></i><b>(2)</b>
+<span class="annotation">@DataSet</span>(cleanBefore = <span class="predefined-constant">true</span>)
+<span class="directive">public</span> <span class="type">class</span> <span class="class">DBUnitJUnit5It</span> {
+
+    <span class="directive">private</span> ConnectionHolder connectionHolder = () -&gt; <i class="conum" data-value="3"></i><b>(3)</b>
+            EntityManagerProvider.instance(<span class="string"><span class="delimiter">"</span><span class="content">junit5-pu</span><span class="delimiter">"</span></span>).clear().connection();<i class="conum" data-value="4"></i><b>(4)</b>
+
+    <span class="annotation">@Test</span>
+    <span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">usersWithTweet.yml</span><span class="delimiter">"</span></span>)
+    <span class="directive">public</span> <span class="type">void</span> shouldListUsers() {
+        <span class="predefined-type">List</span>&lt;User&gt; users = EntityManagerProvider.em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
+        assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">2</span>);
+    }</code></pre> 
+             </div> 
+            </div> 
+            <div class="colist arabic"> 
+             <table> 
+              <tbody> 
+               <tr> 
+                <td><i class="conum" data-value="1"></i><b>1</b></td> 
+                <td>Enables DBUnit.</td> 
+               </tr> 
+               <tr> 
+                <td><i class="conum" data-value="2"></i><b>2</b></td> 
+                <td>JUnit 5 runner;</td> 
+               </tr> 
+               <tr> 
+                <td><i class="conum" data-value="3"></i><b>3</b></td> 
+                <td>As JUnit5 requires <strong>Java8</strong> you can use lambdas in your tests;</td> 
+               </tr> 
+               <tr> 
+                <td><i class="conum" data-value="4"></i><b>4</b></td> 
+                <td>DBUnitExtension will get connection by reflection so just declare a field or a method with <code>ConnectionHolder</code> as return type.</td> 
+               </tr> 
+              </tbody> 
+             </table> 
+            </div> 
+           </div> 
+          </div> 
+          <div class="admonitionblock tip"> 
+           <table> 
+            <tbody> 
+             <tr> 
+              <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
+              <td class="content"> Source code of the above example can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-junit5/src/test/java/com/github/database/rider/junit5/DBUnitJUnit5It.java/#L24" target="_blank">found here</a>. </td> 
+             </tr> 
+            </tbody> 
+           </table> 
+          </div> 
+          <div class="admonitionblock tip"> 
+           <table> 
+            <tbody> 
+             <tr> 
+              <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
+              <td class="content"> 
+               <div class="paragraph"> 
+                <p>Another way to activate DBUnit in JUnits 5 test is using <strong>@DBRider</strong> annotation (at method or class level):</p> 
+               </div> 
+               <div class="listingblock"> 
+                <div class="content"> 
+                 <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(JUnitPlatform.class)
+<span class="directive">public</span> <span class="type">class</span> <span class="class">DBRiderAnnotationIt</span> {
+
+    <span class="directive">private</span> ConnectionHolder connectionHolder = () -&gt;
+            EntityManagerProvider.instance(<span class="string"><span class="delimiter">"</span><span class="content">junit5-pu</span><span class="delimiter">"</span></span>).connection();
+
+
+    <span class="annotation">@DBRider</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    <span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">usersWithTweet.yml</span><span class="delimiter">"</span></span>)
+    <span class="directive">public</span> <span class="type">void</span> shouldListUsers() {
+        <span class="predefined-type">List</span>&lt;User&gt; users = EntityManagerProvider.em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
+        assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">2</span>);
+    }
+}</code></pre> 
+                </div> 
+               </div> 
+               <div class="colist arabic"> 
+                <table> 
+                 <tbody> 
+                  <tr> 
+                   <td><i class="conum" data-value="1"></i><b>1</b></td> 
+                   <td>Shortcut for <code>@Test</code> and <code>@ExtendWith(DBUnitExtension.class)</code></td> 
+                  </tr> 
+                 </tbody> 
+                </table> 
+               </div> </td> 
+             </tr> 
+            </tbody> 
+           </table> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Then 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The database should be seeded with the dataset content before test execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+         </div> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
     </div> 
    </div> 
    <div class="sect1"> 
-    <h2 id="Manage-database-with-Database-Rider-Cucumber"><a class="anchor" href="#Manage-database-with-Database-Rider-Cucumber"></a>4. <strong>Manage database with Database Rider Cucumber</strong></h2> 
+    <h2 id="Manage-database-with-Database-Rider-Cucumber"><a class="anchor" href="#Manage-database-with-Database-Rider-Cucumber"></a>3. <strong>Manage database with Database Rider Cucumber</strong></h2> 
     <div class="sectionbody"> 
      <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('Manage-database-with-Database-Rider-Cucumber');document.getElementById('hidden-Manage-database-with-Database-Rider-Cucumber').style.display = 'inline';this.style.display = 'none'"> </span> 
      <span id="hidden-Manage-database-with-Database-Rider-Cucumber" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('Manage-database-with-Database-Rider-Cucumber');this.style.display = 'none'"> </span> 
@@ -1077,7 +1214,7 @@ follower:
         <p>DBUnit enters the BDD world through a dedicated JUNit runner which is based on <a href="https://cucumber.io/" target="_blank">Cucumber</a> and <a href="https://deltaspike.apache.org/" target="_blank">Apache DeltaSpike</a>.</p> 
        </div> 
        <div class="paragraph"> 
-        <p>This runner just starts CDI within your BDD tests so you just have to use <a href="#Manage-database-with-Database-Rider-CDI">Database Rider CDI interceptor</a> on Cucumber steps, here is the so called Cucumber CDI runner declaration:</p> 
+        <p>This runner just starts CDI within your BDD tests so you just have to use <a href="#Manage database with Database Rider CDI">Database Rider CDI interceptor</a> on Cucumber steps, here is the so called Cucumber CDI runner declaration:</p> 
        </div> 
        <div class="listingblock"> 
         <div class="content"> 
@@ -1091,9 +1228,7 @@ follower:
 <span class="annotation">@RunWith</span>(Cucumber.class)
 <span class="annotation">@CucumberOptions</span>(features = {
         <span class="string"><span class="delimiter">"</span><span class="content">src/test/resources/features/seeding/seeding-database.feature</span><span class="delimiter">"</span></span>,
-        <span class="string"><span class="delimiter">"</span><span class="content">src/test/resources/features/cdi/cdi-seed-database.feature</span><span class="delimiter">"</span></span>,
         <span class="string"><span class="delimiter">"</span><span class="content">src/test/resources/features/cucumber/cucumber-seed-database.feature</span><span class="delimiter">"</span></span>,
-        <span class="string"><span class="delimiter">"</span><span class="content">src/test/resources/features/junit5/junit5-seed-database.feature</span><span class="delimiter">"</span></span>,
         <span class="string"><span class="delimiter">"</span><span class="content">src/test/resources/features/general/dataset-replacements.feature</span><span class="delimiter">"</span></span>,
         <span class="string"><span class="delimiter">"</span><span class="content">src/test/resources/features/general/expected-dataset.feature</span><span class="delimiter">"</span></span>
 },
@@ -1112,7 +1247,7 @@ follower:
          </tbody> 
         </table> 
        </div> 
-       <h3 id="__strong_dependencies_strong_3" class="discrete"><strong>Dependencies</strong></h3> 
+       <h3 id="__strong_dependencies_strong_4" class="discrete"><strong>Dependencies</strong></h3> 
        <div class="paragraph"> 
         <p>Here is a set of maven dependencies needed by Database Rider Cucumber:</p> 
        </div> 
@@ -1223,7 +1358,7 @@ follower:
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_seed_database_using_database_rider_in_cucumber_tests"><a class="anchor" href="#_seed_database_using_database_rider_in_cucumber_tests"></a>4.1. Seed database using Database Rider in Cucumber tests</h3> 
+      <h3 id="_seed_database_using_database_rider_in_cucumber_tests"><a class="anchor" href="#_seed_database_using_database_rider_in_cucumber_tests"></a>3.1. Seed database using Database Rider in Cucumber tests</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -1473,165 +1608,7 @@ company:
     </div> 
    </div> 
    <div class="sect1"> 
-    <h2 id="Manage-database-with-Database-Rider-and-JUnit-5"><a class="anchor" href="#Manage-database-with-Database-Rider-and-JUnit-5"></a>5. <strong>Manage database with Database Rider and JUnit 5</strong></h2> 
-    <div class="sectionbody"> 
-     <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('Manage-database-with-Database-Rider-and-JUnit-5');document.getElementById('hidden-Manage-database-with-Database-Rider-and-JUnit-5').style.display = 'inline';this.style.display = 'none'"> </span> 
-     <span id="hidden-Manage-database-with-Database-Rider-and-JUnit-5" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('Manage-database-with-Database-Rider-and-JUnit-5');this.style.display = 'none'"> </span> 
-     <div class="sidebarblock"> 
-      <div class="content"> 
-       <div class="exampleblock"> 
-        <div class="content"> 
-         <div class="quoteblock"> 
-          <blockquote> 
-           <div class="paragraph"> 
-            <p>In order to manage database state in <a href="http://junit.org/junit5/" target="_blank">JUnit 5</a> integration tests<br> As a developer<br> I want to use DBUnit along side my JUnit 5 tests.</p> 
-           </div> 
-          </blockquote> 
-         </div> 
-        </div> 
-       </div> 
-       <div class="paragraph"> 
-        <p>DBUnit is enabled in JUnit 5 tests through an <a href="http://junit.org/junit5/docs/current/user-guide/#extensions" target="_blank">extension</a> named <strong>DBUnitExtension</strong>.</p> 
-       </div> 
-       <h3 id="__strong_dependencies_strong_4" class="discrete"><strong>Dependencies</strong></h3> 
-       <div class="paragraph"> 
-        <p>To use the extension just add the following maven dependency:</p> 
-       </div> 
-       <div class="listingblock"> 
-        <div class="content"> 
-         <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
-   <span class="tag">&lt;groupId&gt;</span>com.github.dbunit-rules<span class="tag">&lt;/groupId&gt;</span>
-   <span class="tag">&lt;artifactId&gt;</span>junit5<span class="tag">&lt;/artifactId&gt;</span>
-   <span class="tag">&lt;version&gt;</span>1.0.0-RC3-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
-   <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
-<span class="tag">&lt;/dependency&gt;</span></code></pre> 
-        </div> 
-       </div> 
-      </div> 
-     </div> 
-     <div class="sect2"> 
-      <h3 id="_seed_database_using_database_rider_in_junit5_tests"><a class="anchor" href="#_seed_database_using_database_rider_in_junit5_tests"></a>5.1. Seed database using Database Rider in JUnit5 tests</h3> 
-      <div class="sidebarblock"> 
-       <div class="content"> 
-        <div class="dlist"> 
-         <dl> 
-          <dt class="hdlist1">
-            Given 
-          </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
-           <div class="content"> 
-            <div class="listingblock"> 
-             <div class="title">
-               src/test/resources/dataset/users.yml 
-             </div> 
-             <div class="content"> 
-              <pre>user:
-  - id: 1
-    name: "@realpestano"
-  - id: 2
-    name: "@dbunit"</pre> 
-             </div> 
-            </div> 
-           </div> 
-          </div> 
-         </div> 
-        </div> 
-        <div class="dlist"> 
-         <dl> 
-          <dt class="hdlist1">
-            When 
-          </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following junit5 test is executed <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
-           <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@ExtendWith</span>(DBUnitExtension.class) <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="annotation">@RunWith</span>(JUnitPlatform.class) <i class="conum" data-value="2"></i><b>(2)</b>
-<span class="annotation">@DataSet</span>(cleanBefore = <span class="predefined-constant">true</span>)
-<span class="directive">public</span> <span class="type">class</span> <span class="class">DBUnitJUnit5It</span> {
-
-    <span class="directive">private</span> ConnectionHolder connectionHolder = () -&gt; <i class="conum" data-value="3"></i><b>(3)</b>
-            EntityManagerProvider.instance(<span class="string"><span class="delimiter">"</span><span class="content">junit5-pu</span><span class="delimiter">"</span></span>).clear().connection();<i class="conum" data-value="4"></i><b>(4)</b>
-
-    <span class="annotation">@Test</span>
-    <span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">usersWithTweet.yml</span><span class="delimiter">"</span></span>)
-    <span class="directive">public</span> <span class="type">void</span> shouldListUsers() {
-        <span class="predefined-type">List</span>&lt;User&gt; users = EntityManagerProvider.em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
-        assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">2</span>);
-    }</code></pre> 
-             </div> 
-            </div> 
-            <div class="colist arabic"> 
-             <table> 
-              <tbody> 
-               <tr> 
-                <td><i class="conum" data-value="1"></i><b>1</b></td> 
-                <td>Enables DBUnit;</td> 
-               </tr> 
-               <tr> 
-                <td><i class="conum" data-value="2"></i><b>2</b></td> 
-                <td>JUnit 5 runner;</td> 
-               </tr> 
-               <tr> 
-                <td><i class="conum" data-value="3"></i><b>3</b></td> 
-                <td>As JUnit5 requires <strong>Java8</strong> you can use lambdas in your tests;</td> 
-               </tr> 
-               <tr> 
-                <td><i class="conum" data-value="4"></i><b>4</b></td> 
-                <td>DBUnitExtension will get connection by reflection so just declare a field or a method with <code>ConnectionHolder</code> as return type.</td> 
-               </tr> 
-              </tbody> 
-             </table> 
-            </div> 
-           </div> 
-          </div> 
-          <div class="admonitionblock tip"> 
-           <table> 
-            <tbody> 
-             <tr> 
-              <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
-              <td class="content"> Source code of the above example can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-junit5/src/test/java/com/github/database/rider/junit5/DBUnitJUnit5It.java/#L24" target="_blank">found here</a>. </td> 
-             </tr> 
-            </tbody> 
-           </table> 
-          </div> 
-         </div> 
-        </div> 
-        <div class="dlist"> 
-         <dl> 
-          <dt class="hdlist1">
-            Then 
-          </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
-           <p>The database should be seeded with the dataset content before test execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-         </div> 
-        </div> 
-       </div> 
-      </div> 
-     </div> 
-    </div> 
-   </div> 
-   <div class="sect1"> 
-    <h2 id="Dynamic-data-using-scritable-datasets"><a class="anchor" href="#Dynamic-data-using-scritable-datasets"></a>6. <strong>Dynamic data using scritable datasets</strong></h2> 
+    <h2 id="Dynamic-data-using-scritable-datasets"><a class="anchor" href="#Dynamic-data-using-scritable-datasets"></a>4. <strong>Dynamic data using scritable datasets</strong></h2> 
     <div class="sectionbody"> 
      <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('Dynamic-data-using-scritable-datasets');document.getElementById('hidden-Dynamic-data-using-scritable-datasets').style.display = 'inline';this.style.display = 'none'"> </span> 
      <span id="hidden-Dynamic-data-using-scritable-datasets" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('Dynamic-data-using-scritable-datasets');this.style.display = 'none'"> </span> 
@@ -1649,7 +1626,7 @@ company:
         </div> 
        </div> 
        <div class="paragraph"> 
-        <p>Scritable datasets are backed by JSR 223.<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</sup>.</p> 
+        <p>Scritable datasets are backed by JSR 223.<sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnote_2" title="View footnote.">2</a>]</sup>.</p> 
        </div> 
        <div class="paragraph"> 
         <p>Complete source code of examples below can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java#L18" target="_blank">found here</a>.</p> 
@@ -1657,7 +1634,7 @@ company:
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_seed_database_with_groovy_script_in_dataset"><a class="anchor" href="#_seed_database_with_groovy_script_in_dataset"></a>6.1. Seed database with groovy script in dataset</h3> 
+      <h3 id="_seed_database_with_groovy_script_in_dataset"><a class="anchor" href="#_seed_database_with_groovy_script_in_dataset"></a>4.1. Seed database with groovy script in dataset</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -1783,7 +1760,7 @@ company:
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_seed_database_with_javascript_in_dataset"><a class="anchor" href="#_seed_database_with_javascript_in_dataset"></a>6.2. Seed database with javascript in dataset</h3> 
+      <h3 id="_seed_database_with_javascript_in_dataset"><a class="anchor" href="#_seed_database_with_javascript_in_dataset"></a>4.2. Seed database with javascript in dataset</h3> 
       <div class="admonitionblock note"> 
        <table> 
         <tbody> 
@@ -1892,7 +1869,7 @@ company:
     </div> 
    </div> 
    <div class="sect1"> 
-    <h2 id="Database-assertion-using-expected-datasets"><a class="anchor" href="#Database-assertion-using-expected-datasets"></a>7. <strong>Database assertion using expected datasets</strong></h2> 
+    <h2 id="Database-assertion-using-expected-datasets"><a class="anchor" href="#Database-assertion-using-expected-datasets"></a>5. <strong>Database assertion using expected datasets</strong></h2> 
     <div class="sectionbody"> 
      <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('Database-assertion-using-expected-datasets');document.getElementById('hidden-Database-assertion-using-expected-datasets').style.display = 'inline';this.style.display = 'none'"> </span> 
      <span id="hidden-Database-assertion-using-expected-datasets" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('Database-assertion-using-expected-datasets');this.style.display = 'none'"> </span> 
@@ -1915,7 +1892,7 @@ company:
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_database_assertion_with_yml_dataset"><a class="anchor" href="#_database_assertion_with_yml_dataset"></a>7.1. Database assertion with yml dataset</h3> 
+      <h3 id="_database_assertion_with_yml_dataset"><a class="anchor" href="#_database_assertion_with_yml_dataset"></a>5.1. Database assertion with yml dataset</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2023,7 +2000,7 @@ company:
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_database_assertion_with_regular_expression_in_expected_dataset"><a class="anchor" href="#_database_assertion_with_regular_expression_in_expected_dataset"></a>7.2. Database assertion with regular expression in expected dataset</h3> 
+      <h3 id="_database_assertion_with_regular_expression_in_expected_dataset"><a class="anchor" href="#_database_assertion_with_regular_expression_in_expected_dataset"></a>5.2. Database assertion with regular expression in expected dataset</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2109,7 +2086,7 @@ company:
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_database_assertion_with_seeding_before_test_execution"><a class="anchor" href="#_database_assertion_with_seeding_before_test_execution"></a>7.3. Database assertion with seeding before test execution</h3> 
+      <h3 id="_database_assertion_with_seeding_before_test_execution"><a class="anchor" href="#_database_assertion_with_seeding_before_test_execution"></a>5.3. Database assertion with seeding before test execution</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2218,7 +2195,7 @@ company:
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_failling_database_assertion"><a class="anchor" href="#_failling_database_assertion"></a>7.4. Failling database assertion</h3> 
+      <h3 id="_failling_database_assertion"><a class="anchor" href="#_failling_database_assertion"></a>5.4. Failling database assertion</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2317,7 +2294,7 @@ company:
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_database_assertion_using_automatic_transaction"><a class="anchor" href="#_database_assertion_using_automatic_transaction"></a>7.5. Database assertion using automatic transaction</h3> 
+      <h3 id="_database_assertion_using_automatic_transaction"><a class="anchor" href="#_database_assertion_using_automatic_transaction"></a>5.5. Database assertion using automatic transaction</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2417,14 +2394,18 @@ company:
   <div id="footnotes"> 
    <hr> 
    <div class="footnote" id="_footnote_1"> 
-    <a href="#_footnoteref_1">1</a>. Scripting for the Java Platform, for more information access the official 
+    <a href="#_footnoteref_1">1</a>. 
+    <a href="http://docs.oracle.com/javaee/6/tutorial/doc/giwhb.html" target="_blank">Contexts and dependency for the Java EE</a> 
+   </div> 
+   <div class="footnote" id="_footnote_2"> 
+    <a href="#_footnoteref_2">2</a>. Scripting for the Java Platform, for more information access the official 
     <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/prog_guide/api.html" target="_blank">docs here</a> 
    </div> 
   </div> 
   <div id="footer" style="color:gray;font-size:11px">
     Generated by 
-   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.6</a> - Oct 27, 2016 7:09:22 PM 
-   <span style="float:right;font-size:11px"> Execution time: 16.384 seconds</span> 
+   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.6</a> - Oct 28, 2016 12:26:38 AM 
+   <span style="float:right;font-size:11px"> Execution time: 13.843 seconds</span> 
   </div> 
   <style>  
 
