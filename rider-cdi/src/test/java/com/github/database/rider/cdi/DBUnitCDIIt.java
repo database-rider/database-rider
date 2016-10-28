@@ -20,9 +20,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Created by pestano on 23/07/15.
  */
 
-@RunWith(CdiTestRunner.class)
-@DBUnitInterceptor
+// tag::cdi-declaration[]
+@RunWith(CdiTestRunner.class) //<1>
+@DBUnitInterceptor //<2>
 public class DBUnitCDIIt {
+// end::cdi-declaration[]
 
     @Inject
     EntityManager em;

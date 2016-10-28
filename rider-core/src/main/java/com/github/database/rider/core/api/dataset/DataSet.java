@@ -23,7 +23,7 @@ public @interface DataSet {
    *
    * @return name of dataset executor for the given dataset. If not specified the default one will be used.
    *
-   * Use this option to work with multple database conncetions. Remember that each executor has its own connection.
+   * Use this option to work with multiple database connections. Remember that each executor has its own connection.
    */
   String executorId() default DataSetExecutorImpl.DEFAULT_EXECUTOR_ID;
 

@@ -44,7 +44,6 @@ public class GlobalConfig {
         if(dbUnitConfig == null) { 
         	//default config
         	dbUnitConfig = new Yaml().loadAs(GlobalConfig.class.getResourceAsStream("/default/dbunit.yml"), DBUnitConfig.class);
-        	
         }
 
         if (dbUnitConfig.getProperties().containsKey("escapePattern")) {
