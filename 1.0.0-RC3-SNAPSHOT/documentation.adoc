@@ -132,10 +132,10 @@ To use this module just add the following maven dependency:
 [source,xml]
 ----
 <dependency>
- <groupId>com.github.database-rider</groupId>
- <artifactId>rider-cdi</artifactId>
+   <groupId>com.github.database-rider</groupId>
+   <artifactId>rider-cdi</artifactId>
 include::../../../../pom.xml[tags=version]
- <scope>test</scope>
+   <scope>test</scope>
 </dependency>
 ----
 
@@ -230,7 +230,7 @@ To use the extension just add the following maven dependency:
 ----
 <dependency>
    <groupId>com.github.dbunit-rules</groupId>
-   <artifactId>junit5</artifactId>
+   <artifactId>rider-junit5</artifactId>
 include::../../../../pom.xml[tags=version]
    <scope>test</scope>
 </dependency>
@@ -296,22 +296,11 @@ The database should be seeded with the dataset content before test execution ico
 =====
 ****
 
-[[Manage-database-with-Database-Rider-Cucumber, Manage database with Database Rider Cucumber]]
-== *Manage database with Database Rider Cucumber*
-
-****
-====
-[quote]
-____
-In order to manage database state in `BDD` tests
-As a BDD developer
-I want to use DBUnit along side my BDD tests.
-____
-====
+=== Seeding database in BDD tests with `Rider Cucumber`
 
 DBUnit enters the BDD world through a dedicated JUNit runner which is based on https://cucumber.io/[Cucumber^] and https://deltaspike.apache.org/[Apache DeltaSpike^].
 
-This runner just starts CDI within your BDD tests so you just have to use <<Manage database with Database Rider CDI,Database Rider CDI interceptor>> on Cucumber steps, here is the so called Cucumber CDI runner declaration:
+This runner just starts CDI within your BDD tests so you just have to use <<_seed_database_with_code_dbunit_interceptor_code,Database Rider CDI interceptor>> on Cucumber steps, here is the so called Cucumber CDI runner declaration:
 
 [source,java]
 ----
@@ -319,7 +308,7 @@ include::../../../src/test/java/com/github/database/rider/core/bdd/DatabaseRider
 ----
 
 
-IMPORTANT: As cucumber doesn't work with JUnit Rules, see https://github.com/cucumber/cucumber-jvm/issues/393[this issue^], you won't be able to use Cucumber runner with _Database Rider Core_ because its based on JUnit rules, but you can use DataSetExecutor in `@Before`, see https://github.com/database-rider/database-rider/tree/master/examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/withoutcdi[example here^].
+IMPORTANT: As cucumber doesn't work with JUnit Rules, see https://github.com/cucumber/cucumber-jvm/issues/393[this issue^], you won't be able to use Cucumber runner with _DBUnit Rule_, but you can use DataSetExecutor in `@Before`, see https://github.com/database-rider/database-rider/tree/master/examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/withoutcdi[example here^].
 
 [discrete]
 === *Dependencies*
@@ -327,7 +316,7 @@ Here is a set of maven dependencies needed by Database Rider Cucumber:
 
 NOTE: Most of the dependencies, except CDI container implementation, are bring by Database Rider Cucumber module transitively.
 
-[source,xml,indent=0]
+[source,xml]
 ----
 <dependency>
    <groupId>com.github.database-rider</groupId>
@@ -338,22 +327,19 @@ include::../../../../pom.xml[tags=version]
 ----
 
 .Cucumber dependencies
-[source,xml,indent=0]
+[source,xml,ident=0]
 ----
 include::../../../pom.xml[tags=cucumber-deps]
 ----
 <1> You don't need to declare because it comes with Database Rider Cucumber module dependency.
 
 .DeltaSpike and CDI dependency
-[source,xml,indent=0]
+[source,xml,ident=0]
 ----
 include::../../../../rider-cdi/pom.xml[tags=deltaspike-cdi-deps]
 ----
 <2> Also comes with DBUit Rules Cucumber.
 <3> You can use CDI implementation of your choice.
-****
-
-=== Seed database using Database Rider in Cucumber tests
 
 ****
 Given ::

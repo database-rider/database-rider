@@ -530,23 +530,20 @@ table.CodeRay td.code>pre{padding:0}
        <li><a href="#_seeding_database_with_code_dbunit_rule_code">2.1. Seeding database with <code>DBUnit Rule</code></a></li> 
        <li><a href="#_seed_database_with_code_dbunit_interceptor_code">2.2. Seed database with <code>DBUnit Interceptor</code></a></li> 
        <li><a href="#_seed_database_with_code_junit_5_extension_code">2.3. Seed database with <code>JUnit 5 extension</code></a></li> 
+       <li><a href="#_seeding_database_in_bdd_tests_with_code_rider_cucumber_code">2.4. Seeding database in BDD tests with <code>Rider Cucumber</code></a></li> 
       </ul> </li> 
-     <li><a href="#Manage-database-with-Database-Rider-Cucumber">3. <strong>Manage database with Database Rider Cucumber</strong></a> 
+     <li><a href="#Dynamic-data-using-scritable-datasets">3. <strong>Dynamic data using scritable datasets</strong></a> 
       <ul class="sectlevel2"> 
-       <li><a href="#_seed_database_using_database_rider_in_cucumber_tests">3.1. Seed database using Database Rider in Cucumber tests</a></li> 
+       <li><a href="#_seed_database_with_groovy_script_in_dataset">3.1. Seed database with groovy script in dataset</a></li> 
+       <li><a href="#_seed_database_with_javascript_in_dataset">3.2. Seed database with javascript in dataset</a></li> 
       </ul> </li> 
-     <li><a href="#Dynamic-data-using-scritable-datasets">4. <strong>Dynamic data using scritable datasets</strong></a> 
+     <li><a href="#Database-assertion-using-expected-datasets">4. <strong>Database assertion using expected datasets</strong></a> 
       <ul class="sectlevel2"> 
-       <li><a href="#_seed_database_with_groovy_script_in_dataset">4.1. Seed database with groovy script in dataset</a></li> 
-       <li><a href="#_seed_database_with_javascript_in_dataset">4.2. Seed database with javascript in dataset</a></li> 
-      </ul> </li> 
-     <li><a href="#Database-assertion-using-expected-datasets">5. <strong>Database assertion using expected datasets</strong></a> 
-      <ul class="sectlevel2"> 
-       <li><a href="#_database_assertion_with_yml_dataset">5.1. Database assertion with yml dataset</a></li> 
-       <li><a href="#_database_assertion_with_regular_expression_in_expected_dataset">5.2. Database assertion with regular expression in expected dataset</a></li> 
-       <li><a href="#_database_assertion_with_seeding_before_test_execution">5.3. Database assertion with seeding before test execution</a></li> 
-       <li><a href="#_failling_database_assertion">5.4. Failling database assertion</a></li> 
-       <li><a href="#_database_assertion_using_automatic_transaction">5.5. Database assertion using automatic transaction</a></li> 
+       <li><a href="#_database_assertion_with_yml_dataset">4.1. Database assertion with yml dataset</a></li> 
+       <li><a href="#_database_assertion_with_regular_expression_in_expected_dataset">4.2. Database assertion with regular expression in expected dataset</a></li> 
+       <li><a href="#_database_assertion_with_seeding_before_test_execution">4.3. Database assertion with seeding before test execution</a></li> 
+       <li><a href="#_failling_database_assertion">4.4. Failling database assertion</a></li> 
+       <li><a href="#_database_assertion_using_automatic_transaction">4.5. Database assertion using automatic transaction</a></li> 
       </ul> </li> 
     </ul> 
    </div> 
@@ -831,10 +828,10 @@ follower:
       <div class="listingblock"> 
        <div class="content"> 
         <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
- <span class="tag">&lt;groupId&gt;</span>com.github.database-rider<span class="tag">&lt;/groupId&gt;</span>
- <span class="tag">&lt;artifactId&gt;</span>rider-cdi<span class="tag">&lt;/artifactId&gt;</span>
+   <span class="tag">&lt;groupId&gt;</span>com.github.database-rider<span class="tag">&lt;/groupId&gt;</span>
+   <span class="tag">&lt;artifactId&gt;</span>rider-cdi<span class="tag">&lt;/artifactId&gt;</span>
    <span class="tag">&lt;version&gt;</span>1.0.0-RC3-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
- <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+   <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
        </div> 
       </div> 
@@ -1026,7 +1023,7 @@ follower:
        <div class="content"> 
         <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
    <span class="tag">&lt;groupId&gt;</span>com.github.dbunit-rules<span class="tag">&lt;/groupId&gt;</span>
-   <span class="tag">&lt;artifactId&gt;</span>junit5<span class="tag">&lt;/artifactId&gt;</span>
+   <span class="tag">&lt;artifactId&gt;</span>rider-junit5<span class="tag">&lt;/artifactId&gt;</span>
    <span class="tag">&lt;version&gt;</span>1.0.0-RC3-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
@@ -1190,35 +1187,17 @@ follower:
        </div> 
       </div> 
      </div> 
-    </div> 
-   </div> 
-   <div class="sect1"> 
-    <h2 id="Manage-database-with-Database-Rider-Cucumber"><a class="anchor" href="#Manage-database-with-Database-Rider-Cucumber"></a>3. <strong>Manage database with Database Rider Cucumber</strong></h2> 
-    <div class="sectionbody"> 
-     <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('Manage-database-with-Database-Rider-Cucumber');document.getElementById('hidden-Manage-database-with-Database-Rider-Cucumber').style.display = 'inline';this.style.display = 'none'"> </span> 
-     <span id="hidden-Manage-database-with-Database-Rider-Cucumber" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('Manage-database-with-Database-Rider-Cucumber');this.style.display = 'none'"> </span> 
-     <div class="sidebarblock"> 
-      <div class="content"> 
-       <div class="exampleblock"> 
-        <div class="content"> 
-         <div class="quoteblock"> 
-          <blockquote> 
-           <div class="paragraph"> 
-            <p>In order to manage database state in <code>BDD</code> tests<br> As a BDD developer<br> I want to use DBUnit along side my BDD tests.</p> 
-           </div> 
-          </blockquote> 
-         </div> 
-        </div> 
-       </div> 
-       <div class="paragraph"> 
-        <p>DBUnit enters the BDD world through a dedicated JUNit runner which is based on <a href="https://cucumber.io/" target="_blank">Cucumber</a> and <a href="https://deltaspike.apache.org/" target="_blank">Apache DeltaSpike</a>.</p> 
-       </div> 
-       <div class="paragraph"> 
-        <p>This runner just starts CDI within your BDD tests so you just have to use <a href="#Manage database with Database Rider CDI">Database Rider CDI interceptor</a> on Cucumber steps, here is the so called Cucumber CDI runner declaration:</p> 
-       </div> 
-       <div class="listingblock"> 
-        <div class="content"> 
-         <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.github.database.rider.core.bdd</span>;
+     <div class="sect2"> 
+      <h3 id="_seeding_database_in_bdd_tests_with_code_rider_cucumber_code"><a class="anchor" href="#_seeding_database_in_bdd_tests_with_code_rider_cucumber_code"></a>2.4. Seeding database in BDD tests with <code>Rider Cucumber</code></h3> 
+      <div class="paragraph"> 
+       <p>DBUnit enters the BDD world through a dedicated JUNit runner which is based on <a href="https://cucumber.io/" target="_blank">Cucumber</a> and <a href="https://deltaspike.apache.org/" target="_blank">Apache DeltaSpike</a>.</p> 
+      </div> 
+      <div class="paragraph"> 
+       <p>This runner just starts CDI within your BDD tests so you just have to use <a href="#_seed_database_with_code_dbunit_interceptor_code">Database Rider CDI interceptor</a> on Cucumber steps, here is the so called Cucumber CDI runner declaration:</p> 
+      </div> 
+      <div class="listingblock"> 
+       <div class="content"> 
+        <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.github.database.rider.core.bdd</span>;
 
 <span class="keyword">import</span> <span class="include">cucumber.api.CucumberOptions</span>;
 <span class="keyword">import</span> <span class="include">cucumber.api.junit.Cucumber</span>;
@@ -1228,137 +1207,132 @@ follower:
 <span class="annotation">@RunWith</span>(Cucumber.class)
 <span class="annotation">@CucumberOptions</span>(features = {
         <span class="string"><span class="delimiter">"</span><span class="content">src/test/resources/features/seeding/seeding-database.feature</span><span class="delimiter">"</span></span>,
-        <span class="string"><span class="delimiter">"</span><span class="content">src/test/resources/features/cucumber/cucumber-seed-database.feature</span><span class="delimiter">"</span></span>,
         <span class="string"><span class="delimiter">"</span><span class="content">src/test/resources/features/general/dataset-replacements.feature</span><span class="delimiter">"</span></span>,
         <span class="string"><span class="delimiter">"</span><span class="content">src/test/resources/features/general/expected-dataset.feature</span><span class="delimiter">"</span></span>
 },
         plugin = <span class="string"><span class="delimiter">"</span><span class="content">json:target/dbunit-rules.json</span><span class="delimiter">"</span></span>)
 <span class="directive">public</span> <span class="type">class</span> <span class="class">DatabaseRiderBdd</span> {
 }</code></pre> 
-        </div> 
        </div> 
-       <div class="admonitionblock important"> 
-        <table> 
-         <tbody> 
-          <tr> 
-           <td class="icon"> <i class="fa icon-important" title="Important"></i> </td> 
-           <td class="content"> As cucumber doesn’t work with JUnit Rules, see <a href="https://github.com/cucumber/cucumber-jvm/issues/393" target="_blank">this issue</a>, you won’t be able to use Cucumber runner with <em>Database Rider Core</em> because its based on JUnit rules, but you can use DataSetExecutor in <code>@Before</code>, see <a href="https://github.com/database-rider/database-rider/tree/master/examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/withoutcdi" target="_blank">example here</a>. </td> 
-          </tr> 
-         </tbody> 
-        </table> 
-       </div> 
-       <h3 id="__strong_dependencies_strong_4" class="discrete"><strong>Dependencies</strong></h3> 
-       <div class="paragraph"> 
-        <p>Here is a set of maven dependencies needed by Database Rider Cucumber:</p> 
-       </div> 
-       <div class="admonitionblock note"> 
-        <table> 
-         <tbody> 
-          <tr> 
-           <td class="icon"> <i class="fa icon-note" title="Note"></i> </td> 
-           <td class="content"> Most of the dependencies, except CDI container implementation, are bring by Database Rider Cucumber module transitively. </td> 
-          </tr> 
-         </tbody> 
-        </table> 
-       </div> 
-       <div class="listingblock"> 
-        <div class="content"> 
-         <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
+      </div> 
+      <div class="admonitionblock important"> 
+       <table> 
+        <tbody> 
+         <tr> 
+          <td class="icon"> <i class="fa icon-important" title="Important"></i> </td> 
+          <td class="content"> As cucumber doesn’t work with JUnit Rules, see <a href="https://github.com/cucumber/cucumber-jvm/issues/393" target="_blank">this issue</a>, you won’t be able to use Cucumber runner with <em>DBUnit Rule</em>, but you can use DataSetExecutor in <code>@Before</code>, see <a href="https://github.com/database-rider/database-rider/tree/master/examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/withoutcdi" target="_blank">example here</a>. </td> 
+         </tr> 
+        </tbody> 
+       </table> 
+      </div> 
+      <h3 id="__strong_dependencies_strong_4" class="discrete"><strong>Dependencies</strong></h3> 
+      <div class="paragraph"> 
+       <p>Here is a set of maven dependencies needed by Database Rider Cucumber:</p> 
+      </div> 
+      <div class="admonitionblock note"> 
+       <table> 
+        <tbody> 
+         <tr> 
+          <td class="icon"> <i class="fa icon-note" title="Note"></i> </td> 
+          <td class="content"> Most of the dependencies, except CDI container implementation, are bring by Database Rider Cucumber module transitively. </td> 
+         </tr> 
+        </tbody> 
+       </table> 
+      </div> 
+      <div class="listingblock"> 
+       <div class="content"> 
+        <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
    <span class="tag">&lt;groupId&gt;</span>com.github.database-rider<span class="tag">&lt;/groupId&gt;</span>
    <span class="tag">&lt;artifactId&gt;</span>rider-cucumber<span class="tag">&lt;/artifactId&gt;</span>
    <span class="tag">&lt;version&gt;</span>1.0.0-RC3-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
-        </div> 
-       </div> 
-       <div class="listingblock"> 
-        <div class="title">
-          Cucumber dependencies 
-        </div> 
-        <div class="content"> 
-         <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="tag">&lt;groupId&gt;</span>info.cukes<span class="tag">&lt;/groupId&gt;</span>
-    <span class="tag">&lt;artifactId&gt;</span>cucumber-junit<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>1.2.4<span class="tag">&lt;/version&gt;</span>
-    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
-<span class="tag">&lt;/dependency&gt;</span>
-<span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="tag">&lt;groupId&gt;</span>info.cukes<span class="tag">&lt;/groupId&gt;</span>
-    <span class="tag">&lt;artifactId&gt;</span>cucumber-java<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>1.2.4<span class="tag">&lt;/version&gt;</span>
-    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
-<span class="tag">&lt;/dependency&gt;</span></code></pre> 
-        </div> 
-       </div> 
-       <div class="colist arabic"> 
-        <table> 
-         <tbody> 
-          <tr> 
-           <td><i class="conum" data-value="1"></i><b>1</b></td> 
-           <td>You don’t need to declare because it comes with Database Rider Cucumber module dependency.</td> 
-          </tr> 
-         </tbody> 
-        </table> 
-       </div> 
-       <div class="listingblock"> 
-        <div class="title">
-          DeltaSpike and CDI dependency 
-        </div> 
-        <div class="content"> 
-         <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.modules<span class="tag">&lt;/groupId&gt;</span>
-    <span class="tag">&lt;artifactId&gt;</span>deltaspike-test-control-module-api<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
-    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
-<span class="tag">&lt;/dependency&gt;</span>
-
-<span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.core<span class="tag">&lt;/groupId&gt;</span>
-    <span class="tag">&lt;artifactId&gt;</span>deltaspike-core-impl<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
-    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
-<span class="tag">&lt;/dependency&gt;</span>
-
-<span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.modules<span class="tag">&lt;/groupId&gt;</span>
-    <span class="tag">&lt;artifactId&gt;</span>deltaspike-test-control-module-impl<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
-    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
-<span class="tag">&lt;/dependency&gt;</span>
-
-<span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.cdictrl<span class="tag">&lt;/groupId&gt;</span>
-    <span class="tag">&lt;artifactId&gt;</span>deltaspike-cdictrl-owb<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
-    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
-<span class="tag">&lt;/dependency&gt;</span>
-
-<span class="tag">&lt;dependency&gt;</span>  <i class="conum" data-value="2"></i><b>(2)</b>
-    <span class="tag">&lt;groupId&gt;</span>org.apache.openwebbeans<span class="tag">&lt;/groupId&gt;</span>
-    <span class="tag">&lt;artifactId&gt;</span>openwebbeans-impl<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>1.6.2<span class="tag">&lt;/version&gt;</span>
-    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
-<span class="tag">&lt;/dependency&gt;</span></code></pre> 
-        </div> 
-       </div> 
-       <div class="colist arabic"> 
-        <table> 
-         <tbody> 
-          <tr> 
-           <td><i class="conum" data-value="1"></i><b>1</b></td> 
-           <td>Also comes with DBUit Rules Cucumber.</td> 
-          </tr> 
-          <tr> 
-           <td><i class="conum" data-value="2"></i><b>2</b></td> 
-           <td>You can use CDI implementation of your choice.</td> 
-          </tr> 
-         </tbody> 
-        </table> 
        </div> 
       </div> 
-     </div> 
-     <div class="sect2"> 
-      <h3 id="_seed_database_using_database_rider_in_cucumber_tests"><a class="anchor" href="#_seed_database_using_database_rider_in_cucumber_tests"></a>3.1. Seed database using Database Rider in Cucumber tests</h3> 
+      <div class="listingblock"> 
+       <div class="title">
+         Cucumber dependencies 
+       </div> 
+       <div class="content"> 
+        <pre class="CodeRay highlight"><code data-lang="xml">        <span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
+            <span class="tag">&lt;groupId&gt;</span>info.cukes<span class="tag">&lt;/groupId&gt;</span>
+            <span class="tag">&lt;artifactId&gt;</span>cucumber-junit<span class="tag">&lt;/artifactId&gt;</span>
+            <span class="tag">&lt;version&gt;</span>1.2.4<span class="tag">&lt;/version&gt;</span>
+            <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+        <span class="tag">&lt;/dependency&gt;</span>
+        <span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
+            <span class="tag">&lt;groupId&gt;</span>info.cukes<span class="tag">&lt;/groupId&gt;</span>
+            <span class="tag">&lt;artifactId&gt;</span>cucumber-java<span class="tag">&lt;/artifactId&gt;</span>
+            <span class="tag">&lt;version&gt;</span>1.2.4<span class="tag">&lt;/version&gt;</span>
+            <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+        <span class="tag">&lt;/dependency&gt;</span></code></pre> 
+       </div> 
+      </div> 
+      <div class="colist arabic"> 
+       <table> 
+        <tbody> 
+         <tr> 
+          <td><i class="conum" data-value="1"></i><b>1</b></td> 
+          <td>You don’t need to declare because it comes with Database Rider Cucumber module dependency.</td> 
+         </tr> 
+        </tbody> 
+       </table> 
+      </div> 
+      <div class="listingblock"> 
+       <div class="title">
+         DeltaSpike and CDI dependency 
+       </div> 
+       <div class="content"> 
+        <pre class="CodeRay highlight"><code data-lang="xml">        <span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
+            <span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.modules<span class="tag">&lt;/groupId&gt;</span>
+            <span class="tag">&lt;artifactId&gt;</span>deltaspike-test-control-module-api<span class="tag">&lt;/artifactId&gt;</span>
+            <span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
+            <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+        <span class="tag">&lt;/dependency&gt;</span>
+
+        <span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
+            <span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.core<span class="tag">&lt;/groupId&gt;</span>
+            <span class="tag">&lt;artifactId&gt;</span>deltaspike-core-impl<span class="tag">&lt;/artifactId&gt;</span>
+            <span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
+            <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+        <span class="tag">&lt;/dependency&gt;</span>
+
+        <span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
+            <span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.modules<span class="tag">&lt;/groupId&gt;</span>
+            <span class="tag">&lt;artifactId&gt;</span>deltaspike-test-control-module-impl<span class="tag">&lt;/artifactId&gt;</span>
+            <span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
+            <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+        <span class="tag">&lt;/dependency&gt;</span>
+
+        <span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="2"></i><b>(2)</b>
+            <span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.cdictrl<span class="tag">&lt;/groupId&gt;</span>
+            <span class="tag">&lt;artifactId&gt;</span>deltaspike-cdictrl-owb<span class="tag">&lt;/artifactId&gt;</span>
+            <span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
+            <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+        <span class="tag">&lt;/dependency&gt;</span>
+
+        <span class="tag">&lt;dependency&gt;</span>  <i class="conum" data-value="2"></i><b>(2)</b>
+            <span class="tag">&lt;groupId&gt;</span>org.apache.openwebbeans<span class="tag">&lt;/groupId&gt;</span>
+            <span class="tag">&lt;artifactId&gt;</span>openwebbeans-impl<span class="tag">&lt;/artifactId&gt;</span>
+            <span class="tag">&lt;version&gt;</span>1.6.2<span class="tag">&lt;/version&gt;</span>
+            <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+        <span class="tag">&lt;/dependency&gt;</span></code></pre> 
+       </div> 
+      </div> 
+      <div class="colist arabic"> 
+       <table> 
+        <tbody> 
+         <tr> 
+          <td><i class="conum" data-value="1"></i><b>1</b></td> 
+          <td>Also comes with DBUit Rules Cucumber.</td> 
+         </tr> 
+         <tr> 
+          <td><i class="conum" data-value="2"></i><b>2</b></td> 
+          <td>You can use CDI implementation of your choice.</td> 
+         </tr> 
+        </tbody> 
+       </table> 
+      </div> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -1608,7 +1582,7 @@ company:
     </div> 
    </div> 
    <div class="sect1"> 
-    <h2 id="Dynamic-data-using-scritable-datasets"><a class="anchor" href="#Dynamic-data-using-scritable-datasets"></a>4. <strong>Dynamic data using scritable datasets</strong></h2> 
+    <h2 id="Dynamic-data-using-scritable-datasets"><a class="anchor" href="#Dynamic-data-using-scritable-datasets"></a>3. <strong>Dynamic data using scritable datasets</strong></h2> 
     <div class="sectionbody"> 
      <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('Dynamic-data-using-scritable-datasets');document.getElementById('hidden-Dynamic-data-using-scritable-datasets').style.display = 'inline';this.style.display = 'none'"> </span> 
      <span id="hidden-Dynamic-data-using-scritable-datasets" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('Dynamic-data-using-scritable-datasets');this.style.display = 'none'"> </span> 
@@ -1634,7 +1608,7 @@ company:
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_seed_database_with_groovy_script_in_dataset"><a class="anchor" href="#_seed_database_with_groovy_script_in_dataset"></a>4.1. Seed database with groovy script in dataset</h3> 
+      <h3 id="_seed_database_with_groovy_script_in_dataset"><a class="anchor" href="#_seed_database_with_groovy_script_in_dataset"></a>3.1. Seed database with groovy script in dataset</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -1760,7 +1734,7 @@ company:
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_seed_database_with_javascript_in_dataset"><a class="anchor" href="#_seed_database_with_javascript_in_dataset"></a>4.2. Seed database with javascript in dataset</h3> 
+      <h3 id="_seed_database_with_javascript_in_dataset"><a class="anchor" href="#_seed_database_with_javascript_in_dataset"></a>3.2. Seed database with javascript in dataset</h3> 
       <div class="admonitionblock note"> 
        <table> 
         <tbody> 
@@ -1869,7 +1843,7 @@ company:
     </div> 
    </div> 
    <div class="sect1"> 
-    <h2 id="Database-assertion-using-expected-datasets"><a class="anchor" href="#Database-assertion-using-expected-datasets"></a>5. <strong>Database assertion using expected datasets</strong></h2> 
+    <h2 id="Database-assertion-using-expected-datasets"><a class="anchor" href="#Database-assertion-using-expected-datasets"></a>4. <strong>Database assertion using expected datasets</strong></h2> 
     <div class="sectionbody"> 
      <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('Database-assertion-using-expected-datasets');document.getElementById('hidden-Database-assertion-using-expected-datasets').style.display = 'inline';this.style.display = 'none'"> </span> 
      <span id="hidden-Database-assertion-using-expected-datasets" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('Database-assertion-using-expected-datasets');this.style.display = 'none'"> </span> 
@@ -1892,7 +1866,7 @@ company:
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_database_assertion_with_yml_dataset"><a class="anchor" href="#_database_assertion_with_yml_dataset"></a>5.1. Database assertion with yml dataset</h3> 
+      <h3 id="_database_assertion_with_yml_dataset"><a class="anchor" href="#_database_assertion_with_yml_dataset"></a>4.1. Database assertion with yml dataset</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2000,7 +1974,7 @@ company:
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_database_assertion_with_regular_expression_in_expected_dataset"><a class="anchor" href="#_database_assertion_with_regular_expression_in_expected_dataset"></a>5.2. Database assertion with regular expression in expected dataset</h3> 
+      <h3 id="_database_assertion_with_regular_expression_in_expected_dataset"><a class="anchor" href="#_database_assertion_with_regular_expression_in_expected_dataset"></a>4.2. Database assertion with regular expression in expected dataset</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2086,7 +2060,7 @@ company:
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_database_assertion_with_seeding_before_test_execution"><a class="anchor" href="#_database_assertion_with_seeding_before_test_execution"></a>5.3. Database assertion with seeding before test execution</h3> 
+      <h3 id="_database_assertion_with_seeding_before_test_execution"><a class="anchor" href="#_database_assertion_with_seeding_before_test_execution"></a>4.3. Database assertion with seeding before test execution</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2195,7 +2169,7 @@ company:
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_failling_database_assertion"><a class="anchor" href="#_failling_database_assertion"></a>5.4. Failling database assertion</h3> 
+      <h3 id="_failling_database_assertion"><a class="anchor" href="#_failling_database_assertion"></a>4.4. Failling database assertion</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2294,7 +2268,7 @@ company:
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_database_assertion_using_automatic_transaction"><a class="anchor" href="#_database_assertion_using_automatic_transaction"></a>5.5. Database assertion using automatic transaction</h3> 
+      <h3 id="_database_assertion_using_automatic_transaction"><a class="anchor" href="#_database_assertion_using_automatic_transaction"></a>4.5. Database assertion using automatic transaction</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2404,8 +2378,8 @@ company:
   </div> 
   <div id="footer" style="color:gray;font-size:11px">
     Generated by 
-   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.6</a> - Oct 28, 2016 12:26:38 AM 
-   <span style="float:right;font-size:11px"> Execution time: 13.843 seconds</span> 
+   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.6</a> - Oct 28, 2016 12:59:04 AM 
+   <span style="float:right;font-size:11px"> Execution time: 10.742 seconds</span> 
   </div> 
   <style>  
 
