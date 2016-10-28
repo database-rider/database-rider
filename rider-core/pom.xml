@@ -38,7 +38,7 @@
         </dependency>
 
         <!-- bdd tests -->
-        <!--tag::cucumber-deps[]-->
+  <!--tag::cucumber-deps[]-->
         <dependency> <!--1-->
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-junit</artifactId>
@@ -51,7 +51,7 @@
             <version>1.2.4</version>
             <scope>test</scope>
         </dependency>
-        <!--end::cucumber-deps[]-->
+  <!--end::cucumber-deps[]-->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>

@@ -10,7 +10,6 @@ import org.junit.runner.RunWith;
 @RunWith(Cucumber.class)
 @CucumberOptions(features = {
         "src/test/resources/features/seeding/seeding-database.feature",
-        "src/test/resources/features/cucumber/cucumber-seed-database.feature",
         "src/test/resources/features/general/dataset-replacements.feature",
         "src/test/resources/features/general/expected-dataset.feature"
 },

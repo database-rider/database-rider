@@ -86,12 +86,12 @@ To use this module just add the following maven dependency:
 
 [source,xml]
 ----
-<dependency>
-       <groupId>com.github.database-rider</groupId>
-       <artifactId>rider-cdi</artifactId>
+ <dependency>
+         <groupId>com.github.database-rider</groupId>
+         <artifactId>rider-cdi</artifactId>
 include::../../../../pom.xml[tags=version]
-       <scope>test</scope>
-</dependency>
+         <scope>test</scope>
+ </dependency>
 ----
 
 #cukedoctor-discrete
@@ -162,7 +162,7 @@ To use the extension just add the following maven dependency:
 ----
 <dependency>
      <groupId>com.github.dbunit-rules</groupId>
-     <artifactId>junit5</artifactId>
+     <artifactId>rider-junit5</artifactId>
 include::../../../../pom.xml[tags=version]
      <scope>test</scope>
 </dependency>
@@ -203,3 +203,91 @@ include::../../../../rider-junit5/src/test/java/com/github/database/rider/junit5
  """
 
 Then The database should be seeded with the dataset content before test execution
+
+  Scenario: Seeding database in BDD tests with `Rider Cucumber`
+
+DBUnit enters the BDD world through a dedicated JUNit runner which is based on https://cucumber.io/[Cucumber^] and https://deltaspike.apache.org/[Apache DeltaSpike^].
+
+This runner just starts CDI within your BDD tests so you just have to use <<_seed_database_with_code_dbunit_interceptor_code,Database Rider CDI interceptor>> on Cucumber steps, here is the so called Cucumber CDI runner declaration:
+
+[source,java]
+----
+include::../../../src/test/java/com/github/database/rider/core/bdd/DatabaseRiderBdd.java[]
+----
+
+
+IMPORTANT: As cucumber doesn't work with JUnit Rules, see https://github.com/cucumber/cucumber-jvm/issues/393[this issue^], you won't be able to use Cucumber runner with _DBUnit Rule_, but you can use DataSetExecutor in `@Before`, see https://github.com/database-rider/database-rider/tree/master/examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/withoutcdi[example here^].
+
+[discrete]
+=== *Dependencies*
+Here is a set of maven dependencies needed by Database Rider Cucumber:
+
+NOTE: Most of the dependencies, except CDI container implementation, are bring by Database Rider Cucumber module transitively.
+
+[source,xml]
+----
+<dependency>
+       <groupId>com.github.database-rider</groupId>
+       <artifactId>rider-cucumber</artifactId>
+include::../../../../pom.xml[tags=version]
+       <scope>test</scope>
+</dependency>
+----
+
+.Cucumber dependencies
+[source,xml,ident=0]
+----
+include::../../../pom.xml[tags=cucumber-deps]
+----
+<1> You don't need to declare because it comes with Database Rider Cucumber module dependency.
+
+.DeltaSpike and CDI dependency
+[source,xml,ident=0]
+----
+include::../../../../rider-cdi/pom.xml[tags=deltaspike-cdi-deps]
+----
+<2> Also comes with DBUit Rules Cucumber.
+<3> You can use CDI implementation of your choice.
+
+
+#cukedoctor-discrete
+Given The following feature
+  """
+----
+include::../../../../rider-examples/jpa-productivity-boosters/src/test/resources/features/contacts.feature[]
+----
+  """
+
+
+#cukedoctor-discrete
+And The following dataset
+
+ """
+----
+include::../../../../rider-examples/jpa-productivity-boosters/src/test/resources/datasets/contacts.yml[]
+----
+ """
+
+#cukedoctor-discrete
+And The following Cucumber test
+
+ """
+[source,java]
+----
+include::../../../../rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactFeature.java[]
+----
+ """
+
+#{TIP: Source code for the example above can be https://github.com/database-rider/database-rider/blob/master/rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactSteps.java#L17[found here^].}
+#cukedoctor-discrete
+When The following cucumber steps are executed
+ """
+[source,java]
+----
+include::../../../../rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactSteps.java[]
+----
+<1> As the Cucumber cdi runner enables CDI, you can use injection into your Cucumber steps.
+<2> Dataset is prepared before step execution by `@DBUnitInterceptor`.
+ """
+
+Then The database should be seeded with the dataset content before step execution
