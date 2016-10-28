@@ -305,6 +305,9 @@
 
         <profile>
             <id>release</id>
+            <properties>
+                 <docs.outputdir>docs/${project.version}</docs.outputdir>
+            </properties>
             <build>
                 <plugins>
                     <plugin>

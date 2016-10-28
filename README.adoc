@@ -150,7 +150,7 @@ A getting started guide can be found here http://database-rider.github.io/gettin
 
 For main features overview see project living documentation (of each project version):
 
-http://database-rider.github.io/database-rider/index.html.
+http://database-rider.github.io/database-rider/latest/documentation.html.
 
 
 == Rider Core

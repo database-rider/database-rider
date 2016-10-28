@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>com.github.database-rider</groupId>
         <artifactId>rider-parent</artifactId>
-  		<version>1.0.0-RC3-SNAPSHOT</version>
+        <version>1.0.0-RC3-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>rider-core</artifactId>
+    <properties>
+        <!-- must be overriden when releasing a new version with release profile -->
+        <docs.outputdir>docs/latest</docs.outputdir>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -38,7 +43,7 @@
         </dependency>
 
         <!-- bdd tests -->
-  <!--tag::cucumber-deps[]-->
+        <!--tag::cucumber-deps[]-->
         <dependency> <!--1-->
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-junit</artifactId>
@@ -51,7 +56,7 @@
             <version>1.2.4</version>
             <scope>test</scope>
         </dependency>
-  <!--end::cucumber-deps[]-->
+        <!--end::cucumber-deps[]-->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
@@ -96,11 +101,12 @@
                         <version>1.0.6</version>
                         <configuration>
                             <outputFileName>documentation</outputFileName>
-                            <outputDir>docs/${project.parent.version}</outputDir>
+                            <!-- must be overridden -->
+                            <outputDir>${docs.outputdir}</outputDir>
                             <!--pdf and html5 -->
-                            <format>all</format>
+                            <format>html</format>
                             <hideSummarySection>true</hideSummarySection>
-			                <hideScenarioKeyword>true</hideScenarioKeyword>
+                            <hideScenarioKeyword>true</hideScenarioKeyword>
                             <hideStepTime>true</hideStepTime>
                             <hideFeaturesSection>true</hideFeaturesSection>
                             <hideTags>true</hideTags>
@@ -128,13 +134,19 @@
                             </checkinComment>
                             <content>target/docs</content>
                             <skipDeletedFiles>true</skipDeletedFiles>
-                            <pubScmUrl>scm:git:https://${USER}:${PASS}@github.com/database-rider/database-rider.git
+                            <pubScmUrl>scm:git:https://rmpestano:bigboss666@github.com/database-rider/database-rider.git
                             </pubScmUrl>
                             <scmBranch>gh-pages</scmBranch>
                         </configuration>
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>release</id>
+            <properties>
+                <docs.outputdir>docs/${project.version}</docs.outputdir>
+            </properties>
         </profile>
     </profiles>
 
