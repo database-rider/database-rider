@@ -527,23 +527,31 @@ table.CodeRay td.code>pre{padding:0}
      <li><a href="#__strong_introduction_strong">1. <strong>Introduction</strong></a></li> 
      <li><a href="#Seeding-database">2. <strong>Seeding database</strong></a> 
       <ul class="sectlevel2"> 
-       <li><a href="#_seeding_database_with_code_dbunit_rule_code">2.1. Seeding database with <code>DBUnit Rule</code></a></li> 
+       <li><a href="#_seed_database_with_code_dbunit_rule_code">2.1. Seed database with <code>DBUnit Rule</code></a></li> 
        <li><a href="#_seed_database_with_code_dbunit_interceptor_code">2.2. Seed database with <code>DBUnit Interceptor</code></a></li> 
        <li><a href="#_seed_database_with_code_junit_5_extension_code">2.3. Seed database with <code>JUnit 5 extension</code></a></li> 
        <li><a href="#_seeding_database_in_bdd_tests_with_code_rider_cucumber_code">2.4. Seeding database in BDD tests with <code>Rider Cucumber</code></a></li> 
       </ul> </li> 
-     <li><a href="#Dynamic-data-using-scritable-datasets">3. <strong>Dynamic data using scritable datasets</strong></a> 
+     <li><a href="#DataSet-creation">3. <strong>DataSet creation</strong></a> 
       <ul class="sectlevel2"> 
-       <li><a href="#_seed_database_with_groovy_script_in_dataset">3.1. Seed database with groovy script in dataset</a></li> 
-       <li><a href="#_seed_database_with_javascript_in_dataset">3.2. Seed database with javascript in dataset</a></li> 
+       <li><a href="#_creating_a_code_yaml_code_dataset">3.1. Creating a <code>YAML</code> dataset</a></li> 
+       <li><a href="#_creating_a_code_json_code_dataset">3.2. Creating a <code>JSON</code> dataset</a></li> 
+       <li><a href="#_creating_a_code_xml_code_dataset">3.3. Creating a <code>XML</code> dataset</a></li> 
+       <li><a href="#_creating_a_code_xls_code_dataset">3.4. Creating a <code>XLS</code> dataset</a></li> 
+       <li><a href="#_creating_a_code_csv_code_dataset">3.5. Creating a <code>CSV</code> dataset</a></li> 
       </ul> </li> 
-     <li><a href="#Database-assertion-using-expected-datasets">4. <strong>Database assertion using expected datasets</strong></a> 
+     <li><a href="#Dynamic-data-using-scritable-datasets">4. <strong>Dynamic data using scritable datasets</strong></a> 
       <ul class="sectlevel2"> 
-       <li><a href="#_database_assertion_with_yml_dataset">4.1. Database assertion with yml dataset</a></li> 
-       <li><a href="#_database_assertion_with_regular_expression_in_expected_dataset">4.2. Database assertion with regular expression in expected dataset</a></li> 
-       <li><a href="#_database_assertion_with_seeding_before_test_execution">4.3. Database assertion with seeding before test execution</a></li> 
-       <li><a href="#_failling_database_assertion">4.4. Failling database assertion</a></li> 
-       <li><a href="#_database_assertion_using_automatic_transaction">4.5. Database assertion using automatic transaction</a></li> 
+       <li><a href="#_seed_database_with_groovy_script_in_dataset">4.1. Seed database with groovy script in dataset</a></li> 
+       <li><a href="#_seed_database_with_javascript_in_dataset">4.2. Seed database with javascript in dataset</a></li> 
+      </ul> </li> 
+     <li><a href="#Database-assertion-using-expected-datasets">5. <strong>Database assertion using expected datasets</strong></a> 
+      <ul class="sectlevel2"> 
+       <li><a href="#_database_assertion_with_yml_dataset">5.1. Database assertion with yml dataset</a></li> 
+       <li><a href="#_database_assertion_with_regular_expression_in_expected_dataset">5.2. Database assertion with regular expression in expected dataset</a></li> 
+       <li><a href="#_database_assertion_with_seeding_before_test_execution">5.3. Database assertion with seeding before test execution</a></li> 
+       <li><a href="#_failling_database_assertion">5.4. Failling database assertion</a></li> 
+       <li><a href="#_database_assertion_using_automatic_transaction">5.5. Database assertion using automatic transaction</a></li> 
       </ul> </li> 
     </ul> 
    </div> 
@@ -621,7 +629,7 @@ table.CodeRay td.code>pre{padding:0}
          <div class="quoteblock"> 
           <blockquote> 
            <div class="paragraph"> 
-            <p>In order to insert data into database<br> As a developer<br> I want to easily use DBUnit in JUnit tests.</p> 
+            <p>In order to insert data into database before test execution<br> As a developer<br> I want to easily use DBUnit in JUnit tests.</p> 
            </div> 
           </blockquote> 
          </div> 
@@ -640,7 +648,7 @@ table.CodeRay td.code>pre{padding:0}
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_seeding_database_with_code_dbunit_rule_code"><a class="anchor" href="#_seeding_database_with_code_dbunit_rule_code"></a>2.1. Seeding database with <code>DBUnit Rule</code></h3> 
+      <h3 id="_seed_database_with_code_dbunit_rule_code"><a class="anchor" href="#_seed_database_with_code_dbunit_rule_code"></a>2.1. Seed database with <code>DBUnit Rule</code></h3> 
       <div class="paragraph"> 
        <p>JUnit4 integrates with DBUnit through a <a href="https://github.com/junit-team/junit4/wiki/Rules" target="_blank">JUnit rule</a> called <code>DBUnitRule</code> which reads <strong>@Dataset</strong> annotations in order to prepare the database state using DBUnit behind the scenes.</p> 
       </div> 
@@ -1253,18 +1261,18 @@ follower:
          Cucumber dependencies 
        </div> 
        <div class="content"> 
-        <pre class="CodeRay highlight"><code data-lang="xml">        <span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
-            <span class="tag">&lt;groupId&gt;</span>info.cukes<span class="tag">&lt;/groupId&gt;</span>
-            <span class="tag">&lt;artifactId&gt;</span>cucumber-junit<span class="tag">&lt;/artifactId&gt;</span>
-            <span class="tag">&lt;version&gt;</span>1.2.4<span class="tag">&lt;/version&gt;</span>
-            <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
-        <span class="tag">&lt;/dependency&gt;</span>
-        <span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
-            <span class="tag">&lt;groupId&gt;</span>info.cukes<span class="tag">&lt;/groupId&gt;</span>
-            <span class="tag">&lt;artifactId&gt;</span>cucumber-java<span class="tag">&lt;/artifactId&gt;</span>
-            <span class="tag">&lt;version&gt;</span>1.2.4<span class="tag">&lt;/version&gt;</span>
-            <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
-        <span class="tag">&lt;/dependency&gt;</span></code></pre> 
+        <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    <span class="tag">&lt;groupId&gt;</span>info.cukes<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>cucumber-junit<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;version&gt;</span>1.2.4<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+<span class="tag">&lt;/dependency&gt;</span>
+<span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    <span class="tag">&lt;groupId&gt;</span>info.cukes<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>cucumber-java<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;version&gt;</span>1.2.4<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+<span class="tag">&lt;/dependency&gt;</span></code></pre> 
        </div> 
       </div> 
       <div class="colist arabic"> 
@@ -1282,40 +1290,40 @@ follower:
          DeltaSpike and CDI dependency 
        </div> 
        <div class="content"> 
-        <pre class="CodeRay highlight"><code data-lang="xml">        <span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
-            <span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.modules<span class="tag">&lt;/groupId&gt;</span>
-            <span class="tag">&lt;artifactId&gt;</span>deltaspike-test-control-module-api<span class="tag">&lt;/artifactId&gt;</span>
-            <span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
-            <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
-        <span class="tag">&lt;/dependency&gt;</span>
+        <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    <span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.modules<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>deltaspike-test-control-module-api<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+<span class="tag">&lt;/dependency&gt;</span>
 
-        <span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
-            <span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.core<span class="tag">&lt;/groupId&gt;</span>
-            <span class="tag">&lt;artifactId&gt;</span>deltaspike-core-impl<span class="tag">&lt;/artifactId&gt;</span>
-            <span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
-            <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
-        <span class="tag">&lt;/dependency&gt;</span>
+<span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    <span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.core<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>deltaspike-core-impl<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+<span class="tag">&lt;/dependency&gt;</span>
 
-        <span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
-            <span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.modules<span class="tag">&lt;/groupId&gt;</span>
-            <span class="tag">&lt;artifactId&gt;</span>deltaspike-test-control-module-impl<span class="tag">&lt;/artifactId&gt;</span>
-            <span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
-            <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
-        <span class="tag">&lt;/dependency&gt;</span>
+<span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
+    <span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.modules<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>deltaspike-test-control-module-impl<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+<span class="tag">&lt;/dependency&gt;</span>
 
-        <span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="2"></i><b>(2)</b>
-            <span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.cdictrl<span class="tag">&lt;/groupId&gt;</span>
-            <span class="tag">&lt;artifactId&gt;</span>deltaspike-cdictrl-owb<span class="tag">&lt;/artifactId&gt;</span>
-            <span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
-            <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
-        <span class="tag">&lt;/dependency&gt;</span>
+<span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="2"></i><b>(2)</b>
+    <span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.cdictrl<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>deltaspike-cdictrl-owb<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+<span class="tag">&lt;/dependency&gt;</span>
 
-        <span class="tag">&lt;dependency&gt;</span>  <i class="conum" data-value="2"></i><b>(2)</b>
-            <span class="tag">&lt;groupId&gt;</span>org.apache.openwebbeans<span class="tag">&lt;/groupId&gt;</span>
-            <span class="tag">&lt;artifactId&gt;</span>openwebbeans-impl<span class="tag">&lt;/artifactId&gt;</span>
-            <span class="tag">&lt;version&gt;</span>1.6.2<span class="tag">&lt;/version&gt;</span>
-            <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
-        <span class="tag">&lt;/dependency&gt;</span></code></pre> 
+<span class="tag">&lt;dependency&gt;</span>  <i class="conum" data-value="2"></i><b>(2)</b>
+    <span class="tag">&lt;groupId&gt;</span>org.apache.openwebbeans<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>openwebbeans-impl<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;version&gt;</span>1.6.2<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+<span class="tag">&lt;/dependency&gt;</span></code></pre> 
        </div> 
       </div> 
       <div class="colist arabic"> 
@@ -1585,7 +1593,546 @@ company:
     </div> 
    </div> 
    <div class="sect1"> 
-    <h2 id="Dynamic-data-using-scritable-datasets"><a class="anchor" href="#Dynamic-data-using-scritable-datasets"></a>3. <strong>Dynamic data using scritable datasets</strong></h2> 
+    <h2 id="DataSet-creation"><a class="anchor" href="#DataSet-creation"></a>3. <strong>DataSet creation</strong></h2> 
+    <div class="sectionbody"> 
+     <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('DataSet-creation');document.getElementById('hidden-DataSet-creation').style.display = 'inline';this.style.display = 'none'"> </span> 
+     <span id="hidden-DataSet-creation" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('DataSet-creation');this.style.display = 'none'"> </span> 
+     <div class="sidebarblock"> 
+      <div class="content"> 
+       <div class="exampleblock"> 
+        <div class="content"> 
+         <div class="quoteblock"> 
+          <blockquote> 
+           <div class="paragraph"> 
+            <p>In order to create datasets to feed tables<br> As a developer<br> I want to declare database state in external files.</p> 
+           </div> 
+          </blockquote> 
+         </div> 
+        </div> 
+       </div> 
+       <div class="admonitionblock note"> 
+        <table> 
+         <tbody> 
+          <tr> 
+           <td class="icon"> <i class="fa icon-note" title="Note"></i> </td> 
+           <td class="content"> It is a good practice to move database preparation or any infrastructure code outside test logic, it increases test maintainability. </td> 
+          </tr> 
+         </tbody> 
+        </table> 
+       </div> 
+      </div> 
+     </div> 
+     <div class="sect2"> 
+      <h3 id="_creating_a_code_yaml_code_dataset"><a class="anchor" href="#_creating_a_code_yaml_code_dataset"></a>3.1. Creating a <code>YAML</code> dataset</h3> 
+      <div class="paragraph"> 
+       <p><strong>YAML</strong> stands for <code>yet another markup language</code> and is a very simple, lightweight yet powerful format.</p> 
+      </div> 
+      <div class="admonitionblock important"> 
+       <table> 
+        <tbody> 
+         <tr> 
+          <td class="icon"> <i class="fa icon-important" title="Important"></i> </td> 
+          <td class="content"> YAML is based on spaces indentation so be careful because any missing or additional space can lead to an incorrect dataset. </td> 
+         </tr> 
+        </tbody> 
+       </table> 
+      </div> 
+      <div class="admonitionblock tip"> 
+       <table> 
+        <tbody> 
+         <tr> 
+          <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
+          <td class="content"> Source code of the examples below can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/format/DataSetFormatIt.java/" target="_blank">found here</a>. </td> 
+         </tr> 
+        </tbody> 
+       </table> 
+      </div> 
+      <div class="sidebarblock"> 
+       <div class="content"> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Given 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="title">
+               src/test/resources/dataset/yml/users.yml 
+             </div> 
+             <div class="content"> 
+              <pre>user:
+  - id: 1
+    name: "@realpestano"
+  - id: 2
+    name: "@dbunit"
+tweet:
+  - id: abcdef12345
+    content: "dbunit rules!"
+    date: "[DAY,NOW]"
+    user_id: 1
+follower:
+  - id: 1
+    user_id: 1
+    follower_id: 2</pre> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            When 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="content"> 
+              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+<span class="annotation">@DataSet</span>(<span class="string"><span class="delimiter">"</span><span class="content">yml/users.yml</span><span class="delimiter">"</span></span>)
+<span class="directive">public</span> <span class="type">void</span> shouldSeedDatabaseWithYAMLDataSet() {
+   <span class="predefined-type">List</span>&lt;User&gt; users = em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
+   assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">2</span>);
+}</code></pre> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Then 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The database should be seeded with the dataset content before test execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+         </div> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+     <div class="sect2"> 
+      <h3 id="_creating_a_code_json_code_dataset"><a class="anchor" href="#_creating_a_code_json_code_dataset"></a>3.2. Creating a <code>JSON</code> dataset</h3> 
+      <div class="sidebarblock"> 
+       <div class="content"> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Given 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="title">
+               src/test/resources/dataset/json/users.json 
+             </div> 
+             <div class="content"> 
+              <pre>{
+  "USER": [
+    {
+      "id": 1,
+      "name": "@realpestano"
+    },
+    {
+      "id": 2,
+      "name": "@dbunit"
+    }
+  ],
+  "TWEET": [
+    {
+      "id": "abcdef12345",
+      "content": "dbunit rules json example",
+      "date": "2013-01-20",
+      "user_id": 1
+    }
+  ],
+  "FOLLOWER": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "follower_id": 2
+    }
+  ]
+}</pre> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            When 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="content"> 
+              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+<span class="annotation">@DataSet</span>(<span class="string"><span class="delimiter">"</span><span class="content">json/users.json</span><span class="delimiter">"</span></span>)
+<span class="directive">public</span> <span class="type">void</span> shouldSeedDatabaseWithJSONDataSet() {
+   <span class="predefined-type">List</span>&lt;User&gt; users = em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
+   assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">2</span>);
+}</code></pre> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Then 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The database should be seeded with the dataset content before test execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+         </div> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+     <div class="sect2"> 
+      <h3 id="_creating_a_code_xml_code_dataset"><a class="anchor" href="#_creating_a_code_xml_code_dataset"></a>3.3. Creating a <code>XML</code> dataset</h3> 
+      <div class="sidebarblock"> 
+       <div class="content"> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Given 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="title">
+               src/test/resources/dataset/xml/users.xml 
+             </div> 
+             <div class="content"> 
+              <pre>&lt;dataset&gt;
+    &lt;USER id="1" name="@realpestano" /&gt;
+    &lt;USER id="2" name="@dbunit" /&gt;
+    &lt;TWEET id="abcdef12345" content="dbunit rules flat xml example" user_id="1"/&gt;
+    &lt;FOLLOWER id="1" user_id="1" follower_id="2"/&gt;
+&lt;/dataset&gt;</pre> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            When 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="content"> 
+              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+<span class="annotation">@DataSet</span>(<span class="string"><span class="delimiter">"</span><span class="content">xml/users.xml</span><span class="delimiter">"</span></span>)
+<span class="directive">public</span> <span class="type">void</span> shouldSeedDatabaseWithXMLDataSet() {
+   <span class="predefined-type">List</span>&lt;User&gt; users = em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
+   assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">2</span>);
+}</code></pre> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Then 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The database should be seeded with the dataset content before test execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+         </div> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+     <div class="sect2"> 
+      <h3 id="_creating_a_code_xls_code_dataset"><a class="anchor" href="#_creating_a_code_xls_code_dataset"></a>3.4. Creating a <code>XLS</code> dataset</h3> 
+      <div class="sidebarblock"> 
+       <div class="content"> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Given 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="title">
+               src/test/resources/dataset/xls/users.xls 
+             </div> 
+             <div class="content"> 
+              <pre>ID	NAME
+1	@realpestano
+2	@dbunit</pre> 
+             </div> 
+            </div> 
+            <div class="admonitionblock note"> 
+             <table> 
+              <tbody> 
+               <tr> 
+                <td class="icon"> <i class="fa icon-note" title="Note"></i> </td> 
+                <td class="content"> Each Excell <code>sheet</code> name is the <strong>table name</strong>, first row is <strong>columns names</strong> and remaining rows/cells are values. </td> 
+               </tr> 
+              </tbody> 
+             </table> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            When 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="content"> 
+              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+<span class="annotation">@DataSet</span>(<span class="string"><span class="delimiter">"</span><span class="content">xls/users.xls</span><span class="delimiter">"</span></span>)
+<span class="directive">public</span> <span class="type">void</span> shouldSeedDatabaseWithXLSDataSet() {
+    <span class="predefined-type">List</span>&lt;User&gt; users = em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
+    assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">2</span>);
+}</code></pre> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Then 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The database should be seeded with the dataset content before test execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+         </div> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+     <div class="sect2"> 
+      <h3 id="_creating_a_code_csv_code_dataset"><a class="anchor" href="#_creating_a_code_csv_code_dataset"></a>3.5. Creating a <code>CSV</code> dataset</h3> 
+      <div class="sidebarblock"> 
+       <div class="content"> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Given 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="title">
+               src/test/resources/dataset/csv/USER.csv 
+             </div> 
+             <div class="content"> 
+              <pre>ID, NAME
+"1","@realpestano"
+"2","@dbunit"</pre> 
+             </div> 
+            </div> 
+            <div class="listingblock"> 
+             <div class="title">
+               src/test/resources/dataset/csv/TWEET.csv 
+             </div> 
+             <div class="content"> 
+              <pre>ID, CONTENT, DATE, LIKES, USER_ID
+"abcdef12345","dbunit rules!","2016-09-12 22:46:20.0",null,"1"</pre> 
+             </div> 
+            </div> 
+            <div class="admonitionblock note"> 
+             <table> 
+              <tbody> 
+               <tr> 
+                <td class="icon"> <i class="fa icon-note" title="Note"></i> </td> 
+                <td class="content"> File name is <strong>table name</strong> and first row is <strong>column names</strong>. </td> 
+               </tr> 
+              </tbody> 
+             </table> 
+            </div> 
+            <div class="listingblock"> 
+             <div class="title">
+               src/test/resources/dataset/csv/table-ordering.txt 
+             </div> 
+             <div class="content"> 
+              <pre>USER
+TWEET</pre> 
+             </div> 
+            </div> 
+            <div class="admonitionblock important"> 
+             <table> 
+              <tbody> 
+               <tr> 
+                <td class="icon"> <i class="fa icon-important" title="Important"></i> </td> 
+                <td class="content"> CSV datasets are composed by multiple files (one per table) and a table ordering descriptor declaring the order of creation. </td> 
+               </tr> 
+              </tbody> 
+             </table> 
+            </div> 
+            <div class="paragraph"> 
+             <p>Also note that each csv dataset must be declared in its own folder because DBUnit will read all csv files present in dataset folder.</p> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            When 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="content"> 
+              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+<span class="annotation">@DataSet</span>(<span class="string"><span class="delimiter">"</span><span class="content">datasets/csv/USER.csv</span><span class="delimiter">"</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="directive">public</span> <span class="type">void</span> shouldSeedDatabaseWithCSVDataSet() {
+    <span class="predefined-type">List</span>&lt;User&gt; users = em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
+    assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">2</span>);
+}</code></pre> 
+             </div> 
+            </div> 
+            <div class="colist arabic"> 
+             <table> 
+              <tbody> 
+               <tr> 
+                <td><i class="conum" data-value="1"></i><b>1</b></td> 
+                <td>You need to declare just one csv dataset file. Database rider will take parent folder as dataset folder.</td> 
+               </tr> 
+              </tbody> 
+             </table> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Then 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The database should be seeded with the dataset content before test execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+         </div> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+    </div> 
+   </div> 
+   <div class="sect1"> 
+    <h2 id="Dynamic-data-using-scritable-datasets"><a class="anchor" href="#Dynamic-data-using-scritable-datasets"></a>4. <strong>Dynamic data using scritable datasets</strong></h2> 
     <div class="sectionbody"> 
      <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('Dynamic-data-using-scritable-datasets');document.getElementById('hidden-Dynamic-data-using-scritable-datasets').style.display = 'inline';this.style.display = 'none'"> </span> 
      <span id="hidden-Dynamic-data-using-scritable-datasets" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('Dynamic-data-using-scritable-datasets');this.style.display = 'none'"> </span> 
@@ -1611,7 +2158,7 @@ company:
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_seed_database_with_groovy_script_in_dataset"><a class="anchor" href="#_seed_database_with_groovy_script_in_dataset"></a>3.1. Seed database with groovy script in dataset</h3> 
+      <h3 id="_seed_database_with_groovy_script_in_dataset"><a class="anchor" href="#_seed_database_with_groovy_script_in_dataset"></a>4.1. Seed database with groovy script in dataset</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -1700,8 +2247,10 @@ company:
 <span class="directive">public</span> <span class="type">void</span> shouldReplaceDateUsingGroovyInDataset() {
     Tweet tweet = (Tweet) emProvider.em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select t from Tweet t where t.id = '1'</span><span class="delimiter">"</span></span>).getSingleResult();
     assertThat(tweet).isNotNull();
-    assertThat(tweet.getDate().get(<span class="predefined-type">Calendar</span>.DAY_OF_MONTH)).isEqualTo(now.get(<span class="predefined-type">Calendar</span>.DAY_OF_MONTH));
-    assertThat(tweet.getDate().get(<span class="predefined-type">Calendar</span>.HOUR_OF_DAY)).isEqualTo(now.get(<span class="predefined-type">Calendar</span>.HOUR_OF_DAY));
+    assertThat(tweet.getDate().get(<span class="predefined-type">Calendar</span>.DAY_OF_MONTH)).
+            isEqualTo(now.get(<span class="predefined-type">Calendar</span>.DAY_OF_MONTH));
+    assertThat(tweet.getDate(). get(<span class="predefined-type">Calendar</span>.HOUR_OF_DAY)).
+            isEqualTo(now.get(<span class="predefined-type">Calendar</span>.HOUR_OF_DAY));
 }</code></pre> 
              </div> 
             </div> 
@@ -1737,7 +2286,7 @@ company:
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_seed_database_with_javascript_in_dataset"><a class="anchor" href="#_seed_database_with_javascript_in_dataset"></a>3.2. Seed database with javascript in dataset</h3> 
+      <h3 id="_seed_database_with_javascript_in_dataset"><a class="anchor" href="#_seed_database_with_javascript_in_dataset"></a>4.2. Seed database with javascript in dataset</h3> 
       <div class="admonitionblock note"> 
        <table> 
         <tbody> 
@@ -1804,7 +2353,7 @@ company:
             <div class="listingblock"> 
              <div class="content"> 
               <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
-<span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">datasets/yml/js-with-calc-replacements.yml</span><span class="delimiter">"</span></span>,cleanBefore = <span class="predefined-constant">true</span> ,disableConstraints = <span class="predefined-constant">true</span>, executorId = <span class="string"><span class="delimiter">"</span><span class="content">rules-it</span><span class="delimiter">"</span></span>)
+<span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">datasets/yml/js-with-calc-replacements.yml</span><span class="delimiter">"</span></span>,cleanBefore = <span class="predefined-constant">true</span>, disableConstraints = <span class="predefined-constant">true</span>, executorId = <span class="string"><span class="delimiter">"</span><span class="content">rules-it</span><span class="delimiter">"</span></span>)
 <span class="directive">public</span> <span class="type">void</span> shouldReplaceLikesUsingJavaScriptInDataset() {
     Tweet tweet = (Tweet) emProvider.em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select t from Tweet t where t.id = '1'</span><span class="delimiter">"</span></span>).getSingleResult();
     assertThat(tweet).isNotNull();
@@ -1846,7 +2395,7 @@ company:
     </div> 
    </div> 
    <div class="sect1"> 
-    <h2 id="Database-assertion-using-expected-datasets"><a class="anchor" href="#Database-assertion-using-expected-datasets"></a>4. <strong>Database assertion using expected datasets</strong></h2> 
+    <h2 id="Database-assertion-using-expected-datasets"><a class="anchor" href="#Database-assertion-using-expected-datasets"></a>5. <strong>Database assertion using expected datasets</strong></h2> 
     <div class="sectionbody"> 
      <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('Database-assertion-using-expected-datasets');document.getElementById('hidden-Database-assertion-using-expected-datasets').style.display = 'inline';this.style.display = 'none'"> </span> 
      <span id="hidden-Database-assertion-using-expected-datasets" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('Database-assertion-using-expected-datasets');this.style.display = 'none'"> </span> 
@@ -1869,7 +2418,7 @@ company:
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_database_assertion_with_yml_dataset"><a class="anchor" href="#_database_assertion_with_yml_dataset"></a>4.1. Database assertion with yml dataset</h3> 
+      <h3 id="_database_assertion_with_yml_dataset"><a class="anchor" href="#_database_assertion_with_yml_dataset"></a>5.1. Database assertion with yml dataset</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -1977,7 +2526,7 @@ company:
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_database_assertion_with_regular_expression_in_expected_dataset"><a class="anchor" href="#_database_assertion_with_regular_expression_in_expected_dataset"></a>4.2. Database assertion with regular expression in expected dataset</h3> 
+      <h3 id="_database_assertion_with_regular_expression_in_expected_dataset"><a class="anchor" href="#_database_assertion_with_regular_expression_in_expected_dataset"></a>5.2. Database assertion with regular expression in expected dataset</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2063,7 +2612,7 @@ company:
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_database_assertion_with_seeding_before_test_execution"><a class="anchor" href="#_database_assertion_with_seeding_before_test_execution"></a>4.3. Database assertion with seeding before test execution</h3> 
+      <h3 id="_database_assertion_with_seeding_before_test_execution"><a class="anchor" href="#_database_assertion_with_seeding_before_test_execution"></a>5.3. Database assertion with seeding before test execution</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2172,7 +2721,7 @@ company:
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_failling_database_assertion"><a class="anchor" href="#_failling_database_assertion"></a>4.4. Failling database assertion</h3> 
+      <h3 id="_failling_database_assertion"><a class="anchor" href="#_failling_database_assertion"></a>5.4. Failling database assertion</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2271,7 +2820,7 @@ company:
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_database_assertion_using_automatic_transaction"><a class="anchor" href="#_database_assertion_using_automatic_transaction"></a>4.5. Database assertion using automatic transaction</h3> 
+      <h3 id="_database_assertion_using_automatic_transaction"><a class="anchor" href="#_database_assertion_using_automatic_transaction"></a>5.5. Database assertion using automatic transaction</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2381,8 +2930,8 @@ company:
   </div> 
   <div id="footer" style="color:gray;font-size:11px">
     Generated by 
-   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.6</a> - Oct 28, 2016 11:16:40 AM 
-   <span style="float:right;font-size:11px"> Execution time: 12.161 seconds</span> 
+   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.6</a> - Oct 28, 2016 1:13:59 PM 
+   <span style="float:right;font-size:11px"> Execution time: 14.93 seconds</span> 
   </div> 
   <style>  
 
