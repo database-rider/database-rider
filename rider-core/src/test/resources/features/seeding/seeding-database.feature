@@ -212,7 +212,7 @@ This runner just starts CDI within your BDD tests so you just have to use <<_see
 
 [source,java]
 ----
-include::../../../src/test/java/com/github/database/rider/core/bdd/DatabaseRiderBdd.java[]
+include::../../../../rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactFeature.java[]
 ----
 
 
@@ -222,7 +222,7 @@ IMPORTANT: As cucumber doesn't work with JUnit Rules, see https://github.com/cuc
 === *Dependencies*
 Here is a set of maven dependencies needed by Database Rider Cucumber:
 
-NOTE: Most of the dependencies, except CDI container implementation, are bring by Database Rider Cucumber module transitively.
+NOTE: Most of the dependencies, except CDI container implementation, are brought by Database Rider Cucumber module transitively.
 
 [source,xml]
 ----
@@ -246,7 +246,7 @@ include::../../../pom.xml[tags=cucumber-deps]
 ----
 include::../../../../rider-cdi/pom.xml[tags=deltaspike-cdi-deps]
 ----
-<2> Also comes with DBUit Rules Cucumber.
+<2> Also comes with Rider Cucumber.
 <3> You can use CDI implementation of your choice.
 
 
@@ -286,8 +286,9 @@ When The following cucumber steps are executed
 ----
 include::../../../../rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactSteps.java[]
 ----
-<1> As the Cucumber cdi runner enables CDI, you can use injection into your Cucumber steps.
-<2> Dataset is prepared before step execution by `@DBUnitInterceptor`.
+<1> Activates DBUnit CDI interceptor
+<2> As the Cucumber cdi runner enables CDI, you can use injection into your Cucumber steps.
+<3> Dataset is prepared before step execution by `@DBUnitInterceptor`.
  """
 
 Then The database should be seeded with the dataset content before step execution

@@ -1,4 +1,4 @@
-package com.github.database.rider.examples.cucumber; //<1>
+package com.github.database.rider.examples.cucumber;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.cdi.api.DBUnitInterceptor;
@@ -14,11 +14,11 @@ import javax.inject.Inject;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-@DBUnitInterceptor
+@DBUnitInterceptor //<1>
 public class ContactSteps {
 
     @Inject
-    ContactRepository contactRepository; //<1>
+    ContactRepository contactRepository; //<2>
 
     Long count;
 
@@ -36,7 +36,7 @@ public class ContactSteps {
     }
 
     @Given("^we have a list of contacts$")
-    @DataSet("datasets/contacts.yml") //<2>
+    @DataSet("datasets/contacts.yml") //<3>
     public void given() {
         assertEquals(contactRepository.count(), new Long(3));
     }

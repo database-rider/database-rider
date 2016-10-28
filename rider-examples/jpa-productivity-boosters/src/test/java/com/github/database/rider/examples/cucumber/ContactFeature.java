@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         features = {"src/test/resources/features/contacts.feature"},
         plugin = {"json:target/cucumber.json"}
-        //glue = "com.github.dbunit.rules.examples.glues"
+        //glue = "com.github.database.rider.examples.glues"
 )
 public class ContactFeature {
 }
