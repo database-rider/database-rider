@@ -540,18 +540,23 @@ table.CodeRay td.code>pre{padding:0}
        <li><a href="#_creating_a_code_xls_code_dataset">3.4. Creating a <code>XLS</code> dataset</a></li> 
        <li><a href="#_creating_a_code_csv_code_dataset">3.5. Creating a <code>CSV</code> dataset</a></li> 
       </ul> </li> 
-     <li><a href="#Dynamic-data-using-scritable-datasets">4. <strong>Dynamic data using scritable datasets</strong></a> 
+     <li><a href="#Configuration">4. <strong>Configuration</strong></a> 
       <ul class="sectlevel2"> 
-       <li><a href="#_seed_database_with_groovy_script_in_dataset">4.1. Seed database with groovy script in dataset</a></li> 
-       <li><a href="#_seed_database_with_javascript_in_dataset">4.2. Seed database with javascript in dataset</a></li> 
+       <li><a href="#_dataset_configuration">4.1. DataSet configuration</a></li> 
+       <li><a href="#_dbunit_configuration">4.2. DBUnit configuration</a></li> 
       </ul> </li> 
-     <li><a href="#Database-assertion-using-expected-datasets">5. <strong>Database assertion using expected datasets</strong></a> 
+     <li><a href="#Dynamic-data-using-scritable-datasets">5. <strong>Dynamic data using scritable datasets</strong></a> 
       <ul class="sectlevel2"> 
-       <li><a href="#_database_assertion_with_yml_dataset">5.1. Database assertion with yml dataset</a></li> 
-       <li><a href="#_database_assertion_with_regular_expression_in_expected_dataset">5.2. Database assertion with regular expression in expected dataset</a></li> 
-       <li><a href="#_database_assertion_with_seeding_before_test_execution">5.3. Database assertion with seeding before test execution</a></li> 
-       <li><a href="#_failling_database_assertion">5.4. Failling database assertion</a></li> 
-       <li><a href="#_database_assertion_using_automatic_transaction">5.5. Database assertion using automatic transaction</a></li> 
+       <li><a href="#_seed_database_with_groovy_script_in_dataset">5.1. Seed database with groovy script in dataset</a></li> 
+       <li><a href="#_seed_database_with_javascript_in_dataset">5.2. Seed database with javascript in dataset</a></li> 
+      </ul> </li> 
+     <li><a href="#Database-assertion-using-expected-datasets">6. <strong>Database assertion using expected datasets</strong></a> 
+      <ul class="sectlevel2"> 
+       <li><a href="#_database_assertion_with_yml_dataset">6.1. Database assertion with yml dataset</a></li> 
+       <li><a href="#_database_assertion_with_regular_expression_in_expected_dataset">6.2. Database assertion with regular expression in expected dataset</a></li> 
+       <li><a href="#_database_assertion_with_seeding_before_test_execution">6.3. Database assertion with seeding before test execution</a></li> 
+       <li><a href="#_failling_database_assertion">6.4. Failling database assertion</a></li> 
+       <li><a href="#_database_assertion_using_automatic_transaction">6.5. Database assertion using automatic transaction</a></li> 
       </ul> </li> 
     </ul> 
    </div> 
@@ -2132,7 +2137,233 @@ TWEET</pre>
     </div> 
    </div> 
    <div class="sect1"> 
-    <h2 id="Dynamic-data-using-scritable-datasets"><a class="anchor" href="#Dynamic-data-using-scritable-datasets"></a>4. <strong>Dynamic data using scritable datasets</strong></h2> 
+    <h2 id="Configuration"><a class="anchor" href="#Configuration"></a>4. <strong>Configuration</strong></h2> 
+    <div class="sectionbody"> 
+     <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('Configuration');document.getElementById('hidden-Configuration').style.display = 'inline';this.style.display = 'none'"> </span> 
+     <span id="hidden-Configuration" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('Configuration');this.style.display = 'none'"> </span> 
+     <div class="sidebarblock"> 
+      <div class="content"> 
+       <div class="exampleblock"> 
+        <div class="content"> 
+         <div class="quoteblock"> 
+          <blockquote> 
+           <div class="paragraph"> 
+            <p>In order to handle various use cases<br> As a developer<br> I want to be able to configure DataBase Rider</p> 
+           </div> 
+          </blockquote> 
+         </div> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+     <div class="sect2"> 
+      <h3 id="_dataset_configuration"><a class="anchor" href="#_dataset_configuration"></a>4.1. DataSet configuration</h3> 
+      <div class="paragraph"> 
+       <p>DataSet configuration is done via <strong>@DataSet</strong> annotation at <strong>class</strong> or <strong>method</strong> level:</p> 
+      </div> 
+      <div class="listingblock"> 
+       <div class="content"> 
+        <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+<span class="annotation">@DataSet</span>(value =<span class="string"><span class="delimiter">"</span><span class="content">users.yml</span><span class="delimiter">"</span></span>, strategy = SeedStrategy.UPDATE,
+  disableConstraints = <span class="predefined-constant">true</span>,cleanAfter = <span class="predefined-constant">true</span>,
+  useSequenceFiltering = <span class="predefined-constant">true</span>, tableOrdering = {<span class="string"><span class="delimiter">"</span><span class="content">TWEET</span><span class="delimiter">"</span></span>,<span class="string"><span class="delimiter">"</span><span class="content">USER</span><span class="delimiter">"</span></span>},
+  executeScriptsBefore = <span class="string"><span class="delimiter">"</span><span class="content">script.sql</span><span class="delimiter">"</span></span>, executeStatementsBefore = <span class="string"><span class="delimiter">"</span><span class="content">DELETE from USER where 1=1</span><span class="delimiter">"</span></span>
+  transactional = <span class="predefined-constant">true</span>, cleanAfter=<span class="predefined-constant">true</span>)
+<span class="directive">public</span> <span class="type">void</span> shouldCreateDataSet(){
+
+}</code></pre> 
+       </div> 
+      </div> 
+      <div class="paragraph"> 
+       <p>Table below illustrate the possible configurations:</p> 
+      </div> 
+      <table class="tableblock frame-all grid-all spread"> 
+       <colgroup> 
+        <col style="width: 33.3333%;"> 
+        <col style="width: 33.3333%;"> 
+        <col style="width: 33.3334%;"> 
+       </colgroup> 
+       <thead> 
+        <tr> 
+         <th class="tableblock halign-left valign-top">Name</th> 
+         <th class="tableblock halign-left valign-top">Description</th> 
+         <th class="tableblock halign-left valign-top">Default</th> 
+        </tr> 
+       </thead> 
+       <tbody> 
+        <tr> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">value</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">Dataset file name using test resources folder as root directory. Multiple, comma separated, dataset file names can be provided.</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">""</p></td> 
+        </tr> 
+        <tr> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">executorId</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">Name of dataset executor for the given dataset.</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">DataSetExecutorImpl.DEFAULT_EXECUTOR_ID</p></td> 
+        </tr> 
+        <tr> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">strategy</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">DataSet seed strategy. Possible values are: CLEAN_INSERT, INSERT, REFRESH and UPDATE.</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">CLEAN_INSERT, meaning that DBUnit will clean and then insert data in tables present in provided dataset.</p></td> 
+        </tr> 
+        <tr> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">useSequenceFiltering</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">If true dbunit will look at constraints and dataset to try to determine the correct ordering for the SQL statements.</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td> 
+        </tr> 
+        <tr> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">tableOrdering</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">A list of table names used to reorder DELETE operations to prevent failures due to circular dependencies.</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">""</p></td> 
+        </tr> 
+        <tr> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">disableConstraints</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">Disable database constraints.</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td> 
+        </tr> 
+        <tr> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">cleanBefore</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">If true Database Rider will try to delete database before test in a smart way by using table ordering and brute force.</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td> 
+        </tr> 
+        <tr> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">cleanAfter</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">If true Database Rider will try to delete database after test in a smart way by using table ordering and brute force.</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td> 
+        </tr> 
+        <tr> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">transactional</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">If true a transaction will be started before and committed after test execution.</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td> 
+        </tr> 
+        <tr> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">executeStatementsBefore</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">A list of jdbc statements to execute before test.</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">{}</p></td> 
+        </tr> 
+        <tr> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">executeStatementsAfter</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">A list of jdbc statements to execute after test.</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">{}</p></td> 
+        </tr> 
+        <tr> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">executeScriptsBefore</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">A list of sql script files to execute before test. Note that commands inside sql file must be separated by <code>;</code>.</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">{}</p></td> 
+        </tr> 
+        <tr> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">executeScriptsAfter</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">A list of sql script files to execute after test. Note that commands inside sql file must be separated by <code>;</code>.</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">{}</p></td> 
+        </tr> 
+       </tbody> 
+      </table> 
+     </div> 
+     <div class="sect2"> 
+      <h3 id="_dbunit_configuration"><a class="anchor" href="#_dbunit_configuration"></a>4.2. DBUnit configuration</h3> 
+      <div class="paragraph"> 
+       <p><code>DBUnit</code>, the tool doing the dirt work the scenes, can be configured by <strong>@DBUnit</strong> annotation (class or method level) and <strong>dbunit.yml</strong> file present in <code>test resources</code> folder.</p> 
+      </div> 
+      <div class="listingblock"> 
+       <div class="content"> 
+        <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+<span class="annotation">@DBUnit</span>(cacheConnection = <span class="predefined-constant">true</span>, cacheTableNames = <span class="predefined-constant">false</span>, allowEmptyFields = <span class="predefined-constant">true</span>,batchSize = <span class="integer">50</span>)
+<span class="directive">public</span> <span class="type">void</span> shouldLoadDBUnitConfigViaAnnotation() {
+
+}</code></pre> 
+       </div> 
+      </div> 
+      <div class="paragraph"> 
+       <p>Here is a dbunit.yml example, also the default values:</p> 
+      </div> 
+      <div class="listingblock"> 
+       <div class="title">
+         src/test/resources/dbunit.yml 
+       </div> 
+       <div class="content"> 
+        <pre>cacheConnection: true <i class="conum" data-value="1"></i><b>(1)</b>
+cacheTableNames: true <i class="conum" data-value="2"></i><b>(2)</b>
+leakHunter: false <i class="conum" data-value="3"></i><b>(3)</b>
+properties:
+batchedStatements:  false <i class="conum" data-value="4"></i><b>(4)</b>
+qualifiedTableNames: false <i class="conum" data-value="5"></i><b>(5)</b>
+caseSensitiveTableNames: false <i class="conum" data-value="6"></i><b>(6)</b>
+batchSize: 100 <i class="conum" data-value="7"></i><b>(7)</b>
+fetchSize: 100 <i class="conum" data-value="8"></i><b>(8)</b>
+allowEmptyFields: false <i class="conum" data-value="9"></i><b>(9)</b>
+escapePattern: <i class="conum" data-value="10"></i><b>(10)</b>
+connectionConfig: <i class="conum" data-value="11"></i><b>(11)</b>
+driver: ""
+url: ""
+user: ""
+password: ""</pre> 
+       </div> 
+      </div> 
+      <div class="colist arabic"> 
+       <table> 
+        <tbody> 
+         <tr> 
+          <td><i class="conum" data-value="1"></i><b>1</b></td> 
+          <td>Database connection will be reused among tests</td> 
+         </tr> 
+         <tr> 
+          <td><i class="conum" data-value="2"></i><b>2</b></td> 
+          <td>Caches table names to avoid query connection metadata unnecessarily</td> 
+         </tr> 
+         <tr> 
+          <td><i class="conum" data-value="3"></i><b>3</b></td> 
+          <td>Activate connection leak detection. In case a leak (open JDBC connections is increased after test execution) is found an exception is thrown and test fails.</td> 
+         </tr> 
+         <tr> 
+          <td><i class="conum" data-value="4"></i><b>4</b></td> 
+          <td>Enables usage of JDBC batched statement</td> 
+         </tr> 
+         <tr> 
+          <td><i class="conum" data-value="5"></i><b>5</b></td> 
+          <td>Enable or disable multiple schemas support. If enabled, Dbunit access tables with names fully qualified by schema using this format: SCHEMA.TABLE.</td> 
+         </tr> 
+         <tr> 
+          <td><i class="conum" data-value="6"></i><b>6</b></td> 
+          <td>Enable or disable case sensitive table names. If enabled, Dbunit handles all table names in a case sensitive way.</td> 
+         </tr> 
+         <tr> 
+          <td><i class="conum" data-value="7"></i><b>7</b></td> 
+          <td>Specifies the size of JDBC batch updates</td> 
+         </tr> 
+         <tr> 
+          <td><i class="conum" data-value="8"></i><b>8</b></td> 
+          <td>Specifies statement fetch size for loading data into a result set table.</td> 
+         </tr> 
+         <tr> 
+          <td><i class="conum" data-value="9"></i><b>9</b></td> 
+          <td>Allow to call INSERT/UPDATE with empty strings ('').</td> 
+         </tr> 
+         <tr> 
+          <td><i class="conum" data-value="10"></i><b>10</b></td> 
+          <td>Allows schema, table and column names escaping. The property value is an escape pattern where the ? is replaced by the name. For example, the pattern "[?]" is expanded as "[MY_TABLE]" for a table named "MY_TABLE". The most common escape pattern is ""?"" which surrounds the table name with quotes (for the above example it would result in ""MY_TABLE""). As a fallback if no questionmark is in the given String and its length is one it is used to surround the table name on the left and right side. For example the escape pattern """ will have the same effect as the escape pattern ""?"".</td> 
+         </tr> 
+         <tr> 
+          <td><i class="conum" data-value="11"></i><b>11</b></td> 
+          <td>JDBC connection configuration, it will be used in case you don’t provide a connection inside test (except in CDI test where connection is inferred from entity manager).</td> 
+         </tr> 
+        </tbody> 
+       </table> 
+      </div> 
+      <div class="admonitionblock note"> 
+       <table> 
+        <tbody> 
+         <tr> 
+          <td class="icon"> <i class="fa icon-note" title="Note"></i> </td> 
+          <td class="content"> <code>@DBUnit</code> annotation takes precedence over <code>dbunit.yml</code> global configuration which will be used only if the annotation is not present. </td> 
+         </tr> 
+        </tbody> 
+       </table> 
+      </div> 
+     </div> 
+    </div> 
+   </div> 
+   <div class="sect1"> 
+    <h2 id="Dynamic-data-using-scritable-datasets"><a class="anchor" href="#Dynamic-data-using-scritable-datasets"></a>5. <strong>Dynamic data using scritable datasets</strong></h2> 
     <div class="sectionbody"> 
      <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('Dynamic-data-using-scritable-datasets');document.getElementById('hidden-Dynamic-data-using-scritable-datasets').style.display = 'inline';this.style.display = 'none'"> </span> 
      <span id="hidden-Dynamic-data-using-scritable-datasets" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('Dynamic-data-using-scritable-datasets');this.style.display = 'none'"> </span> 
@@ -2158,7 +2389,7 @@ TWEET</pre>
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_seed_database_with_groovy_script_in_dataset"><a class="anchor" href="#_seed_database_with_groovy_script_in_dataset"></a>4.1. Seed database with groovy script in dataset</h3> 
+      <h3 id="_seed_database_with_groovy_script_in_dataset"><a class="anchor" href="#_seed_database_with_groovy_script_in_dataset"></a>5.1. Seed database with groovy script in dataset</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2286,7 +2517,7 @@ TWEET</pre>
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_seed_database_with_javascript_in_dataset"><a class="anchor" href="#_seed_database_with_javascript_in_dataset"></a>4.2. Seed database with javascript in dataset</h3> 
+      <h3 id="_seed_database_with_javascript_in_dataset"><a class="anchor" href="#_seed_database_with_javascript_in_dataset"></a>5.2. Seed database with javascript in dataset</h3> 
       <div class="admonitionblock note"> 
        <table> 
         <tbody> 
@@ -2395,7 +2626,7 @@ TWEET</pre>
     </div> 
    </div> 
    <div class="sect1"> 
-    <h2 id="Database-assertion-using-expected-datasets"><a class="anchor" href="#Database-assertion-using-expected-datasets"></a>5. <strong>Database assertion using expected datasets</strong></h2> 
+    <h2 id="Database-assertion-using-expected-datasets"><a class="anchor" href="#Database-assertion-using-expected-datasets"></a>6. <strong>Database assertion using expected datasets</strong></h2> 
     <div class="sectionbody"> 
      <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('Database-assertion-using-expected-datasets');document.getElementById('hidden-Database-assertion-using-expected-datasets').style.display = 'inline';this.style.display = 'none'"> </span> 
      <span id="hidden-Database-assertion-using-expected-datasets" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('Database-assertion-using-expected-datasets');this.style.display = 'none'"> </span> 
@@ -2418,7 +2649,7 @@ TWEET</pre>
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_database_assertion_with_yml_dataset"><a class="anchor" href="#_database_assertion_with_yml_dataset"></a>5.1. Database assertion with yml dataset</h3> 
+      <h3 id="_database_assertion_with_yml_dataset"><a class="anchor" href="#_database_assertion_with_yml_dataset"></a>6.1. Database assertion with yml dataset</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2526,7 +2757,7 @@ TWEET</pre>
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_database_assertion_with_regular_expression_in_expected_dataset"><a class="anchor" href="#_database_assertion_with_regular_expression_in_expected_dataset"></a>5.2. Database assertion with regular expression in expected dataset</h3> 
+      <h3 id="_database_assertion_with_regular_expression_in_expected_dataset"><a class="anchor" href="#_database_assertion_with_regular_expression_in_expected_dataset"></a>6.2. Database assertion with regular expression in expected dataset</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2612,7 +2843,7 @@ TWEET</pre>
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_database_assertion_with_seeding_before_test_execution"><a class="anchor" href="#_database_assertion_with_seeding_before_test_execution"></a>5.3. Database assertion with seeding before test execution</h3> 
+      <h3 id="_database_assertion_with_seeding_before_test_execution"><a class="anchor" href="#_database_assertion_with_seeding_before_test_execution"></a>6.3. Database assertion with seeding before test execution</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2721,7 +2952,7 @@ TWEET</pre>
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_failling_database_assertion"><a class="anchor" href="#_failling_database_assertion"></a>5.4. Failling database assertion</h3> 
+      <h3 id="_failling_database_assertion"><a class="anchor" href="#_failling_database_assertion"></a>6.4. Failling database assertion</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2820,7 +3051,7 @@ TWEET</pre>
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_database_assertion_using_automatic_transaction"><a class="anchor" href="#_database_assertion_using_automatic_transaction"></a>5.5. Database assertion using automatic transaction</h3> 
+      <h3 id="_database_assertion_using_automatic_transaction"><a class="anchor" href="#_database_assertion_using_automatic_transaction"></a>6.5. Database assertion using automatic transaction</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2930,8 +3161,8 @@ TWEET</pre>
   </div> 
   <div id="footer" style="color:gray;font-size:11px">
     Generated by 
-   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.6</a> - Oct 28, 2016 1:13:59 PM 
-   <span style="float:right;font-size:11px"> Execution time: 14.93 seconds</span> 
+   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.6</a> - Oct 28, 2016 8:41:19 PM 
+   <span style="float:right;font-size:11px"> Execution time: 13.069 seconds</span> 
   </div> 
   <style>  
 
