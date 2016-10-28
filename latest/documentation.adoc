@@ -15,7 +15,7 @@
 
 = *Living Documentation*
 
-include::/home/pestano/projects/database-rider/rider-core/target/test-classes/cukedoctor-intro.adoc[leveloffset=+1]
+include::/home/travis/build/database-rider/database-rider/rider-core/target/test-classes/cukedoctor-intro.adoc[leveloffset=+1]
 
 
 [[Seeding-database, Seeding database]]
