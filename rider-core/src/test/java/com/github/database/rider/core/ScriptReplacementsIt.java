@@ -33,15 +33,18 @@ public class ScriptReplacementsIt {
     @Test
     @DataSet(value = "datasets/yml/js-with-date-replacements.yml",cleanBefore = true ,disableConstraints = true, executorId = "rules-it")
     public void shouldReplaceDateUsingJavaScriptInDataset() {
-        Tweet tweet = (Tweet) emProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
+        Tweet tweet = (Tweet) emProvider.em().createQuery("select t from Tweet t where t.id = '1'").
+                getSingleResult();
         assertThat(tweet).isNotNull();
-        assertThat(tweet.getDate().get(Calendar.DAY_OF_MONTH)).isEqualTo(now.get(Calendar.DAY_OF_MONTH));
-        assertThat(tweet.getDate().get(Calendar.HOUR_OF_DAY)).isEqualTo(now.get(Calendar.HOUR_OF_DAY));
+        assertThat(tweet.getDate().get(Calendar.DAY_OF_MONTH)).
+                isEqualTo(now.get(Calendar.DAY_OF_MONTH));
+        assertThat(tweet.getDate().get(Calendar.HOUR_OF_DAY)).
+                isEqualTo(now.get(Calendar.HOUR_OF_DAY));
     }
 
 // tag::javascript-likes[]
     @Test
-    @DataSet(value = "datasets/yml/js-with-calc-replacements.yml",cleanBefore = true ,disableConstraints = true, executorId = "rules-it")
+    @DataSet(value = "datasets/yml/js-with-calc-replacements.yml",cleanBefore = true, disableConstraints = true, executorId = "rules-it")
     public void shouldReplaceLikesUsingJavaScriptInDataset() {
         Tweet tweet = (Tweet) emProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
         assertThat(tweet).isNotNull();
@@ -56,8 +59,10 @@ public class ScriptReplacementsIt {
     public void shouldReplaceDateUsingGroovyInDataset() {
         Tweet tweet = (Tweet) emProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
         assertThat(tweet).isNotNull();
-        assertThat(tweet.getDate().get(Calendar.DAY_OF_MONTH)).isEqualTo(now.get(Calendar.DAY_OF_MONTH));
-        assertThat(tweet.getDate().get(Calendar.HOUR_OF_DAY)).isEqualTo(now.get(Calendar.HOUR_OF_DAY));
+        assertThat(tweet.getDate().get(Calendar.DAY_OF_MONTH)).
+                isEqualTo(now.get(Calendar.DAY_OF_MONTH));
+        assertThat(tweet.getDate(). get(Calendar.HOUR_OF_DAY)).
+                isEqualTo(now.get(Calendar.HOUR_OF_DAY));
     }
 // end::groovy[]
 

@@ -3,7 +3,7 @@ Feature: Seeding database
 ====
 [quote]
 ____
-In order to insert data into database
+In order to insert data into database before test execution
 As a developer
 I want to easily use DBUnit in JUnit tests.
 ____
@@ -16,7 +16,7 @@ Database Rider brings http://dbunit.sourceforge.net/[DBunit^] to your http://jun
 * http://junit.org/junit5/docs/current/user-guide/#extensions[JUnit5 extension^].
  
 
-  Scenario: Seeding database with `DBUnit Rule`
+  Scenario: Seed database with `DBUnit Rule`
 
     JUnit4 integrates with DBUnit through a https://github.com/junit-team/junit4/wiki/Rules[JUnit rule^] called `DBUnitRule` which reads *@Dataset* annotations in order to prepare the database state using DBUnit behind the scenes.
 
@@ -235,14 +235,14 @@ include::../../../../pom.xml[tags=version]
 ----
 
 .Cucumber dependencies
-[source,xml,ident=0]
+[source,xml,indent=0]
 ----
 include::../../../pom.xml[tags=cucumber-deps]
 ----
 <1> You don't need to declare because it comes with Database Rider Cucumber module dependency.
 
 .DeltaSpike and CDI dependency
-[source,xml,ident=0]
+[source,xml,indent=0]
 ----
 include::../../../../rider-cdi/pom.xml[tags=deltaspike-cdi-deps]
 ----

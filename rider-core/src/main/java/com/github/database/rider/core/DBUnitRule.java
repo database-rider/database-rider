@@ -184,7 +184,7 @@ public class DBUnitRule implements TestRule {
             private Connection getConnectionFrom(DBUnitConfig dbUnitConfig) {
                 ConnectionConfig connectionConfig = dbUnitConfig.getConnectionConfig();
                 if ("".equals(connectionConfig.getUrl()) || "".equals(connectionConfig.getUser())) {
-                    throw new RuntimeException(String.format("Could not create JDBC connection for method %s, provide a connection at test level or via configuration, see documentation here: https://github.com/rmpestano/dbunit-rules#jdbc-connection", currentMethod));
+                    throw new RuntimeException(String.format("Could not create JDBC connection for method %s, provide a connection at test level or via configuration, see documentation here: https://github.com/database-rider/database-rider#jdbc-connection", currentMethod));
                 }
                 try {
                     if (!"".equals(connectionConfig.getDriver())) {
