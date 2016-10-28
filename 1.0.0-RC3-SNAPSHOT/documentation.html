@@ -1197,21 +1197,20 @@ follower:
       </div> 
       <div class="listingblock"> 
        <div class="content"> 
-        <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.github.database.rider.core.bdd</span>;
+        <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.github.database.rider.examples.cucumber</span>;
 
+<span class="keyword">import</span> <span class="include">com.github.database.rider.cucumber.CdiCucumberTestRunner</span>;
 <span class="keyword">import</span> <span class="include">cucumber.api.CucumberOptions</span>;
-<span class="keyword">import</span> <span class="include">cucumber.api.junit.Cucumber</span>;
 <span class="keyword">import</span> <span class="include">org.junit.runner.RunWith</span>;
 
-<span class="comment">/** * Created by rmpestano on 4/17/16. */</span>
-<span class="annotation">@RunWith</span>(Cucumber.class)
-<span class="annotation">@CucumberOptions</span>(features = {
-        <span class="string"><span class="delimiter">"</span><span class="content">src/test/resources/features/seeding/seeding-database.feature</span><span class="delimiter">"</span></span>,
-        <span class="string"><span class="delimiter">"</span><span class="content">src/test/resources/features/general/dataset-replacements.feature</span><span class="delimiter">"</span></span>,
-        <span class="string"><span class="delimiter">"</span><span class="content">src/test/resources/features/general/expected-dataset.feature</span><span class="delimiter">"</span></span>
-},
-        plugin = <span class="string"><span class="delimiter">"</span><span class="content">json:target/dbunit-rules.json</span><span class="delimiter">"</span></span>)
-<span class="directive">public</span> <span class="type">class</span> <span class="class">DatabaseRiderBdd</span> {
+
+<span class="annotation">@RunWith</span>(CdiCucumberTestRunner.class)
+<span class="annotation">@CucumberOptions</span>(
+        features = {<span class="string"><span class="delimiter">"</span><span class="content">src/test/resources/features/contacts.feature</span><span class="delimiter">"</span></span>},
+        plugin = {<span class="string"><span class="delimiter">"</span><span class="content">json:target/cucumber.json</span><span class="delimiter">"</span></span>}
+        <span class="comment">//glue = "com.github.database.rider.examples.glues"</span>
+)
+<span class="directive">public</span> <span class="type">class</span> <span class="class">ContactFeature</span> {
 }</code></pre> 
        </div> 
       </div> 
@@ -1234,7 +1233,7 @@ follower:
         <tbody> 
          <tr> 
           <td class="icon"> <i class="fa icon-note" title="Note"></i> </td> 
-          <td class="content"> Most of the dependencies, except CDI container implementation, are bring by Database Rider Cucumber module transitively. </td> 
+          <td class="content"> Most of the dependencies, except CDI container implementation, are brought by Database Rider Cucumber module transitively. </td> 
          </tr> 
         </tbody> 
        </table> 
@@ -1324,7 +1323,7 @@ follower:
         <tbody> 
          <tr> 
           <td><i class="conum" data-value="1"></i><b>1</b></td> 
-          <td>Also comes with DBUit Rules Cucumber.</td> 
+          <td>Also comes with Rider Cucumber.</td> 
          </tr> 
          <tr> 
           <td><i class="conum" data-value="2"></i><b>2</b></td> 
@@ -1453,7 +1452,7 @@ company:
 <span class="annotation">@CucumberOptions</span>(
         features = {<span class="string"><span class="delimiter">"</span><span class="content">src/test/resources/features/contacts.feature</span><span class="delimiter">"</span></span>},
         plugin = {<span class="string"><span class="delimiter">"</span><span class="content">json:target/cucumber.json</span><span class="delimiter">"</span></span>}
-        <span class="comment">//glue = "com.github.dbunit.rules.examples.glues"</span>
+        <span class="comment">//glue = "com.github.database.rider.examples.glues"</span>
 )
 <span class="directive">public</span> <span class="type">class</span> <span class="class">ContactFeature</span> {
 }</code></pre> 
@@ -1479,7 +1478,7 @@ company:
            <div class="content"> 
             <div class="listingblock"> 
              <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.github.database.rider.examples.cucumber</span>; <i class="conum" data-value="1"></i><b>(1)</b>
+              <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.github.database.rider.examples.cucumber</span>;
 
 <span class="keyword">import</span> <span class="include">com.github.database.rider.core.api.dataset.DataSet</span>;
 <span class="keyword">import</span> <span class="include">com.github.database.rider.cdi.api.DBUnitInterceptor</span>;
@@ -1495,11 +1494,11 @@ company:
 <span class="keyword">import</span> <span class="include">static</span> <span class="include">org.junit.Assert.assertEquals</span>;
 <span class="keyword">import</span> <span class="include">static</span> <span class="include">org.junit.Assert.assertNull</span>;
 
-<span class="annotation">@DBUnitInterceptor</span>
+<span class="annotation">@DBUnitInterceptor</span> <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">ContactSteps</span> {
 
     <span class="annotation">@Inject</span>
-    ContactRepository contactRepository; <i class="conum" data-value="1"></i><b>(1)</b>
+    ContactRepository contactRepository; <i class="conum" data-value="2"></i><b>(2)</b>
 
     <span class="predefined-type">Long</span> count;
 
@@ -1517,7 +1516,7 @@ company:
     }
 
     <span class="annotation">@Given</span>(<span class="string"><span class="delimiter">"</span><span class="content">^we have a list of contacts$</span><span class="delimiter">"</span></span>)
-    <span class="annotation">@DataSet</span>(<span class="string"><span class="delimiter">"</span><span class="content">datasets/contacts.yml</span><span class="delimiter">"</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
+    <span class="annotation">@DataSet</span>(<span class="string"><span class="delimiter">"</span><span class="content">datasets/contacts.yml</span><span class="delimiter">"</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
     <span class="directive">public</span> <span class="type">void</span> given() {
         assertEquals(contactRepository.count(), <span class="keyword">new</span> <span class="predefined-type">Long</span>(<span class="integer">3</span>));
     }
@@ -1539,10 +1538,14 @@ company:
               <tbody> 
                <tr> 
                 <td><i class="conum" data-value="1"></i><b>1</b></td> 
-                <td>As the Cucumber cdi runner enables CDI, you can use injection into your Cucumber steps.</td> 
+                <td>Activates DBUnit CDI interceptor</td> 
                </tr> 
                <tr> 
                 <td><i class="conum" data-value="2"></i><b>2</b></td> 
+                <td>As the Cucumber cdi runner enables CDI, you can use injection into your Cucumber steps.</td> 
+               </tr> 
+               <tr> 
+                <td><i class="conum" data-value="3"></i><b>3</b></td> 
                 <td>Dataset is prepared before step execution by <code>@DBUnitInterceptor</code>.</td> 
                </tr> 
               </tbody> 
@@ -2378,8 +2381,8 @@ company:
   </div> 
   <div id="footer" style="color:gray;font-size:11px">
     Generated by 
-   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.6</a> - Oct 28, 2016 12:59:04 AM 
-   <span style="float:right;font-size:11px"> Execution time: 10.742 seconds</span> 
+   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.6</a> - Oct 28, 2016 11:16:40 AM 
+   <span style="float:right;font-size:11px"> Execution time: 12.161 seconds</span> 
   </div> 
   <style>  
 
