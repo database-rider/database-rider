@@ -11,7 +11,7 @@ ____
 
 Scritable datasets are backed by JSR 223.footnote:[Scripting for the Java Platform, for more information access the official https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/prog_guide/api.html[docs here^]].
 
-Complete source code of examples below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java#L18[found here^].
+TIP: Complete source code of examples below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java#L18[found here^].
 
 
   Scenario: Seed database with groovy script in dataset
@@ -39,7 +39,6 @@ include::../../../src/test/resources/datasets/yml/groovy-with-date-replacements.
 <1> Groovy scripting is enabled by `groovy:` string.
 """
 
-#{TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java#L55[found here^].}
 #cukedoctor-discrete
     When The following test is executed:
 """
@@ -64,7 +63,6 @@ include::../../../src/test/resources/datasets/yml/js-with-calc-replacements.yml[
 <1> Javascript scripting is enabled by `js:` string.
 """
 
-#{TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java#L44[found here^].}
 #cukedoctor-discrete
     When The following test is executed:
 """

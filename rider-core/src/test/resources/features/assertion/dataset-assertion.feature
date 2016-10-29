@@ -1,5 +1,5 @@
-# order: 5
-Feature: Database assertion using expected datasets
+# order: 4
+Feature: DataSet assertion
 ====
 [quote]
 ____
@@ -7,11 +7,12 @@ In order to verify database state after test execution
 As a developer
 I want to assert database state with datasets.
 ____
-
 ====
-Complete source code of examples below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ExpectedDataSetIt.java#L23[found here^].
 
-  Scenario: Database assertion with yml dataset
+TIP: Complete source code of examples below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ExpectedDataSetIt.java#L23[found here^].
+
+
+  Scenario: Assertion with yml dataset
 
      #cukedoctor-discrete
     Given The following dataset
@@ -33,7 +34,7 @@ include::../../../src/test/java/com/github/database/rider/core/ExpectedDataSetIt
 """
     Then Test must pass because database state is as in expected dataset.
 
-  Scenario: Database assertion with regular expression in expected dataset
+  Scenario: Assertion with regular expression in expected dataset
 
        #cukedoctor-discrete
     Given The following dataset
@@ -83,7 +84,7 @@ include::../../../src/test/java/com/github/database/rider/core/ExpectedDataSetIt
 """
     Then Test must pass because database state is as in expected dataset.
 
-  Scenario: Failling database assertion
+  Scenario: Failing assertion
 
        #cukedoctor-discrete
     Given The following dataset
@@ -109,7 +110,7 @@ include::../../../src/test/java/com/github/database/rider/core/ExpectedDataSetIt
 IMPORTANT: junit.framework.ComparisonFailure: value (table=USER, row=0, col=name) expected:<[]expected user1> but was:<[non ]expected user1>  at org.dbunit.assertion.JUnitFailureFactory.createFailure(JUnitFailureFactory.java:39) at org.dbunit.assertion.DefaultFailureHandler.createFailure(DefaultFailureHandler.java:97) at org.dbunit.assertion.DefaultFailureHandler.handle(DefaultFailureHandler.java:223) at ...
 """
 
-  Scenario: Database assertion using automatic transaction
+  Scenario: Assertion using automatic transaction
 
    #cukedoctor-discrete
     Given The following dataset

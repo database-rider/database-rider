@@ -12,8 +12,8 @@ import org.junit.runner.RunWith;
         "src/test/resources/features/seeding/seeding-database.feature",
         "src/test/resources/features/format/dataset-format.feature",
         "src/test/resources/features/configuration/dataset-configuration.feature",
-        "src/test/resources/features/general/dataset-replacements.feature",
-        "src/test/resources/features/general/expected-dataset.feature"
+        "src/test/resources/features/assertion/dataset-assertion.feature",
+        "src/test/resources/features/scriptable/scriptable-dataset.feature"
 },
         plugin = "json:target/dbunit-rules.json")
 public class DatabaseRiderBdd {
