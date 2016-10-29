@@ -558,6 +558,10 @@ table.CodeRay td.code>pre{padding:0}
        <li><a href="#_seed_database_with_groovy_script_in_dataset">6.1. Seed database with groovy script in dataset</a></li> 
        <li><a href="#_seed_database_with_javascript_in_dataset">6.2. Seed database with javascript in dataset</a></li> 
       </ul> </li> 
+     <li><a href="#Database-connection-leak-detection">7. <strong>Database connection leak detection</strong></a> 
+      <ul class="sectlevel2"> 
+       <li><a href="#_detecting_connection_leak">7.1. Detecting connection leak</a></li> 
+      </ul> </li> 
     </ul> 
    </div> 
   </div> 
@@ -3144,6 +3148,94 @@ password: ""</pre>
      </div> 
     </div> 
    </div> 
+   <div class="sect1"> 
+    <h2 id="Database-connection-leak-detection"><a class="anchor" href="#Database-connection-leak-detection"></a>7. <strong>Database connection leak detection</strong></h2> 
+    <div class="sectionbody"> 
+     <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('Database-connection-leak-detection');document.getElementById('hidden-Database-connection-leak-detection').style.display = 'inline';this.style.display = 'none'"> </span> 
+     <span id="hidden-Database-connection-leak-detection" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('Database-connection-leak-detection');this.style.display = 'none'"> </span> 
+     <div class="sidebarblock"> 
+      <div class="content"> 
+       <div class="exampleblock"> 
+        <div class="content"> 
+         <div class="quoteblock"> 
+          <blockquote> 
+           <div class="paragraph"> 
+            <p>In order to find JDBC connection leaks<br> As a developer<br> I want to make Database Rider monitor connections during tests execution.</p> 
+           </div> 
+          </blockquote> 
+         </div> 
+        </div> 
+       </div> 
+       <div class="paragraph"> 
+        <p>Leak hunter is a Database Rider component, based on <a href="https://vladmihalcea.com/2016/07/12/the-best-way-to-detect-database-connection-leaks/" target="_blank">this blog post</a>, which counts open jdbc connections before and after test execution.</p> 
+       </div> 
+       <div class="admonitionblock tip"> 
+        <table> 
+         <tbody> 
+          <tr> 
+           <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
+           <td class="content"> Complete source code of example below can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/LeakHunterIt.java#L19" target="_blank">found here</a>. </td> 
+          </tr> 
+         </tbody> 
+        </table> 
+       </div> 
+      </div> 
+     </div> 
+     <div class="sect2"> 
+      <h3 id="_detecting_connection_leak"><a class="anchor" href="#_detecting_connection_leak"></a>7.1. Detecting connection leak</h3> 
+      <div class="listingblock"> 
+       <div class="content"> 
+        <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(JUnit4.class)
+<span class="annotation">@DBUnit</span>(leakHunter = <span class="predefined-constant">true</span>) <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">LeakHunterIt</span> {
+
+    <span class="annotation">@Rule</span>
+    <span class="directive">public</span> DBUnitRule dbUnitRule = DBUnitRule.instance(<span class="keyword">new</span> ConnectionHolderImpl(getConnection()));
+
+    <span class="annotation">@Rule</span>
+    <span class="directive">public</span> ExpectedException exception = ExpectedException.none();
+
+    <span class="annotation">@Test</span>
+    <span class="annotation">@DataSet</span>(<span class="string"><span class="delimiter">"</span><span class="content">yml/user.yml</span><span class="delimiter">"</span></span>)
+    <span class="directive">public</span> <span class="type">void</span> shouldFindConnectionLeak() <span class="directive">throws</span> <span class="exception">SQLException</span> {
+        exception.expect(LeakHunterException.class);
+        exception.expectMessage(<span class="string"><span class="delimiter">"</span><span class="content">Execution of method shouldFindConnectionLeak left 1 open connection(s).</span><span class="delimiter">"</span></span>);
+        createLeak();
+    }
+
+    <span class="directive">private</span> <span class="type">void</span> createLeak() <span class="directive">throws</span> <span class="exception">SQLException</span> {
+        <span class="predefined-type">Connection</span> connection = getConnection();
+        <span class="keyword">try</span> (<span class="predefined-type">Statement</span> stmt = connection.createStatement()) {
+            <span class="predefined-type">ResultSet</span> resultSet = stmt.executeQuery(<span class="string"><span class="delimiter">"</span><span class="content">select count(*) from user</span><span class="delimiter">"</span></span>);
+            assertThat(resultSet.next()).isTrue();
+            assertThat(resultSet.getInt(<span class="integer">1</span>)).isEqualTo(<span class="integer">2</span>);
+        }
+    }</code></pre> 
+       </div> 
+      </div> 
+      <div class="colist arabic"> 
+       <table> 
+        <tbody> 
+         <tr> 
+          <td><i class="conum" data-value="1"></i><b>1</b></td> 
+          <td>Enables connection leak detection.</td> 
+         </tr> 
+        </tbody> 
+       </table> 
+      </div> 
+      <div class="admonitionblock note"> 
+       <table> 
+        <tbody> 
+         <tr> 
+          <td class="icon"> <i class="fa icon-note" title="Note"></i> </td> 
+          <td class="content"> If number of connections after test execution are greater than before then a <strong>LeakHunterException</strong> will be raised. </td> 
+         </tr> 
+        </tbody> 
+       </table> 
+      </div> 
+     </div> 
+    </div> 
+   </div> 
   </div> 
   <div id="footnotes"> 
    <hr> 
@@ -3158,8 +3250,8 @@ password: ""</pre>
   </div> 
   <div id="footer" style="color:gray;font-size:11px">
     Generated by 
-   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.6</a> - Oct 29, 2016 1:00:04 PM 
-   <span style="float:right;font-size:11px"> Execution time: 13.1 seconds</span> 
+   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.6</a> - Oct 29, 2016 1:52:42 PM 
+   <span style="float:right;font-size:11px"> Execution time: 11.674 seconds</span> 
   </div> 
   <style>  
 
