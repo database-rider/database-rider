@@ -1,5 +1,5 @@
 :toc: center
-:backend: html5
+:backend: pdf
 :doctitle: Living Documentation
 :doctype: book
 :icons: font
@@ -8,7 +8,7 @@
 :sectanchors:
 :sectlink:
 :docinfo:
-:source-highlighter: coderay
+:source-highlighter: highlightjs
 :toclevels: 3
 :revnumber: 1.0.0-RC3-SNAPSHOT
 :hardbreaks:
@@ -21,7 +21,6 @@ include::/home/travis/build/database-rider/database-rider/rider-core/target/test
 [[Seeding-database, Seeding database]]
 == *Seeding database*
 
-minmax::Seeding-database[]
 ****
 ====
 [quote]
@@ -416,7 +415,6 @@ The database should be seeded with the dataset content before step execution ico
 [[DataSet-creation, DataSet creation]]
 == *DataSet creation*
 
-minmax::DataSet-creation[]
 ****
 ====
 [quote]
@@ -661,7 +659,6 @@ The database should be seeded with the dataset content before test execution ico
 [[Configuration, Configuration]]
 == *Configuration*
 
-minmax::Configuration[]
 ****
 ====
 [quote]
@@ -764,7 +761,6 @@ NOTE: `@DBUnit` annotation takes precedence over `dbunit.yml` global configurati
 [[Dynamic-data-using-scritable-datasets, Dynamic data using scritable datasets]]
 == *Dynamic data using scritable datasets*
 
-minmax::Dynamic-data-using-scritable-datasets[]
 ****
 ====
 [quote]
@@ -887,7 +883,6 @@ Dataset script should be interpreted while seeding the database icon:thumbs-up[r
 [[Database-assertion-using-expected-datasets, Database assertion using expected datasets]]
 == *Database assertion using expected datasets*
 
-minmax::Database-assertion-using-expected-datasets[]
 ****
 ====
 [quote]
