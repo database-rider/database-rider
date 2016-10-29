@@ -101,10 +101,10 @@
                         <version>1.0.6</version>
                         <configuration>
                             <outputFileName>documentation</outputFileName>
-                            <!-- must be overridden -->
+                            <!-- by default it resolves to 'latest' and is overriden by release profile -->
                             <outputDir>${docs.outputdir}</outputDir>
                             <!--pdf and html5 -->
-                            <format>html</format>
+                            <format>all</format>
                             <hideSummarySection>true</hideSummarySection>
                             <hideScenarioKeyword>true</hideScenarioKeyword>
                             <hideStepTime>true</hideStepTime>
