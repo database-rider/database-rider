@@ -545,18 +545,18 @@ table.CodeRay td.code>pre{padding:0}
        <li><a href="#_dataset_configuration">4.1. DataSet configuration</a></li> 
        <li><a href="#_dbunit_configuration">4.2. DBUnit configuration</a></li> 
       </ul> </li> 
-     <li><a href="#Dynamic-data-using-scritable-datasets">5. <strong>Dynamic data using scritable datasets</strong></a> 
+     <li><a href="#DataSet-assertion">5. <strong>DataSet assertion</strong></a> 
       <ul class="sectlevel2"> 
-       <li><a href="#_seed_database_with_groovy_script_in_dataset">5.1. Seed database with groovy script in dataset</a></li> 
-       <li><a href="#_seed_database_with_javascript_in_dataset">5.2. Seed database with javascript in dataset</a></li> 
+       <li><a href="#_assertion_with_yml_dataset">5.1. Assertion with yml dataset</a></li> 
+       <li><a href="#_assertion_with_regular_expression_in_expected_dataset">5.2. Assertion with regular expression in expected dataset</a></li> 
+       <li><a href="#_database_assertion_with_seeding_before_test_execution">5.3. Database assertion with seeding before test execution</a></li> 
+       <li><a href="#_failing_assertion">5.4. Failing assertion</a></li> 
+       <li><a href="#_assertion_using_automatic_transaction">5.5. Assertion using automatic transaction</a></li> 
       </ul> </li> 
-     <li><a href="#Database-assertion-using-expected-datasets">6. <strong>Database assertion using expected datasets</strong></a> 
+     <li><a href="#Dynamic-data-using-scritable-datasets">6. <strong>Dynamic data using scritable datasets</strong></a> 
       <ul class="sectlevel2"> 
-       <li><a href="#_database_assertion_with_yml_dataset">6.1. Database assertion with yml dataset</a></li> 
-       <li><a href="#_database_assertion_with_regular_expression_in_expected_dataset">6.2. Database assertion with regular expression in expected dataset</a></li> 
-       <li><a href="#_database_assertion_with_seeding_before_test_execution">6.3. Database assertion with seeding before test execution</a></li> 
-       <li><a href="#_failling_database_assertion">6.4. Failling database assertion</a></li> 
-       <li><a href="#_database_assertion_using_automatic_transaction">6.5. Database assertion using automatic transaction</a></li> 
+       <li><a href="#_seed_database_with_groovy_script_in_dataset">6.1. Seed database with groovy script in dataset</a></li> 
+       <li><a href="#_seed_database_with_javascript_in_dataset">6.2. Seed database with javascript in dataset</a></li> 
       </ul> </li> 
     </ul> 
    </div> 
@@ -2366,273 +2366,10 @@ password: ""</pre>
     </div> 
    </div> 
    <div class="sect1"> 
-    <h2 id="Dynamic-data-using-scritable-datasets"><a class="anchor" href="#Dynamic-data-using-scritable-datasets"></a>5. <strong>Dynamic data using scritable datasets</strong></h2> 
+    <h2 id="DataSet-assertion"><a class="anchor" href="#DataSet-assertion"></a>5. <strong>DataSet assertion</strong></h2> 
     <div class="sectionbody"> 
-     <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('Dynamic-data-using-scritable-datasets');document.getElementById('hidden-Dynamic-data-using-scritable-datasets').style.display = 'inline';this.style.display = 'none'"> </span> 
-     <span id="hidden-Dynamic-data-using-scritable-datasets" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('Dynamic-data-using-scritable-datasets');this.style.display = 'none'"> </span> 
-     <div class="sidebarblock"> 
-      <div class="content"> 
-       <div class="exampleblock"> 
-        <div class="content"> 
-         <div class="quoteblock"> 
-          <blockquote> 
-           <div class="paragraph"> 
-            <p>In order to have dynamic data in datasets<br> As a developer<br> I want to use scripts in DBUnit datasets.</p> 
-           </div> 
-          </blockquote> 
-         </div> 
-        </div> 
-       </div> 
-       <div class="paragraph"> 
-        <p>Scritable datasets are backed by JSR 223.<sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnote_2" title="View footnote.">2</a>]</sup>.</p> 
-       </div> 
-       <div class="paragraph"> 
-        <p>Complete source code of examples below can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java#L18" target="_blank">found here</a>.</p> 
-       </div> 
-      </div> 
-     </div> 
-     <div class="sect2"> 
-      <h3 id="_seed_database_with_groovy_script_in_dataset"><a class="anchor" href="#_seed_database_with_groovy_script_in_dataset"></a>5.1. Seed database with groovy script in dataset</h3> 
-      <div class="sidebarblock"> 
-       <div class="content"> 
-        <div class="dlist"> 
-         <dl> 
-          <dt class="hdlist1">
-            Given 
-          </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
-           <p>Groovy script engine is on test classpath <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
-           <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
-    <span class="tag">&lt;groupId&gt;</span>org.codehaus.groovy<span class="tag">&lt;/groupId&gt;</span>
-    <span class="tag">&lt;artifactId&gt;</span>groovy-all<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>2.4.6<span class="tag">&lt;/version&gt;</span>
-    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
-<span class="tag">&lt;/dependency&gt;</span></code></pre> 
-             </div> 
-            </div> 
-           </div> 
-          </div> 
-         </div> 
-        </div> 
-        <div class="dlist"> 
-         <dl> 
-          <dt class="hdlist1">
-            And 
-          </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
-           <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre>tweet:
-  - id: "1"
-    content: "dbunit rules!"
-    date: "groovy:new Date()" <i class="conum" data-value="1"></i><b>(1)</b>
-    user_id: 1</pre> 
-             </div> 
-            </div> 
-            <div class="colist arabic"> 
-             <table> 
-              <tbody> 
-               <tr> 
-                <td><i class="conum" data-value="1"></i><b>1</b></td> 
-                <td>Groovy scripting is enabled by <code>groovy:</code> string.</td> 
-               </tr> 
-              </tbody> 
-             </table> 
-            </div> 
-           </div> 
-          </div> 
-         </div> 
-        </div> 
-        <div class="dlist"> 
-         <dl> 
-          <dt class="hdlist1">
-            When 
-          </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
-           <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
-<span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">datasets/yml/groovy-with-date-replacements.yml</span><span class="delimiter">"</span></span>,cleanBefore = <span class="predefined-constant">true</span>, disableConstraints = <span class="predefined-constant">true</span>, executorId = <span class="string"><span class="delimiter">"</span><span class="content">rules-it</span><span class="delimiter">"</span></span>)
-<span class="directive">public</span> <span class="type">void</span> shouldReplaceDateUsingGroovyInDataset() {
-    Tweet tweet = (Tweet) emProvider.em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select t from Tweet t where t.id = '1'</span><span class="delimiter">"</span></span>).getSingleResult();
-    assertThat(tweet).isNotNull();
-    assertThat(tweet.getDate().get(<span class="predefined-type">Calendar</span>.DAY_OF_MONTH)).
-            isEqualTo(now.get(<span class="predefined-type">Calendar</span>.DAY_OF_MONTH));
-    assertThat(tweet.getDate(). get(<span class="predefined-type">Calendar</span>.HOUR_OF_DAY)).
-            isEqualTo(now.get(<span class="predefined-type">Calendar</span>.HOUR_OF_DAY));
-}</code></pre> 
-             </div> 
-            </div> 
-           </div> 
-          </div> 
-          <div class="admonitionblock tip"> 
-           <table> 
-            <tbody> 
-             <tr> 
-              <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
-              <td class="content"> Source code of the above example can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java#L55" target="_blank">found here</a>. </td> 
-             </tr> 
-            </tbody> 
-           </table> 
-          </div> 
-         </div> 
-        </div> 
-        <div class="dlist"> 
-         <dl> 
-          <dt class="hdlist1">
-            Then 
-          </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
-           <p>Dataset script should be interpreted while seeding the database <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-         </div> 
-        </div> 
-       </div> 
-      </div> 
-     </div> 
-     <div class="sect2"> 
-      <h3 id="_seed_database_with_javascript_in_dataset"><a class="anchor" href="#_seed_database_with_javascript_in_dataset"></a>5.2. Seed database with javascript in dataset</h3> 
-      <div class="admonitionblock note"> 
-       <table> 
-        <tbody> 
-         <tr> 
-          <td class="icon"> <i class="fa icon-note" title="Note"></i> </td> 
-          <td class="content"> Javascript engine comes within JDK so no additional classpath dependency is necessary. </td> 
-         </tr> 
-        </tbody> 
-       </table> 
-      </div> 
-      <div class="sidebarblock"> 
-       <div class="content"> 
-        <div class="dlist"> 
-         <dl> 
-          <dt class="hdlist1">
-            Given 
-          </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
-           <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre>tweet:
-  - id: "1"
-    content: "dbunit rules!"
-    likes: "js:(5+5)*10/2" <i class="conum" data-value="1"></i><b>(1)</b>
-    user_id: 1</pre> 
-             </div> 
-            </div> 
-            <div class="colist arabic"> 
-             <table> 
-              <tbody> 
-               <tr> 
-                <td><i class="conum" data-value="1"></i><b>1</b></td> 
-                <td>Javascript scripting is enabled by <code>js:</code> string.</td> 
-               </tr> 
-              </tbody> 
-             </table> 
-            </div> 
-           </div> 
-          </div> 
-         </div> 
-        </div> 
-        <div class="dlist"> 
-         <dl> 
-          <dt class="hdlist1">
-            When 
-          </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
-           <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
-<span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">datasets/yml/js-with-calc-replacements.yml</span><span class="delimiter">"</span></span>,cleanBefore = <span class="predefined-constant">true</span>, disableConstraints = <span class="predefined-constant">true</span>, executorId = <span class="string"><span class="delimiter">"</span><span class="content">rules-it</span><span class="delimiter">"</span></span>)
-<span class="directive">public</span> <span class="type">void</span> shouldReplaceLikesUsingJavaScriptInDataset() {
-    Tweet tweet = (Tweet) emProvider.em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select t from Tweet t where t.id = '1'</span><span class="delimiter">"</span></span>).getSingleResult();
-    assertThat(tweet).isNotNull();
-    assertThat(tweet.getLikes()).isEqualTo(<span class="integer">50</span>);
-}</code></pre> 
-             </div> 
-            </div> 
-           </div> 
-          </div> 
-          <div class="admonitionblock tip"> 
-           <table> 
-            <tbody> 
-             <tr> 
-              <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
-              <td class="content"> Source code of the above example can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java#L44" target="_blank">found here</a>. </td> 
-             </tr> 
-            </tbody> 
-           </table> 
-          </div> 
-         </div> 
-        </div> 
-        <div class="dlist"> 
-         <dl> 
-          <dt class="hdlist1">
-            Then 
-          </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
-           <p>Dataset script should be interpreted while seeding the database <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-         </div> 
-        </div> 
-       </div> 
-      </div> 
-     </div> 
-    </div> 
-   </div> 
-   <div class="sect1"> 
-    <h2 id="Database-assertion-using-expected-datasets"><a class="anchor" href="#Database-assertion-using-expected-datasets"></a>6. <strong>Database assertion using expected datasets</strong></h2> 
-    <div class="sectionbody"> 
-     <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('Database-assertion-using-expected-datasets');document.getElementById('hidden-Database-assertion-using-expected-datasets').style.display = 'inline';this.style.display = 'none'"> </span> 
-     <span id="hidden-Database-assertion-using-expected-datasets" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('Database-assertion-using-expected-datasets');this.style.display = 'none'"> </span> 
+     <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('DataSet-assertion');document.getElementById('hidden-DataSet-assertion').style.display = 'inline';this.style.display = 'none'"> </span> 
+     <span id="hidden-DataSet-assertion" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('DataSet-assertion');this.style.display = 'none'"> </span> 
      <div class="sidebarblock"> 
       <div class="content"> 
        <div class="exampleblock"> 
@@ -2646,13 +2383,20 @@ password: ""</pre>
          </div> 
         </div> 
        </div> 
-       <div class="paragraph"> 
-        <p>Complete source code of examples below can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ExpectedDataSetIt.java#L23" target="_blank">found here</a>.</p> 
+       <div class="admonitionblock tip"> 
+        <table> 
+         <tbody> 
+          <tr> 
+           <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
+           <td class="content"> Complete source code of examples below can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ExpectedDataSetIt.java#L23" target="_blank">found here</a>. </td> 
+          </tr> 
+         </tbody> 
+        </table> 
        </div> 
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_database_assertion_with_yml_dataset"><a class="anchor" href="#_database_assertion_with_yml_dataset"></a>6.1. Database assertion with yml dataset</h3> 
+      <h3 id="_assertion_with_yml_dataset"><a class="anchor" href="#_assertion_with_yml_dataset"></a>5.1. Assertion with yml dataset</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2760,7 +2504,7 @@ password: ""</pre>
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_database_assertion_with_regular_expression_in_expected_dataset"><a class="anchor" href="#_database_assertion_with_regular_expression_in_expected_dataset"></a>6.2. Database assertion with regular expression in expected dataset</h3> 
+      <h3 id="_assertion_with_regular_expression_in_expected_dataset"><a class="anchor" href="#_assertion_with_regular_expression_in_expected_dataset"></a>5.2. Assertion with regular expression in expected dataset</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2846,7 +2590,7 @@ password: ""</pre>
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_database_assertion_with_seeding_before_test_execution"><a class="anchor" href="#_database_assertion_with_seeding_before_test_execution"></a>6.3. Database assertion with seeding before test execution</h3> 
+      <h3 id="_database_assertion_with_seeding_before_test_execution"><a class="anchor" href="#_database_assertion_with_seeding_before_test_execution"></a>5.3. Database assertion with seeding before test execution</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -2955,7 +2699,7 @@ password: ""</pre>
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_failling_database_assertion"><a class="anchor" href="#_failling_database_assertion"></a>6.4. Failling database assertion</h3> 
+      <h3 id="_failing_assertion"><a class="anchor" href="#_failing_assertion"></a>5.4. Failing assertion</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -3054,7 +2798,7 @@ password: ""</pre>
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_database_assertion_using_automatic_transaction"><a class="anchor" href="#_database_assertion_using_automatic_transaction"></a>6.5. Database assertion using automatic transaction</h3> 
+      <h3 id="_assertion_using_automatic_transaction"><a class="anchor" href="#_assertion_using_automatic_transaction"></a>5.5. Assertion using automatic transaction</h3> 
       <div class="sidebarblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -3150,6 +2894,256 @@ password: ""</pre>
      </div> 
     </div> 
    </div> 
+   <div class="sect1"> 
+    <h2 id="Dynamic-data-using-scritable-datasets"><a class="anchor" href="#Dynamic-data-using-scritable-datasets"></a>6. <strong>Dynamic data using scritable datasets</strong></h2> 
+    <div class="sectionbody"> 
+     <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('Dynamic-data-using-scritable-datasets');document.getElementById('hidden-Dynamic-data-using-scritable-datasets').style.display = 'inline';this.style.display = 'none'"> </span> 
+     <span id="hidden-Dynamic-data-using-scritable-datasets" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('Dynamic-data-using-scritable-datasets');this.style.display = 'none'"> </span> 
+     <div class="sidebarblock"> 
+      <div class="content"> 
+       <div class="exampleblock"> 
+        <div class="content"> 
+         <div class="quoteblock"> 
+          <blockquote> 
+           <div class="paragraph"> 
+            <p>In order to have dynamic data in datasets<br> As a developer<br> I want to use scripts in DBUnit datasets.</p> 
+           </div> 
+          </blockquote> 
+         </div> 
+        </div> 
+       </div> 
+       <div class="paragraph"> 
+        <p>Scritable datasets are backed by JSR 223.<sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnote_2" title="View footnote.">2</a>]</sup>.</p> 
+       </div> 
+       <div class="admonitionblock tip"> 
+        <table> 
+         <tbody> 
+          <tr> 
+           <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
+           <td class="content"> Complete source code of examples below can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java#L18" target="_blank">found here</a>. </td> 
+          </tr> 
+         </tbody> 
+        </table> 
+       </div> 
+      </div> 
+     </div> 
+     <div class="sect2"> 
+      <h3 id="_seed_database_with_groovy_script_in_dataset"><a class="anchor" href="#_seed_database_with_groovy_script_in_dataset"></a>6.1. Seed database with groovy script in dataset</h3> 
+      <div class="sidebarblock"> 
+       <div class="content"> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Given 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>Groovy script engine is on test classpath <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="content"> 
+              <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
+    <span class="tag">&lt;groupId&gt;</span>org.codehaus.groovy<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>groovy-all<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;version&gt;</span>2.4.6<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+<span class="tag">&lt;/dependency&gt;</span></code></pre> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            And 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="content"> 
+              <pre>tweet:
+  - id: "1"
+    content: "dbunit rules!"
+    date: "groovy:new Date()" <i class="conum" data-value="1"></i><b>(1)</b>
+    user_id: 1</pre> 
+             </div> 
+            </div> 
+            <div class="colist arabic"> 
+             <table> 
+              <tbody> 
+               <tr> 
+                <td><i class="conum" data-value="1"></i><b>1</b></td> 
+                <td>Groovy scripting is enabled by <code>groovy:</code> string.</td> 
+               </tr> 
+              </tbody> 
+             </table> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            When 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="content"> 
+              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+<span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">datasets/yml/groovy-with-date-replacements.yml</span><span class="delimiter">"</span></span>,cleanBefore = <span class="predefined-constant">true</span>, disableConstraints = <span class="predefined-constant">true</span>, executorId = <span class="string"><span class="delimiter">"</span><span class="content">rules-it</span><span class="delimiter">"</span></span>)
+<span class="directive">public</span> <span class="type">void</span> shouldReplaceDateUsingGroovyInDataset() {
+    Tweet tweet = (Tweet) emProvider.em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select t from Tweet t where t.id = '1'</span><span class="delimiter">"</span></span>).getSingleResult();
+    assertThat(tweet).isNotNull();
+    assertThat(tweet.getDate().get(<span class="predefined-type">Calendar</span>.DAY_OF_MONTH)).
+            isEqualTo(now.get(<span class="predefined-type">Calendar</span>.DAY_OF_MONTH));
+    assertThat(tweet.getDate(). get(<span class="predefined-type">Calendar</span>.HOUR_OF_DAY)).
+            isEqualTo(now.get(<span class="predefined-type">Calendar</span>.HOUR_OF_DAY));
+}</code></pre> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Then 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>Dataset script should be interpreted while seeding the database <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+         </div> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+     <div class="sect2"> 
+      <h3 id="_seed_database_with_javascript_in_dataset"><a class="anchor" href="#_seed_database_with_javascript_in_dataset"></a>6.2. Seed database with javascript in dataset</h3> 
+      <div class="admonitionblock note"> 
+       <table> 
+        <tbody> 
+         <tr> 
+          <td class="icon"> <i class="fa icon-note" title="Note"></i> </td> 
+          <td class="content"> Javascript engine comes within JDK so no additional classpath dependency is necessary. </td> 
+         </tr> 
+        </tbody> 
+       </table> 
+      </div> 
+      <div class="sidebarblock"> 
+       <div class="content"> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Given 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="content"> 
+              <pre>tweet:
+  - id: "1"
+    content: "dbunit rules!"
+    likes: "js:(5+5)*10/2" <i class="conum" data-value="1"></i><b>(1)</b>
+    user_id: 1</pre> 
+             </div> 
+            </div> 
+            <div class="colist arabic"> 
+             <table> 
+              <tbody> 
+               <tr> 
+                <td><i class="conum" data-value="1"></i><b>1</b></td> 
+                <td>Javascript scripting is enabled by <code>js:</code> string.</td> 
+               </tr> 
+              </tbody> 
+             </table> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            When 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="content"> 
+              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+<span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">datasets/yml/js-with-calc-replacements.yml</span><span class="delimiter">"</span></span>,cleanBefore = <span class="predefined-constant">true</span>, disableConstraints = <span class="predefined-constant">true</span>, executorId = <span class="string"><span class="delimiter">"</span><span class="content">rules-it</span><span class="delimiter">"</span></span>)
+<span class="directive">public</span> <span class="type">void</span> shouldReplaceLikesUsingJavaScriptInDataset() {
+    Tweet tweet = (Tweet) emProvider.em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select t from Tweet t where t.id = '1'</span><span class="delimiter">"</span></span>).getSingleResult();
+    assertThat(tweet).isNotNull();
+    assertThat(tweet.getLikes()).isEqualTo(<span class="integer">50</span>);
+}</code></pre> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Then 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>Dataset script should be interpreted while seeding the database <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+         </div> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+    </div> 
+   </div> 
   </div> 
   <div id="footnotes"> 
    <hr> 
@@ -3164,8 +3158,8 @@ password: ""</pre>
   </div> 
   <div id="footer" style="color:gray;font-size:11px">
     Generated by 
-   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.6</a> - Oct 29, 2016 10:40:56 AM 
-   <span style="float:right;font-size:11px"> Execution time: 11.156 seconds</span> 
+   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.6</a> - Oct 29, 2016 12:59:14 PM 
+   <span style="float:right;font-size:11px"> Execution time: 11.088 seconds</span> 
   </div> 
   <style>  
 

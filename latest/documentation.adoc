@@ -758,130 +758,8 @@ password: ""
 
 NOTE: `@DBUnit` annotation takes precedence over `dbunit.yml` global configuration which will be used only if the annotation is not present.
 
-[[Dynamic-data-using-scritable-datasets, Dynamic data using scritable datasets]]
-== *Dynamic data using scritable datasets*
-
-****
-====
-[quote]
-____
-In order to have dynamic data in datasets
-As a developer
-I want to use scripts in DBUnit datasets.
-____
-====
-
-Scritable datasets are backed by JSR 223.footnote:[Scripting for the Java Platform, for more information access the official https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/prog_guide/api.html[docs here^]].
-
-Complete source code of examples below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java#L18[found here^].
-****
-
-=== Seed database with groovy script in dataset
-
-****
-Given ::
-=====
-Groovy script engine is on test classpath icon:thumbs-up[role="green",title="Passed"]
-******
-
-[discrete]
-[source,xml,indent=0]
-----
-<dependency>
-    <groupId>org.codehaus.groovy</groupId>
-    <artifactId>groovy-all</artifactId>
-    <version>2.4.6</version>
-    <scope>test</scope>
-</dependency>
-----
-
-
-******
-
-=====
-And ::
-=====
-The following dataset icon:thumbs-up[role="green",title="Passed"]
-******
-
-----
-include::../../../src/test/resources/datasets/yml/groovy-with-date-replacements.yml[]
-----
-[discrete]
-<1> Groovy scripting is enabled by `groovy:` string.
-
-
-******
-
-=====
-When ::
-=====
-The following test is executed: icon:thumbs-up[role="green",title="Passed"]
-******
-
-[discrete]
-[source,java,indent=0]
-----
-include::../../../src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java[tags=groovy]
-----
-
-
-******
-
-TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java#L55[found here^].
-
-=====
-Then ::
-=====
-Dataset script should be interpreted while seeding the database icon:thumbs-up[role="green",title="Passed"]
-=====
-****
-
-=== Seed database with javascript in dataset
-
-NOTE: Javascript engine comes within JDK so no additional classpath dependency is necessary.
-
-****
-Given ::
-=====
-The following dataset icon:thumbs-up[role="green",title="Passed"]
-******
-
-----
-include::../../../src/test/resources/datasets/yml/js-with-calc-replacements.yml[]
-----
-[discrete]
-<1> Javascript scripting is enabled by `js:` string.
-
-
-******
-
-=====
-When ::
-=====
-The following test is executed: icon:thumbs-up[role="green",title="Passed"]
-******
-
-[discrete]
-[source,java,indent=0]
-----
-include::../../../src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java[tags=javascript-likes]
-----
-
-
-******
-
-TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java#L44[found here^].
-
-=====
-Then ::
-=====
-Dataset script should be interpreted while seeding the database icon:thumbs-up[role="green",title="Passed"]
-=====
-****
-
-[[Database-assertion-using-expected-datasets, Database assertion using expected datasets]]
-== *Database assertion using expected datasets*
+[[DataSet-assertion, DataSet assertion]]
+== *DataSet assertion*
 
 ****
 ====
@@ -891,12 +769,12 @@ In order to verify database state after test execution
 As a developer
 I want to assert database state with datasets.
 ____
-
 ====
-Complete source code of examples below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ExpectedDataSetIt.java#L23[found here^].
+
+TIP: Complete source code of examples below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ExpectedDataSetIt.java#L23[found here^].
 ****
 
-=== Database assertion with yml dataset
+=== Assertion with yml dataset
 
 ****
 Given ::
@@ -937,7 +815,7 @@ Test must pass because database state is as in expected dataset. icon:thumbs-up[
 =====
 ****
 
-=== Database assertion with regular expression in expected dataset
+=== Assertion with regular expression in expected dataset
 
 ****
 Given ::
@@ -1030,7 +908,7 @@ Test must pass because database state is as in expected dataset. icon:thumbs-up[
 =====
 ****
 
-=== Failling database assertion
+=== Failing assertion
 
 ****
 Given ::
@@ -1077,7 +955,7 @@ IMPORTANT: junit.framework.ComparisonFailure: value (table=USER, row=0, col=name
 =====
 ****
 
-=== Database assertion using automatic transaction
+=== Assertion using automatic transaction
 
 ****
 Given ::
@@ -1115,6 +993,124 @@ NOTE: `Transactional` attribute will make Database Rider start a transaction bef
 Then ::
 =====
 Test must pass because inserted users are commited to database and database state matches expected dataset. icon:thumbs-up[role="green",title="Passed"]
+=====
+****
+
+[[Dynamic-data-using-scritable-datasets, Dynamic data using scritable datasets]]
+== *Dynamic data using scritable datasets*
+
+****
+====
+[quote]
+____
+In order to have dynamic data in datasets
+As a developer
+I want to use scripts in DBUnit datasets.
+____
+====
+
+Scritable datasets are backed by JSR 223.footnote:[Scripting for the Java Platform, for more information access the official https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/prog_guide/api.html[docs here^]].
+
+TIP: Complete source code of examples below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java#L18[found here^].
+****
+
+=== Seed database with groovy script in dataset
+
+****
+Given ::
+=====
+Groovy script engine is on test classpath icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,xml,indent=0]
+----
+<dependency>
+    <groupId>org.codehaus.groovy</groupId>
+    <artifactId>groovy-all</artifactId>
+    <version>2.4.6</version>
+    <scope>test</scope>
+</dependency>
+----
+
+
+******
+
+=====
+And ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"]
+******
+
+----
+include::../../../src/test/resources/datasets/yml/groovy-with-date-replacements.yml[]
+----
+[discrete]
+<1> Groovy scripting is enabled by `groovy:` string.
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java,indent=0]
+----
+include::../../../src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java[tags=groovy]
+----
+
+
+******
+
+=====
+Then ::
+=====
+Dataset script should be interpreted while seeding the database icon:thumbs-up[role="green",title="Passed"]
+=====
+****
+
+=== Seed database with javascript in dataset
+
+NOTE: Javascript engine comes within JDK so no additional classpath dependency is necessary.
+
+****
+Given ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"]
+******
+
+----
+include::../../../src/test/resources/datasets/yml/js-with-calc-replacements.yml[]
+----
+[discrete]
+<1> Javascript scripting is enabled by `js:` string.
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java,indent=0]
+----
+include::../../../src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java[tags=javascript-likes]
+----
+
+
+******
+
+=====
+Then ::
+=====
+Dataset script should be interpreted while seeding the database icon:thumbs-up[role="green",title="Passed"]
 =====
 ****
 
