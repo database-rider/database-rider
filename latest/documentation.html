@@ -566,7 +566,8 @@ table.CodeRay td.code>pre{padding:0}
       <ul class="sectlevel2"> 
        <li><a href="#_export_dataset_with_code_exportdataset_code_annotation">8.1. Export dataset with <code>@ExportDataSet</code> annotation</a></li> 
        <li><a href="#_programmatic_export">8.2. Programmatic export</a></li> 
-       <li><a href="#_export_using_dbunit_addon">8.3. Export using DBUnit Addon</a></li> 
+       <li><a href="#_configuration">8.3. Configuration</a></li> 
+       <li><a href="#_export_using_dbunit_addon">8.4. Export using DBUnit Addon</a></li> 
       </ul> </li> 
     </ul> 
    </div> 
@@ -677,7 +678,7 @@ table.CodeRay td.code>pre{padding:0}
         </tbody> 
        </table> 
       </div> 
-      <h3 id="__strong_dependencies_strong" class="discrete"><strong>Dependencies</strong></h3> 
+      <h4 id="__strong_dependencies_strong" class="discrete"><strong>Dependencies</strong></h4> 
       <div class="paragraph"> 
        <p>To use it add the following maven dependency:</p> 
       </div> 
@@ -846,7 +847,7 @@ follower:
       <div class="paragraph"> 
        <p>DBUnit CDI<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnote_1" title="View footnote.">1</a>]</sup> integration is done through a <a href="https://docs.jboss.org/weld/reference/latest/en-US/html_single/#interceptors" target="_blank">CDI interceptor</a> which reads <code>@DataSet</code> to prepare database in CDI tests.</p> 
       </div> 
-      <h3 id="__strong_dependencies_strong_2" class="discrete"><strong>Dependencies</strong></h3> 
+      <h4 id="__strong_dependencies_strong_2" class="discrete"><strong>Dependencies</strong></h4> 
       <div class="paragraph"> 
        <p>To use this module just add the following maven dependency:</p> 
       </div> 
@@ -1040,7 +1041,7 @@ follower:
       <div class="paragraph"> 
        <p>DBUnit is enabled in JUnit 5 tests through an <a href="http://junit.org/junit5/docs/current/user-guide/#extensions" target="_blank">extension</a> named <strong>DBUnitExtension</strong>.</p> 
       </div> 
-      <h3 id="__strong_dependencies_strong_3" class="discrete"><strong>Dependencies</strong></h3> 
+      <h4 id="__strong_dependencies_strong_3" class="discrete"><strong>Dependencies</strong></h4> 
       <div class="paragraph"> 
        <p>To use the extension just add the following maven dependency:</p> 
       </div> 
@@ -1249,7 +1250,7 @@ follower:
         </tbody> 
        </table> 
       </div> 
-      <h3 id="__strong_dependencies_strong_4" class="discrete"><strong>Dependencies</strong></h3> 
+      <h4 id="__strong_dependencies_strong_4" class="discrete"><strong>Dependencies</strong></h4> 
       <div class="paragraph"> 
        <p>Here is a set of maven dependencies needed by Database Rider Cucumber:</p> 
       </div> 
@@ -3335,16 +3336,67 @@ password: ""</pre>
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_export_using_dbunit_addon"><a class="anchor" href="#_export_using_dbunit_addon"></a>8.3. Export using DBUnit Addon</h3> 
+      <h3 id="_configuration"><a class="anchor" href="#_configuration"></a>8.3. Configuration</h3> 
+      <div class="paragraph"> 
+       <p>Following table shows all exporter configuration options:</p> 
+      </div> 
+      <table class="tableblock frame-all grid-all spread"> 
+       <colgroup> 
+        <col style="width: 33.3333%;"> 
+        <col style="width: 33.3333%;"> 
+        <col style="width: 33.3334%;"> 
+       </colgroup> 
+       <thead> 
+        <tr> 
+         <th class="tableblock halign-left valign-top">Name</th> 
+         <th class="tableblock halign-left valign-top">Description</th> 
+         <th class="tableblock halign-left valign-top">Default</th> 
+        </tr> 
+       </thead> 
+       <tbody> 
+        <tr> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">format</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">Exported dataset file format.</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">YML</p></td> 
+        </tr> 
+        <tr> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">includeTables</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">A list of table names to include in exported dataset.</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">Default is empty which means <strong>ALL tables</strong>.</p></td> 
+        </tr> 
+        <tr> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">queryList</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">A list of select statements which the result will used in exported dataset.</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">{}</p></td> 
+        </tr> 
+        <tr> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">dependentTables</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">If true will bring dependent tables of declared includeTables.</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td> 
+        </tr> 
+        <tr> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">outputName</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">Name (and path) of output file.</p></td> 
+         <td class="tableblock halign-left valign-top"><p class="tableblock">""</p></td> 
+        </tr> 
+       </tbody> 
+      </table> 
+     </div> 
+     <div class="sect2"> 
+      <h3 id="_export_using_dbunit_addon"><a class="anchor" href="#_export_using_dbunit_addon"></a>8.4. Export using DBUnit Addon</h3> 
       <div class="paragraph"> 
        <p><a href="https://github.com/database-rider/dbunit-addon" target="_blank">DBUnit Addon</a> exports DBUnit datasets based on a database connection.</p> 
       </div> 
-      <h3 id="__strong_pre_requisites_strong" class="discrete"><strong>Pre requisites</strong></h3> 
       <div class="paragraph"> 
+       <div class="title">
+         Pre requisites 
+       </div> 
        <p>You need <a href="https://forge.jboss.org/download" target="_blank">JBoss Forge</a> installed in your IDE or available at command line.</p> 
       </div> 
-      <h3 id="__strong_installation_strong" class="discrete"><strong>Installation</strong></h3> 
       <div class="paragraph"> 
+       <div class="title">
+         Installation 
+       </div> 
        <p>Use install addon from git command:</p> 
       </div> 
       <div class="listingblock"> 
@@ -3352,8 +3404,10 @@ password: ""</pre>
         <pre>addon-install-from-git --url https://github.com/database-rider/dbunit-addon.git</pre> 
        </div> 
       </div> 
-      <h3 id="__strong_usage_strong" class="discrete"><strong>Usage</strong></h3> 
       <div class="olist arabic"> 
+       <div class="title">
+         Usage 
+       </div> 
        <ol class="arabic"> 
         <li> <p>Setup database connection</p> 
          <div class="imageblock"> 
@@ -3369,8 +3423,10 @@ password: ""</pre>
          </div> </li> 
        </ol> 
       </div> 
-      <h3 id="__strong_export_configuration_strong" class="discrete"><strong>Export configuration</strong></h3> 
       <div class="ulist"> 
+       <div class="title">
+         Export configuration 
+       </div> 
        <ul> 
         <li> <p><code>Format</code>: Dataset format.</p> </li> 
         <li> <p><code>Include tables</code>: Name of tables to include in generated dataset. If empty all tables will be exported.</p> </li> 
@@ -3397,8 +3453,8 @@ password: ""</pre>
   </div> 
   <div id="footer" style="color:gray;font-size:11px">
     Generated by 
-   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.6</a> - Oct 29, 2016 4:06:15 PM 
-   <span style="float:right;font-size:11px"> Execution time: 19.068 seconds</span> 
+   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.6</a> - Oct 29, 2016 4:30:02 PM 
+   <span style="float:right;font-size:11px"> Execution time: 21.199 seconds</span> 
   </div> 
   <style>  
 
