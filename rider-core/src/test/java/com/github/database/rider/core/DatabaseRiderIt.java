@@ -84,7 +84,8 @@ public class DatabaseRiderIt {
     @Test
     @DataSet(value = "datasets/yml/users.yml", useSequenceFiltering = true)
     public void shouldSeedUserDataSet() {
-        User user = (User) EntityManagerProvider.em().createQuery("select u from User u join fetch u.tweets join fetch u.followers where u.id = 1").getSingleResult();
+        User user = (User) EntityManagerProvider.em().
+                createQuery("select u from User u join fetch u.tweets join fetch u.followers where u.id = 1").getSingleResult();
         assertThat(user).isNotNull();
         assertThat(user.getId()).isEqualTo(1);
         assertThat(user.getTweets()).isNotNull().hasSize(1);
@@ -92,7 +93,8 @@ public class DatabaseRiderIt {
         assertThat(tweet).isNotNull();
         Calendar date = tweet.getDate();
         Calendar now = Calendar.getInstance();
-        assertThat(date.get(Calendar.DAY_OF_MONTH)).isEqualTo(now.get(Calendar.DAY_OF_MONTH));
+        assertThat(date.get(Calendar.DAY_OF_MONTH)).
+                isEqualTo(now.get(Calendar.DAY_OF_MONTH));
     }
     // end::seedDatabase[]
 

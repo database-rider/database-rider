@@ -1,7 +1,6 @@
 package com.github.database.rider.core.format;
 
 import com.github.database.rider.core.DBUnitRule;
-import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.model.User;
 import com.github.database.rider.core.util.EntityManagerProvider;
@@ -26,7 +25,6 @@ public class DataSetFormatIt {
     @Rule
     public TestRule theRule = RuleChain.outerRule(emProvider).
             around(DBUnitRule.instance(emProvider.connection()));
-
 
 //tag::yml[]
     @Test
