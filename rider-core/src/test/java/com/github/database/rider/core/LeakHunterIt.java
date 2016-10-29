@@ -1,9 +1,9 @@
 package com.github.database.rider.core;
 
-import com.github.database.rider.core.leak.LeakHunterException;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.connection.ConnectionHolderImpl;
+import com.github.database.rider.core.leak.LeakHunterException;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -16,8 +16,9 @@ import java.sql.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+//tag::leak-hunter-declare[]
 @RunWith(JUnit4.class)
-@DBUnit(leakHunter = true)
+@DBUnit(leakHunter = true) //<1>
 public class LeakHunterIt {
 
     @Rule
@@ -26,6 +27,7 @@ public class LeakHunterIt {
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
+//end::leak-hunter-declare[]
 
     @BeforeClass
     public static void initDB() {
@@ -34,6 +36,7 @@ public class LeakHunterIt {
     }
 
 
+//tag::find-leak[]
     @Test
     @DataSet("yml/user.yml")
     public void shouldFindConnectionLeak() throws SQLException {
@@ -41,6 +44,7 @@ public class LeakHunterIt {
         exception.expectMessage("Execution of method shouldFindConnectionLeak left 1 open connection(s).");
         createLeak();
     }
+//end::find-leak[]
 
     @Test
     @DataSet("yml/user.yml")
@@ -75,6 +79,8 @@ public class LeakHunterIt {
         }
     }
 
+//tag::find-leak[]
+
     private void createLeak() throws SQLException {
         Connection connection = getConnection();
         try (Statement stmt = connection.createStatement()) {
@@ -83,6 +89,7 @@ public class LeakHunterIt {
             assertThat(resultSet.getInt(1)).isEqualTo(2);
         }
     }
+//end::find-leak[]
 
     private void createAndCloseConnection() throws SQLException {
         Connection connection = getConnection();
