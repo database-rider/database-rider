@@ -33,17 +33,30 @@ Scenario: Programmatic export
 include::../../../src/test/java/com/github/database/rider/core/exporter/ExportDataSetIt.java[tags=export-programmatically]
 ----
 
+Scenario: Configuration
+
+Following table shows all exporter configuration options:
+
+[cols="3*", options="header"]
+|===
+|Name | Description | Default
+|format| Exported dataset file format.| YML
+|includeTables| A list of table names to include in exported dataset.| Default is empty which means *ALL tables*.
+|queryList| A list of select statements which the result will used in exported dataset.| {}
+|dependentTables| If true will bring dependent tables of declared includeTables.| false
+|outputName| Name (and path) of output file.| ""
+|===
+
 Scenario: Export using DBUnit Addon
 
   https://github.com/database-rider/dbunit-addon[DBUnit Addon^] exports DBUnit datasets based on a database connection.
 
-[discrete]
-=== *Pre requisites*
+.Pre requisites
 
   You need https://forge.jboss.org/download[JBoss Forge^] installed in your IDE or available at command line.
 
-[discrete]
-=== *Installation*
+
+.Installation
 
 Use install addon from git command:
 
@@ -52,8 +65,7 @@ addon-install-from-git --url https://github.com/database-rider/dbunit-addon.git
 ----
 
 
-[discrete]
-=== *Usage*
+.Usage
 
 . Setup database connection
 +
@@ -62,8 +74,7 @@ image::https://raw.githubusercontent.com/database-rider/dbunit-addon/master/setu
 +
 image::https://raw.githubusercontent.com/database-rider/dbunit-addon/master/export_cmd.png["Export command"]
 
-[discrete]
-=== *Export configuration*
+.Export configuration
 
 \* `Format`: Dataset format.
 \* `Include tables`: Name of tables to include in generated dataset. If empty all tables will be exported.

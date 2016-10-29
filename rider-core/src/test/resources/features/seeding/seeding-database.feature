@@ -23,7 +23,7 @@ Database Rider brings http://dbunit.sourceforge.net/[DBUnit^] to your http://jun
     NOTE: The rule just needs a https://docs.oracle.com/javase/tutorial/jdbc/[JDBC^] connection in order to be created.
 
 [discrete]
-=== *Dependencies*
+==== *Dependencies*
 
 To use it add the following maven dependency:
 
@@ -80,7 +80,7 @@ include::../../../src/test/java/com/github/database/rider/core/DatabaseRiderIt.j
     DBUnit CDIfootnote:[http://docs.oracle.com/javaee/6/tutorial/doc/giwhb.html[Contexts and dependency for the Java EE^]] integration is done through a https://docs.jboss.org/weld/reference/latest/en-US/html_single/#interceptors[CDI interceptor^] which reads `@DataSet` to prepare database in CDI tests.
 
 [discrete]
-=== *Dependencies*
+==== *Dependencies*
 
 To use this module just add the following maven dependency:
 
@@ -154,7 +154,7 @@ Scenario: Seed database with `JUnit 5 extension`
   DBUnit is enabled in JUnit 5 tests through an http://junit.org/junit5/docs/current/user-guide/#extensions[extension^] named *DBUnitExtension*.
 
 [discrete]
-=== *Dependencies*
+==== *Dependencies*
 
 To use the extension just add the following maven dependency:
 
@@ -219,7 +219,7 @@ include::../../../../rider-examples/jpa-productivity-boosters/src/test/java/com/
 IMPORTANT: As cucumber doesn't work with JUnit Rules, see https://github.com/cucumber/cucumber-jvm/issues/393[this issue^], you won't be able to use Cucumber runner with _DBUnit Rule_, but you can use DataSetExecutor in `@Before`, see https://github.com/database-rider/database-rider/tree/master/examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/withoutcdi[example here^].
 
 [discrete]
-=== *Dependencies*
+==== *Dependencies*
 Here is a set of maven dependencies needed by Database Rider Cucumber:
 
 NOTE: Most of the dependencies, except CDI container implementation, are brought by Database Rider Cucumber module transitively.
