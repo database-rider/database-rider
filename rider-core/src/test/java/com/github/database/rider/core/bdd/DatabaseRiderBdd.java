@@ -14,7 +14,8 @@ import org.junit.runner.RunWith;
         "src/test/resources/features/configuration/dataset-configuration.feature",
         "src/test/resources/features/assertion/dataset-assertion.feature",
         "src/test/resources/features/scriptable/scriptable-dataset.feature",
-        "src/test/resources/features/leak/leak-hunter.feature"
+        "src/test/resources/features/leak/leak-hunter.feature",
+        "src/test/resources/features/export/dataset-export.feature"
 },
         plugin = "json:target/dbunit-rules.json")
 public class DatabaseRiderBdd {
