@@ -24,4 +24,3 @@ baseurl: /database-rider
 exclude:
   - lib/gh-board
 repository: database-rider/database-rider
-currentVersion: 1.0.0-RC3-SNAPSHOT
