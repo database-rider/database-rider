@@ -40,14 +40,14 @@ public class ExportDataSetIt {
     public DBUnitRule dbUnitRule = DBUnitRule.instance(emProvider.connection());
 
 
-//tag:export-annotation[]
+//tag::export-annotation[]
     @Test
     @DataSet("datasets/yml/users.yml") //<1>
     @ExportDataSet(format = DataSetFormat.XML, outputName = "target/exported/xml/allTables.xml")
     public void shouldExportAllTablesInXMLFormat() {
     }
 
-//end:export-annotation[]
+//end::export-annotation[]
 
     @Test
     @DataSet("datasets/yml/users.yml")
@@ -69,7 +69,7 @@ public class ExportDataSetIt {
     public void shouldExportAllTablesInXLSFormat() {
     }
 
-//tag:export-programmatically[]
+//tag::export-programmatically[]
     @Test
     @DataSet(cleanBefore = true)
     public void shouldExportYMLDataSetProgrammatically() throws SQLException, DatabaseUnitException {
@@ -88,7 +88,7 @@ public class ExportDataSetIt {
                 );
     }
 
-//end:export-programmatically[]
+//end::export-programmatically[]
 
     @Test
     @DataSet(cleanBefore = true)
