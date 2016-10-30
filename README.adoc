@@ -148,14 +148,14 @@ NOTE: <<EntityManagerProvider>> is a simple JUnit rule that creates a JPA entity
 
 A getting started guide can be found here http://database-rider.github.io/getting-started/getting-started.html.
 
-For main features overview see project living documentation (of each project version):
+For main features overview see http://database-rider.github.io/database-rider/latest/documentation.html[project living documentation^].
 
-http://database-rider.github.io/database-rider/latest/documentation.html.
+Older documentation versions can be found here: https://database-rider.github.io/database-rider/#documentation.
 
 
 == Rider Core
 
-This module is the basis for subsequent modules. It contains a JUnit rule (shown above), the api for dataset and DBunit configuration and *DataSetExecutor* which is responsible for dataset creation.
+This module is the basis for subsequent modules. It contains a JUnit rule (shown above), the api for dataset, DBunit configuration and *DataSetExecutor* which is responsible for dataset creation.
 
 === Adding Database Rider core to your project
 
@@ -278,7 +278,7 @@ Here are possible values:
 |Name | Description | Default
 |value| Dataset file name using test resources folder as root directory. Multiple, comma separated, dataset file names can be provided.| ""
 |executorId| Name of dataset executor for the given dataset.| DataSetExecutorImpl.DEFAULT_EXECUTOR_ID
-|strategy| DataSet seed strategy. Possible values are: CLEAN_INSERT, INSERT, REFRESH and UPDATE.| CLEAN_INSERT, meaning that DBUnit will clean and then insert data in tables present in provided dataset.
+|strategy| DataSet seed strategy. Possible values are: CLEAN_INSERT, INSERT, REFRESH and UPDATE.| CLEAN_INSERT, meaning that DBUnit will clean and then insert data in tables present on provided dataset.
 |useSequenceFiltering| If true dbunit will look at constraints and dataset to try to determine the correct ordering for the SQL statements.| true
 |tableOrdering| A list of table names used to reorder DELETE operations to prevent failures due to circular dependencies.| ""
 |disableConstraints| Disable database constraints.| false
