@@ -27,7 +27,8 @@ image:https://coveralls.io/repos/database-rider/database-rider/badge.png[Coverag
 image:https://maven-badges.herokuapp.com/maven-central/com.github.database-rider/rider-core/badge.svg["Maven Central",link="http://search.maven.org/#search|ga|1|database-rider"]
 
 
-image::rider.png[200,350, float="right", link="https://postimg.org/image/dl2y36aod/"] 
+<img align="right" height="200" width="350" float="right" src="/database-rider/database-rider/raw/master/rider.png">
+
 
 
 This project aims for bringing http://dbunit.sourceforge.net/[DBUnit] closer to your JUnit tests *so database testing will feel like a breeze!*
