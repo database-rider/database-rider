@@ -1,3 +1,4 @@
+image::rider.png[200,350, align="center", link="https://postimg.org/image/dl2y36aod/"] 
 :page-layout: base
 :source-language: java
 :icons: font
@@ -13,8 +14,6 @@
 :caution-caption: :fire:
 :warning-caption: :warning:
 
-
-image::rider.png[200,350, align="center", link="https://postimg.org/image/dl2y36aod/"] 
 
 [quote]
 ____
