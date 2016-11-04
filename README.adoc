@@ -1,4 +1,4 @@
-image::rider.png[200,350, align="center", link="https://postimg.org/image/dl2y36aod/"] 
+= Database Rider
 :page-layout: base
 :source-language: java
 :icons: font
@@ -13,6 +13,9 @@ image::rider.png[200,350, align="center", link="https://postimg.org/image/dl2y36
 :important-caption: :heavy_exclamation_mark:
 :caution-caption: :fire:
 :warning-caption: :warning:
+
+
+image::rider.png[200,350, align="center", link="https://postimg.org/image/dl2y36aod/"] 
 
 
 [quote]
