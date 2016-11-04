@@ -1,4 +1,3 @@
-= Database Rider
 :page-layout: base
 :source-language: java
 :icons: font
@@ -15,8 +14,7 @@
 :warning-caption: :warning:
 
 
-
-image::rider.png[300,400, float="right", link="https://postimg.org/image/dl2y36aod/"] 
+image::rider.png[180,300, link="https://postimg.org/image/dl2y36aod/"] 
 
 [quote]
 ____
