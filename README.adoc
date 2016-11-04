@@ -15,9 +15,6 @@
 :warning-caption: :warning:
 
 
-image::rider.png[200,350, align="center", link="https://postimg.org/image/dl2y36aod/"] 
-
-
 [quote]
 ____
 So you can ride the database in your JUnit tests!
@@ -29,6 +26,7 @@ image:https://travis-ci.org/database-rider/database-rider.svg[Build Status (Trav
 image:https://coveralls.io/repos/database-rider/database-rider/badge.png[Coverage, link=https://coveralls.io/r/database-rider/database-rider]
 image:https://maven-badges.herokuapp.com/maven-central/com.github.database-rider/rider-core/badge.svg["Maven Central",link="http://search.maven.org/#search|ga|1|database-rider"]
 
+image::rider.png[200,350, align="center", link="https://postimg.org/image/dl2y36aod/"] 
 
 
 This project aims for bringing http://dbunit.sourceforge.net/[DBUnit] closer to your JUnit tests *so database testing will feel like a breeze!*
