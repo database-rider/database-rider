@@ -14,10 +14,15 @@
 :caution-caption: :fire:
 :warning-caption: :warning:
 
+
+
+image::rider.png[300,400, float="right", link="https://postimg.org/image/dl2y36aod/"] 
+
 [quote]
 ____
 So you can ride the database in your JUnit tests!
 ____
+
 
 
 image:https://travis-ci.org/database-rider/database-rider.svg[Build Status (Travis CI), link=https://travis-ci.org/database-rider/database-rider]
