@@ -28,7 +28,7 @@ image:https://maven-badges.herokuapp.com/maven-central/com.github.database-rider
 
 ++++
 <a href="https://s22.postimg.org/t6k9n4mmp/rider_logo.png">
-<img align="right" height="400" width="350" src="https://s18.postimg.org/5yp3yyi3t/rider.png" style="max-width:100%;">
+<img align="right" height="450" width="350" src="https://s18.postimg.org/5yp3yyi3t/rider.png" style="max-width:100%;">
 </a>
 ++++
 
