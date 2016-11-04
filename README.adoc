@@ -14,7 +14,7 @@
 :warning-caption: :warning:
 
 
-image::rider.png[180,300, link="https://postimg.org/image/dl2y36aod/"] 
+image::rider.png[200,350, link="https://postimg.org/image/dl2y36aod/"] 
 
 [quote]
 ____
