@@ -2,8 +2,8 @@
 layout: landing
 ---
 
-{:.centered}
-**Database Rider** integrates [DBUnit](http://dbunit.sourceforge.net/) and [JUnit](http://junit.org/) in order to make **database testing** a breeze!
+
+[**Database Rider**](https://github.com/database-rider/database-rider) integrates [DBUnit](http://dbunit.sourceforge.net/) and [JUnit](http://junit.org/) in order to make **database testing** a breeze!
 
  Here are some features:
 
