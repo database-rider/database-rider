@@ -161,7 +161,7 @@ To use the extension just add the following maven dependency:
 [source,xml]
 ----
 <dependency>
-     <groupId>com.github.dbunit-rules</groupId>
+     <groupId>com.github.database-rider</groupId>
      <artifactId>rider-junit5</artifactId>
 include::../../../../pom.xml[tags=version]
      <scope>test</scope>
@@ -216,7 +216,7 @@ include::../../../../rider-examples/jpa-productivity-boosters/src/test/java/com/
 ----
 
 
-IMPORTANT: As cucumber doesn't work with JUnit Rules, see https://github.com/cucumber/cucumber-jvm/issues/393[this issue^], you won't be able to use Cucumber runner with _DBUnit Rule_, but you can use DataSetExecutor in `@Before`, see https://github.com/database-rider/database-rider/tree/master/examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/withoutcdi[example here^].
+IMPORTANT: As cucumber doesn't work with JUnit Rules, see https://github.com/cucumber/cucumber-jvm/issues/393[this issue^], you won't be able to use Cucumber runner with _DBUnit Rule_, but you can use DataSetExecutor in `@Before`, see https://github.com/database-rider/database-rider/tree/master/rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/withoutcdi[example here^].
 
 [discrete]
 ==== *Dependencies*
