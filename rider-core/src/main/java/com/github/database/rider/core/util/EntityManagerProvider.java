@@ -131,6 +131,14 @@ public class EntityManagerProvider implements TestRule {
         return instance.em;
     }
 
+    public EntityManager getEm() {
+        return em();
+    }
+
+    public EntityManager getEm(String puName){
+        return em(puName);
+    }
+
     /**
      * @param puName unit name
      * clears entityManager (represented by given puName) persistence context
