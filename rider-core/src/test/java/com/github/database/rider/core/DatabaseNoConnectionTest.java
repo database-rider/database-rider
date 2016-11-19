@@ -1,14 +1,12 @@
 package com.github.database.rider.core;
 
+import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.model.Follower;
 import com.github.database.rider.core.model.Tweet;
 import com.github.database.rider.core.model.User;
 import com.github.database.rider.core.util.EntityManagerProvider;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
@@ -18,17 +16,20 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.List;
 
+import static com.github.database.rider.core.util.EntityManagerProvider.clear;
 import static com.github.database.rider.core.util.EntityManagerProvider.em;
+import static com.github.database.rider.core.util.EntityManagerProvider.emf;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by pestano on 23/07/15.
  */
 @RunWith(JUnit4.class)
-public class DatabaseTest {
+@DBUnit(url = "jdbc:hsqldb:mem:rider;DB_CLOSE_DELAY=-1", user = "sa", driver = "org.hsqldb.jdbcDriver")
+public class DatabaseNoConnectionTest {
 
     @Rule
-    public DBUnitRule dbUnitRule = DBUnitRule.instance(JDBCConnection());
+    public DBUnitRule dbUnitRule = DBUnitRule.instance();
 
     @Test
     @DataSet(value = "datasets/yml/user.yml")
@@ -48,7 +49,7 @@ public class DatabaseTest {
         assertThat(user.getId()).isEqualTo(1);
     }
 
-     @Test
+    @Test
     @DataSet(value = "datasets/yml/users.yml", executeStatementsBefore = "SET DATABASE REFERENTIAL INTEGRITY FALSE;")
     public void shouldSeedDataSetDisablingContraintsViaStatement() {
         User user = (User) EntityManagerProvider.em().createQuery("select u from User u join fetch u.tweets join fetch u.followers join fetch u.tweets join fetch u.followers where u.id = 1").getSingleResult();
@@ -145,34 +146,19 @@ public class DatabaseTest {
     }
 
 
-    private static Connection connection;
-
-     //called before each test by DBUnitRule
-    private java.sql.Connection JDBCConnection() {
-        try {
-            //trigger db creation via JPA and clear jpa cache
-            EntityManagerProvider.instance("rider-it").getEm().clear();
-
-            if (connection == null || connection.isClosed()) {
-                connection = DriverManager.getConnection("jdbc:hsqldb:mem:rider;DB_CLOSE_DELAY=-1", "sa", "");
-            }
-            return connection; //we can reuse same connection as dbunit will control database state for us
-        } catch (Exception e) {
-            throw new RuntimeException("Could not aquire JDBC connection",e);
-        }
+    @Before
+    public void before(){
+        //clear jpa and entity manager factory cache
+        clear();
     }
 
-    @AfterClass//optional because connection will be closed at jvm exit
-    public static void close() throws SQLException {
-        try{
-            if(connection != null && !connection.isClosed()){
-                connection.close();
-                //OR DataSetExecutorImpl.getExecutorById(DataSetExecutorImpl.DEFAULT_EXECUTOR_ID).getConnection().close();
-            }
-        }catch (SQLException e){
-            //
-        }
+    @BeforeClass
+    public static void setUp() {
+          //trigger db creation (first time)
+          EntityManagerProvider.instance("rider-it");
     }
+
+
 
 
 }

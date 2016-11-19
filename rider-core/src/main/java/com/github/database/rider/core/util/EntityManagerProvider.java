@@ -124,6 +124,15 @@ public class EntityManagerProvider implements TestRule {
 
     /**
      *
+     * @param puName unit name
+     * @return entityManagerFactory represented by given puName
+     */
+    public static EntityManagerFactory emf(String puName) {
+        return instance(puName).emf;
+    }
+
+    /**
+     *
      * @return entityManager of current instance of this provider
      */
     public static EntityManager em() {
@@ -135,26 +144,36 @@ public class EntityManagerProvider implements TestRule {
         return em();
     }
 
+    public static EntityManagerFactory emf(){
+        return instance.emf;
+    }
+
+    public EntityManagerFactory getEmf() {
+        return instance.emf;
+    }
+
     public EntityManager getEm(String puName){
         return em(puName);
     }
 
     /**
      * @param puName unit name
-     * clears entityManager (represented by given puName) persistence context
+     * clears entityManager persistence context and entityManager factory cache represented by given puName
      * @return provider represented by puName
      */
     public static EntityManagerProvider clear(String puName){
         em(puName).clear();
+        emf(puName).getCache().evictAll();
         return providers.get(puName);
     }
 
     /**
-     * clears entityManager persistence context of current instance of this provider
+     * clears entityManager persistence context and entity manager factory cache of current instance of this provider
      * @return current provider
      */
     public static EntityManagerProvider clear(){
         em().clear();
+        emf().getCache().evictAll();
         return instance;
     }
 
