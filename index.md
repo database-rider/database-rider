@@ -62,7 +62,7 @@ Following is documentation for each released version:
 
 #### Getting Started 
 
-TO BE ADDED, a port of https://rmpestano.github.io/dbunit-rules-sample/dbunit-rules.html 
+An introdutory guide with a sample application can be found here: https://database-rider.github.io/getting-started.
 
 #### Examples
 
@@ -77,12 +77,6 @@ TO BE ADDED, a port of https://rmpestano.github.io/dbunit-rules-sample/dbunit-ru
 
 #### Credits
 * Maintained by:
-  * [Rafael M. Pestano](rmpestano)
+  * [Rafael M. Pestano](https://database-rider.github.io/getting-started)
 
 [rmpestano]: https://github.com/rmpestano
-[gist-examples]: {{site.baseurl}}/examples/gists
-[user-examples]: {{site.baseurl}}/examples/users
-[organization-examples]: {{site.baseurl}}/examples/organizations
-[authorization-examples]: {{site.baseurl}}/examples/authorization
-[webhook-examples]: {{site.baseurl}}/examples/webhooks
-[ratelimit-examples]: {{site.baseurl}}/examples/ratelimit
