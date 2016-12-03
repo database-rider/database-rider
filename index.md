@@ -77,6 +77,6 @@ An introdutory guide with a sample application can be found here: https://databa
 
 #### Credits
 * Maintained by:
-  * [Rafael M. Pestano](https://database-rider.github.io/getting-started)
+  * [Rafael M. Pestano](https://github.com/rmpestano)
 
 [rmpestano]: https://github.com/rmpestano
