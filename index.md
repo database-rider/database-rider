@@ -62,7 +62,7 @@ Following is documentation for each released version:
 
 #### Getting Started 
 
-An introdutory guide with a sample application can be found here: https://database-rider.github.io/getting-started.
+An introdutory guide with a sample application can be [found here](https://database-rider.github.io/getting-started).
 
 #### Examples
 
