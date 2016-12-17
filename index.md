@@ -49,7 +49,7 @@ layout: landing
 
 #### Documentation
 
-Current version (under development) of documentation can be [found here]({{site.baseurl}}/latest/documentation.html).
+Current version (under development) of documentation can be [found here]({{site.baseurl}}/latest/documentation.html?theme=foundation).
 
 Following is documentation for each released version:
 
