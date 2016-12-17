@@ -78,7 +78,7 @@ public class ExportDataSetIt {
         u1.setName("u1");
         EntityManagerProvider.em().persist(u1);
         tx().commit();
-        DataSetExporter.getInstance().export(new DatabaseConnection(emProvider.connection()), new DataSetExportConfig().outputFileName("target/user.yml"));
+        DataSetExporter.getInstance().export(emProvider.connection(), new DataSetExportConfig().outputFileName("target/user.yml"));
         File ymlDataSet = new File("target/user.yml");
         assertThat(ymlDataSet).exists();
         assertThat(contentOf(ymlDataSet)).

@@ -127,7 +127,7 @@ public class DataSetProcessor {
             try {
                 DataSetExporter.getInstance().export(dataSetExecutor.getDBUnitConnection(),exportConfig);
             } catch (Exception e) {
-                java.util.logging.Logger.getLogger(getClass().getName()).log(Level.WARNING,"Could not export dataset after method "+method.getName(),e);
+                log.warn("Could not export dataset after method " + method.getName(), e);
             }
         }
     }
@@ -138,5 +138,13 @@ public class DataSetProcessor {
             exportDataSet = method.getDeclaringClass().getAnnotation(ExportDataSet.class);
         }
         return exportDataSet;
+    }
+
+    public void enableConstraints(){
+        try {
+            dataSetExecutor.enableConstraints();
+        } catch (SQLException e) {
+            log.warn("Could not enable constraints.", e);
+        }
     }
 }

@@ -37,14 +37,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -73,9 +71,13 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private List<String> tableNames;
 
+    private String schemaName;
+
     private String driverName;
-    
-    
+
+    private boolean isContraintsDisabled = false;
+
+
     static {
         SEQUENCE_TABLE_NAME = System.getProperty("SEQUENCE_TABLE_NAME") == null ? "SEQ" : System.getProperty("SEQUENCE_TABLE_NAME");
     }
@@ -100,7 +102,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             instance = new DataSetExecutorImpl(executorId, connectionHolder, DBUnitConfig.fromGlobalConfig().executorId(executorId));
             log.debug("creating executor instance " + executorId);
             executors.put(executorId, instance);
-        } else if(!instance.dbUnitConfig.isCacheConnection()) {
+        } else if (!instance.dbUnitConfig.isCacheConnection()) {
             instance.setConnectionHolder(connectionHolder);
         }
         return instance;
@@ -115,7 +117,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     @Override
     public void createDataSet(DataSetConfig dataSetConfig) {
-        if(printDBUnitConfig.compareAndSet(true,false)){
+        if (printDBUnitConfig.compareAndSet(true, false)) {
             StringBuilder sb = new StringBuilder(150);
             sb.append("cacheConnection: ").append("" + dbUnitConfig.isCacheConnection()).append("\n").
                     append("cacheTableNames: ").append(dbUnitConfig.isCacheTableNames()).append("\n").
@@ -124,12 +126,12 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             for (Entry<String, Object> entry : dbUnitConfig.getProperties().entrySet()) {
                 sb.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
             }
-            log.info(String.format("DBUnit configuration for dataset executor '%s':\n"+sb.toString(),this.executorId));
+            log.info(String.format("DBUnit configuration for dataset executor '%s':\n" + sb.toString(), this.executorId));
         }
 
         if (dataSetConfig != null) {
             try {
-                if(databaseConnection == null || !dbUnitConfig.isCacheConnection()){
+                if (databaseConnection == null || !dbUnitConfig.isCacheConnection()) {
                     initDatabaseConnection();
                 }
                 if (dataSetConfig.isDisableConstraints()) {
@@ -170,7 +172,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             } catch (Exception e) {
                 throw new DataBaseSeedingException("Could not initialize dataset: " + dataSetConfig, e);
             }
-
 
         }
     }
@@ -258,7 +259,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     private void configDatabaseProperties() throws SQLException {
         DatabaseConfig config = databaseConnection.getConfig();
         for (Entry<String, Object> p : dbUnitConfig.getProperties().entrySet()) {
-            config.setProperty(DatabaseConfig.findByShortName(p.getKey()).getProperty(),p.getValue());
+            config.setProperty(DatabaseConfig.findByShortName(p.getKey()).getProperty(), p.getValue());
         }
 
         //PROPERTY_DATATYPE_FACTORY
@@ -278,7 +279,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     private void disableConstraints() throws SQLException {
-
         String driverName = getDriverName(connectionHolder);
         if (DriverUtils.isHsql(driverName)) {
             connectionHolder.getConnection().createStatement().execute("SET DATABASE REFERENTIAL INTEGRITY FALSE;");
@@ -292,21 +292,125 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             connectionHolder.getConnection().createStatement().execute(" SET FOREIGN_KEY_CHECKS=0;");
         }
 
-        if (DriverUtils.isPostgre(driverName) || DriverUtils.isOracle(driverName)) {
+        if (DriverUtils.isPostgre(driverName)) {
+            /*
+            preferable way because constraints are automatically re-enabled afer transaction.
+           The only downside is that constrains need to be marked as deferrable:
+
+            ALTER TABLE table_name
+            ADD CONSTRAINT constraint_uk UNIQUE(column_1, column_2)
+             DEFERRABLE INITIALLY IMMEDIATE;
+             */
             connectionHolder.getConnection().createStatement().execute("SET CONSTRAINTS ALL DEFERRED;");
+
+
+            /*
+            connection = connectionHolder.getConnection();
+            queryStatement = connection.createStatement();
+
+            for (String tableName : getTableNames(connection)) {
+                resultSet = queryStatement.executeQuery("select constraint_name from information_schema.table_constraints con where con.table_name = '" + tableName + "' and constraint_type = 'FOREIGN KEY' and constraint_schema = '" + resolveSchema() + "'");
+                String schemaName = resolveSchema(resultSet);
+                boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
+                String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'" : "'" + tableName + "'";
+                while (resultSet.next()){
+                    String constraint = resultSet.getString(1);
+                    executeStatements("alter table " + qualifiedTableName + " drop constraint '" + constraint +"'");
+                }
+            }*/
+
         }
 
+        if (DriverUtils.isOracle(driverName)) {
+            //adapted from Unitils: https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
+            Connection connection = null;
+            Statement queryStatement = null;
+            ResultSet resultSet = null;
+            String schemaName = "";
+            String tableName = "";
+            try {
+                connection = connectionHolder.getConnection();
+                queryStatement = connection.createStatement();
+                schemaName = resolveSchema();//default schema
+                // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be filtered out.
+                resultSet = queryStatement.executeQuery("select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' and OWNER = '" + schemaName + "' and CONSTRAINT_NAME not like 'BIN$%' and STATUS <> 'DISABLED'");
+                while (resultSet.next()) {
+                    schemaName = resolveSchema(resultSet);//result set schema
+                    tableName = resultSet.getString("TABLE_NAME");
+                    boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
+                    String constraintName = resultSet.getString("CONSTRAINT_NAME");
+                    String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'" : "'" + tableName + "'";
+                    executeStatements("alter table " + qualifiedTableName + " disable constraint '" + constraintName + "'");
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Error while disabling referential constraints on schema " + schemaName, e);
+            }
+        }
+
+        isContraintsDisabled = true;
+
+    }
+
+    public void enableConstraints() throws SQLException {
+        if(isContraintsDisabled) {
+            String driverName = null;
+            driverName = getDriverName(connectionHolder);
+
+            if (DriverUtils.isHsql(driverName)) {
+                connectionHolder.getConnection().createStatement().execute("SET DATABASE REFERENTIAL INTEGRITY TRUE;");
+            }
+
+            if (DriverUtils.isH2(driverName)) {
+                connectionHolder.getConnection().createStatement().execute("SET foreign_key_checks = 1;");
+            }
+
+            if (DriverUtils.isMysql(driverName)) {
+                connectionHolder.getConnection().createStatement().execute(" SET FOREIGN_KEY_CHECKS=1;");
+            }
+
+            if (DriverUtils.isPostgre(driverName)) {
+                //no-op, they are re-enabled after transaction
+            }
+
+            if (DriverUtils.isOracle(driverName)) {
+                //adapted from Unitils: https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
+                Connection connection = null;
+                Statement queryStatement = null;
+                Statement alterStatement = null;
+                ResultSet resultSet = null;
+                String schemaName = "";
+                String tableName = "";
+                try {
+                    connection = connectionHolder.getConnection();
+                    queryStatement = connection.createStatement();
+                    schemaName = resolveSchema();
+                    // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be filtered out.
+                    resultSet = queryStatement.executeQuery("select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' and OWNER = '" + schemaName + "' and CONSTRAINT_NAME not like 'BIN$%' and STATUS <> 'DISABLED'");
+                    while (resultSet.next()) {
+                        tableName = resultSet.getString("TABLE_NAME");
+                        boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
+                        String constraintName = resultSet.getString("CONSTRAINT_NAME");
+                        String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'" : "'" + tableName + "'";
+                        executeStatements("alter table " + qualifiedTableName + " enable constraint '" + constraintName + "'");
+
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException("Error while enabling referential constraints on schema " + schemaName, e);
+                }
+            }
+            isContraintsDisabled = false;
+        }
     }
 
     private String getDriverName(ConnectionHolder connectionHolder) throws SQLException {
 
-        if(driverName != null){
+        if (driverName != null) {
             return driverName;
         }
         return DriverUtils.getDriverName(connectionHolder.getConnection());
     }
 
-    public void executeStatements(String[] statements) {
+    public void executeStatements(String... statements) {
         if (statements != null && statements.length > 0 && !"".equals(statements[0].trim())) {
             try {
                 boolean autoCommit = connectionHolder.getConnection().getAutoCommit();
@@ -320,7 +424,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 connectionHolder.getConnection().commit();
                 connectionHolder.getConnection().setAutoCommit(autoCommit);
             } catch (Exception e) {
-                log.error("Could not createDataSet statements:" + e.getMessage(), e);
+                log.error("Could execute statements:" + e.getMessage(), e);
             }
 
         }
@@ -334,8 +438,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
 
     private void initDatabaseConnection() throws DatabaseUnitException, SQLException {
-         databaseConnection = new DatabaseConnection(connectionHolder.getConnection());
-         configDatabaseProperties();
+        databaseConnection = new DatabaseConnection(connectionHolder.getConnection());
+        configDatabaseProperties();
     }
 
 
@@ -343,8 +447,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         this.connectionHolder = connectionHolder;
         try {
             initDatabaseConnection();
-        }catch (Exception e){
-            log.error("Could not initialize dbunit connection.",e);
+        } catch (Exception e) {
+            log.error("Could not initialize dbunit connection.", e);
         }
     }
 
@@ -401,8 +505,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         if (is == null) {//if not found try to get from datasets folder
             is = getClass().getResourceAsStream("/datasets" + dataSet);
         }
-        if(is == null){
-            throw new RuntimeException(String.format("Could not find dataset '%s' under 'resources' or 'resources/datasets' directory.",dataSet.substring(1)));
+        if (is == null) {
+            throw new RuntimeException(String.format("Could not find dataset '%s' under 'resources' or 'resources/datasets' directory.", dataSet.substring(1)));
         }
         return is;
     }
@@ -426,7 +530,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         //clear remaining tables in any order(if there are any, also no problem clearing again)
         List<String> tables = getTableNames(connection);
         for (String tableName : tables) {
-            if (tableName.toUpperCase().contains("SEQ")) {
+            if (tableName.toUpperCase().contains(SEQUENCE_TABLE_NAME)) {
                 //tables containing 'SEQ' will NOT be cleared see https://github.com/rmpestano/dbunit-rules/issues/26
                 continue;
             }
@@ -434,7 +538,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 connection.createStatement().executeUpdate("DELETE FROM " + tableName + " where 1=1");
                 connection.commit();
             } catch (Exception e) {
-                log.warn("Could not clear table " + tableName + ", message:"+e.getMessage()+", cause: "+e.getCause());
+                log.warn("Could not clear table " + tableName + ", message:" + e.getMessage() + ", cause: " + e.getCause());
             }
         }
 
@@ -443,11 +547,11 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     private List<String> getTableNames(Connection con) {
 
         List<String> tables = new ArrayList<String>();
-        
-        if(tableNames != null && dbUnitConfig.isCacheTableNames()){
+
+        if (tableNames != null && dbUnitConfig.isCacheTableNames()) {
             return tableNames;
         }
-        
+
         ResultSet result = null;
         try {
             DatabaseMetaData metaData = con.getMetaData();
@@ -459,10 +563,10 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 String name = result.getString("TABLE_NAME");
                 tables.add(schema != null ? schema + "." + name : name);
             }
-            
-            if(tableNames == null){
+
+            if (tableNames == null) {
                 this.tableNames = new ArrayList<>();
-                this.tableNames.addAll(tables);    
+                this.tableNames.addAll(tables);
             }
 
             return tables;
@@ -475,7 +579,25 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private String resolveSchema(ResultSet result) {
         try {
-            return result.getString("TABLE_SCHEMA");
+            if(schemaName == null){
+                schemaName = result.getString("TABLE_SCHEMA");
+            }
+            return schemaName;
+        } catch (Exception e) {
+
+        }
+        return null;
+    }
+
+    private String resolveSchema() {
+        try {
+            if(schemaName == null){
+                DatabaseMetaData metaData = connectionHolder.getConnection().getMetaData();
+
+                ResultSet result = metaData.getTables(null, null, "%", new String[]{"TABLE"});
+                schemaName = resolveSchema(result);
+            }
+            return schemaName;
         } catch (Exception e) {
 
         }
@@ -590,5 +712,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     public DatabaseConnection getDBUnitConnection() {
         return databaseConnection;
+    }
+
+    public boolean isContraintsDisabled() {
+        return isContraintsDisabled;
     }
 }

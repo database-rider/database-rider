@@ -30,6 +30,7 @@ public class DatabaseTest {
     @Rule
     public DBUnitRule dbUnitRule = DBUnitRule.instance(JDBCConnection());
 
+
     @Test
     @DataSet(value = "datasets/yml/user.yml")
     public void shouldSeedDatabase() {
@@ -41,14 +42,14 @@ public class DatabaseTest {
     }
 
     @Test
-    @DataSet(value = "datasets/yml/users.yml",disableConstraints = true)
+    @DataSet(value = "datasets/yml/users.yml", disableConstraints = true)
     public void shouldSeedDataSetDisablingContraints() {
         User user = (User) EntityManagerProvider.em().createQuery("select u from User u where u.id = 1").getSingleResult();
         assertThat(user).isNotNull();
         assertThat(user.getId()).isEqualTo(1);
     }
 
-     @Test
+    @Test
     @DataSet(value = "datasets/yml/users.yml", executeStatementsBefore = "SET DATABASE REFERENTIAL INTEGRITY FALSE;")
     public void shouldSeedDataSetDisablingContraintsViaStatement() {
         User user = (User) EntityManagerProvider.em().createQuery("select u from User u join fetch u.tweets join fetch u.followers join fetch u.tweets join fetch u.followers where u.id = 1").getSingleResult();
@@ -58,15 +59,14 @@ public class DatabaseTest {
     }
 
 
-
     @Test
     @DataSet(value = "datasets/yml/users.yml",
             useSequenceFiltering = false,
-            tableOrdering = {"USER","TWEET","FOLLOWER"},
-            executeStatementsBefore = {"DELETE FROM FOLLOWER","DELETE FROM TWEET","DELETE FROM USER"}//needed because other tests created user dataset
+            tableOrdering = {"USER", "TWEET", "FOLLOWER"},
+            executeStatementsBefore = {"DELETE FROM FOLLOWER", "DELETE FROM TWEET", "DELETE FROM USER"}//needed because other tests created user dataset
     )
     public void shouldSeedDataSetUsingTableCreationOrder() {
-        List<User> users =  EntityManagerProvider.em().createQuery("select u from User u left join fetch u.tweets left join fetch u.followers").getResultList();
+        List<User> users = EntityManagerProvider.em().createQuery("select u from User u left join fetch u.tweets left join fetch u.followers").getResultList();
         assertThat(users).hasSize(2);
     }
 
@@ -98,7 +98,7 @@ public class DatabaseTest {
         assertThat(user.getTweets()).hasSize(1);
         Assert.assertEquals(user.getTweets().get(0).getContent(), "dbunit rules!");
         assertThat(user.getFollowers()).isNotNull().hasSize(1);
-        Follower expectedFollower = new Follower(2,1);
+        Follower expectedFollower = new Follower(2, 1);
         assertThat(user.getFollowers()).contains(expectedFollower);
     }
 
@@ -111,7 +111,7 @@ public class DatabaseTest {
         assertThat(user.getTweets()).hasSize(1);
         Assert.assertEquals("dbunit rules json example", user.getTweets().get(0).getContent());
         assertThat(user.getFollowers()).isNotNull().hasSize(1);
-        Follower expectedFollower = new Follower(2,1);
+        Follower expectedFollower = new Follower(2, 1);
         assertThat(user.getFollowers()).contains(expectedFollower);
     }
 
@@ -124,13 +124,13 @@ public class DatabaseTest {
         assertThat(user.getTweets()).hasSize(1);
         Assert.assertEquals("dbunit rules flat xml example", user.getTweets().get(0).getContent());
         assertThat(user.getFollowers()).isNotNull().hasSize(1);
-        Follower expectedFollower = new Follower(2,1);
+        Follower expectedFollower = new Follower(2, 1);
         assertThat(user.getFollowers()).contains(expectedFollower);
     }
 
     @Test
     @DataSet(value = "datasets/csv/USER.csv", cleanBefore = true)
-    public void shouldSeedDatabaseWithCSVDataSet(){
+    public void shouldSeedDatabaseWithCSVDataSet() {
         User user = (User) EntityManagerProvider.em().createQuery("select u from User u join u.tweets t where t.content = 'dbunit rules!'").getSingleResult();
         assertThat(user).isNotNull();
         assertThat(user.getName()).isEqualTo("@realpestano");
@@ -138,7 +138,7 @@ public class DatabaseTest {
 
     @Test
     @DataSet("xls/users.xls")
-    public void shouldSeedDatabaseWithXLSDataSet(){
+    public void shouldSeedDatabaseWithXLSDataSet() {
         User user = (User) EntityManagerProvider.em().createQuery("select u from User u join u.tweets t where t.content = 'dbunit rules!'").getSingleResult();
         assertThat(user).isNotNull();
         assertThat(user.getName()).isEqualTo("@realpestano");
@@ -147,7 +147,7 @@ public class DatabaseTest {
 
     private static Connection connection;
 
-     //called before each test by DBUnitRule
+    //called before each test by DBUnitRule
     private java.sql.Connection JDBCConnection() {
         try {
             //trigger db creation via JPA and clear jpa cache
@@ -158,18 +158,18 @@ public class DatabaseTest {
             }
             return connection; //we can reuse same connection as dbunit will control database state for us
         } catch (Exception e) {
-            throw new RuntimeException("Could not aquire JDBC connection",e);
+            throw new RuntimeException("Could not aquire JDBC connection", e);
         }
     }
 
     @AfterClass//optional because connection will be closed at jvm exit
     public static void close() throws SQLException {
-        try{
-            if(connection != null && !connection.isClosed()){
+        try {
+            if (connection != null && !connection.isClosed()) {
                 connection.close();
                 //OR DataSetExecutorImpl.getExecutorById(DataSetExecutorImpl.DEFAULT_EXECUTOR_ID).getConnection().close();
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             //
         }
     }

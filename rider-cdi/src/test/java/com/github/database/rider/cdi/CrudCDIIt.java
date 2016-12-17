@@ -25,8 +25,6 @@ public class CrudCDIIt {
     @Inject
     EntityManager em;
 
-
-
     @Test
 	@DataSet("yml/users.yml")
 	public void shouldListUsers() {

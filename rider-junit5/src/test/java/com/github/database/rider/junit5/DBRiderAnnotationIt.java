@@ -15,7 +15,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Created by pestano on 07/09/16.
  */
-//tag::junit5-annotation[]
 @RunWith(JUnitPlatform.class)
 public class DBRiderAnnotationIt {
 
@@ -23,11 +22,12 @@ public class DBRiderAnnotationIt {
             EntityManagerProvider.instance("junit5-pu").connection();
 
 
-    @DBRider //<1>
+    @DBRider //shortcut for @ExtendWith(DBUnitExtension.class) and @Test
     @DataSet(value = "usersWithTweet.yml")
     public void shouldListUsers() {
-        List<User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
+        List users = EntityManagerProvider.em().
+                createQuery("select u from User u").getResultList();
         assertThat(users).isNotNull().isNotEmpty().hasSize(2);
+        assertThat(users.get(0)).isEqualTo(new User(1));
     }
 }
-//end::junit5-annotation[]

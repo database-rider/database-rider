@@ -53,5 +53,7 @@ public interface DataSetExecutor{
 
     DatabaseConnection getDBUnitConnection();
 
+    void enableConstraints() throws SQLException ;
+
 
 }

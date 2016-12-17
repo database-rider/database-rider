@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import static com.github.database.rider.core.util.EntityManagerProvider.em;
 import static com.github.database.rider.core.util.EntityManagerProvider.isEntityManagerActive;
@@ -168,9 +169,15 @@ public class DBUnitRule implements TestRule {
                         if (dataSetConfig.isCleanAfter()) {
                             executor.clearDatabase(dataSetConfig);
                         }
-                    }
-                    //no dataset provided, only export and evaluate expected dataset
-                } else {
+                        try {
+                            executor.enableConstraints();
+                        } catch (SQLException e) {
+                            logger.warn("Could not enable constraints.", e);
+                        }
+                    }//finally
+
+                }  //no dataset provided, only export and evaluate expected dataset
+                else {
                     if(executor.getConnectionHolder() == null || executor.getConnectionHolder().getConnection() == null){
                         executor.setConnectionHolder(new ConnectionHolderImpl(getConnectionFrom(dbUnitConfig)));
                     }

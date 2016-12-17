@@ -7,10 +7,7 @@ import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.model.Follower;
 import com.github.database.rider.core.model.Tweet;
 import com.github.database.rider.core.model.User;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 

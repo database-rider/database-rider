@@ -33,19 +33,6 @@ public class SpringBootDBUnitTest {
             instance(() -> jdbcTemplate.getDataSource().getConnection());
 
 
-
-    /** users.yml
-     * USERS:
-     - ID: 1
-     EMAIL: "dbunit@gmail.com"
-     NAME: "dbunit"
-     - ID: 2
-     EMAIL: "rmpestano@gmail.com"
-     NAME: "rmpestano"
-     - ID: 3
-     EMAIL: "springboot@gmail.com"
-     NAME: "springboot"
-     */
     @Test
     @DataSet("users.yml")
     public void shouldListUsers() throws Exception {

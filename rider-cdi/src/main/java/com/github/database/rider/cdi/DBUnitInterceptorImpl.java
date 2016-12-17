@@ -8,6 +8,9 @@ import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.leak.LeakHunterException;
 import com.github.database.rider.core.leak.LeakHunterFactory;
+import org.dbunit.assertion.DbUnitAssert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
@@ -101,6 +104,7 @@ public class DBUnitInterceptorImpl implements Serializable {
                         dataSetProcessor.executeScript(usingDataSet.executeScriptsAfter()[i]);
                     }
                 }
+                dataSetProcessor.enableConstraints();
             }//end finally
 
 
