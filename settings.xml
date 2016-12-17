@@ -12,7 +12,7 @@
         <server>
             <id>snapshots</id>
             <username>${env.USER}</username>
-            <password>${env.PASS2}</password>
+            <password>${env.CENTRAL_PASS}</password>
         </server>
     </servers>
     <mirrors/>
