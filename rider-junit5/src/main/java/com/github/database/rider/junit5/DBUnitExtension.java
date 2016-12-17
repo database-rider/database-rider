@@ -250,7 +250,9 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
             if (dataSetConfig.isCleanAfter()) {
                 executor.clearDatabase(dataSetConfig);
             }
-        }
+
+            executor.enableConstraints();
+        }//end finally
 
     }
 

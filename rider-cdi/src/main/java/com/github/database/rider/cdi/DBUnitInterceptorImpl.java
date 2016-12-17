@@ -91,10 +91,6 @@ public class DBUnitInterceptorImpl implements Serializable {
 
                 dataSetProcessor.exportDataSet(invocationContext.getMethod());
 
-                if(usingDataSet.cleanAfter()){
-                    dataSetProcessor.clearDatabase(dataSetConfig);
-                }
-
                 if (!"".equals(usingDataSet.executeStatementsAfter())) {
                     dataSetProcessor.executeStatements(dataSetConfig.getExecuteStatementsAfter());
                 }
@@ -104,6 +100,11 @@ public class DBUnitInterceptorImpl implements Serializable {
                         dataSetProcessor.executeScript(usingDataSet.executeScriptsAfter()[i]);
                     }
                 }
+
+                if(usingDataSet.cleanAfter()){
+                    dataSetProcessor.clearDatabase(dataSetConfig);
+                }
+
                 dataSetProcessor.enableConstraints();
             }//end finally
 

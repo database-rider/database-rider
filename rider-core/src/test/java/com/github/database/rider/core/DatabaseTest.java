@@ -32,7 +32,7 @@ public class DatabaseTest {
 
 
     @Test
-    @DataSet(value = "datasets/yml/user.yml")
+    @DataSet(value = "datasets/yml/user.yml", cleanBefore = true)
     public void shouldSeedDatabase() {
         List<User> users = em().createQuery("select u from User u ").getResultList();
         assertThat(users).
