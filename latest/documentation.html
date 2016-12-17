@@ -1164,20 +1164,7 @@ follower:
                </div> 
                <div class="listingblock"> 
                 <div class="content"> 
-                 <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(JUnitPlatform.class)
-<span class="directive">public</span> <span class="type">class</span> <span class="class">DBRiderAnnotationIt</span> {
-
-    <span class="directive">private</span> ConnectionHolder connectionHolder = () -&gt;
-            EntityManagerProvider.instance(<span class="string"><span class="delimiter">"</span><span class="content">junit5-pu</span><span class="delimiter">"</span></span>).connection();
-
-
-    <span class="annotation">@DBRider</span> <i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">usersWithTweet.yml</span><span class="delimiter">"</span></span>)
-    <span class="directive">public</span> <span class="type">void</span> shouldListUsers() {
-        <span class="predefined-type">List</span>&lt;User&gt; users = EntityManagerProvider.em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
-        assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">2</span>);
-    }
-}</code></pre> 
+                 <pre class="CodeRay highlight"><code data-lang="java"></code></pre> 
                 </div> 
                </div> 
                <div class="colist arabic"> 
@@ -1528,18 +1515,6 @@ company:
 
     <span class="predefined-type">Long</span> count;
 
-    <span class="annotation">@When</span>(<span class="string"><span class="delimiter">"</span><span class="content">^^we search contacts by name </span><span class="char">\"</span><span class="content">([^</span><span class="char">\"</span><span class="content">]*)</span><span class="char">\"</span><span class="content">$</span><span class="delimiter">"</span></span>)
-    <span class="directive">public</span> <span class="type">void</span> we_search_contacts_by_name_(<span class="predefined-type">String</span> name) <span class="directive">throws</span> <span class="predefined-type">Throwable</span> {
-        Contact contact = <span class="keyword">new</span> Contact();
-        contact.setName(name);
-        count = contactRepository.countLike(contact, Contact_.name);
-    }
-
-
-    <span class="annotation">@Then</span>(<span class="string"><span class="delimiter">"</span><span class="content">^we should find (</span><span class="char">\\</span><span class="content">d+) contacts$</span><span class="delimiter">"</span></span>)
-    <span class="directive">public</span> <span class="type">void</span> we_should_find_result_contacts(<span class="predefined-type">Long</span> result) <span class="directive">throws</span> <span class="predefined-type">Throwable</span> {
-        assertEquals(result, count);
-    }
 
     <span class="annotation">@Given</span>(<span class="string"><span class="delimiter">"</span><span class="content">^we have a list of contacts$</span><span class="delimiter">"</span></span>)
     <span class="annotation">@DataSet</span>(<span class="string"><span class="delimiter">"</span><span class="content">datasets/contacts.yml</span><span class="delimiter">"</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
@@ -1555,6 +1530,18 @@ company:
     <span class="annotation">@Then</span>(<span class="string"><span class="delimiter">"</span><span class="content">^we should not find contact (</span><span class="char">\\</span><span class="content">d+)$</span><span class="delimiter">"</span></span>)
     <span class="directive">public</span> <span class="type">void</span> we_should_not_find_contacts_in_database(<span class="type">long</span> id) <span class="directive">throws</span> <span class="predefined-type">Throwable</span> {
         assertNull(contactRepository.findBy(id));
+    }
+
+    <span class="annotation">@When</span>(<span class="string"><span class="delimiter">"</span><span class="content">^^we search contacts by name </span><span class="char">\"</span><span class="content">([^</span><span class="char">\"</span><span class="content">]*)</span><span class="char">\"</span><span class="content">$</span><span class="delimiter">"</span></span>)
+    <span class="directive">public</span> <span class="type">void</span> we_search_contacts_by_name_(<span class="predefined-type">String</span> name) <span class="directive">throws</span> <span class="predefined-type">Throwable</span> {
+        Contact contact = <span class="keyword">new</span> Contact();
+        contact.setName(name);
+        count = contactRepository.countLike(contact, Contact_.name);
+    }
+
+    <span class="annotation">@Then</span>(<span class="string"><span class="delimiter">"</span><span class="content">^we should find (</span><span class="char">\\</span><span class="content">d+) contacts$</span><span class="delimiter">"</span></span>)
+    <span class="directive">public</span> <span class="type">void</span> we_should_find_result_contacts(<span class="predefined-type">Long</span> result) <span class="directive">throws</span> <span class="predefined-type">Throwable</span> {
+        assertEquals(result, count);
     }
 }</code></pre> 
              </div> 
@@ -3323,7 +3310,7 @@ password: ""</pre>
     u1.setName(<span class="string"><span class="delimiter">"</span><span class="content">u1</span><span class="delimiter">"</span></span>);
     EntityManagerProvider.em().persist(u1);
     tx().commit();
-    DataSetExporter.getInstance().export(<span class="keyword">new</span> DatabaseConnection(emProvider.connection()), <span class="keyword">new</span> DataSetExportConfig().outputFileName(<span class="string"><span class="delimiter">"</span><span class="content">target/user.yml</span><span class="delimiter">"</span></span>));
+    DataSetExporter.getInstance().export(emProvider.connection(), <span class="keyword">new</span> DataSetExportConfig().outputFileName(<span class="string"><span class="delimiter">"</span><span class="content">target/user.yml</span><span class="delimiter">"</span></span>));
     <span class="predefined-type">File</span> ymlDataSet = <span class="keyword">new</span> <span class="predefined-type">File</span>(<span class="string"><span class="delimiter">"</span><span class="content">target/user.yml</span><span class="delimiter">"</span></span>);
     assertThat(ymlDataSet).exists();
     assertThat(contentOf(ymlDataSet)).
@@ -3453,8 +3440,8 @@ password: ""</pre>
   </div> 
   <div id="footer" style="color:gray;font-size:11px">
     Generated by 
-   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.6</a> - Dec 4, 2016 12:26:16 PM 
-   <span style="float:right;font-size:11px"> Execution time: 6.687 seconds</span> 
+   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.6</a> - Dec 17, 2016 2:41:02 PM 
+   <span style="float:right;font-size:11px"> Execution time: 5.079 seconds</span> 
   </div> 
   <style>  
 
