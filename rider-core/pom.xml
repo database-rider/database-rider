@@ -105,6 +105,7 @@
                             <outputDir>${docs.outputdir}</outputDir>
                             <!--pdf and html5 -->
                             <format>all</format>
+                            <documentTitle>Database Rider Documentation</documentTitle>
                             <hideSummarySection>true</hideSummarySection>
                             <hideScenarioKeyword>true</hideScenarioKeyword>
                             <hideStepTime>true</hideStepTime>
