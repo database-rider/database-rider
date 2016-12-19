@@ -333,7 +333,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 queryStatement = connection.createStatement();
                 schemaName = resolveSchema();//default schema
                 // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be filtered out.
-                resultSet = queryStatement.executeQuery("select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' and OWNER = '" + schemaName + "' and CONSTRAINT_NAME not like 'BIN$%' and STATUS <> 'DISABLED'");
+                resultSet = queryStatement.executeQuery("select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' " + (schemaName != null ? "and OWNER = '" + schemaName + "'" : "") +" and CONSTRAINT_NAME not like 'BIN$%' and STATUS <> 'DISABLED'");
                 while (resultSet.next()) {
                     schemaName = resolveSchema(resultSet);//result set schema
                     tableName = resultSet.getString("TABLE_NAME");
@@ -385,7 +385,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     queryStatement = connection.createStatement();
                     schemaName = resolveSchema();
                     // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be filtered out.
-                    resultSet = queryStatement.executeQuery("select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' and OWNER = '" + schemaName + "' and CONSTRAINT_NAME not like 'BIN$%' and STATUS <> 'DISABLED'");
+                    resultSet = queryStatement.executeQuery("select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' " + (schemaName != null ? "and OWNER = '" + schemaName + "'" : "") +" and CONSTRAINT_NAME not like 'BIN$%' and STATUS = 'DISABLED'");
                     while (resultSet.next()) {
                         tableName = resultSet.getString("TABLE_NAME");
                         boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
