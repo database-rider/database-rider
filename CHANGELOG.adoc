@@ -10,6 +10,28 @@ endif::[]
 Below is an overview of what has changed on each `Database Rider` version.
 
 
+== https://github.com/database-rider/database-rider/releases/tag/1.0.0[1.0.0 (2016-30-12)^]
+
+Enhancements::
+
+    * Custom annotation for JUnit 5 (https://github.com/database-rider/database-rider/issues/11[#11])
+    * Exposed clear() on EntityManagerProvider (https://github.com/database-rider/database-rider/issues/13[#13])
+    * Constraints are re-enabled after test execution (https://github.com/database-rider/database-rider/issues/16[#16])
+    * Updates to latest JUnit 5 (https://github.com/database-rider/database-rider/issues/17[#17])
+
+Infrastructure::
+
+    * http://database-rider.github.io/getting-started/[Getting started guide] (https://github.com/database-rider/database-rider/issues/3[#3])
+    * Adds change log file (https://github.com/database-rider/database-rider/issues/9[#9])
+    * The definitive guide (https://github.com/database-rider/database-rider/issues/10[#10])
+    * Create logo (https://github.com/database-rider/database-rider/issues/12[#12])
+    * Maven central snapshots are deployed automatically (https://github.com/database-rider/database-rider/issues/18[#18])
+
+Bug fixes::
+
+    * Disable constraints oracle support (https://github.com/database-rider/database-rider/issues/15[#15])
+
+
 == https://github.com/database-rider/database-rider/releases/tag/1.0.0-RC2[1.0.0-RC2 (2016-10-05)^]
 
 
