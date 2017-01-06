@@ -36,6 +36,7 @@ image:https://maven-badges.herokuapp.com/maven-central/com.github.database-rider
 
 This project aims for bringing http://dbunit.sourceforge.net/[DBUnit] closer to your JUnit tests *so database testing will feel like a breeze!*
 
+Watch https://www.youtube.com/watch?v=A5ryED3a8FY[1.0 promo video^] to get an idea.
 
 A lot of this work is based on https://github.com/arquillian/arquillian-extension-persistence/[Arquillian persistence extension] and focus on simplicity (one dependency - dbunit). If you need a more robust and reliable solution (tests closer to production), I'd suggest arquillian persistence.
 
