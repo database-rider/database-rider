@@ -51,7 +51,7 @@ public interface DataSetExecutor{
 
     DBUnitConfig getDBUnitConfig();
 
-    DatabaseConnection getDBUnitConnection();
+    DatabaseConnection getDBUnitConnection() throws DatabaseUnitException, SQLException;
 
     void enableConstraints() throws SQLException ;
 
