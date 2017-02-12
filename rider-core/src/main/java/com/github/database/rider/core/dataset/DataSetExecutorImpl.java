@@ -669,11 +669,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         IDataSet current = null;
         IDataSet expected = null;
         try {
-            if (databaseConnection == null) {
-                //no dataset was created yet (e.g only @ExpectedDataSet declared in test method)
-                initDatabaseConnection();
-            }
-            current = databaseConnection.createDataSet();
+            current = getDBUnitConnection().createDataSet();
             expected = loadDataSets(expectedDataSetConfig.getDatasets());
         } catch (Exception e) {
             throw new RuntimeException("Could not create dataset to compare.", e);
@@ -710,7 +706,11 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
 
-    public DatabaseConnection getDBUnitConnection() {
+    public DatabaseConnection getDBUnitConnection() throws DatabaseUnitException, SQLException {
+        if (databaseConnection == null) {
+            initDatabaseConnection();
+        }
+
         return databaseConnection;
     }
 
