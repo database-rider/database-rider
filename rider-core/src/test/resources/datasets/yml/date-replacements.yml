@@ -1,27 +1,27 @@
-tweet:
-  - id: "1"
-    content: "dbunit rules!"
-    date: "[DAY,NOW]"
-    user_id: 1
-  - id: "2"
-    content: "dbunit rules!"
-    date: "[DAY,YESTERDAY]"
-    user_id: 1
-  - id: "3"
-    content: "dbunit rules!"
-    date: "[DAY,TOMORROW]"
-    user_id: 1
-  - id: "4"
-    content: "dbunit rules!"
-    date: "[DAY,YEAR_AFTER]"
-    user_id: 1
-  - id: "5"
-    content: "dbunit rules!"
-    date: "[DAY,YEAR_BEFORE]"
-    user_id: 1
-  - id: "6"
-    content: "dbunit rules!"
-    date: "[HOUR,PLUS_ONE]"
-    user_id: 1
+TWEET:
+  - ID: "1"
+    CONTENT: "dbunit rules!"
+    DATE: "[DAY,NOW]"
+    USER_ID: 1
+  - ID: "2"
+    CONTENT: "dbunit rules!"
+    DATE: "[DAY,YESTERDAY]"
+    USER_ID: 1
+  - ID: "3"
+    CONTENT: "dbunit rules!"
+    DATE: "[DAY,TOMORROW]"
+    USER_ID: 1
+  - ID: "4"
+    CONTENT: "dbunit rules!"
+    DATE: "[DAY,YEAR_AFTER]"
+    USER_ID: 1
+  - ID: "5"
+    CONTENT: "dbunit rules!"
+    DATE: "[DAY,YEAR_BEFORE]"
+    USER_ID: 1
+  - ID: "6"
+    CONTENT: "dbunit rules!"
+    DATE: "[HOUR,PLUS_ONE]"
+    USER_ID: 1
 
 
