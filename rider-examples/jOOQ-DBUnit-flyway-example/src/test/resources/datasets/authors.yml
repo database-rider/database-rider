@@ -1,13 +1,13 @@
-flyway_test.author:
-  - id: 1
-    first_name: George
-    last_name: Orwell
-    date_of_birth: 1903-06-25
-    year_of_birth: 1903
-    address: null
-  - id: 2
-    first_name: Paulo
-    last_name: Coelho
-    date_of_birth: 1947-08-24
-    year_of_birth: 1947
-    address: null
+FLYWAY_TEST.AUTHOR:
+  - ID: 1
+    FIRST_NAME: George
+    LAST_NAME: Orwell
+    DATE_OF_BIRTH: 1903-06-25
+    YEAR_OF_BIRTH: 1903
+    ADDRESS: null
+  - ID: 2
+    FIRST_NAME: Paulo
+    LAST_NAME: Coelho
+    DATE_OF_BIRTH: 1947-08-24
+    YEAR_OF_BIRTH: 1947
+    ADDRESS: null

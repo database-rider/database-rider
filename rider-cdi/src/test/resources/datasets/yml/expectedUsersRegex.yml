@@ -1,5 +1,5 @@
-user:
-  - id: "regex:\\d+"
-    name: regex:^expected user.* #expected user1
-  - id: "regex:\\d+"
-    name: regex:.*user2$ #expected user2
+USER:
+  - ID: "regex:\\d+"
+    NAME: regex:^expected user.* #expected user1
+  - ID: "regex:\\d+"
+    NAME: regex:.*user2$ #expected user2
