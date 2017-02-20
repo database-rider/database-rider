@@ -155,4 +155,4 @@ If you use different transaction strategies between your application and tests (
 
 ====
 
-For more examples see full https://github.com/database-rider/database-rider/blob/master/rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/DeltaspikeUsingInterceptorIt.java#L25[sample here] and https://github.com/database-rider/database-rider/tree/master/cdi/src/test/java/com/github/database/rider[cdi module tests^].
+For more examples see full https://github.com/database-rider/database-rider/blob/master/rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/DeltaspikeUsingInterceptorIt.java#L25[sample here] and https://github.com/database-rider/database-rider/tree/master/rider-cdi/src/test/java/com/github/database/rider/cdi[cdi module tests^].
