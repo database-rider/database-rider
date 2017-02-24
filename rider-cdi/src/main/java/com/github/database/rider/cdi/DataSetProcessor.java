@@ -125,7 +125,7 @@ public class DataSetProcessor {
             }
             exportConfig.outputFileName(outputName);
             try {
-                DataSetExporter.getInstance().export(dataSetExecutor.getDBUnitConnection(),exportConfig);
+                DataSetExporter.getInstance().export(dataSetExecutor.getRiderDataSource().getDBUnitConnection(),exportConfig);
             } catch (Exception e) {
                 log.warn("Could not export dataset after method " + method.getName(), e);
             }

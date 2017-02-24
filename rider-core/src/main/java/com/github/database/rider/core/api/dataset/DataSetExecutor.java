@@ -1,10 +1,10 @@
 package com.github.database.rider.core.api.dataset;
 
+import com.github.database.rider.core.configuration.ConnectionConfig;
 import com.github.database.rider.core.configuration.DBUnitConfig;
-import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.configuration.DataSetConfig;
+import com.github.database.rider.core.connection.RiderDataSource;
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.DatabaseConnection;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 
@@ -26,9 +26,7 @@ public interface DataSetExecutor{
 
     IDataSet loadDataSets(String[] datasets) throws DataSetException, IOException;
 
-    ConnectionHolder getConnectionHolder();
-
-    void setConnectionHolder(ConnectionHolder connectionHolder);
+    void initConnectionFromConfig(ConnectionConfig connectionConfig) throws SQLException;
 
     void clearDatabase(DataSetConfig dataset) throws SQLException;
 
@@ -51,7 +49,7 @@ public interface DataSetExecutor{
 
     DBUnitConfig getDBUnitConfig();
 
-    DatabaseConnection getDBUnitConnection() throws DatabaseUnitException, SQLException;
+    RiderDataSource getRiderDataSource() throws DatabaseUnitException, SQLException;
 
     void enableConstraints() throws SQLException ;
 
