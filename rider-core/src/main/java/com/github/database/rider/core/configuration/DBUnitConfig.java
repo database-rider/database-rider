@@ -14,13 +14,11 @@ public class DBUnitConfig {
 
     private String executorId;
 
-    private boolean cacheConnection = false;
+    private Boolean cacheConnection;
 
-    private boolean cacheTableNames = false;
+    private Boolean cacheTableNames;
 
-    private boolean caseSensitiveTableNames = false;
-
-    private boolean leakHunter = false;
+    private Boolean leakHunter;
 
     private Map<String, Object> properties;
 
@@ -28,6 +26,9 @@ public class DBUnitConfig {
 
     public DBUnitConfig() {
         this.executorId = DataSetExecutorImpl.DEFAULT_EXECUTOR_ID;
+        cacheConnection = false;
+        cacheTableNames = false;
+        leakHunter = false;
     }
 
     public DBUnitConfig(String executor) {
@@ -92,11 +93,6 @@ public class DBUnitConfig {
         return this;
     }
 
-    public DBUnitConfig caseSensitiveTableNames(boolean caseSensitiveTableNames) {
-        this.caseSensitiveTableNames = caseSensitiveTableNames;
-        return this;
-    }
-
     public DBUnitConfig leakHunter(boolean leakHunter){
         this.leakHunter = leakHunter;
         return this;
@@ -151,23 +147,15 @@ public class DBUnitConfig {
         this.cacheTableNames = cacheTableNames;
     }
 
-    public boolean isCacheConnection() {
+    public Boolean isCacheConnection() {
         return cacheConnection;
     }
 
-    public boolean isCaseSensitiveTableNames() {
-        return caseSensitiveTableNames;
-    }
-
-    public void setCaseSensitiveTableNames(boolean caseSensitiveTableNames) {
-        this.caseSensitiveTableNames = caseSensitiveTableNames;
-    }
-
-    public boolean isCacheTableNames() {
+    public Boolean isCacheTableNames() {
         return cacheTableNames;
     }
 
-    public boolean isLeakHunter() {
+    public Boolean isLeakHunter() {
         return leakHunter;
     }
 

@@ -16,6 +16,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
+/**
+ * @author artemy-osipov
+ */
 public class RiderDataSource {
 
     public enum DBType { HSQLDB, H2, MYSQL, ORACLE, POSTGRESQL, UNKNOWN }
