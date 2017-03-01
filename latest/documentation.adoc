@@ -712,7 +712,7 @@ Table below illustrate the possible configurations:
 
 === DBUnit configuration
 
-`DBUnit`, the tool doing the dirt work the scenes, can be configured by *@DBUnit* annotation (class or method level) and *dbunit.yml* file present in `test resources` folder.
+`DBUnit`, the tool doing the dirty work the scenes, can be configured by *@DBUnit* annotation (class or method level) and *dbunit.yml* file present in `test resources` folder.
 
 [source,java]
 ----
