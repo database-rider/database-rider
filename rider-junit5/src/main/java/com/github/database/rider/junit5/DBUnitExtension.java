@@ -118,7 +118,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
                     EntityManagerProvider.em().getTransaction().begin();
                 }
             } else{
-                Connection connection = executor.getConnectionHolder().getConnection();
+                Connection connection = executor.getRiderDataSource().getConnection();
                 connection.setAutoCommit(false);
             }
         }
@@ -148,7 +148,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
             }
             exportConfig.outputFileName(outputName);
             try {
-                DataSetExporter.getInstance().export(dataSetExecutor.getDBUnitConnection(),exportConfig);
+                DataSetExporter.getInstance().export(dataSetExecutor.getRiderDataSource().getDBUnitConnection(),exportConfig);
             } catch (Exception e) {
             	log.warn("Could not export dataset after method "+method.getName(),e);
             }
@@ -186,7 +186,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
                                     EntityManagerProvider.tx().commit();
                                 }
                             } else {
-                                Connection connection = executor.getConnectionHolder().getConnection();
+                                Connection connection = executor.getRiderDataSource().getConnection();
                                 connection.commit();
                                 connection.setAutoCommit(false);
                             }
@@ -194,7 +194,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
                             if(EntityManagerProvider.isEntityManagerActive()){
                                 EntityManagerProvider.tx().rollback();
                             } else{
-                                Connection connection = executor.getConnectionHolder().getConnection();
+                                Connection connection = executor.getRiderDataSource().getConnection();
                                 connection.setAutoCommit(false);
                                 connection.setReadOnly(true);
                             }

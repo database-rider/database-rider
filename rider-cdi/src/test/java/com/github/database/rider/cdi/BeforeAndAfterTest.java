@@ -31,6 +31,8 @@ public class BeforeAndAfterTest {
     @Before
     public void init() {
         em.getTransaction().begin();
+        em.createNativeQuery("DELETE FROM FOLLOWER").executeUpdate();
+        em.createNativeQuery("DELETE FROM TWEET").executeUpdate();
         em.createNativeQuery("DELETE FROM USER").executeUpdate();//delete users inserted in other tests
         for (int i=0;i<6;i++ ) {
             User u = new User();

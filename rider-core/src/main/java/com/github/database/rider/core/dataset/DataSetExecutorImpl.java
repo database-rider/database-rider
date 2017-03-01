@@ -1,20 +1,20 @@
 package com.github.database.rider.core.dataset;
 
+import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSetExecutor;
+import com.github.database.rider.core.api.dataset.JSONDataSet;
 import com.github.database.rider.core.api.dataset.YamlDataSet;
+import com.github.database.rider.core.assertion.DataSetAssertion;
+import com.github.database.rider.core.configuration.ConnectionConfig;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
-import com.github.database.rider.core.api.connection.ConnectionHolder;
-import com.github.database.rider.core.api.dataset.JSONDataSet;
-import com.github.database.rider.core.assertion.DataSetAssertion;
+import com.github.database.rider.core.connection.ConnectionHolderImpl;
+import com.github.database.rider.core.connection.RiderDataSource;
 import com.github.database.rider.core.exception.DataBaseSeedingException;
 import com.github.database.rider.core.replacer.DateTimeReplacer;
-import com.github.database.rider.core.util.DriverUtils;
 import com.github.database.rider.core.replacer.ScriptReplacer;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.AmbiguousTableNameException;
-import org.dbunit.database.DatabaseConfig;
-import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.DatabaseSequenceFilter;
 import org.dbunit.dataset.*;
 import org.dbunit.dataset.csv.CsvDataSet;
@@ -23,11 +23,6 @@ import org.dbunit.dataset.filter.DefaultColumnFilter;
 import org.dbunit.dataset.filter.ITableFilter;
 import org.dbunit.dataset.filter.SequenceTableFilter;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
-import org.dbunit.ext.h2.H2DataTypeFactory;
-import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
-import org.dbunit.ext.mysql.MySqlDataTypeFactory;
-import org.dbunit.ext.oracle.Oracle10DataTypeFactory;
-import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -63,7 +57,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private static String SEQUENCE_TABLE_NAME;
 
-    private DatabaseConnection databaseConnection;
+    private RiderDataSource riderDataSource;
 
     private ConnectionHolder connectionHolder;
 
@@ -72,8 +66,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     private List<String> tableNames;
 
     private String schemaName;
-
-    private String driverName;
 
     private boolean isContraintsDisabled = false;
 
@@ -84,19 +76,15 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
 
     public static DataSetExecutorImpl instance(ConnectionHolder connectionHolder) {
-
-        if (connectionHolder == null) {
-            throw new RuntimeException("Invalid connection");
-        }
         //if no executor name is provided use default
         return instance(DEFAULT_EXECUTOR_ID, connectionHolder);
     }
 
     public static DataSetExecutorImpl instance(String executorId, ConnectionHolder connectionHolder) {
-
         if (connectionHolder == null) {
             throw new RuntimeException("Invalid connection");
         }
+
         DataSetExecutorImpl instance = executors.get(executorId);
         if (instance == null) {
             instance = new DataSetExecutorImpl(executorId, connectionHolder, DBUnitConfig.fromGlobalConfig().executorId(executorId));
@@ -131,9 +119,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
         if (dataSetConfig != null) {
             try {
-                if (databaseConnection == null || !dbUnitConfig.isCacheConnection()) {
-                    initDatabaseConnection();
-                }
                 if (dataSetConfig.isDisableConstraints()) {
                     disableConstraints();
                 }
@@ -166,7 +151,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
                     DatabaseOperation operation = dataSetConfig.getstrategy().getOperation();
 
-                    operation.execute(databaseConnection, resultingDataSet);
+                    operation.execute(getRiderDataSource().getDBUnitConnection(), resultingDataSet);
                 }
 
             } catch (Exception e) {
@@ -235,11 +220,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         return new CompositeDataSet(dataSetList.toArray(new IDataSet[dataSetList.size()]));
     }
 
-    @Override
-    public ConnectionHolder getConnectionHolder() {
-        return connectionHolder;
-    }
-
     private IDataSet performTableOrdering(DataSetConfig dataSet, IDataSet target) throws AmbiguousTableNameException {
         if (dataSet.getTableOrdering().length > 0) {
             target = new FilteredDataSet(new SequenceTableFilter(dataSet.getTableOrdering()), target);
@@ -247,104 +227,61 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         return target;
     }
 
-    private IDataSet performSequenceFiltering(DataSetConfig dataSet, IDataSet target) throws DataSetException, SQLException {
+    private IDataSet performSequenceFiltering(DataSetConfig dataSet, IDataSet target) throws DatabaseUnitException, SQLException {
         if (dataSet.isUseSequenceFiltering()) {
-            ITableFilter filteredTable = new DatabaseSequenceFilter(databaseConnection, target.getTableNames());
+            ITableFilter filteredTable = new DatabaseSequenceFilter(getRiderDataSource().getDBUnitConnection(), target.getTableNames());
             target = new FilteredDataSet(filteredTable, target);
         }
         return target;
     }
 
-
-    private void configDatabaseProperties() throws SQLException {
-        DatabaseConfig config = databaseConnection.getConfig();
-        for (Entry<String, Object> p : dbUnitConfig.getProperties().entrySet()) {
-            config.setProperty(DatabaseConfig.findByShortName(p.getKey()).getProperty(), p.getValue());
-        }
-
-        //PROPERTY_DATATYPE_FACTORY
-        String driverName = getDriverName(connectionHolder);
-        if (DriverUtils.isHsql(driverName)) {
-            config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
-        } else if (DriverUtils.isH2(driverName)) {
-            config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new H2DataTypeFactory());
-        } else if (DriverUtils.isMysql(driverName)) {
-            config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
-        } else if (DriverUtils.isPostgre(driverName)) {
-            config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new PostgresqlDataTypeFactory());
-        } else if (DriverUtils.isOracle(driverName)) {
-            config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new Oracle10DataTypeFactory());
-        }
-
-    }
-
     private void disableConstraints() throws SQLException {
-        String driverName = getDriverName(connectionHolder);
-        if (DriverUtils.isHsql(driverName)) {
-            connectionHolder.getConnection().createStatement().execute("SET DATABASE REFERENTIAL INTEGRITY FALSE;");
-        }
+        switch (getRiderDataSource().getDBType()) {
+            case HSQLDB:
+                getRiderDataSource().getConnection().createStatement().execute("SET DATABASE REFERENTIAL INTEGRITY FALSE;");
+                break;
+            case H2:
+                getRiderDataSource().getConnection().createStatement().execute("SET foreign_key_checks = 0;");
+                break;
+            case MYSQL:
+                getRiderDataSource().getConnection().createStatement().execute(" SET FOREIGN_KEY_CHECKS=0;");
+                break;
+            case POSTGRESQL:
+                /*
+                preferable way because constraints are automatically re-enabled afer transaction.
+                The only downside is that constrains need to be marked as deferrable:
 
-        if (DriverUtils.isH2(driverName)) {
-            connectionHolder.getConnection().createStatement().execute("SET foreign_key_checks = 0;");
-        }
-
-        if (DriverUtils.isMysql(driverName)) {
-            connectionHolder.getConnection().createStatement().execute(" SET FOREIGN_KEY_CHECKS=0;");
-        }
-
-        if (DriverUtils.isPostgre(driverName)) {
-            /*
-            preferable way because constraints are automatically re-enabled afer transaction.
-           The only downside is that constrains need to be marked as deferrable:
-
-            ALTER TABLE table_name
-            ADD CONSTRAINT constraint_uk UNIQUE(column_1, column_2)
-             DEFERRABLE INITIALLY IMMEDIATE;
-             */
-            connectionHolder.getConnection().createStatement().execute("SET CONSTRAINTS ALL DEFERRED;");
-
-
-            /*
-            connection = connectionHolder.getConnection();
-            queryStatement = connection.createStatement();
-
-            for (String tableName : getTableNames(connection)) {
-                resultSet = queryStatement.executeQuery("select constraint_name from information_schema.table_constraints con where con.table_name = '" + tableName + "' and constraint_type = 'FOREIGN KEY' and constraint_schema = '" + resolveSchema() + "'");
-                String schemaName = resolveSchema(resultSet);
-                boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
-                String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'" : "'" + tableName + "'";
-                while (resultSet.next()){
-                    String constraint = resultSet.getString(1);
-                    executeStatements("alter table " + qualifiedTableName + " drop constraint '" + constraint +"'");
+                ALTER TABLE table_name
+                ADD CONSTRAINT constraint_uk UNIQUE(column_1, column_2)
+                DEFERRABLE INITIALLY IMMEDIATE;
+                */
+                getRiderDataSource().getConnection().createStatement().execute("SET CONSTRAINTS ALL DEFERRED;");
+                break;
+            case ORACLE:
+                //adapted from Unitils: https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
+                Connection connection = null;
+                Statement queryStatement = null;
+                ResultSet resultSet = null;
+                String schemaName = "";
+                String tableName = "";
+                try {
+                    connection = getRiderDataSource().getConnection();
+                    queryStatement = connection.createStatement();
+                    schemaName = resolveSchema();//default schema
+                    // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be filtered out.
+                    resultSet = queryStatement.executeQuery("select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' " + (schemaName != null ? "and OWNER = '" + schemaName + "'" : "") +" and CONSTRAINT_NAME not like 'BIN$%' and STATUS <> 'DISABLED'");
+                    while (resultSet.next()) {
+                        schemaName = resolveSchema(resultSet);//result set schema
+                        tableName = resultSet.getString("TABLE_NAME");
+                        boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
+                        String constraintName = resultSet.getString("CONSTRAINT_NAME");
+                        String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'" : "'" + tableName + "'";
+                        executeStatements("alter table " + qualifiedTableName + " disable constraint '" + constraintName + "'");
+                    }
+                    break;
+                } catch (Exception e) {
+                    throw new RuntimeException("Error while disabling referential constraints on schema " + schemaName, e);
                 }
-            }*/
-
-        }
-
-        if (DriverUtils.isOracle(driverName)) {
-            //adapted from Unitils: https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
-            Connection connection = null;
-            Statement queryStatement = null;
-            ResultSet resultSet = null;
-            String schemaName = "";
-            String tableName = "";
-            try {
-                connection = connectionHolder.getConnection();
-                queryStatement = connection.createStatement();
-                schemaName = resolveSchema();//default schema
-                // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be filtered out.
-                resultSet = queryStatement.executeQuery("select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' " + (schemaName != null ? "and OWNER = '" + schemaName + "'" : "") +" and CONSTRAINT_NAME not like 'BIN$%' and STATUS <> 'DISABLED'");
-                while (resultSet.next()) {
-                    schemaName = resolveSchema(resultSet);//result set schema
-                    tableName = resultSet.getString("TABLE_NAME");
-                    boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
-                    String constraintName = resultSet.getString("CONSTRAINT_NAME");
-                    String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'" : "'" + tableName + "'";
-                    executeStatements("alter table " + qualifiedTableName + " disable constraint '" + constraintName + "'");
-                }
-            } catch (Exception e) {
-                throw new RuntimeException("Error while disabling referential constraints on schema " + schemaName, e);
-            }
         }
 
         isContraintsDisabled = true;
@@ -353,76 +290,59 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     public void enableConstraints() throws SQLException {
         if(isContraintsDisabled) {
-            String driverName = null;
-            driverName = getDriverName(connectionHolder);
-
-            if (DriverUtils.isHsql(driverName)) {
-                connectionHolder.getConnection().createStatement().execute("SET DATABASE REFERENTIAL INTEGRITY TRUE;");
-            }
-
-            if (DriverUtils.isH2(driverName)) {
-                connectionHolder.getConnection().createStatement().execute("SET foreign_key_checks = 1;");
-            }
-
-            if (DriverUtils.isMysql(driverName)) {
-                connectionHolder.getConnection().createStatement().execute(" SET FOREIGN_KEY_CHECKS=1;");
-            }
-
-            if (DriverUtils.isPostgre(driverName)) {
-                //no-op, they are re-enabled after transaction
-            }
-
-            if (DriverUtils.isOracle(driverName)) {
-                //adapted from Unitils: https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
-                Connection connection = null;
-                Statement queryStatement = null;
-                Statement alterStatement = null;
-                ResultSet resultSet = null;
-                String schemaName = "";
-                String tableName = "";
-                try {
-                    connection = connectionHolder.getConnection();
-                    queryStatement = connection.createStatement();
-                    schemaName = resolveSchema();
-                    // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be filtered out.
-                    resultSet = queryStatement.executeQuery("select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' " + (schemaName != null ? "and OWNER = '" + schemaName + "'" : "") +" and CONSTRAINT_NAME not like 'BIN$%' and STATUS = 'DISABLED'");
-                    while (resultSet.next()) {
-                        tableName = resultSet.getString("TABLE_NAME");
-                        boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
-                        String constraintName = resultSet.getString("CONSTRAINT_NAME");
-                        String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'" : "'" + tableName + "'";
-                        executeStatements("alter table " + qualifiedTableName + " enable constraint '" + constraintName + "'");
-
+            switch (getRiderDataSource().getDBType()) {
+                case HSQLDB:
+                    getRiderDataSource().getConnection().createStatement().execute("SET DATABASE REFERENTIAL INTEGRITY TRUE;");
+                    break;
+                case H2:
+                    getRiderDataSource().getConnection().createStatement().execute("SET foreign_key_checks = 1;");
+                    break;
+                case MYSQL:
+                    getRiderDataSource().getConnection().createStatement().execute(" SET FOREIGN_KEY_CHECKS=1;");
+                    break;
+                case ORACLE:
+                    //adapted from Unitils: https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
+                    Connection connection = null;
+                    Statement queryStatement = null;
+                    ResultSet resultSet = null;
+                    String schemaName = "";
+                    String tableName = "";
+                    try {
+                        connection = getRiderDataSource().getConnection();
+                        queryStatement = connection.createStatement();
+                        schemaName = resolveSchema();
+                        // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be filtered out.
+                        resultSet = queryStatement.executeQuery("select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' " + (schemaName != null ? "and OWNER = '" + schemaName + "'" : "") +" and CONSTRAINT_NAME not like 'BIN$%' and STATUS = 'DISABLED'");
+                        while (resultSet.next()) {
+                            tableName = resultSet.getString("TABLE_NAME");
+                            boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
+                            String constraintName = resultSet.getString("CONSTRAINT_NAME");
+                            String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'" : "'" + tableName + "'";
+                            executeStatements("alter table " + qualifiedTableName + " enable constraint '" + constraintName + "'");
+                        }
+                        break;
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error while enabling referential constraints on schema " + schemaName, e);
                     }
-                } catch (Exception e) {
-                    throw new RuntimeException("Error while enabling referential constraints on schema " + schemaName, e);
-                }
             }
+
             isContraintsDisabled = false;
         }
-    }
-
-    private String getDriverName(ConnectionHolder connectionHolder) throws SQLException {
-
-        if (driverName != null) {
-            return driverName;
-        }
-        return DriverUtils.getDriverName(connectionHolder.getConnection());
     }
 
     public void executeStatements(String... statements) {
         if (statements != null && statements.length > 0 && !"".equals(statements[0].trim())) {
             try {
-                boolean autoCommit = connectionHolder.getConnection().getAutoCommit();
-                connectionHolder.getConnection().setAutoCommit(false);
-                java.sql.Statement statement = connectionHolder.getConnection().createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+                boolean autoCommit = getRiderDataSource().getConnection().getAutoCommit();
+                getRiderDataSource().getConnection().setAutoCommit(false);
+                java.sql.Statement statement = getRiderDataSource().getConnection().createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
                         ResultSet.CONCUR_UPDATABLE);
                 for (String stm : statements) {
                     statement.addBatch(stm);
                 }
                 statement.executeBatch();
-                connectionHolder.getConnection().commit();
-                connectionHolder.getConnection().setAutoCommit(autoCommit);
+                getRiderDataSource().getConnection().commit();
+                getRiderDataSource().getConnection().setAutoCommit(autoCommit);
             } catch (Exception e) {
                 log.error("Could execute statements:" + e.getMessage(), e);
             }
@@ -436,34 +356,34 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         return replace;
     }
 
-
-    private void initDatabaseConnection() throws DatabaseUnitException, SQLException {
-        databaseConnection = new DatabaseConnection(connectionHolder.getConnection());
-        configDatabaseProperties();
+    private void setConnectionHolder(ConnectionHolder connectionHolder) {
+        this.connectionHolder = connectionHolder;
+        riderDataSource = null;
     }
 
+    public void initConnectionFromConfig(ConnectionConfig connectionConfig) throws SQLException {
+        setConnectionHolder(new ConnectionHolderImpl(getConnectionFromConfig(connectionConfig)));
+    }
 
-    public void setConnectionHolder(ConnectionHolder connectionHolder) {
-        this.connectionHolder = connectionHolder;
-        try {
-            initDatabaseConnection();
-        } catch (Exception e) {
-            log.error("Could not initialize dbunit connection.", e);
+    private Connection getConnectionFromConfig(ConnectionConfig connectionConfig) throws SQLException {
+        if (!"".equals(connectionConfig.getDriver())) {
+            try {
+                Class.forName(connectionConfig.getDriver());
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+
         }
+        return DriverManager.getConnection(connectionConfig.getUrl(), connectionConfig.getUser(), connectionConfig.getPassword());
     }
 
     public Connection getConnection() {
         try {
-            return connectionHolder.getConnection();
+            return getRiderDataSource().getConnection();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-
-    public static Map<String, DataSetExecutorImpl> getExecutors() {
-        return executors;
-    }
-
 
     @Override
     public boolean equals(Object other) {
@@ -471,15 +391,15 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             return false;
         }
         DataSetExecutorImpl otherExecutor = (DataSetExecutorImpl) other;
-        if (databaseConnection == null || otherExecutor.databaseConnection == null) {
+        if (riderDataSource == null || otherExecutor.riderDataSource == null) {
             return false;
         }
         try {
-            if (databaseConnection.getConnection() == null || otherExecutor.databaseConnection.getConnection() == null) {
+            if (riderDataSource.getDBUnitConnection().getConnection() == null || otherExecutor.riderDataSource.getDBUnitConnection().getConnection() == null) {
                 return false;
             }
 
-            if (!databaseConnection.getConnection().getMetaData().getURL().equals(otherExecutor.databaseConnection.getConnection().getMetaData().getURL())) {
+            if (!riderDataSource.getDBUnitConnection().getConnection().getMetaData().getURL().equals(otherExecutor.riderDataSource.getDBUnitConnection().getConnection().getMetaData().getURL())) {
                 return false;
             }
         } catch (Exception e) {
@@ -515,7 +435,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
      * @throws SQLException if clean up cannot be performed
      */
     public void clearDatabase(DataSetConfig dataset) throws SQLException {
-        Connection connection = connectionHolder.getConnection();
+        Connection connection = getRiderDataSource().getConnection();
 
         if (dataset != null && dataset.getTableOrdering() != null && dataset.getTableOrdering().length > 0) {
             for (String table : dataset.getTableOrdering()) {
@@ -592,7 +512,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     private String resolveSchema() {
         try {
             if(schemaName == null){
-                DatabaseMetaData metaData = connectionHolder.getConnection().getMetaData();
+                DatabaseMetaData metaData = getRiderDataSource().getConnection().getMetaData();
 
                 ResultSet result = metaData.getTables(null, null, "%", new String[]{"TABLE"});
                 schemaName = resolveSchema(result);
@@ -669,7 +589,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         IDataSet current = null;
         IDataSet expected = null;
         try {
-            current = getDBUnitConnection().createDataSet();
+            current = getRiderDataSource().getDBUnitConnection().createDataSet();
             expected = loadDataSets(expectedDataSetConfig.getDatasets());
         } catch (Exception e) {
             throw new RuntimeException("Could not create dataset to compare.", e);
@@ -697,7 +617,10 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     public void setDBUnitConfig(DBUnitConfig dbUnitConfig) {
-        this.dbUnitConfig = dbUnitConfig;
+        if (this.dbUnitConfig != dbUnitConfig) {
+            this.dbUnitConfig = dbUnitConfig;
+            riderDataSource = null;
+        }
     }
 
     @Override
@@ -706,15 +629,11 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
 
-    public DatabaseConnection getDBUnitConnection() throws DatabaseUnitException, SQLException {
-        if (databaseConnection == null) {
-            initDatabaseConnection();
+    public RiderDataSource getRiderDataSource() throws SQLException {
+        if (riderDataSource == null) {
+            riderDataSource = new RiderDataSource(connectionHolder, dbUnitConfig);
         }
 
-        return databaseConnection;
-    }
-
-    public boolean isContraintsDisabled() {
-        return isContraintsDisabled;
+        return riderDataSource;
     }
 }

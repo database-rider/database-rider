@@ -1,6 +1,5 @@
 package com.github.database.rider.core;
 
-import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
@@ -10,10 +9,11 @@ import com.github.database.rider.core.api.exporter.DataSetExportConfig;
 import com.github.database.rider.core.api.exporter.ExportDataSet;
 import com.github.database.rider.core.api.leak.LeakHunter;
 import com.github.database.rider.core.configuration.ConnectionConfig;
+import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.connection.ConnectionHolderImpl;
-import com.github.database.rider.core.exporter.DataSetExporter;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
+import com.github.database.rider.core.exporter.DataSetExporter;
 import com.github.database.rider.core.leak.LeakHunterException;
 import com.github.database.rider.core.leak.LeakHunterFactory;
 import org.dbunit.DatabaseUnitException;
@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import static com.github.database.rider.core.util.EntityManagerProvider.em;
@@ -89,8 +88,8 @@ public class DBUnitRule implements TestRule {
                         executor = DataSetExecutorImpl.getExecutorById(datasetExecutorId);
                     }
                     try {
-                        if (executor.getConnectionHolder() == null || executor.getConnectionHolder().getConnection() == null) {
-                            executor.setConnectionHolder(new ConnectionHolderImpl(getConnectionFrom(dbUnitConfig)));
+                        if (executor.getRiderDataSource().getConnection() == null) {
+                            initConnectionFromConfig(executor, dbUnitConfig);
                         }
                         executor.setDBUnitConfig(dbUnitConfig);
                         executor.createDataSet(dataSetConfig);
@@ -104,14 +103,14 @@ public class DBUnitRule implements TestRule {
                             if(isEntityManagerActive()){
                                 em().getTransaction().begin();
                             }else{
-                                Connection connection = executor.getConnectionHolder().getConnection();
+                                Connection connection = executor.getRiderDataSource().getConnection();
                                 connection.setAutoCommit(false);
                             }
                         }
                         boolean leakHunterActivated = dbUnitConfig.isLeakHunter();
                         int openConnectionsBefore = 0;
                         if (leakHunterActivated) {
-                            leakHunter = LeakHunterFactory.from(executor.getConnectionHolder().getConnection());
+                            leakHunter = LeakHunterFactory.from(executor.getRiderDataSource().getConnection());
                             openConnectionsBefore = leakHunter.openConnections();
                         }
                         statement.evaluate();
@@ -128,7 +127,7 @@ public class DBUnitRule implements TestRule {
                             if(isEntityManagerActive() && em().getTransaction().isActive()){
                                 em().getTransaction().commit();
                             } else{
-                                Connection connection = executor.getConnectionHolder().getConnection();
+                                Connection connection = executor.getRiderDataSource().getConnection();
                                 connection.commit();
                                 connection.setAutoCommit(false);
                             }
@@ -139,7 +138,7 @@ public class DBUnitRule implements TestRule {
                             if(isEntityManagerActive() && em().getTransaction().isActive()) {
                                 em().getTransaction().rollback();
                             } else {
-                                Connection connection = executor.getConnectionHolder().getConnection();
+                                Connection connection = executor.getRiderDataSource().getConnection();
                                 connection.rollback();
                             }
                         }
@@ -178,8 +177,8 @@ public class DBUnitRule implements TestRule {
 
                 }  //no dataset provided, only export and evaluate expected dataset
                 else {
-                    if(executor.getConnectionHolder() == null || executor.getConnectionHolder().getConnection() == null){
-                        executor.setConnectionHolder(new ConnectionHolderImpl(getConnectionFrom(dbUnitConfig)));
+                    if(executor.getRiderDataSource().getConnection() == null) {
+                        initConnectionFromConfig(executor, dbUnitConfig);
                     }
                     exportDataSet(executor, description);
                     statement.evaluate();
@@ -188,20 +187,16 @@ public class DBUnitRule implements TestRule {
 
             }
 
-            private Connection getConnectionFrom(DBUnitConfig dbUnitConfig) {
+            private void initConnectionFromConfig(DataSetExecutor executor, DBUnitConfig dbUnitConfig) {
                 ConnectionConfig connectionConfig = dbUnitConfig.getConnectionConfig();
                 if ("".equals(connectionConfig.getUrl()) || "".equals(connectionConfig.getUser())) {
                     throw new RuntimeException(String.format("Could not create JDBC connection for method %s, provide a connection at test level or via configuration, see documentation here: https://github.com/database-rider/database-rider#jdbc-connection", currentMethod));
                 }
                 try {
-                    if (!"".equals(connectionConfig.getDriver())) {
-                        Class.forName(connectionConfig.getDriver());
-                    }
-                    return DriverManager.getConnection(connectionConfig.getUrl(), connectionConfig.getUser(), connectionConfig.getPassword());
+                    executor.initConnectionFromConfig(connectionConfig);
                 } catch (Exception e) {
                     logger.error("Could not create JDBC connection for method " + currentMethod, e);
                 }
-                return null;
             }
 
 
@@ -218,7 +213,7 @@ public class DBUnitRule implements TestRule {
             }
             exportConfig.outputFileName(outputName);
             try {
-                DataSetExporter.getInstance().export(executor.getDBUnitConnection(), exportConfig);
+                DataSetExporter.getInstance().export(executor.getRiderDataSource().getDBUnitConnection(), exportConfig);
             } catch (Exception e) {
             	logger.error("Could not export dataset after method " + description.getMethodName(), e);
             }
@@ -266,14 +261,7 @@ public class DBUnitRule implements TestRule {
     }
 
     private void init(String name, ConnectionHolder connectionHolder) {
-        DataSetExecutorImpl instance = DataSetExecutorImpl.getExecutorById(name);
-        if (instance == null) {
-            instance = DataSetExecutorImpl.instance(name, connectionHolder);
-            DataSetExecutorImpl.getExecutors().put(name, instance);
-        } else {
-            instance.setConnectionHolder(connectionHolder);
-        }
-        executor = instance;
+        executor = DataSetExecutorImpl.instance(name, connectionHolder);
 
     }
 
