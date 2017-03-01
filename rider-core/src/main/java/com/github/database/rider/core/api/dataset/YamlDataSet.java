@@ -25,7 +25,7 @@ public class YamlDataSet implements IDataSet {
       for (Map.Entry<String, List<Map<String, Object>>> ent : data.entrySet()) {
         String tableName = ent.getKey();
         List<Map<String, Object>> rows = ent.getValue();
-        createTable(tableName.toUpperCase(), rows);
+        createTable(tableName, rows);
       }
     }
 
@@ -67,7 +67,7 @@ public class YamlDataSet implements IDataSet {
     public Object getValue(int row, String column) throws DataSetException {
       if (data.size() <= row)
         throw new RowOutOfBoundsException("" + row);
-      return data.get(row).get(column.toUpperCase());
+      return data.get(row).get(column);
     }
 
     public void addRow(Map<String, Object> values) {
@@ -77,7 +77,7 @@ public class YamlDataSet implements IDataSet {
     Map<String, Object> convertMap(Map<String, Object> values) {
       Map<String, Object> ret = new HashMap<String, Object>();
       for (Map.Entry<String, Object> ent : values.entrySet()) {
-        ret.put(ent.getKey().toUpperCase(), ent.getValue());
+        ret.put(ent.getKey(), ent.getValue());
       }
       return ret;
     }
@@ -101,17 +101,24 @@ public class YamlDataSet implements IDataSet {
   public ITableMetaData getTableMetaData(final String tableName) throws DataSetException {
     MyTable myTable = tables.get(tableName.toUpperCase());
     if(myTable != null){
-      return tables.get(tableName.toUpperCase()).getTableMetaData();
+      return myTable.getTableMetaData();
     }
     return null;
   }
 
   public String[] getTableNames() throws DataSetException {
-    return (String[]) tables.keySet().toArray(new String[tables.size()]);
+    ITable[] tables = getTables();
+    String[] tableNames = new String[tables.length];
+
+    for (int i = 0; i < tables.length; i++) {
+      tableNames[i] = tables[i].getTableMetaData().getTableName();
+    }
+
+    return tableNames;
   }
 
   public ITable[] getTables() throws DataSetException {
-    return (ITable[]) tables.values().toArray(new ITable[tables.size()]);
+    return tables.values().toArray(new ITable[tables.size()]);
   }
 
   public ITableIterator iterator() throws DataSetException {

@@ -678,10 +678,10 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         try {
             tableNames = expected.getTableNames();
         } catch (DataSetException e) {
-            throw new RuntimeException("Could extract dataset table names.", e);
+            throw new RuntimeException("Could not extract dataset table names.", e);
         }
 
-        for (String tableName : expected.getTableNames()) {
+        for (String tableName : tableNames) {
             ITable expectedTable = null;
             ITable actualTable = null;
             try {

@@ -1,7 +1,7 @@
-user:
-  - id: 1
-    name: "user1"
-  - id: 2
-    name: "user2"
-  - id: 3
-    name: "user3"
+USER:
+  - ID: 1
+    NAME: "user1"
+  - ID: 2
+    NAME: "user2"
+  - ID: 3
+    NAME: "user3"

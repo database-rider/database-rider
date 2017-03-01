@@ -1,5 +1,5 @@
-user:
-  - id: 1
-    name: "@realpestano"
-  - id: 2
-    name: "@dbunit"
+USER:
+  - ID: 1
+    NAME: "@realpestano"
+  - ID: 2
+    NAME: "@dbunit"
