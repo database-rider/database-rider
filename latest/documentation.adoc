@@ -731,18 +731,18 @@ cacheConnection: true <1>
 cacheTableNames: true <2>
 leakHunter: false <3>
 properties:
-batchedStatements:  false <4>
-qualifiedTableNames: false <5>
-caseSensitiveTableNames: false <6>
-batchSize: 100 <7>
-fetchSize: 100 <8>
-allowEmptyFields: false <9>
-escapePattern: <10>
+  batchedStatements:  false <4>
+  qualifiedTableNames: false <5>
+  caseSensitiveTableNames: false <6>
+  batchSize: 100 <7>
+  fetchSize: 100 <8>
+  allowEmptyFields: false <9>
+  escapePattern: <10>
 connectionConfig: <11>
-driver: ""
-url: ""
-user: ""
-password: ""
+  driver: ""
+  url: ""
+  user: ""
+  password: ""
 ----
 <1> Database connection will be reused among tests
 <2> Caches table names to avoid query connection metadata unnecessarily
