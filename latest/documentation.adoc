@@ -758,6 +758,18 @@ connectionConfig: <11>
 
 NOTE: `@DBUnit` annotation takes precedence over `dbunit.yml` global configuration which will be used only if the annotation is not present.
 
+[TIP]
+=====
+Since version 1.1.0 you can define only the properties of your interest, example:
+
+----
+cacheConnection: false
+properties:
+  caseSensitiveTableNames: true
+  escapePattern: ""?""
+----
+=====
+
 [[DataSet-assertion, DataSet assertion]]
 == *DataSet assertion*
 
