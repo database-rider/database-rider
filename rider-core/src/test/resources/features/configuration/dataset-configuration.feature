@@ -96,3 +96,15 @@ leakHunter: false <3>
 <11> JDBC connection configuration, it will be used in case you don't provide a connection inside test (except in CDI test where connection is inferred from entity manager).
 
 NOTE: `@DBUnit` annotation takes precedence over `dbunit.yml` global configuration which will be used only if the annotation is not present.
+
+[TIP]
+=====
+Since version 1.1.0 you can define only the properties of your interest, example:
+
+----
+cacheConnection: false
+  properties:
+    caseSensitiveTableNames: true
+    escapePattern: "\"?\""
+----
+=====
