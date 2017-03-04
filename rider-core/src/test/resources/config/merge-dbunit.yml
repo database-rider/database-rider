@@ -1,0 +1,4 @@
+leakHunter: true
+properties:
+  qualifiedTableNames: true
+  escapePattern: "[?]"

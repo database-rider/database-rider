@@ -73,7 +73,39 @@ public class ConfigurationTest {
         originalStream.write(Files.readAllBytes(Paths.get(backupConfig.toURI())));
         originalStream.flush();
         originalStream.close();
-        
+    }
+
+    @Test
+    public void shouldMergeGlobalFile() throws IOException {
+    	File backupConfig = new File("target/test-classes/dbunit-backup.yml");
+    	File customConfig = new File("target/test-classes/dbunit.yml");
+        FileOutputStream backupStream = new FileOutputStream(backupConfig);
+        backupStream.write(Files.readAllBytes(Paths.get(getClass().getResource("/default/dbunit.yml").getPath().replaceFirst("^/(.:/)", "$1"))));
+
+        backupStream.flush();
+        backupStream.close();
+        FileOutputStream fos = new FileOutputStream(customConfig);
+        fos.write(Files.readAllBytes(Paths.get(getClass().getResource("/config/merge-dbunit.yml").getPath().replaceFirst("^/(.:/)", "$1"))));
+        fos.flush();
+        fos.close();
+
+        GlobalConfig globaConfig = GlobalConfig.newInstance();
+        assertThat(globaConfig).isNotNull()
+                .extracting("dbUnitConfig.cacheConnection","dbUnitConfig.cacheTableNames","dbUnitConfig.leakHunter")
+                .contains(false,false,true);
+
+        assertThat(globaConfig.getDbUnitConfig().getProperties()).
+                containsEntry("allowEmptyFields", false).
+                containsEntry("batchedStatements", false).
+                containsEntry("qualifiedTableNames", true).
+                containsEntry("batchSize", 100).
+                containsEntry("fetchSize",100).
+                containsEntry("escapePattern","[?]");
+
+        FileOutputStream originalStream = new FileOutputStream(customConfig);
+        originalStream.write(Files.readAllBytes(Paths.get(backupConfig.toURI())));
+        originalStream.flush();
+        originalStream.close();
     }
 
 

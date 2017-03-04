@@ -10,6 +10,18 @@ endif::[]
 Below is an overview of what has changed on each `Database Rider` version.
 
 
+== https://github.com/database-rider/database-rider/releases/tag/1.0.0[1.0.0 (2017-04-03)^]
+
+Enhancements::
+    * Merge global and user defined configuration (https://github.com/database-rider/database-rider/issues/24[#24])
+
+
+Bug fixes::
+    * ExportDataSet can not to establish connection (https://github.com/database-rider/database-rider/issues/19[#19])
+    * ExpectedDataSet can not find lowercase named table in yaml format (https://github.com/database-rider/database-rider/issues/21[#21])
+    * Remove caseSensitiveTableNames from DBUnit config (https://github.com/database-rider/database-rider/issues/25[#25])
+
+
 == https://github.com/database-rider/database-rider/releases/tag/1.0.0[1.0.0 (2016-30-12)^]
 
 Enhancements::
