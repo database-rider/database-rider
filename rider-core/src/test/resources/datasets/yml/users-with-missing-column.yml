@@ -1,0 +1,13 @@
+USER:
+  - ID: 1
+  - ID: 2
+    NAME: "@dbunit"
+TWEET:
+  - ID: abcdef12345
+    CONTENT: "dbunit rules!"
+    DATE: "[DAY,NOW]"
+    USER_ID: 1
+FOLLOWER:
+  - ID: 1
+    USER_ID: 1
+    FOLLOWER_ID: 2
