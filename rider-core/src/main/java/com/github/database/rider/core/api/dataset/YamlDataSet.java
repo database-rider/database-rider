@@ -7,10 +7,20 @@ package com.github.database.rider.core.api.dataset;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.dbunit.dataset.*;
+import org.dbunit.dataset.Column;
+import org.dbunit.dataset.DataSetException;
+import org.dbunit.dataset.DefaultTableIterator;
+import org.dbunit.dataset.DefaultTableMetaData;
+import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.ITable;
+import org.dbunit.dataset.ITableIterator;
+import org.dbunit.dataset.ITableMetaData;
+import org.dbunit.dataset.RowOutOfBoundsException;
 import org.dbunit.dataset.datatype.DataType;
 import org.yaml.snakeyaml.Yaml;
 
@@ -85,13 +95,25 @@ public class YamlDataSet implements IDataSet {
   }
 
   MyTable createTable(String name, List<Map<String, Object>> rows) {
-    MyTable table = new MyTable(name, (rows != null && rows.size() > 0) ? new ArrayList<String>(rows.get(0).keySet()) : null);
+    MyTable table = new MyTable(name, getColumns(rows));
     if(rows != null){
       for (Map<String, Object> values : rows)
         table.addRow(values);
     }
     tables.put(name.toUpperCase(), table);
     return table;
+  }
+  
+  public List<String> getColumns(List<Map<String, Object>> rows) {
+	if (rows != null) {
+	  Set<String> columns = new HashSet<String>();
+	  for (Map<String, Object> row : rows) {
+	    columns.addAll(row.keySet());
+	  }
+
+	  return new ArrayList<String>(columns);
+	}
+	return null;
   }
 
   public ITable getTable(String tableName) throws DataSetException {
