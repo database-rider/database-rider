@@ -166,19 +166,19 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
 
     @Override
     public void afterTestExecution(TestExtensionContext testExtensionContext) throws Exception {
-    	DBUnitTestContext dbUnitTestContext = getTestContext(testExtensionContext);
-        DBUnitConfig dbUnitConfig = dbUnitTestContext.getExecutor().getDBUnitConfig();
+        DBUnitTestContext dbUnitTestContext = getTestContext(testExtensionContext);
+        DataSetConfig dataSetConfig = dbUnitTestContext.getDataSetConfig();
+        DataSetExecutor executor = dbUnitTestContext.getExecutor();
+        DBUnitConfig dbUnitConfig = executor != null ? executor.getDBUnitConfig() : DBUnitConfig.from(testExtensionContext.getTestMethod().get());
         try {
-            if (shouldCompareDataSet(testExtensionContext)) {
+            if (dataSetConfig != null && executor != null && shouldCompareDataSet(testExtensionContext)) {
                 ExpectedDataSet expectedDataSet = testExtensionContext.getTestMethod().get().getAnnotation(ExpectedDataSet.class);
                 if (expectedDataSet == null) {
                     //try to infer from class level annotation
                     expectedDataSet = testExtensionContext.getTestClass().get().getAnnotation(ExpectedDataSet.class);
                 }
                 if (expectedDataSet != null) {
-                    DataSetExecutor executor = dbUnitTestContext.getExecutor();
-                    DataSetConfig datasetConfig = dbUnitTestContext.getDataSetConfig();
-                    boolean isTransactional = datasetConfig.isTransactional();
+                    boolean isTransactional = dataSetConfig.isTransactional();
                     if (isTransactional) {
                         try {
                             if (EntityManagerProvider.isEntityManagerActive()) {
@@ -215,18 +215,15 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
             }
 
         } finally {
-
-            DataSetConfig dataSetConfig = dbUnitTestContext.getDataSetConfig();
-            if (dataSetConfig == null) {
+            if (dataSetConfig == null || executor == null) {
                 return;
             }
-            DataSetExecutor executor = dbUnitTestContext.getExecutor();
 
-            if(shouldExportDataSet(testExtensionContext)){
+            if (shouldExportDataSet(testExtensionContext)){
                 exportDataSet(executor,testExtensionContext.getTestMethod().get());
             }
 
-            if (dataSetConfig != null && dataSetConfig.getExecuteStatementsAfter() != null && dataSetConfig.getExecuteStatementsAfter().length > 0) {
+            if (dataSetConfig.getExecuteStatementsAfter() != null && dataSetConfig.getExecuteStatementsAfter().length > 0) {
                 try {
                     executor.executeStatements(dataSetConfig.getExecuteStatementsAfter());
                 } catch (Exception e) {
