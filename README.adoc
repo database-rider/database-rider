@@ -174,7 +174,7 @@ This module is the basis for subsequent modules. It contains a JUnit rule (shown
 <dependency>
       <groupId>com.github.database-rider</groupId>
       <artifactId>database-rider</artifactId>
-      <version>1.0.0</version>
+      <version>1.1.0</version>
       <scope>test</scope>
 </dependency>
 ----
@@ -1009,7 +1009,7 @@ public class LeakHunterIt {
 ----
 <1> If number of connections after test execution are greater than before then a *LeakHunterException* will be raised.
 
-TIP: Complete source code of example above can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/LeakHunterIt.java[found here^].
+TIP: Complete source code of example above can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/LeakHunterIt.java[found here^].
 
 == Export DataSets
 
