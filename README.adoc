@@ -1032,7 +1032,7 @@ After above test execution all tables will be exported to a xml dataset.
 
 NOTE: *XML*, *YML*, *JSON*, *XLS* and *CSV* formats are supported.
 
-TIP: Full example above (and other related tests) can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/exporter/ExportDataSetIt.java#L35[found here^].
+TIP: Full example above (and other related tests) can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/exporter/ExportDataSetIt.java#L32[found here^].
 
 === Configuration
 
