@@ -18,7 +18,7 @@ public class YamlDataSetTest {
         YamlDataSet dataSet = new YamlDataSet(YamlDataSetTest.class.getResourceAsStream("/datasets/yml/user.yml"),
                 dbUnitConfig);
 
-        assertEquals("USER", dataSet.applyCase("uSeR"));
+        assertEquals("USER", dataSet.applyCaseInsensitivity("uSeR"));
     }
 
     @Test
@@ -29,6 +29,6 @@ public class YamlDataSetTest {
         YamlDataSet dataSet = new YamlDataSet(YamlDataSetTest.class.getResourceAsStream("/datasets/yml/user.yml"),
                 dbUnitConfig);
 
-        assertEquals("user", dataSet.applyCase("uSeR"));
+        assertEquals("user", dataSet.applyCaseInsensitivity("uSeR"));
     }
 }
