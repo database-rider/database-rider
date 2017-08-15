@@ -2285,15 +2285,16 @@ USER</pre>
         <pre>cacheConnection: true <i class="conum" data-value="1"></i><b>(1)</b>
 cacheTableNames: true <i class="conum" data-value="2"></i><b>(2)</b>
 leakHunter: false <i class="conum" data-value="3"></i><b>(3)</b>
+caseInsensitiveStrategy: !!com.github.database.rider.core.api.configuration.Orthography 'UPPERCASE' <i class="conum" data-value="4"></i><b>(4)</b>
 properties:
-  batchedStatements:  false <i class="conum" data-value="4"></i><b>(4)</b>
-  qualifiedTableNames: false <i class="conum" data-value="5"></i><b>(5)</b>
-  caseSensitiveTableNames: false <i class="conum" data-value="6"></i><b>(6)</b>
-  batchSize: 100 <i class="conum" data-value="7"></i><b>(7)</b>
-  fetchSize: 100 <i class="conum" data-value="8"></i><b>(8)</b>
-  allowEmptyFields: false <i class="conum" data-value="9"></i><b>(9)</b>
-  escapePattern: <i class="conum" data-value="10"></i><b>(10)</b>
-connectionConfig: <i class="conum" data-value="11"></i><b>(11)</b>
+  batchedStatements:  false <i class="conum" data-value="5"></i><b>(5)</b>
+  qualifiedTableNames: false <i class="conum" data-value="6"></i><b>(6)</b>
+  caseSensitiveTableNames: false <i class="conum" data-value="7"></i><b>(7)</b>
+  batchSize: 100 <i class="conum" data-value="8"></i><b>(8)</b>
+  fetchSize: 100 <i class="conum" data-value="9"></i><b>(9)</b>
+  allowEmptyFields: false <i class="conum" data-value="10"></i><b>(10)</b>
+  escapePattern: <i class="conum" data-value="11"></i><b>(11)</b>
+connectionConfig: <i class="conum" data-value="12"></i><b>(12)</b>
   driver: ""
   url: ""
   user: ""
@@ -2317,34 +2318,38 @@ connectionConfig: <i class="conum" data-value="11"></i><b>(11)</b>
          </tr> 
          <tr> 
           <td><i class="conum" data-value="4"></i><b>4</b></td> 
-          <td>Enables usage of JDBC batched statement</td> 
+          <td>When <code>caseSensitiveTableNames</code> is <code>false</code> will apply letter case based on configured strategy. Valid values are <code>UPPERCASE</code> and <code>LOWERCASE</code>.</td> 
          </tr> 
          <tr> 
           <td><i class="conum" data-value="5"></i><b>5</b></td> 
-          <td>Enable or disable multiple schemas support. If enabled, Dbunit access tables with names fully qualified by schema using this format: SCHEMA.TABLE.</td> 
+          <td>Enables usage of JDBC batched statement</td> 
          </tr> 
          <tr> 
           <td><i class="conum" data-value="6"></i><b>6</b></td> 
-          <td>Enable or disable case sensitive table names. If enabled, Dbunit handles all table names in a case sensitive way.</td> 
+          <td>Enable or disable multiple schemas support. If enabled, Dbunit access tables with names fully qualified by schema using this format: SCHEMA.TABLE.</td> 
          </tr> 
          <tr> 
           <td><i class="conum" data-value="7"></i><b>7</b></td> 
-          <td>Specifies the size of JDBC batch updates</td> 
+          <td>Enable or disable case sensitive table names. If enabled, Dbunit handles all table names in a case sensitive way.</td> 
          </tr> 
          <tr> 
           <td><i class="conum" data-value="8"></i><b>8</b></td> 
-          <td>Specifies statement fetch size for loading data into a result set table.</td> 
+          <td>Specifies the size of JDBC batch updates</td> 
          </tr> 
          <tr> 
           <td><i class="conum" data-value="9"></i><b>9</b></td> 
-          <td>Allow to call INSERT/UPDATE with empty strings ('').</td> 
+          <td>Specifies statement fetch size for loading data into a result set table.</td> 
          </tr> 
          <tr> 
           <td><i class="conum" data-value="10"></i><b>10</b></td> 
-          <td>Allows schema, table and column names escaping. The property value is an escape pattern where the ? is replaced by the name. For example, the pattern "[?]" is expanded as "[MY_TABLE]" for a table named "MY_TABLE". The most common escape pattern is ""?"" which surrounds the table name with quotes (for the above example it would result in ""MY_TABLE""). As a fallback if no questionmark is in the given String and its length is one it is used to surround the table name on the left and right side. For example the escape pattern """ will have the same effect as the escape pattern ""?"".</td> 
+          <td>Allow to call INSERT/UPDATE with empty strings ('').</td> 
          </tr> 
          <tr> 
           <td><i class="conum" data-value="11"></i><b>11</b></td> 
+          <td>Allows schema, table and column names escaping. The property value is an escape pattern where the ? is replaced by the name. For example, the pattern "[?]" is expanded as "[MY_TABLE]" for a table named "MY_TABLE". The most common escape pattern is ""?"" which surrounds the table name with quotes (for the above example it would result in ""MY_TABLE""). As a fallback if no questionmark is in the given String and its length is one it is used to surround the table name on the left and right side. For example the escape pattern """ will have the same effect as the escape pattern ""?"".</td> 
+         </tr> 
+         <tr> 
+          <td><i class="conum" data-value="12"></i><b>12</b></td> 
           <td>JDBC connection configuration, it will be used in case you don’t provide a connection inside test (except in CDI test where connection is inferred from entity manager).</td> 
          </tr> 
         </tbody> 
@@ -3461,8 +3466,8 @@ properties:
   </div> 
   <div id="footer" style="color:gray;font-size:11px">
     Generated by 
-   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.6</a> - Aug 15, 2017 5:11:47 PM 
-   <span style="float:right;font-size:11px"> Execution time: 7.061 seconds</span> 
+   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.6</a> - Aug 15, 2017 5:23:44 PM 
+   <span style="float:right;font-size:11px"> Execution time: 4.921 seconds</span> 
   </div> 
   <style>  
 
