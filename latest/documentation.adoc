@@ -10,7 +10,7 @@
 :docinfo:
 :source-highlighter: highlightjs
 :toclevels: 3
-:revnumber: 1.1.0
+:revnumber: 1.2.0-SNAPSHOT
 :hardbreaks:
 
 = *Living Documentation*
