@@ -93,7 +93,7 @@ public class YamlDataSet implements IDataSet {
         public Object getValue(int row, String column) throws DataSetException {
             if (data.size() <= row)
                 throw new RowOutOfBoundsException("" + row);
-            return data.get(row).get(applyCase(column)); // FIXME [tj]: issue #37
+            return data.get(row).get(applyCaseInsensitivity(column)); // issue #37
         }
 
         public void addRow(Map<String, Object> values) {
@@ -103,7 +103,7 @@ public class YamlDataSet implements IDataSet {
         Map<String, Object> convertMap(Map<String, Object> values) {
             Map<String, Object> row = new HashMap<String, Object>();
             for (Map.Entry<String, Object> ent : values.entrySet()) {
-                row.put(applyCase(ent.getKey()), ent.getValue()); // FIXME [tj]: issue #37
+                row.put(applyCaseInsensitivity(ent.getKey()), ent.getValue()); // issue #37
             }
             return row;
         }
@@ -111,7 +111,7 @@ public class YamlDataSet implements IDataSet {
     }
 
     MyTable createTable(String name, List<Map<String, Object>> rows) {
-        MyTable table = new MyTable(applyCase(name), applyCase(getColumns(rows))); // FIXME [tj]: issue #37
+        MyTable table = new MyTable(applyCaseInsensitivity(name), applyCase(getColumns(rows))); // issue #37
         if (rows != null) {
             for (Map<String, Object> values : rows)
                 table.addRow(values);
@@ -124,7 +124,7 @@ public class YamlDataSet implements IDataSet {
         if (rows != null) {
             Set<String> columns = new HashSet<String>();
             for (Map<String, Object> row : rows) {
-                columns.addAll(applyCase(new ArrayList<>(row.keySet()))); // FIXME [tj]: issue #37
+                columns.addAll(applyCase(new ArrayList<>(row.keySet()))); // issue #37
             }
 
             return new ArrayList<String>(columns);
@@ -194,7 +194,7 @@ public class YamlDataSet implements IDataSet {
      * @return The adjusted identifier name
      * @see Orthography
      */
-    String applyCase(String name) {
+    String applyCaseInsensitivity(String name) {
         return (name != null)
                 ? isCaseSensitiveTableNames() ? name : isCaseInsensitiveStrategyLowerCase()
                         ? name.toLowerCase(Locale.ENGLISH)
@@ -205,7 +205,7 @@ public class YamlDataSet implements IDataSet {
     private List<String> applyCase(List<String> names) {
         if (names != null) {
             for (int i = 0; i < names.size(); i++) {
-                names.set(i, applyCase(names.get(i)));
+                names.set(i, applyCaseInsensitivity(names.get(i)));
             }
         }
         return names;
