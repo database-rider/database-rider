@@ -5,6 +5,8 @@ properties:
   batchedStatements:  false
   qualifiedTableNames: false
   caseSensitiveTableNames: false
+# see com.github.database.rider.core.api.configuration.LetterCase
+  caseInsensitiveStrategy: "UPPER"
   batchSize: 100
   fetchSize: 100
   allowEmptyFields: false
