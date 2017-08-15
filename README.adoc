@@ -174,7 +174,7 @@ This module is the basis for subsequent modules. It contains a JUnit rule (shown
 <dependency>
       <groupId>com.github.database-rider</groupId>
       <artifactId>database-rider</artifactId>
-      <version>1.1.0</version>
+      <version>1.2.0</version>
       <scope>test</scope>
 </dependency>
 ----
@@ -318,6 +318,7 @@ Here is a dbunit.yml example, also the default values:
 cacheConnection: true
 cacheTableNames: true
 leakHunter: false
+caseInsensitiveStrategy: !!com.github.database.rider.core.api.configuration.Orthography 'UPPERCASE' <1>
 properties:
   batchedStatements:  false
   qualifiedTableNames: false
@@ -332,6 +333,7 @@ connectionConfig:
   user: ""
   password: ""
 ----
+<1> Only applied when `caseSensitiveTableNames` is `false`. Valid values are `UPPERCASE` and `LOWERCASE`
 +
 NOTE: `@DBUnit` annotation takes precedence over `dbunit.yml` global configuration which will be used only if the annotation is not present.
 
