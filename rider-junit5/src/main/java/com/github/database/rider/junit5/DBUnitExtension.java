@@ -1,15 +1,15 @@
 package com.github.database.rider.junit5;
 
+import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetExecutor;
+import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.api.exporter.DataSetExportConfig;
+import com.github.database.rider.core.api.exporter.ExportDataSet;
 import com.github.database.rider.core.api.leak.LeakHunter;
+import com.github.database.rider.core.configuration.ConnectionConfig;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
-import com.github.database.rider.core.api.connection.ConnectionHolder;
-import com.github.database.rider.core.api.dataset.ExpectedDataSet;
-import com.github.database.rider.core.api.exporter.ExportDataSet;
-import com.github.database.rider.core.configuration.ConnectionConfig;
 import com.github.database.rider.core.connection.ConnectionHolderImpl;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.exporter.DataSetExporter;
@@ -22,7 +22,6 @@ import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 import org.junit.jupiter.api.extension.ExtensionContext.Store;
-import org.junit.jupiter.api.extension.TestExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,9 +31,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Arrays;
 import java.util.Optional;
-
-import static com.github.database.rider.core.util.EntityManagerProvider.em;
-import static com.github.database.rider.core.util.EntityManagerProvider.tx;
 
 /**
  * Created by pestano on 27/08/16.
@@ -46,7 +42,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
 	private static final Namespace namespace = Namespace.create(DBUnitExtension.class);
 
     @Override
-    public void beforeTestExecution(TestExtensionContext testExtensionContext) throws Exception {
+    public void beforeTestExecution(ExtensionContext testExtensionContext) throws Exception {
 
         if (!shouldCreateDataSet(testExtensionContext)) {
             return;
@@ -126,15 +122,15 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     }
 
 
-    private boolean shouldCreateDataSet(TestExtensionContext testExtensionContext) {
+    private boolean shouldCreateDataSet(ExtensionContext testExtensionContext) {
         return testExtensionContext.getTestMethod().get().isAnnotationPresent(DataSet.class) || testExtensionContext.getTestClass().get().isAnnotationPresent(DataSet.class);
     }
 
-    private boolean shouldCompareDataSet(TestExtensionContext testExtensionContext) {
+    private boolean shouldCompareDataSet(ExtensionContext testExtensionContext) {
         return testExtensionContext.getTestMethod().get().isAnnotationPresent(ExpectedDataSet.class) || testExtensionContext.getTestClass().get().isAnnotationPresent(ExpectedDataSet.class);
     }
 
-    private boolean shouldExportDataSet(TestExtensionContext testExtensionContext) {
+    private boolean shouldExportDataSet(ExtensionContext testExtensionContext) {
         return testExtensionContext.getTestMethod().get().isAnnotationPresent(ExportDataSet.class) || testExtensionContext.getTestClass().get().isAnnotationPresent(ExportDataSet.class);
     }
 
@@ -165,7 +161,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
 
 
     @Override
-    public void afterTestExecution(TestExtensionContext testExtensionContext) throws Exception {
+    public void afterTestExecution(ExtensionContext testExtensionContext) throws Exception {
         DBUnitTestContext dbUnitTestContext = getTestContext(testExtensionContext);
         DataSetConfig dataSetConfig = dbUnitTestContext.getDataSetConfig();
         DataSetExecutor executor = dbUnitTestContext.getExecutor();
@@ -254,7 +250,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     }
 
 
-    private ConnectionHolder findTestConnection(TestExtensionContext testExtensionContext) {
+    private ConnectionHolder findTestConnection(ExtensionContext testExtensionContext) {
         Class<?> testClass = testExtensionContext.getTestClass().get();
         try {
             Optional<Field> fieldFound = Arrays.stream(testClass.getDeclaredFields()).
@@ -266,7 +262,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
                 if (!field.isAccessible()) {
                     field.setAccessible(true);
                 }
-                ConnectionHolder connectionHolder = ConnectionHolder.class.cast(field.get(testExtensionContext.getTestInstance()));
+                ConnectionHolder connectionHolder = ConnectionHolder.class.cast(field.get(testExtensionContext.getTestInstance().get()));
                 if (connectionHolder == null || connectionHolder.getConnection() == null) {
                     throw new RuntimeException("ConnectionHolder not initialized correctly");
                 }
@@ -284,8 +280,8 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
                 if (!method.isAccessible()) {
                     method.setAccessible(true);
                 }
-                ConnectionHolder connectionHolder = ConnectionHolder.class.cast(method.invoke(testExtensionContext.getTestInstance()));
-                if (connectionHolder == null || connectionHolder.getConnection() == null) {
+                ConnectionHolder connectionHolder = ConnectionHolder.class.cast(method.invoke(testExtensionContext.getTestInstance().get()));
+                if (connectionHolder == null || connectionHolder == null) {
                     throw new RuntimeException("ConnectionHolder not initialized correctly");
                 }
                 return connectionHolder;
