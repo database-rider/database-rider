@@ -1,20 +1,20 @@
 package com.github.database.rider.core.api.configuration;
 
 /**
- * Enumeration denoting the used 'letter-case' for database identifiers (tables, columns), if database-rider is
- * configured in case-insensitive mode (i.e. "<code>caseSensitiveTableNames=false</code>").
+ * Enumeration denoting the used orthography ('letter-case') for database identifiers (tables, columns), if
+ * database-rider is configured in case-insensitive mode (i.e. "<code>caseSensitiveTableNames=false</code>").
  * 
  * @since 1.1.1
  */
-public enum LetterCase {
+public enum Orthography {
 
     /**
-     * Upper-case
+     * Orthography 'upper-case'. Words (identifiers) are changed having upper-case letters only.
      */
-    UPPER,
+    UPPERCASE,
 
     /**
-     * Lower-case.
+     * Orthography 'lower-case'. Words (identifiers) are changed having lower-case letters only.
      */
-    LOWER;
+    LOWERCASE;
 }

@@ -25,7 +25,7 @@ import org.dbunit.dataset.RowOutOfBoundsException;
 import org.dbunit.dataset.datatype.DataType;
 import org.yaml.snakeyaml.Yaml;
 
-import com.github.database.rider.core.api.configuration.LetterCase;
+import com.github.database.rider.core.api.configuration.Orthography;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 
 public class YamlDataSet implements IDataSet {
@@ -182,10 +182,18 @@ public class YamlDataSet implements IDataSet {
 
     public boolean isCaseInsensitiveStrategyLowerCase() {
         Object strategy = dbUnitConfig.getProperties().get("caseInsensitiveStrategy");
-        LetterCase result = (strategy == null) ? LetterCase.UPPER : LetterCase.valueOf(String.valueOf(strategy));
-        return LetterCase.LOWER.equals(result);
+        Orthography result = (strategy == null) ? Orthography.UPPERCASE : Orthography.valueOf(String.valueOf(strategy));
+        return Orthography.LOWERCASE.equals(result);
     }
 
+    /**
+     * Applies the case-insensitive strategy (orthography) to the given <code>name</code>, if
+     * {@link #isCaseSensitiveTableNames()} is <code>false</code>.
+     * 
+     * @param name The identifier name
+     * @return The adjusted identifier name
+     * @see Orthography
+     */
     String applyCase(String name) {
         return (name != null)
                 ? isCaseSensitiveTableNames() ? name : isCaseInsensitiveStrategyLowerCase()

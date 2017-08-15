@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.yaml.snakeyaml.Yaml;
 
-import com.github.database.rider.core.api.configuration.LetterCase;
+import com.github.database.rider.core.api.configuration.Orthography;
 
 /**
  * Created by pestano on 03/09/16. pojo which represents dbunit.yml, used for global which can be overrided via @DataSet

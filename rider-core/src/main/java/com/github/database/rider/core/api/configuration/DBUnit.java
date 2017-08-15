@@ -56,15 +56,15 @@ public @interface DBUnit {
     boolean caseSensitiveTableNames() default false;
 
     /**
-     * Specify letter-case strategy if {@link #caseSensitiveTableNames()} is set to <code>false</code>
-     * (case-insensitive). If {@link #caseSensitiveTableNames()}=<code>false</code>, then this property is ignored and
-     * has no effect. Defaults to {@link LetterCase#UPPER}.<br>
+     * Specifies the orthography/letter-case strategy if {@link #caseSensitiveTableNames()} is set to <code>false</code>
+     * (case-insensitive mode). If {@link #caseSensitiveTableNames()}=<code>false</code>, then this property is ignored
+     * and has no effect. Defaults to {@link Orthography#UPPERCASE}.<br>
      * This is a database-rider internal property and not related to dbunit.
      * 
      * @since 1.1.1
-     * @return The {@link LetterCase} constant
+     * @return The {@link Orthography} constant
      */
-    LetterCase caseInsensitiveStrategy() default LetterCase.UPPER;
+    Orthography caseInsensitiveStrategy() default Orthography.UPPERCASE;
 
     /**
      * Allow to call INSERT/UPDATE with empty strings ('').
