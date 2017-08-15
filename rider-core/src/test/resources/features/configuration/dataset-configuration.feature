@@ -69,15 +69,16 @@ Here is a dbunit.yml example, also the default values:
 cacheConnection: true <1>
 cacheTableNames: true <2>
 leakHunter: false <3>
+caseInsensitiveStrategy: !!com.github.database.rider.core.api.configuration.Orthography 'UPPERCASE' <4>
   properties:
-    batchedStatements:  false <4>
-    qualifiedTableNames: false <5>
-    caseSensitiveTableNames: false <6>
-    batchSize: 100 <7>
-    fetchSize: 100 <8>
-    allowEmptyFields: false <9>
-    escapePattern: <10>
-  connectionConfig: <11>
+    batchedStatements:  false <5>
+    qualifiedTableNames: false <6>
+    caseSensitiveTableNames: false <7>
+    batchSize: 100 <8>
+    fetchSize: 100 <9>
+    allowEmptyFields: false <10>
+    escapePattern: <11>
+  connectionConfig: <12>
     driver: ""
     url: ""
     user: ""
@@ -86,14 +87,15 @@ leakHunter: false <3>
 <1> Database connection will be reused among tests
 <2> Caches table names to avoid query connection metadata unnecessarily
 <3> Activate connection leak detection. In case a leak (open JDBC connections is increased after test execution) is found an exception is thrown and test fails.
-<4> Enables usage of JDBC batched statement
-<5> Enable or disable multiple schemas support. If enabled, Dbunit access tables with names fully qualified by schema using this format: SCHEMA.TABLE.
-<6> Enable or disable case sensitive table names. If enabled, Dbunit handles all table names in a case sensitive way.
-<7> Specifies the size of JDBC batch updates
-<8> Specifies statement fetch size for loading data into a result set table.
-<9> Allow to call INSERT/UPDATE with empty strings ('').
-<10> Allows schema, table and column names escaping. The property value is an escape pattern where the ? is replaced by the name. For example, the pattern "[?]" is expanded as "[MY_TABLE]" for a table named "MY_TABLE". The most common escape pattern is "\"?\"" which surrounds the table name with quotes (for the above example it would result in "\"MY_TABLE\""). As a fallback if no questionmark is in the given String and its length is one it is used to surround the table name on the left and right side. For example the escape pattern "\"" will have the same effect as the escape pattern "\"?\"".
-<11> JDBC connection configuration, it will be used in case you don't provide a connection inside test (except in CDI test where connection is inferred from entity manager).
+<4> When `caseSensitiveTableNames` is `false` will apply letter case based on configured strategy. Valid values are `UPPERCASE` and `LOWERCASE`.
+<5> Enables usage of JDBC batched statement
+<6> Enable or disable multiple schemas support. If enabled, Dbunit access tables with names fully qualified by schema using this format: SCHEMA.TABLE.
+<7> Enable or disable case sensitive table names. If enabled, Dbunit handles all table names in a case sensitive way.
+<8> Specifies the size of JDBC batch updates
+<9> Specifies statement fetch size for loading data into a result set table.
+<10> Allow to call INSERT/UPDATE with empty strings ('').
+<11> Allows schema, table and column names escaping. The property value is an escape pattern where the ? is replaced by the name. For example, the pattern "[?]" is expanded as "[MY_TABLE]" for a table named "MY_TABLE". The most common escape pattern is "\"?\"" which surrounds the table name with quotes (for the above example it would result in "\"MY_TABLE\""). As a fallback if no questionmark is in the given String and its length is one it is used to surround the table name on the left and right side. For example the escape pattern "\"" will have the same effect as the escape pattern "\"?\"".
+<12> JDBC connection configuration, it will be used in case you don't provide a connection inside test (except in CDI test where connection is inferred from entity manager).
 
 NOTE: `@DBUnit` annotation takes precedence over `dbunit.yml` global configuration which will be used only if the annotation is not present.
 

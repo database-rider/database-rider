@@ -333,7 +333,7 @@ connectionConfig:
   user: ""
   password: ""
 ----
-<1> Only applied when `caseSensitiveTableNames` is `false`. Valid values are `UPPERCASE` and `LOWERCASE`
+<1> Only applied when `caseSensitiveTableNames` is `false`. Valid values are `UPPERCASE` and `LOWERCASE`.
 +
 NOTE: `@DBUnit` annotation takes precedence over `dbunit.yml` global configuration which will be used only if the annotation is not present.
 

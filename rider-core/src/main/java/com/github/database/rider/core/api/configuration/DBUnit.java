@@ -61,7 +61,7 @@ public @interface DBUnit {
      * and has no effect. Defaults to {@link Orthography#UPPERCASE}.<br>
      * This is a database-rider internal property and not related to dbunit.
      * 
-     * @since 1.1.1
+     * @since 1.2.0
      * @return The {@link Orthography} constant
      */
     Orthography caseInsensitiveStrategy() default Orthography.UPPERCASE;
