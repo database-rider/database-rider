@@ -24,7 +24,7 @@ public class YamlDataSetTest {
     @Test
     public void testApplyCase_StrategyLowerCase() {
         DBUnitConfig dbUnitConfig = DBUnitConfig.from(YamlDataSetTest.class.getAnnotation(DBUnit.class));
-        dbUnitConfig.getProperties().put("caseInsensitiveStrategy", Orthography.LOWERCASE);
+        dbUnitConfig.caseInsensitiveStrategy(Orthography.LOWERCASE);
         // uses default config (dbunit.yml plus @DBUnit of this class)
         YamlDataSet dataSet = new YamlDataSet(YamlDataSetTest.class.getResourceAsStream("/datasets/yml/user.yml"),
                 dbUnitConfig);

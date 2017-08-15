@@ -5,8 +5,6 @@ import java.util.Map;
 
 import org.yaml.snakeyaml.Yaml;
 
-import com.github.database.rider.core.api.configuration.Orthography;
-
 /**
  * Created by pestano on 03/09/16. pojo which represents dbunit.yml, used for global which can be overrided via @DataSet
  * annotation at class or method level and with @DBUnit at class or method level
@@ -63,6 +61,10 @@ public class GlobalConfig {
                 dbUnitConfig.leakHunter(defaultConfig.isLeakHunter());
             }
 
+            if (dbUnitConfig.getCaseInsensitiveStrategy() == null) {
+                dbUnitConfig.caseInsensitiveStrategy(defaultConfig.getCaseInsensitiveStrategy());
+            }
+
             if (dbUnitConfig.getProperties() == null || dbUnitConfig.getProperties().isEmpty()) {
                 dbUnitConfig.setProperties(defaultConfig.getProperties());
             } else {
@@ -74,10 +76,8 @@ public class GlobalConfig {
                     properties.put("qualifiedTableNames", defaultConfig.getProperties().get("qualifiedTableNames"));
                 }
                 if (!properties.containsKey("caseSensitiveTableNames")) {
-                    properties.put("caseSensitiveTableNames", defaultConfig.getProperties().get("caseSensitiveTableNames"));
-                }
-                if (!properties.containsKey("caseInsensitiveStrategy")) {
-                    properties.put("caseInsensitiveStrategy", defaultConfig.getProperties().get("caseInsensitiveStrategy"));
+                    properties.put("caseSensitiveTableNames",
+                            defaultConfig.getProperties().get("caseSensitiveTableNames"));
                 }
                 if (!properties.containsKey("batchSize")) {
                     properties.put("batchSize", defaultConfig.getProperties().get("batchSize"));
@@ -91,9 +91,7 @@ public class GlobalConfig {
                 if (!properties.containsKey("escapePattern")) {
                     properties.put("escapePattern", defaultConfig.getProperties().get("escapePattern"));
                 }
-
             }
-
         }
 
         if (dbUnitConfig.getProperties().containsKey("escapePattern")

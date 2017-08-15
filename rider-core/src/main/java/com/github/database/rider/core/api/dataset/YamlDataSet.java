@@ -181,9 +181,7 @@ public class YamlDataSet implements IDataSet {
     }
 
     public boolean isCaseInsensitiveStrategyLowerCase() {
-        Object strategy = dbUnitConfig.getProperties().get("caseInsensitiveStrategy");
-        Orthography result = (strategy == null) ? Orthography.UPPERCASE : Orthography.valueOf(String.valueOf(strategy));
-        return Orthography.LOWERCASE.equals(result);
+        return Orthography.LOWERCASE.equals(dbUnitConfig.getCaseInsensitiveStrategy());
     }
 
     /**

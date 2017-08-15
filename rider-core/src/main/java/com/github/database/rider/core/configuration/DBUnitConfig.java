@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.database.rider.core.api.configuration.DBUnit;
+import com.github.database.rider.core.api.configuration.Orthography;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 
 /**
@@ -19,6 +20,8 @@ public class DBUnitConfig {
     private Boolean cacheTableNames;
 
     private Boolean leakHunter;
+
+    private Orthography caseInsensitiveStrategy;
 
     private Map<String, Object> properties;
 
@@ -42,14 +45,16 @@ public class DBUnitConfig {
     public static DBUnitConfig from(DBUnit dbUnit) {
         DBUnitConfig dbUnitConfig = new DBUnitConfig(dbUnit.executor());
 
-        dbUnitConfig.cacheConnection(dbUnit.cacheConnection()).cacheTableNames(dbUnit.cacheTableNames())
-                .leakHunter(dbUnit.leakHunter()).addDBUnitProperty("batchedStatements", dbUnit.batchedStatements())
+        dbUnitConfig.cacheConnection(dbUnit.cacheConnection())
+                .cacheTableNames(dbUnit.cacheTableNames())
+                .leakHunter(dbUnit.leakHunter())
+                .addDBUnitProperty("batchedStatements", dbUnit.batchedStatements())
                 .addDBUnitProperty("batchSize", dbUnit.batchSize())
                 .addDBUnitProperty("allowEmptyFields", dbUnit.allowEmptyFields())
                 .addDBUnitProperty("fetchSize", dbUnit.fetchSize())
+                .addDBUnitProperty("qualifiedTableNames", dbUnit.qualifiedTableNames())
                 .addDBUnitProperty("caseSensitiveTableNames", dbUnit.caseSensitiveTableNames())
-                .addDBUnitProperty("caseInsensitiveStrategy", dbUnit.caseInsensitiveStrategy())
-                .addDBUnitProperty("qualifiedTableNames", dbUnit.qualifiedTableNames());
+                .caseInsensitiveStrategy(dbUnit.caseInsensitiveStrategy());
 
         if (!"".equals(dbUnit.escapePattern())) {
             dbUnitConfig.addDBUnitProperty("escapePattern", dbUnit.escapePattern());
@@ -97,6 +102,11 @@ public class DBUnitConfig {
 
     public DBUnitConfig cacheTableNames(boolean cacheTables) {
         this.cacheTableNames = cacheTables;
+        return this;
+    }
+
+    public DBUnitConfig caseInsensitiveStrategy(Orthography orthography) {
+        this.caseInsensitiveStrategy = orthography;
         return this;
     }
 
@@ -157,6 +167,14 @@ public class DBUnitConfig {
 
     public void setLeakHunter(boolean activateLeakHunter) {
         this.leakHunter = activateLeakHunter;
+    }
+
+    public Orthography getCaseInsensitiveStrategy() {
+        return caseInsensitiveStrategy;
+    }
+
+    public void setCaseInsensitiveStrategy(Orthography caseInsensitiveStrategy) {
+        this.caseInsensitiveStrategy = caseInsensitiveStrategy;
     }
 
     public Map<String, Object> getProperties() {

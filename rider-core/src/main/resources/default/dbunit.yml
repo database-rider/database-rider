@@ -1,12 +1,11 @@
 cacheConnection: true
 cacheTableNames: true
 leakHunter: false
+caseInsensitiveStrategy: !!com.github.database.rider.core.api.configuration.Orthography 'UPPERCASE'
 properties:
   batchedStatements:  false
   qualifiedTableNames: false
   caseSensitiveTableNames: false
-# see com.github.database.rider.core.api.configuration.Orthography
-  caseInsensitiveStrategy: "UPPERCASE"
   batchSize: 100
   fetchSize: 100
   allowEmptyFields: false
