@@ -1,14 +1,13 @@
 package com.github.database.rider.core.configuration;
 
-import org.yaml.snakeyaml.Yaml;
-
 import java.io.InputStream;
 import java.util.Map;
 
+import org.yaml.snakeyaml.Yaml;
+
 /**
- * Created by pestano on 03/09/16.
- * pojo which represents dbunit.yml, used for global which can be overrided via @DataSet annotation
- * at class or method level and with @DBUnit at class or method level
+ * Created by pestano on 03/09/16. pojo which represents dbunit.yml, used for global which can be overrided via @DataSet
+ * annotation at class or method level and with @DBUnit at class or method level
  */
 public class GlobalConfig {
 
@@ -16,7 +15,6 @@ public class GlobalConfig {
 
     private GlobalConfig() {
     }
-
 
     private DBUnitConfig dbUnitConfig;
 
@@ -35,8 +33,9 @@ public class GlobalConfig {
     private static void createInstance() {
         instance = new GlobalConfig();
         DBUnitConfig dbUnitConfig = null;
-        DBUnitConfig defaultConfig = new Yaml().loadAs(GlobalConfig.class.getResourceAsStream("/default/dbunit.yml"), DBUnitConfig.class);
-        //try to instance user provided dbunit.yml
+        DBUnitConfig defaultConfig = new Yaml().loadAs(GlobalConfig.class.getResourceAsStream("/default/dbunit.yml"),
+                DBUnitConfig.class);
+        // try to instance user provided dbunit.yml
         InputStream customConfiguration = Thread.currentThread().getContextClassLoader().getResourceAsStream("dbunit.yml");
         if (customConfiguration != null) {
             dbUnitConfig = new Yaml().loadAs(customConfiguration, DBUnitConfig.class);
@@ -45,7 +44,7 @@ public class GlobalConfig {
         if (dbUnitConfig == null) {
             dbUnitConfig = defaultConfig;
 
-        } else { //merge default and user defined
+        } else { // merge default and user defined
             if (dbUnitConfig.isCacheConnection() == null) {
                 dbUnitConfig.cacheConnection(defaultConfig.isCacheConnection());
             }
@@ -62,6 +61,10 @@ public class GlobalConfig {
                 dbUnitConfig.leakHunter(defaultConfig.isLeakHunter());
             }
 
+            if (dbUnitConfig.getCaseInsensitiveStrategy() == null) {
+                dbUnitConfig.caseInsensitiveStrategy(defaultConfig.getCaseInsensitiveStrategy());
+            }
+
             if (dbUnitConfig.getProperties() == null || dbUnitConfig.getProperties().isEmpty()) {
                 dbUnitConfig.setProperties(defaultConfig.getProperties());
             } else {
@@ -73,7 +76,8 @@ public class GlobalConfig {
                     properties.put("qualifiedTableNames", defaultConfig.getProperties().get("qualifiedTableNames"));
                 }
                 if (!properties.containsKey("caseSensitiveTableNames")) {
-                    properties.put("caseSensitiveTableNames", defaultConfig.getProperties().get("caseSensitiveTableNames"));
+                    properties.put("caseSensitiveTableNames",
+                            defaultConfig.getProperties().get("caseSensitiveTableNames"));
                 }
                 if (!properties.containsKey("batchSize")) {
                     properties.put("batchSize", defaultConfig.getProperties().get("batchSize"));
@@ -87,13 +91,12 @@ public class GlobalConfig {
                 if (!properties.containsKey("escapePattern")) {
                     properties.put("escapePattern", defaultConfig.getProperties().get("escapePattern"));
                 }
-
             }
-
         }
 
-        if (dbUnitConfig.getProperties().containsKey("escapePattern") && dbUnitConfig.getProperties().get("escapePattern").equals("")) {
-            //avoid Caused by: org.dbunit.DatabaseUnitRuntimeException: Empty string is an invalid escape pattern!
+        if (dbUnitConfig.getProperties().containsKey("escapePattern")
+                && dbUnitConfig.getProperties().get("escapePattern").equals("")) {
+            // avoid Caused by: org.dbunit.DatabaseUnitRuntimeException: Empty string is an invalid escape pattern!
             // because @DBUnit annotation and dbunit.yml global config have escapePattern defaults to ""
             dbUnitConfig.getProperties().remove("escapePattern");
         }

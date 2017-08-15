@@ -1,11 +1,12 @@
 package com.github.database.rider.core.configuration;
 
-import com.github.database.rider.core.api.configuration.DBUnit;
-import com.github.database.rider.core.dataset.DataSetExecutorImpl;
-
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.github.database.rider.core.api.configuration.DBUnit;
+import com.github.database.rider.core.api.configuration.Orthography;
+import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 
 /**
  * represents DBUnit configuration of a dataset executor.
@@ -19,6 +20,8 @@ public class DBUnitConfig {
     private Boolean cacheTableNames;
 
     private Boolean leakHunter;
+
+    private Orthography caseInsensitiveStrategy;
 
     private Map<String, Object> properties;
 
@@ -39,29 +42,29 @@ public class DBUnitConfig {
         }
     }
 
-
     public static DBUnitConfig from(DBUnit dbUnit) {
         DBUnitConfig dbUnitConfig = new DBUnitConfig(dbUnit.executor());
 
-        dbUnitConfig.cacheConnection(dbUnit.cacheConnection()).
-                cacheTableNames(dbUnit.cacheTableNames()).
-                leakHunter(dbUnit.leakHunter()).
-                addDBUnitProperty("batchedStatements", dbUnit.batchedStatements()).
-                addDBUnitProperty("batchSize", dbUnit.batchSize()).
-                addDBUnitProperty("allowEmptyFields", dbUnit.allowEmptyFields()).
-                addDBUnitProperty("fetchSize", dbUnit.fetchSize()).
-                addDBUnitProperty("caseSensitiveTableNames",dbUnit.caseSensitiveTableNames()).
-                addDBUnitProperty("qualifiedTableNames", dbUnit.qualifiedTableNames());
+        dbUnitConfig.cacheConnection(dbUnit.cacheConnection())
+                .cacheTableNames(dbUnit.cacheTableNames())
+                .leakHunter(dbUnit.leakHunter())
+                .addDBUnitProperty("batchedStatements", dbUnit.batchedStatements())
+                .addDBUnitProperty("batchSize", dbUnit.batchSize())
+                .addDBUnitProperty("allowEmptyFields", dbUnit.allowEmptyFields())
+                .addDBUnitProperty("fetchSize", dbUnit.fetchSize())
+                .addDBUnitProperty("qualifiedTableNames", dbUnit.qualifiedTableNames())
+                .addDBUnitProperty("caseSensitiveTableNames", dbUnit.caseSensitiveTableNames())
+                .caseInsensitiveStrategy(dbUnit.caseInsensitiveStrategy());
 
         if (!"".equals(dbUnit.escapePattern())) {
             dbUnitConfig.addDBUnitProperty("escapePattern", dbUnit.escapePattern());
         }
 
-        //declarative connection config
-        dbUnitConfig.driver(dbUnit.driver()).
-                url(dbUnit.url()).
-                    user(dbUnit.user()).
-                password(dbUnit.password());
+        // declarative connection config
+        dbUnitConfig.driver(dbUnit.driver())
+                .url(dbUnit.url())
+                .user(dbUnit.user())
+                .password(dbUnit.password());
 
         return dbUnitConfig;
     }
@@ -82,25 +85,28 @@ public class DBUnitConfig {
         }
     }
 
-
     public DBUnitConfig cacheConnection(boolean cacheConnection) {
         this.cacheConnection = cacheConnection;
         return this;
     }
 
-    public DBUnitConfig executorId(String executorId){
+    public DBUnitConfig executorId(String executorId) {
         this.executorId = executorId;
         return this;
     }
 
-    public DBUnitConfig leakHunter(boolean leakHunter){
+    public DBUnitConfig leakHunter(boolean leakHunter) {
         this.leakHunter = leakHunter;
         return this;
     }
 
-
     public DBUnitConfig cacheTableNames(boolean cacheTables) {
         this.cacheTableNames = cacheTables;
+        return this;
+    }
+
+    public DBUnitConfig caseInsensitiveStrategy(Orthography orthography) {
+        this.caseInsensitiveStrategy = orthography;
         return this;
     }
 
@@ -109,22 +115,22 @@ public class DBUnitConfig {
         return this;
     }
 
-    public DBUnitConfig driver(String driverClass){
+    public DBUnitConfig driver(String driverClass) {
         connectionConfig.setDriver(driverClass);
         return this;
     }
 
-    public DBUnitConfig url(String url){
+    public DBUnitConfig url(String url) {
         connectionConfig.setUrl(url);
         return this;
     }
 
-    public DBUnitConfig user(String user){
+    public DBUnitConfig user(String user) {
         connectionConfig.setUser(user);
         return this;
     }
 
-    public DBUnitConfig password(String password){
+    public DBUnitConfig password(String password) {
         connectionConfig.setPassword(password);
         return this;
     }
@@ -133,7 +139,7 @@ public class DBUnitConfig {
         return connectionConfig;
     }
 
-    //methods above are for snakeyml library
+    // methods above are for snakeyml library
 
     public void setCacheConnection(boolean cacheConnection) {
         this.cacheConnection = cacheConnection;
@@ -161,6 +167,14 @@ public class DBUnitConfig {
 
     public void setLeakHunter(boolean activateLeakHunter) {
         this.leakHunter = activateLeakHunter;
+    }
+
+    public Orthography getCaseInsensitiveStrategy() {
+        return caseInsensitiveStrategy;
+    }
+
+    public void setCaseInsensitiveStrategy(Orthography caseInsensitiveStrategy) {
+        this.caseInsensitiveStrategy = caseInsensitiveStrategy;
     }
 
     public Map<String, Object> getProperties() {
