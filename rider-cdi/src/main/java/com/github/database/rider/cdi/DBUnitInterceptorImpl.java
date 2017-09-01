@@ -37,7 +37,8 @@ public class DBUnitInterceptorImpl implements Serializable {
             throws Exception {
 
         Object proceed = null;
-        DataSet usingDataSet = invocationContext.getMethod().getAnnotation(DataSet.class);
+        DataSet usingDataSet = resolveDataSet(invocationContext);
+
         if (usingDataSet != null) {
             DataSetConfig dataSetConfig = new DataSetConfig(usingDataSet.value()).
                     cleanAfter(usingDataSet.cleanAfter()).
@@ -125,6 +126,16 @@ public class DBUnitInterceptorImpl implements Serializable {
 
 
         return proceed;
+    }
+
+    private DataSet resolveDataSet(InvocationContext invocationContext) {
+        DataSet usingDataSet = invocationContext.getMethod().getAnnotation(DataSet.class);
+        if (usingDataSet == null) {
+            usingDataSet = invocationContext.getMethod().getDeclaringClass().getAnnotation(DataSet.class);
+        }
+
+        return usingDataSet;
+
     }
 
 
