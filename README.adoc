@@ -1092,6 +1092,7 @@ The examples module which contains:
 * https://github.com/database-rider/database-rider/tree/master/rider-examples/dbunit-tomee-appcomposer-sample[DBUnit Application Composer^]
 * https://github.com/database-rider/database-rider/tree/master/rider-examples/jOOQ-DBUnit-flyway-example/[jOOQ Flyway DBUnit^]
 * https://github.com/database-rider/database-rider/tree/master/rider-examples/spring-boot-dbunit-sample/[SpringBoot Data DBUnit^]
+* https://github.com/rmpestano/spring-events/blob/master/src/test/java/com/sambrannen/spring/events/repository/EventRepositoryTests.java#L47[Gradle, SpringBoot and JUnit5 example^]
 
 And also each module contain a lot of tests that you can use as example.
 
