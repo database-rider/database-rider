@@ -115,9 +115,8 @@ public class DBUnitRule implements TestRule {
                         }
                         statement.evaluate();
 
-                        int openConnectionsAfter = 0;
                         if (leakHunterActivated) {
-                            openConnectionsAfter = leakHunter.openConnections();
+                            int openConnectionsAfter = leakHunter.openConnections();
                             if (openConnectionsAfter > openConnectionsBefore) {
                                 throw new LeakHunterException(currentMethod, openConnectionsAfter - openConnectionsBefore);
                             }
