@@ -670,7 +670,7 @@ If you use CDI in your tests then you should give a try in Database Rider https:
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-cdi</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.2.1</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -737,7 +737,7 @@ NOTE: If you don't use CDI you need to <<Programmatically creating datasets, cre
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-cucumber</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.2.1</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -940,7 +940,7 @@ http://junit.org/junit5/[JUnit 5] is the new version of JUnit and comes with a n
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>junit5</artifactId>
-    <version>1.0.0</version>
+    <version>1.2.1</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -964,6 +964,30 @@ public class DBUnitJUnit5Test {
 <1> DBUnit extension will get JDBC connection by reflection so you need to declare a *field* or *method* with `ConnectionHolder` as return type.
 
 TIP: You can configure JDBC connection using @DBUnit annotation or dbunit.yml, see <<JDBC Connection>>.
+
+[NOTE]
+====
+You can use `@DBRider` (at test or method level) to enable the extension: 
+
+[source,java]
+----
+@RunWith(JUnitPlatform.class)
+public class DBRiderAnnotationIt {
+
+    private ConnectionHolder connectionHolder = () ->
+            EntityManagerProvider.instance("junit5-pu").connection();
+
+    @DBRider //shortcut for @ExtendWith(DBUnitExtension.class) and @Test
+    @DataSet(value = "usersWithTweet.yml")
+    public void shouldListUsers() {
+        List users = EntityManagerProvider.em().
+                createQuery("select u from User u").getResultList();
+        assertThat(users).isNotNull().isNotEmpty().hasSize(2);
+        assertThat(users.get(0)).isEqualTo(new User(1));
+    }
+}
+----
+====
 
 == Leak Hunter
 
