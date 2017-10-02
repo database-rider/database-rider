@@ -32,14 +32,17 @@ import java.sql.DriverManager;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static com.github.database.rider.core.util.EntityManagerProvider.em;
+import static com.github.database.rider.core.util.EntityManagerProvider.isEntityManagerActive;
+
 /**
  * Created by pestano on 27/08/16.
  */
 public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestExecutionCallback {
-	
+
     private static final Logger log = LoggerFactory.getLogger(DBUnitExtension.class);
 
-	private static final Namespace namespace = Namespace.create(DBUnitExtension.class);
+    private static final Namespace namespace = Namespace.create(DBUnitExtension.class);
 
     @Override
     public void beforeTestExecution(ExtensionContext testExtensionContext) throws Exception {
@@ -64,14 +67,14 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
 
         DBUnitConfig dbUnitConfig = DBUnitConfig.from(testExtensionContext.getTestMethod().get());
         final DataSetConfig dataSetConfig = new DataSetConfig().from(annotation);
-        if(connectionHolder == null || connectionHolder.getConnection() == null){
-            connectionHolder = createConnection(dbUnitConfig,testExtensionContext.getTestMethod().get().getName());
+        if (connectionHolder == null || connectionHolder.getConnection() == null) {
+            connectionHolder = createConnection(dbUnitConfig, testExtensionContext.getTestMethod().get().getName());
         }
         DataSetExecutor executor = DataSetExecutorImpl.instance(dataSetConfig.getExecutorId(), connectionHolder);
         executor.setDBUnitConfig(dbUnitConfig);
         DBUnitTestContext dbUnitTestContext = getTestContext(testExtensionContext);
         dbUnitTestContext.setExecutor(executor).
-        setDataSetConfig(dataSetConfig);
+                setDataSetConfig(dataSetConfig);
 
 
         if (dataSetConfig != null && dataSetConfig.getExecuteStatementsBefore() != null && dataSetConfig.getExecuteStatementsBefore().length > 0) {
@@ -94,11 +97,11 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
                 log.error(testExtensionContext.getTestMethod().get().getName() + "() - Could not execute scriptsBefore:" + e.getMessage(), e);
             }
         }//end execute scripts
-        
+
         if (dbUnitConfig.isLeakHunter()) {
             LeakHunter leakHunter = LeakHunterFactory.from(connectionHolder.getConnection());
             dbUnitTestContext.setLeakHunter(leakHunter).
-            	setOpenConnections(leakHunter.openConnections());
+                    setOpenConnections(leakHunter.openConnections());
         }
 
         try {
@@ -110,10 +113,10 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         boolean isTransactional = dataSetConfig.isTransactional();
         if (isTransactional) {
             if (EntityManagerProvider.isEntityManagerActive()) {
-                if(!EntityManagerProvider.tx().isActive()){
+                if (!EntityManagerProvider.tx().isActive()) {
                     EntityManagerProvider.em().getTransaction().begin();
                 }
-            } else{
+            } else {
                 Connection connection = executor.getRiderDataSource().getConnection();
                 connection.setAutoCommit(false);
             }
@@ -136,17 +139,17 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
 
     public void exportDataSet(DataSetExecutor dataSetExecutor, Method method) {
         ExportDataSet exportDataSet = resolveExportDataSet(method);
-        if(exportDataSet != null){
+        if (exportDataSet != null) {
             DataSetExportConfig exportConfig = DataSetExportConfig.from(exportDataSet);
             String outputName = exportConfig.getOutputFileName();
-            if(outputName == null || "".equals(outputName.trim())){
-                outputName = method.getName().toLowerCase()+"."+exportConfig.getDataSetFormat().name().toLowerCase();
+            if (outputName == null || "".equals(outputName.trim())) {
+                outputName = method.getName().toLowerCase() + "." + exportConfig.getDataSetFormat().name().toLowerCase();
             }
             exportConfig.outputFileName(outputName);
             try {
-                DataSetExporter.getInstance().export(dataSetExecutor.getRiderDataSource().getDBUnitConnection(),exportConfig);
+                DataSetExporter.getInstance().export(dataSetExecutor.getRiderDataSource().getDBUnitConnection(), exportConfig);
             } catch (Exception e) {
-            	log.warn("Could not export dataset after method "+method.getName(),e);
+                log.warn("Could not export dataset after method " + method.getName(), e);
             }
         }
     }
@@ -166,7 +169,20 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         DataSetConfig dataSetConfig = dbUnitTestContext.getDataSetConfig();
         DataSetExecutor executor = dbUnitTestContext.getExecutor();
         DBUnitConfig dbUnitConfig = executor != null ? executor.getDBUnitConfig() : DBUnitConfig.from(testExtensionContext.getTestMethod().get());
+
+        boolean isTransactional = dataSetConfig != null && dataSetConfig.isTransactional();
         try {
+            if (isTransactional) {
+                if (EntityManagerProvider.isEntityManagerActive()) {
+                    if (EntityManagerProvider.tx().isActive()) {
+                        EntityManagerProvider.tx().commit();
+                    }
+                } else {
+                    Connection connection = executor.getRiderDataSource().getConnection();
+                    connection.commit();
+                    connection.setAutoCommit(false);
+                }
+            }
             if (dataSetConfig != null && executor != null && shouldCompareDataSet(testExtensionContext)) {
                 ExpectedDataSet expectedDataSet = testExtensionContext.getTestMethod().get().getAnnotation(ExpectedDataSet.class);
                 if (expectedDataSet == null) {
@@ -174,28 +190,6 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
                     expectedDataSet = testExtensionContext.getTestClass().get().getAnnotation(ExpectedDataSet.class);
                 }
                 if (expectedDataSet != null) {
-                    boolean isTransactional = dataSetConfig.isTransactional();
-                    if (isTransactional) {
-                        try {
-                            if (EntityManagerProvider.isEntityManagerActive()) {
-                                if(EntityManagerProvider.tx().isActive()){
-                                    EntityManagerProvider.tx().commit();
-                                }
-                            } else {
-                                Connection connection = executor.getRiderDataSource().getConnection();
-                                connection.commit();
-                                connection.setAutoCommit(false);
-                            }
-                        }catch (Exception e){
-                            if(EntityManagerProvider.isEntityManagerActive()){
-                                EntityManagerProvider.tx().rollback();
-                            } else{
-                                Connection connection = executor.getRiderDataSource().getConnection();
-                                connection.setAutoCommit(false);
-                                connection.setReadOnly(true);
-                            }
-                        }
-                    }
                     executor.compareCurrentDataSetWith(new DataSetConfig(expectedDataSet.value()).disableConstraints(true), expectedDataSet.ignoreCols());
                 }
             }
@@ -214,9 +208,17 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
             if (dataSetConfig == null || executor == null) {
                 return;
             }
+            if (isTransactional) {
+                if (isEntityManagerActive() && em().getTransaction().isActive()) {
+                    em().getTransaction().rollback();
+                } else {
+                    Connection connection = executor.getRiderDataSource().getConnection();
+                    connection.rollback();
+                }
+            }
 
-            if (shouldExportDataSet(testExtensionContext)){
-                exportDataSet(executor,testExtensionContext.getTestMethod().get());
+            if (shouldExportDataSet(testExtensionContext)) {
+                exportDataSet(executor, testExtensionContext.getTestMethod().get());
             }
 
             if (dataSetConfig.getExecuteStatementsAfter() != null && dataSetConfig.getExecuteStatementsAfter().length > 0) {
@@ -313,20 +315,20 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         }
         return null;
     }
-    
-    
+
+
     /**
      * one test context (datasetExecutor, dbunitConfig etc..) per test
      */
-	private DBUnitTestContext getTestContext(ExtensionContext context) {
-		Class<?> testClass = context.getTestClass().get();
-		Store store = context.getStore(namespace);
-		DBUnitTestContext testContext = store.get(testClass,DBUnitTestContext.class);
-		if(testContext == null){
-			testContext = new DBUnitTestContext();
-			store.put(testClass, testContext);
-		}
-		return testContext;
-	}
+    private DBUnitTestContext getTestContext(ExtensionContext context) {
+        Class<?> testClass = context.getTestClass().get();
+        Store store = context.getStore(namespace);
+        DBUnitTestContext testContext = store.get(testClass, DBUnitTestContext.class);
+        if (testContext == null) {
+            testContext = new DBUnitTestContext();
+            store.put(testClass, testContext);
+        }
+        return testContext;
+    }
 
 }

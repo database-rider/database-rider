@@ -35,7 +35,7 @@ import static com.github.database.rider.core.util.EntityManagerProvider.isEntity
  */
 public class DBUnitRule implements TestRule {
 
-	
+
     private static final Logger logger = LoggerFactory.getLogger(DbUnitAssert.class);
 
 
@@ -100,9 +100,9 @@ public class DBUnitRule implements TestRule {
                     try {
                         isTransactional = dataSetConfig.isTransactional();
                         if (isTransactional) {
-                            if(isEntityManagerActive()){
+                            if (isEntityManagerActive()) {
                                 em().getTransaction().begin();
-                            }else{
+                            } else {
                                 Connection connection = executor.getRiderDataSource().getConnection();
                                 connection.setAutoCommit(false);
                             }
@@ -123,26 +123,24 @@ public class DBUnitRule implements TestRule {
                         }
 
                         if (isTransactional) {
-                            if(isEntityManagerActive() && em().getTransaction().isActive()){
+                            if (isEntityManagerActive() && em().getTransaction().isActive()) {
                                 em().getTransaction().commit();
-                            } else{
+                            } else {
                                 Connection connection = executor.getRiderDataSource().getConnection();
                                 connection.commit();
                                 connection.setAutoCommit(false);
                             }
                         }
                         performDataSetComparison(description);
-                    } catch (Exception e) {
-                        if (isTransactional){
-                            if(isEntityManagerActive() && em().getTransaction().isActive()) {
+                    } finally {
+                        if (isTransactional) {
+                            if (isEntityManagerActive() && em().getTransaction().isActive()) {
                                 em().getTransaction().rollback();
                             } else {
                                 Connection connection = executor.getRiderDataSource().getConnection();
                                 connection.rollback();
                             }
                         }
-                        throw e;
-                    } finally {
                         exportDataSet(executor, description);
                         if (dataSetConfig != null && dataSetConfig.getExecuteStatementsAfter() != null && dataSetConfig.getExecuteStatementsAfter().length > 0) {
                             try {
@@ -176,7 +174,7 @@ public class DBUnitRule implements TestRule {
 
                 }  //no dataset provided, only export and evaluate expected dataset
                 else {
-                    if(executor.getRiderDataSource().getConnection() == null) {
+                    if (executor.getRiderDataSource().getConnection() == null) {
                         initConnectionFromConfig(executor, dbUnitConfig);
                     }
                     exportDataSet(executor, description);
@@ -214,7 +212,7 @@ public class DBUnitRule implements TestRule {
             try {
                 DataSetExporter.getInstance().export(executor.getRiderDataSource().getDBUnitConnection(), exportConfig);
             } catch (Exception e) {
-            	logger.error("Could not export dataset after method " + description.getMethodName(), e);
+                logger.error("Could not export dataset after method " + description.getMethodName(), e);
             }
         }
     }
