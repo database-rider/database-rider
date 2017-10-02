@@ -75,13 +75,11 @@ public class DBUnitInterceptorImpl implements Serializable {
                 if(expectedDataSet != null){
                     dataSetProcessor.compareCurrentDataSetWith(new DataSetConfig(expectedDataSet.value()).disableConstraints(true),expectedDataSet.ignoreCols());
                 }
-
-            }catch (Exception e){
+            } finally {
                 if(isTransactionalTest && em.getTransaction().isActive()){
                     em.getTransaction().rollback();
                 }
-                throw e;
-            } finally {
+
                 int openConnectionsAfter = 0;
                 if(leakHunter != null){
                     openConnectionsAfter = leakHunter.openConnections();
