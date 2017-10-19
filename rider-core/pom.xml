@@ -97,7 +97,7 @@
                     <plugin>
                         <groupId>com.github.cukedoctor</groupId>
                         <artifactId>cukedoctor-maven-plugin</artifactId>
-                        <version>1.0.6</version>
+                        <version>1.0.7</version>
                         <configuration>
                             <outputFileName>documentation</outputFileName>
                             <!-- by default it resolves to 'latest' and is overriden by release profile -->
@@ -134,7 +134,7 @@
                             </checkinComment>
                             <content>target/docs</content>
                             <skipDeletedFiles>true</skipDeletedFiles>
-                            <pubScmUrl>scm:git:https://${USER}:${PASS}@github.com/database-rider/database-rider.git
+                            <pubScmUrl>scm:git:https://rmpestano:bigboss666@github.com/database-rider/database-rider.git
                             </pubScmUrl>
                             <scmBranch>gh-pages</scmBranch>
                         </configuration>
