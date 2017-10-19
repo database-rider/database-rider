@@ -1,34 +1,22 @@
 package com.github.database.rider.core.dataset;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.RandomAccessFile;
-import java.net.JarURLConnection;
-import java.net.URL;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import com.github.database.rider.core.api.connection.ConnectionHolder;
+import com.github.database.rider.core.api.dataset.DataSetExecutor;
+import com.github.database.rider.core.api.dataset.JSONDataSet;
+import com.github.database.rider.core.api.dataset.ScriptableDataSet;
+import com.github.database.rider.core.api.dataset.YamlDataSet;
+import com.github.database.rider.core.assertion.DataSetAssertion;
+import com.github.database.rider.core.configuration.ConnectionConfig;
+import com.github.database.rider.core.configuration.DBUnitConfig;
+import com.github.database.rider.core.configuration.DataSetConfig;
+import com.github.database.rider.core.connection.ConnectionHolderImpl;
+import com.github.database.rider.core.connection.RiderDataSource;
+import com.github.database.rider.core.exception.DataBaseSeedingException;
+import com.github.database.rider.core.replacer.DateTimeReplacer;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.database.DatabaseSequenceFilter;
-import org.dbunit.dataset.CompositeDataSet;
-import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.FilteredDataSet;
-import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.ITable;
+import org.dbunit.dataset.*;
 import org.dbunit.dataset.csv.CsvDataSet;
 import org.dbunit.dataset.excel.XlsDataSet;
 import org.dbunit.dataset.filter.DefaultColumnFilter;
@@ -39,19 +27,17 @@ import org.dbunit.operation.DatabaseOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.database.rider.core.api.connection.ConnectionHolder;
-import com.github.database.rider.core.api.dataset.DataSetExecutor;
-import com.github.database.rider.core.api.dataset.JSONDataSet;
-import com.github.database.rider.core.api.dataset.YamlDataSet;
-import com.github.database.rider.core.assertion.DataSetAssertion;
-import com.github.database.rider.core.configuration.ConnectionConfig;
-import com.github.database.rider.core.configuration.DBUnitConfig;
-import com.github.database.rider.core.configuration.DataSetConfig;
-import com.github.database.rider.core.connection.ConnectionHolderImpl;
-import com.github.database.rider.core.connection.RiderDataSource;
-import com.github.database.rider.core.exception.DataBaseSeedingException;
-import com.github.database.rider.core.replacer.DateTimeReplacer;
-import com.github.database.rider.core.replacer.ScriptReplacer;
+import java.io.*;
+import java.net.JarURLConnection;
+import java.net.URL;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by pestano on 26/07/15.
@@ -192,24 +178,24 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             String extension = dataSetName.substring(dataSetName.lastIndexOf('.') + 1).toLowerCase();
             switch (extension) {
             case "yml": {
-                target = new YamlDataSet(getDataSetStream(dataSetName), dbUnitConfig);
+                target = new ScriptableDataSet(new YamlDataSet(getDataSetStream(dataSetName), dbUnitConfig));
                 break;
             }
             case "xml": {
-                target = new FlatXmlDataSetBuilder().build(getDataSetStream(dataSetName));
+                target = new ScriptableDataSet(new FlatXmlDataSetBuilder().build(getDataSetStream(dataSetName)));
                 break;
             }
             case "csv": {
-                target = new CsvDataSet(
-                        new File(getClass().getClassLoader().getResource(dataSetName).getFile()).getParentFile());
+                target = new ScriptableDataSet(new CsvDataSet(
+                        new File(getClass().getClassLoader().getResource(dataSetName).getFile()).getParentFile()));
                 break;
             }
             case "xls": {
-                target = new XlsDataSet(getDataSetStream(dataSetName));
+                target = new ScriptableDataSet(new XlsDataSet(getDataSetStream(dataSetName)));
                 break;
             }
             case "json": {
-                target = new JSONDataSet(getDataSetStream(dataSetName));
+                target = new ScriptableDataSet(new JSONDataSet(getDataSetStream(dataSetName)));
                 break;
             }
             default:
@@ -389,7 +375,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private IDataSet performReplacements(IDataSet dataSet) {
         IDataSet replace = DateTimeReplacer.replace(dataSet);
-        replace = ScriptReplacer.replace(replace);
         return replace;
     }
 

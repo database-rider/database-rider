@@ -3,6 +3,7 @@ package com.github.database.rider.core;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Calendar;
+import java.util.List;
 
 import com.github.database.rider.core.util.EntityManagerProvider;
 import com.github.database.rider.core.api.dataset.DataSet;
@@ -65,6 +66,19 @@ public class ScriptReplacementsIt {
                 isEqualTo(now.get(Calendar.HOUR_OF_DAY));
     }
 // end::groovy[]
+
+
+    @Test
+    @DataSet(value = "datasets/yml/random-replacements.yml",cleanBefore = true, disableConstraints = true, executorId = "rules-it")
+    public void shouldGenerateDifferentValuesInScriptEvaluation() {
+        List<Tweet> tweets = emProvider.em().createQuery("select t from Tweet t").getResultList();
+        assertThat(tweets).isNotNull().hasSize(2);
+        Tweet tweet1 = tweets.get(0);
+        Tweet tweet2 = tweets.get(1);
+        assertThat(tweet1).isNotEqualTo(tweet2);
+
+        assertThat(tweet1.getContent()).isNotEqualTo(tweet2.getContent());
+    }
 
 
 }

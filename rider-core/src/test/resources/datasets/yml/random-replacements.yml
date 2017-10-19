@@ -1,0 +1,9 @@
+TWEET:
+  - ID: "js:Math.floor(Math.random() * (100))"
+    CONTENT: "groovy: UUID.randomUUID().toString()"
+    DATE: "groovy:new Date()"
+    USER_ID: 1
+  - ID: "js:Math.floor(Math.random() * (100))"
+    CONTENT: "groovy: UUID.randomUUID().toString()"
+    DATE: "groovy:new Date()"
+    USER_ID: 1
