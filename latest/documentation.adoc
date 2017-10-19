@@ -1,6 +1,6 @@
 :toc: center
 :backend: pdf
-:doctitle: Living Documentation
+:doctitle: Database Rider Documentation
 :doctype: book
 :icons: font
 :numbered:
@@ -13,7 +13,7 @@
 :revnumber: 1.2.3-SNAPSHOT
 :hardbreaks:
 
-= *Living Documentation*
+= *Database Rider Documentation*
 
 include::/home/travis/build/database-rider/database-rider/rider-core/target/test-classes/cukedoctor-intro.adoc[leveloffset=+1]
 
