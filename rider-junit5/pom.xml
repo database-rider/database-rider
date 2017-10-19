@@ -3,11 +3,15 @@
     <parent>
         <artifactId>rider-parent</artifactId>
         <groupId>com.github.database-rider</groupId>
-        <version>1.1.0</version>
+        <version>1.2.3-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>rider-junit5</artifactId>
+
+    <properties>
+        <version.junit-platform>1.0.0</version.junit-platform>
+        <version.junit-jupiter>5.0.0</version.junit-jupiter>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>com.github.database-rider</groupId>
@@ -19,7 +23,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.0.0-M3</version>
+            <version>${version.junit-jupiter}</version>
             <!-- for writing tests "test" scope would suffice,
                 but extensions are defined in the project's "main" folder, so we need "compile" -->
             <scope>compile</scope>
@@ -29,7 +33,7 @@
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-commons</artifactId>
-            <version>1.0.0-M3</version>
+            <version>${version.junit-platform}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -38,14 +42,14 @@
             <!-- contains the engine that actually runs the Jupiter-tests -->
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.0.0-M3</version>
+            <version>${version.junit-jupiter}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <!-- contains the runner that adapts Jupiter-tests for a v4-run -->
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-runner</artifactId>
-            <version>1.0.0-M3</version>
+            <version>${version.junit-platform}</version>
             <scope>test</scope>
         </dependency>
 
@@ -118,7 +122,7 @@
                     <dependency>
                         <groupId>org.junit.platform</groupId>
                         <artifactId>junit-platform-surefire-provider</artifactId>
-                        <version>1.0.0-M3</version>
+                        <version>1.0.0-RC2</version>
                     </dependency>
                 </dependencies>
 				 

@@ -23,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 // tag::cdi-declaration[]
 @RunWith(CdiTestRunner.class) //<1>
 @DBUnitInterceptor //<2>
+@DataSet(value = "yml/users.yml")
 public class DBUnitCDIIt {
 // end::cdi-declaration[]
 
@@ -115,6 +116,18 @@ public class DBUnitCDIIt {
         assertThat(user).isNotNull();
         assertThat(user.getId()).isEqualTo(3);
         assertThat(user.getName()).isEqualTo("user3");
+    }
+
+    @Test
+    public void shouldSeedDBUsingClassLevelDataSet() {
+        List<User> users = em.createQuery("select u from User u order by u.id asc").getResultList();
+        User user1 = new User(1);
+        User user2 = new User(2);
+        Tweet tweetUser1 = new Tweet();
+        tweetUser1.setId("abcdef12345");
+        assertThat(users).isNotNull().hasSize(2).contains(user1, user2);
+        List<Tweet> tweetsUser1 = users.get(0).getTweets();
+        assertThat(tweetsUser1).isNotNull().hasSize(1).contains(tweetUser1);
     }
 
 

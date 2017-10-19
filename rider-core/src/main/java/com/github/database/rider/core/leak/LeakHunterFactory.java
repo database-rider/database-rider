@@ -25,8 +25,10 @@ public class LeakHunterFactory {
         }
         String driverName = DriverUtils.getDriverName(connection);
 
-        if (DriverUtils.isHsql(driverName) || DriverUtils.isH2(driverName)) {
-            return new InMemoryLeakHunter(connection);
+        if (DriverUtils.isHsql(driverName)) {
+            return new HsqlDBLeakHunter(connection);
+        } else if(DriverUtils.isH2(driverName)) {
+            return new H2LeakHunter(connection);
         } else if (DriverUtils.isPostgre(driverName)) {
             return new PostgreLeakHunter(connection);
         } else if (DriverUtils.isMysql(driverName)) {

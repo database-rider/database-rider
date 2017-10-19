@@ -17,7 +17,7 @@ Scenario: Detecting connection leak
 
 [source,java,indent=0]
 ----
-include::../../../src/test/java/com/github/database/rider/core/LeakHunterIt.java[tags=leak-hunter-declare;find-leak;ceate-leak]
+include::../../../src/test/java/com/github/database/rider/core/LeakHunterIt.java[tags=leak-hunter-declare;find-leak;create-leak]
 ----
 <1> Enables connection leak detection.
 

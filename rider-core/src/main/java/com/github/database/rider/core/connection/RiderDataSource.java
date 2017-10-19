@@ -1,10 +1,12 @@
 package com.github.database.rider.core.connection;
 
-import com.github.database.rider.core.api.connection.ConnectionHolder;
-import com.github.database.rider.core.configuration.DBUnitConfig;
-import com.github.database.rider.core.util.DriverUtils;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Map;
+
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
+import org.dbunit.database.DatabaseConfig.ConfigProperty;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.ext.h2.H2DataTypeFactory;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
@@ -12,16 +14,18 @@ import org.dbunit.ext.mysql.MySqlDataTypeFactory;
 import org.dbunit.ext.oracle.Oracle10DataTypeFactory;
 import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Map;
+import com.github.database.rider.core.api.connection.ConnectionHolder;
+import com.github.database.rider.core.configuration.DBUnitConfig;
+import com.github.database.rider.core.util.DriverUtils;
 
 /**
  * @author artemy-osipov
  */
 public class RiderDataSource {
 
-    public enum DBType { HSQLDB, H2, MYSQL, ORACLE, POSTGRESQL, UNKNOWN }
+    public enum DBType {
+        HSQLDB, H2, MYSQL, ORACLE, POSTGRESQL, UNKNOWN
+    }
 
     private final ConnectionHolder connectionHolder;
     private final DBUnitConfig dbUnitConfig;
@@ -75,25 +79,28 @@ public class RiderDataSource {
     private void configDatabaseProperties() throws SQLException {
         DatabaseConfig config = dbUnitConnection.getConfig();
         for (Map.Entry<String, Object> p : dbUnitConfig.getProperties().entrySet()) {
-            config.setProperty(DatabaseConfig.findByShortName(p.getKey()).getProperty(), p.getValue());
+            ConfigProperty byShortName = DatabaseConfig.findByShortName(p.getKey());
+            if (byShortName != null) {
+                config.setProperty(byShortName.getProperty(), p.getValue());
+            }
         }
 
         switch (dbType) {
-            case HSQLDB:
-                config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
-                break;
-            case H2:
-                config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new H2DataTypeFactory());
-                break;
-            case MYSQL:
-                config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
-                break;
-            case POSTGRESQL:
-                config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new PostgresqlDataTypeFactory());
-                break;
-            case ORACLE:
-                config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new Oracle10DataTypeFactory());
-                break;
+        case HSQLDB:
+            config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
+            break;
+        case H2:
+            config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new H2DataTypeFactory());
+            break;
+        case MYSQL:
+            config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
+            break;
+        case POSTGRESQL:
+            config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new PostgresqlDataTypeFactory());
+            break;
+        case ORACLE:
+            config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new Oracle10DataTypeFactory());
+            break;
         }
     }
 

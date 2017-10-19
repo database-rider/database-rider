@@ -192,7 +192,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             String extension = dataSetName.substring(dataSetName.lastIndexOf('.') + 1).toLowerCase();
             switch (extension) {
             case "yml": {
-                target = new YamlDataSet(getDataSetStream(dataSetName));
+                target = new YamlDataSet(getDataSetStream(dataSetName), dbUnitConfig);
                 break;
             }
             case "xml": {

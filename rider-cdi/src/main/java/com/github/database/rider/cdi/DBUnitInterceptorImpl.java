@@ -37,7 +37,8 @@ public class DBUnitInterceptorImpl implements Serializable {
             throws Exception {
 
         Object proceed = null;
-        DataSet usingDataSet = invocationContext.getMethod().getAnnotation(DataSet.class);
+        DataSet usingDataSet = resolveDataSet(invocationContext);
+
         if (usingDataSet != null) {
             DataSetConfig dataSetConfig = new DataSetConfig(usingDataSet.value()).
                     cleanAfter(usingDataSet.cleanAfter()).
@@ -74,13 +75,11 @@ public class DBUnitInterceptorImpl implements Serializable {
                 if(expectedDataSet != null){
                     dataSetProcessor.compareCurrentDataSetWith(new DataSetConfig(expectedDataSet.value()).disableConstraints(true),expectedDataSet.ignoreCols());
                 }
-
-            }catch (Exception e){
+            } finally {
                 if(isTransactionalTest && em.getTransaction().isActive()){
                     em.getTransaction().rollback();
                 }
-                throw e;
-            } finally {
+
                 int openConnectionsAfter = 0;
                 if(leakHunter != null){
                     openConnectionsAfter = leakHunter.openConnections();
@@ -125,6 +124,16 @@ public class DBUnitInterceptorImpl implements Serializable {
 
 
         return proceed;
+    }
+
+    private DataSet resolveDataSet(InvocationContext invocationContext) {
+        DataSet usingDataSet = invocationContext.getMethod().getAnnotation(DataSet.class);
+        if (usingDataSet == null) {
+            usingDataSet = invocationContext.getMethod().getDeclaringClass().getAnnotation(DataSet.class);
+        }
+
+        return usingDataSet;
+
     }
 
 

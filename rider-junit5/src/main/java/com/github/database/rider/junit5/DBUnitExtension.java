@@ -1,15 +1,15 @@
 package com.github.database.rider.junit5;
 
+import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetExecutor;
+import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.api.exporter.DataSetExportConfig;
+import com.github.database.rider.core.api.exporter.ExportDataSet;
 import com.github.database.rider.core.api.leak.LeakHunter;
+import com.github.database.rider.core.configuration.ConnectionConfig;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
-import com.github.database.rider.core.api.connection.ConnectionHolder;
-import com.github.database.rider.core.api.dataset.ExpectedDataSet;
-import com.github.database.rider.core.api.exporter.ExportDataSet;
-import com.github.database.rider.core.configuration.ConnectionConfig;
 import com.github.database.rider.core.connection.ConnectionHolderImpl;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.exporter.DataSetExporter;
@@ -22,7 +22,6 @@ import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 import org.junit.jupiter.api.extension.ExtensionContext.Store;
-import org.junit.jupiter.api.extension.TestExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,19 +33,19 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import static com.github.database.rider.core.util.EntityManagerProvider.em;
-import static com.github.database.rider.core.util.EntityManagerProvider.tx;
+import static com.github.database.rider.core.util.EntityManagerProvider.isEntityManagerActive;
 
 /**
  * Created by pestano on 27/08/16.
  */
 public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestExecutionCallback {
-	
+
     private static final Logger log = LoggerFactory.getLogger(DBUnitExtension.class);
 
-	private static final Namespace namespace = Namespace.create(DBUnitExtension.class);
+    private static final Namespace namespace = Namespace.create(DBUnitExtension.class);
 
     @Override
-    public void beforeTestExecution(TestExtensionContext testExtensionContext) throws Exception {
+    public void beforeTestExecution(ExtensionContext testExtensionContext) throws Exception {
 
         if (!shouldCreateDataSet(testExtensionContext)) {
             return;
@@ -68,14 +67,14 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
 
         DBUnitConfig dbUnitConfig = DBUnitConfig.from(testExtensionContext.getTestMethod().get());
         final DataSetConfig dataSetConfig = new DataSetConfig().from(annotation);
-        if(connectionHolder == null || connectionHolder.getConnection() == null){
-            connectionHolder = createConnection(dbUnitConfig,testExtensionContext.getTestMethod().get().getName());
+        if (connectionHolder == null || connectionHolder.getConnection() == null) {
+            connectionHolder = createConnection(dbUnitConfig, testExtensionContext.getTestMethod().get().getName());
         }
         DataSetExecutor executor = DataSetExecutorImpl.instance(dataSetConfig.getExecutorId(), connectionHolder);
         executor.setDBUnitConfig(dbUnitConfig);
         DBUnitTestContext dbUnitTestContext = getTestContext(testExtensionContext);
         dbUnitTestContext.setExecutor(executor).
-        setDataSetConfig(dataSetConfig);
+                setDataSetConfig(dataSetConfig);
 
 
         if (dataSetConfig != null && dataSetConfig.getExecuteStatementsBefore() != null && dataSetConfig.getExecuteStatementsBefore().length > 0) {
@@ -98,11 +97,11 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
                 log.error(testExtensionContext.getTestMethod().get().getName() + "() - Could not execute scriptsBefore:" + e.getMessage(), e);
             }
         }//end execute scripts
-        
+
         if (dbUnitConfig.isLeakHunter()) {
             LeakHunter leakHunter = LeakHunterFactory.from(connectionHolder.getConnection());
             dbUnitTestContext.setLeakHunter(leakHunter).
-            	setOpenConnections(leakHunter.openConnections());
+                    setOpenConnections(leakHunter.openConnections());
         }
 
         try {
@@ -114,10 +113,10 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         boolean isTransactional = dataSetConfig.isTransactional();
         if (isTransactional) {
             if (EntityManagerProvider.isEntityManagerActive()) {
-                if(!EntityManagerProvider.tx().isActive()){
+                if (!EntityManagerProvider.tx().isActive()) {
                     EntityManagerProvider.em().getTransaction().begin();
                 }
-            } else{
+            } else {
                 Connection connection = executor.getRiderDataSource().getConnection();
                 connection.setAutoCommit(false);
             }
@@ -126,31 +125,31 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     }
 
 
-    private boolean shouldCreateDataSet(TestExtensionContext testExtensionContext) {
+    private boolean shouldCreateDataSet(ExtensionContext testExtensionContext) {
         return testExtensionContext.getTestMethod().get().isAnnotationPresent(DataSet.class) || testExtensionContext.getTestClass().get().isAnnotationPresent(DataSet.class);
     }
 
-    private boolean shouldCompareDataSet(TestExtensionContext testExtensionContext) {
+    private boolean shouldCompareDataSet(ExtensionContext testExtensionContext) {
         return testExtensionContext.getTestMethod().get().isAnnotationPresent(ExpectedDataSet.class) || testExtensionContext.getTestClass().get().isAnnotationPresent(ExpectedDataSet.class);
     }
 
-    private boolean shouldExportDataSet(TestExtensionContext testExtensionContext) {
+    private boolean shouldExportDataSet(ExtensionContext testExtensionContext) {
         return testExtensionContext.getTestMethod().get().isAnnotationPresent(ExportDataSet.class) || testExtensionContext.getTestClass().get().isAnnotationPresent(ExportDataSet.class);
     }
 
     public void exportDataSet(DataSetExecutor dataSetExecutor, Method method) {
         ExportDataSet exportDataSet = resolveExportDataSet(method);
-        if(exportDataSet != null){
+        if (exportDataSet != null) {
             DataSetExportConfig exportConfig = DataSetExportConfig.from(exportDataSet);
             String outputName = exportConfig.getOutputFileName();
-            if(outputName == null || "".equals(outputName.trim())){
-                outputName = method.getName().toLowerCase()+"."+exportConfig.getDataSetFormat().name().toLowerCase();
+            if (outputName == null || "".equals(outputName.trim())) {
+                outputName = method.getName().toLowerCase() + "." + exportConfig.getDataSetFormat().name().toLowerCase();
             }
             exportConfig.outputFileName(outputName);
             try {
-                DataSetExporter.getInstance().export(dataSetExecutor.getRiderDataSource().getDBUnitConnection(),exportConfig);
+                DataSetExporter.getInstance().export(dataSetExecutor.getRiderDataSource().getDBUnitConnection(), exportConfig);
             } catch (Exception e) {
-            	log.warn("Could not export dataset after method "+method.getName(),e);
+                log.warn("Could not export dataset after method " + method.getName(), e);
             }
         }
     }
@@ -165,41 +164,32 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
 
 
     @Override
-    public void afterTestExecution(TestExtensionContext testExtensionContext) throws Exception {
-    	DBUnitTestContext dbUnitTestContext = getTestContext(testExtensionContext);
-        DBUnitConfig dbUnitConfig = dbUnitTestContext.getExecutor().getDBUnitConfig();
+    public void afterTestExecution(ExtensionContext testExtensionContext) throws Exception {
+        DBUnitTestContext dbUnitTestContext = getTestContext(testExtensionContext);
+        DataSetConfig dataSetConfig = dbUnitTestContext.getDataSetConfig();
+        DataSetExecutor executor = dbUnitTestContext.getExecutor();
+        DBUnitConfig dbUnitConfig = executor != null ? executor.getDBUnitConfig() : DBUnitConfig.from(testExtensionContext.getTestMethod().get());
+
+        boolean isTransactional = dataSetConfig != null && dataSetConfig.isTransactional();
         try {
-            if (shouldCompareDataSet(testExtensionContext)) {
+            if (isTransactional) {
+                if (EntityManagerProvider.isEntityManagerActive()) {
+                    if (EntityManagerProvider.tx().isActive()) {
+                        EntityManagerProvider.tx().commit();
+                    }
+                } else {
+                    Connection connection = executor.getRiderDataSource().getConnection();
+                    connection.commit();
+                    connection.setAutoCommit(false);
+                }
+            }
+            if (dataSetConfig != null && executor != null && shouldCompareDataSet(testExtensionContext)) {
                 ExpectedDataSet expectedDataSet = testExtensionContext.getTestMethod().get().getAnnotation(ExpectedDataSet.class);
                 if (expectedDataSet == null) {
                     //try to infer from class level annotation
                     expectedDataSet = testExtensionContext.getTestClass().get().getAnnotation(ExpectedDataSet.class);
                 }
                 if (expectedDataSet != null) {
-                    DataSetExecutor executor = dbUnitTestContext.getExecutor();
-                    DataSetConfig datasetConfig = dbUnitTestContext.getDataSetConfig();
-                    boolean isTransactional = datasetConfig.isTransactional();
-                    if (isTransactional) {
-                        try {
-                            if (EntityManagerProvider.isEntityManagerActive()) {
-                                if(EntityManagerProvider.tx().isActive()){
-                                    EntityManagerProvider.tx().commit();
-                                }
-                            } else {
-                                Connection connection = executor.getRiderDataSource().getConnection();
-                                connection.commit();
-                                connection.setAutoCommit(false);
-                            }
-                        }catch (Exception e){
-                            if(EntityManagerProvider.isEntityManagerActive()){
-                                EntityManagerProvider.tx().rollback();
-                            } else{
-                                Connection connection = executor.getRiderDataSource().getConnection();
-                                connection.setAutoCommit(false);
-                                connection.setReadOnly(true);
-                            }
-                        }
-                    }
                     executor.compareCurrentDataSetWith(new DataSetConfig(expectedDataSet.value()).disableConstraints(true), expectedDataSet.ignoreCols());
                 }
             }
@@ -215,18 +205,23 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
             }
 
         } finally {
-
-            DataSetConfig dataSetConfig = dbUnitTestContext.getDataSetConfig();
-            if (dataSetConfig == null) {
+            if (dataSetConfig == null || executor == null) {
                 return;
             }
-            DataSetExecutor executor = dbUnitTestContext.getExecutor();
-
-            if(shouldExportDataSet(testExtensionContext)){
-                exportDataSet(executor,testExtensionContext.getTestMethod().get());
+            if (isTransactional) {
+                if (isEntityManagerActive() && em().getTransaction().isActive()) {
+                    em().getTransaction().rollback();
+                } else {
+                    Connection connection = executor.getRiderDataSource().getConnection();
+                    connection.rollback();
+                }
             }
 
-            if (dataSetConfig != null && dataSetConfig.getExecuteStatementsAfter() != null && dataSetConfig.getExecuteStatementsAfter().length > 0) {
+            if (shouldExportDataSet(testExtensionContext)) {
+                exportDataSet(executor, testExtensionContext.getTestMethod().get());
+            }
+
+            if (dataSetConfig.getExecuteStatementsAfter() != null && dataSetConfig.getExecuteStatementsAfter().length > 0) {
                 try {
                     executor.executeStatements(dataSetConfig.getExecuteStatementsAfter());
                 } catch (Exception e) {
@@ -257,7 +252,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     }
 
 
-    private ConnectionHolder findTestConnection(TestExtensionContext testExtensionContext) {
+    private ConnectionHolder findTestConnection(ExtensionContext testExtensionContext) {
         Class<?> testClass = testExtensionContext.getTestClass().get();
         try {
             Optional<Field> fieldFound = Arrays.stream(testClass.getDeclaredFields()).
@@ -269,7 +264,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
                 if (!field.isAccessible()) {
                     field.setAccessible(true);
                 }
-                ConnectionHolder connectionHolder = ConnectionHolder.class.cast(field.get(testExtensionContext.getTestInstance()));
+                ConnectionHolder connectionHolder = ConnectionHolder.class.cast(field.get(testExtensionContext.getTestInstance().get()));
                 if (connectionHolder == null || connectionHolder.getConnection() == null) {
                     throw new RuntimeException("ConnectionHolder not initialized correctly");
                 }
@@ -287,8 +282,8 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
                 if (!method.isAccessible()) {
                     method.setAccessible(true);
                 }
-                ConnectionHolder connectionHolder = ConnectionHolder.class.cast(method.invoke(testExtensionContext.getTestInstance()));
-                if (connectionHolder == null || connectionHolder.getConnection() == null) {
+                ConnectionHolder connectionHolder = ConnectionHolder.class.cast(method.invoke(testExtensionContext.getTestInstance().get()));
+                if (connectionHolder == null || connectionHolder == null) {
                     throw new RuntimeException("ConnectionHolder not initialized correctly");
                 }
                 return connectionHolder;
@@ -307,7 +302,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     private ConnectionHolder createConnection(DBUnitConfig dbUnitConfig, String currentMethod) {
         ConnectionConfig connectionConfig = dbUnitConfig.getConnectionConfig();
         if ("".equals(connectionConfig.getUrl()) || "".equals(connectionConfig.getUser())) {
-            throw new RuntimeException(String.format("Could not create JDBC connection for method %s, provide a connection at test level or via configuration, see documentation here: https://github.com/rmpestano/dbunit-rules#jdbc-connection", currentMethod));
+            throw new RuntimeException(String.format("Could not create JDBC connection for method %s, provide a connection at test level or via configuration, see documentation here: https://github.com/database-rider/database-rider#7-junit-5", currentMethod));
         }
 
         try {
@@ -320,20 +315,20 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         }
         return null;
     }
-    
-    
+
+
     /**
      * one test context (datasetExecutor, dbunitConfig etc..) per test
      */
-	private DBUnitTestContext getTestContext(ExtensionContext context) {
-		Class<?> testClass = context.getTestClass().get();
-		Store store = context.getStore(namespace);
-		DBUnitTestContext testContext = store.get(testClass,DBUnitTestContext.class);
-		if(testContext == null){
-			testContext = new DBUnitTestContext();
-			store.put(testClass, testContext);
-		}
-		return testContext;
-	}
+    private DBUnitTestContext getTestContext(ExtensionContext context) {
+        Class<?> testClass = context.getTestClass().get();
+        Store store = context.getStore(namespace);
+        DBUnitTestContext testContext = store.get(testClass, DBUnitTestContext.class);
+        if (testContext == null) {
+            testContext = new DBUnitTestContext();
+            store.put(testClass, testContext);
+        }
+        return testContext;
+    }
 
 }

@@ -79,7 +79,7 @@ public class LeakHunterIt {
         }
     }
 
-//tag::find-leak[]
+//tag::create-leak[]
 
     private void createLeak() throws SQLException {
         Connection connection = getConnection();
@@ -89,7 +89,7 @@ public class LeakHunterIt {
             assertThat(resultSet.getInt(1)).isEqualTo(2);
         }
     }
-//end::find-leak[]
+//end::create-leak[]
 
     private void createAndCloseConnection() throws SQLException {
         Connection connection = getConnection();

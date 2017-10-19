@@ -22,6 +22,7 @@ public class DBRiderAnnotationIt {
             EntityManagerProvider.instance("junit5-pu").connection();
 
 
+    //tag::junit5-annotation[]
     @DBRider //shortcut for @ExtendWith(DBUnitExtension.class) and @Test
     @DataSet(value = "usersWithTweet.yml")
     public void shouldListUsers() {
@@ -30,4 +31,5 @@ public class DBRiderAnnotationIt {
         assertThat(users).isNotNull().isNotEmpty().hasSize(2);
         assertThat(users.get(0)).isEqualTo(new User(1));
     }
+    //end::junit5-annotation[]
 }

@@ -14,7 +14,7 @@ import org.junit.runner.RunWith;
 import java.sql.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.expectThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(DBUnitExtension.class)
 @RunWith(JUnitPlatform.class)
@@ -32,7 +32,7 @@ public class LeakHunterJUnit5It {
 
         createLeak();
 
-        Throwable exception = expectThrows(LeakHunterException.class, () -> {
+        Throwable exception = assertThrows(LeakHunterException.class, () -> {
         });
         assertThat(exception.getMessage()).isEqualTo("Execution of method shouldFindConnectionLeak left 1 open connection(s).");
     }
@@ -42,7 +42,7 @@ public class LeakHunterJUnit5It {
     public void shouldFindTwoConnectionLeaks() throws SQLException {
         createLeak();
         createLeak();
-        Throwable exception = expectThrows(LeakHunterException.class, () -> {
+        Throwable exception = assertThrows(LeakHunterException.class, () -> {
         });
         assertThat(exception.getMessage()).isEqualTo("Execution of method shouldFindConnectionLeak left 1 open connection(s).");
 

@@ -5,15 +5,15 @@ import java.sql.Connection;
 /**
  * Created by pestano on 07/09/16.
  *
- * Leak hunter for H2 and HSQLDB
+ * Leak hunter for HSQLDB
  */
-class InMemoryLeakHunter extends AbstractLeakHunter {
+class HsqlDBLeakHunter extends AbstractLeakHunter {
 
     private final String sql = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SYSTEM_SESSIONS";
 
     private Connection connection;
 
-    public InMemoryLeakHunter(Connection connection) {
+    public HsqlDBLeakHunter(Connection connection) {
         this.connection = connection;
     }
 
