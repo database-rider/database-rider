@@ -9,8 +9,43 @@ endif::[]
 
 Below is an overview of what has changed on each `Database Rider` version.
 
+== https://github.com/database-rider/database-rider/releases/tag/1.2.3[1.2.3 (2017-20-10)^]
 
-== https://github.com/database-rider/database-rider/releases/tag/1.0.0[1.0.0 (2017-04-03)^]
+Bug fixes::
+    * Changes the way https://database-rider.github.io/database-rider/1.2.3/documentation.html#Dynamic-data-using-scritable-datasets[dynamic datasets^] script replacements are done. Instead of using a https://www.programcreek.com/java-api-examples/index.php?api=org.dbunit.dataset.ReplacementDataSet[ReplacementDataSet^] We have created our own "ScriptableDataSet". The main problem with Replacements is that if a replace pattern is repeated in a dataset the replacement will be the same for all matches.
+
+== https://github.com/database-rider/database-rider/releases/tag/1.2.2[1.2.2 (2017-02-10)^]
+
+Enhancements::
+    * JUnit5 - update dependency to 1.0.0. (https://github.com/database-rider/database-rider/issues/45[#45])
+
+Bug fixes::
+     * LeakHunter uses wrong sql to count open connections in H2; (https://github.com/database-rider/database-rider/issues/43[#43])
+     * Transactional interceptor doesn't close transaction when test falls down by assert. (https://github.com/database-rider/database-rider/issues/44[#44])
+
+== https://github.com/database-rider/database-rider/releases/tag/1.2.1[1.2.1 (2017-01-09)^]
+
+Enhancements::
+    * ClassLevel DataSet annotation support for Rider CDI (https://github.com/database-rider/database-rider/issues/40[#40])
+    * Update JUnit5 to RC3 (https://github.com/database-rider/database-rider/issues/41[#41])
+
+
+
+== https://github.com/database-rider/database-rider/releases/tag/1.2.0[1.2.0 (2017-15-08)^]
+
+Enhancements::
+    * DataBaseSeedingException after migrating from rider-core:1.0.0 to 1.1.0 (https://github.com/database-rider/database-rider/issues/26[#26])
+    * Loading script file from within jar (https://github.com/database-rider/database-rider/issues/27[#27])
+    * Config to apply uppercase to the table and columns names (related to #37) (https://github.com/database-rider/database-rider/issues/32[#32])
+    * Consider all rows to get the columns and not the first one (https://github.com/database-rider/database-rider/issues/34[#34])
+    * Updates to latest JUnit5 (https://github.com/database-rider/database-rider/issues/35[#35])
+    * Support for Case INsensitive YML dataset (https://github.com/database-rider/database-rider/issues/37[#37])
+
+Bug fixes::
+    *  NPE on test methods not annotated with @Dataset in junit 5 (https://github.com/database-rider/database-rider/issues/29[#29])
+
+
+== https://github.com/database-rider/database-rider/releases/tag/1.1.0[1.1.0 (2017-04-03)^]
 
 Enhancements::
     * Merge global and user defined configuration (https://github.com/database-rider/database-rider/issues/24[#24])
