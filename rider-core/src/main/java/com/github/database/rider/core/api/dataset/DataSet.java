@@ -1,7 +1,5 @@
 package com.github.database.rider.core.api.dataset;
 
-import com.github.database.rider.core.dataset.DataSetExecutorImpl;
-
 import java.lang.annotation.*;
 
 /**
@@ -25,7 +23,7 @@ public @interface DataSet {
    *
    * Use this option to work with multiple database connections. Remember that each executor has its own connection.
    */
-  String executorId() default DataSetExecutorImpl.DEFAULT_EXECUTOR_ID;
+  String executorId() default "";
 
   /**
    * @return DataSet seed strategy. Default is CLEAN_INSERT, meaning that DBUnit will clean and then insert data in tables present in provided dataset.
