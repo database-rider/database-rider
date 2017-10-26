@@ -1,4 +1,4 @@
-package com.github.database.rider.junit5.model;
+package com.github.database.rider.junit5.model.schema;
 
 import javax.persistence.*;
 import java.util.List;
@@ -7,6 +7,7 @@ import java.util.List;
  * Created by pestano on 22/07/15.
  */
 @Entity
+@Table(name="USER",schema="PUBLIC")
 public class User {
 
     @Id

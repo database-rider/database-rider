@@ -1,9 +1,9 @@
-dbo.USER:
+PUBLIC.USER:
   - ID: 1
     NAME: "@realpestano"
   - ID: 2
     NAME: "@dbunit"
-dbo.TWEET:
+PUBLIC.TWEET:
   - ID: abcdef12345
     CONTENT: "dbunit rules!"
     DATE: "[DAY,NOW]"
