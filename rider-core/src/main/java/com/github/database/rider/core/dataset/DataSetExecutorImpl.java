@@ -182,7 +182,11 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 break;
             }
             case "xml": {
-                target = new ScriptableDataSet(new FlatXmlDataSetBuilder().build(getDataSetStream(dataSetName)));
+                try {
+                    target = new ScriptableDataSet(new FlatXmlDataSetBuilder().build(getDataSetUrl(dataSetName)));
+                }catch (Exception e) {
+                    target = new ScriptableDataSet(new FlatXmlDataSetBuilder().build(getDataSetStream(dataSetName)));
+                }
                 break;
             }
             case "csv": {
@@ -212,6 +216,22 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         }
 
         return new CompositeDataSet(dataSets.toArray(new IDataSet[dataSets.size()]));
+    }
+
+    private URL getDataSetUrl(String dataSet) {
+         if (!dataSet.startsWith("/")) {
+            dataSet = "/" + dataSet;
+        }
+        URL resource = getClass().getResource(dataSet);
+        if (resource == null) {// if not found try to get from datasets folder
+            resource = getClass().getResource("/datasets" + dataSet);
+        }
+        if (resource == null) {
+            throw new RuntimeException(
+                    String.format("Could not find dataset '%s' under 'resources' or 'resources/datasets' directory.",
+                            dataSet.substring(1)));
+        }
+        return resource;
     }
 
     @Override
