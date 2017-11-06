@@ -9,8 +9,8 @@
     <artifactId>rider-junit5</artifactId>
 
     <properties>
-        <version.junit-platform>1.0.0</version.junit-platform>
-        <version.junit-jupiter>5.0.0</version.junit-jupiter>
+        <version.junit-platform>1.0.1</version.junit-platform>
+        <version.junit-jupiter>5.0.1</version.junit-jupiter>
     </properties>
     <dependencies>
         <dependency>
