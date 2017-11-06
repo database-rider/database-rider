@@ -1,0 +1,9 @@
+TWEET:
+  - ID: 1
+    CONTENT: "FOO:01"
+    DATE: "groovy:new Date()"
+    USER_ID: 1
+  - ID: 2
+    CONTENT: "FOO:02"
+    DATE: "groovy:new Date()"
+    USER_ID: 1
