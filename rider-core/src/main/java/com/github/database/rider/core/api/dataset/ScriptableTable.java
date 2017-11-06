@@ -23,11 +23,11 @@ public class ScriptableTable implements ITable {
     //any non digit char (except 'regex') followed by ':' followed by 1 or more chars e.g: js: new Date().toString()
     private static final Pattern scriptEnginePattern = Pattern.compile("^(?!regex)[a-zA-Z]+:.+");
 
-    private static Logger log = Logger.getLogger(ScriptableTable.class.getName());
+    static Logger log = Logger.getLogger(ScriptableTable.class.getName());
 
+    ScriptEngineManager manager;
+    
     private Map<String, ScriptEngine> engines;
-
-    private ScriptEngineManager manager;
 
     private ITable delegate;
 
@@ -80,11 +80,10 @@ public class ScriptableTable implements ITable {
             if (engine != null) {
                 engines.put(engineName, engine);
             } else {
-                throw new RuntimeException(String.format("Could not find script engine with name %s in classpath", engineName));
+                log.warning(String.format("Could not find script engine by name '%s'", engineName));
             }
             return engine;
         }
-
     }
 
     /**
