@@ -80,5 +80,20 @@ public class ScriptReplacementsIt {
         assertThat(tweet1.getContent()).isNotEqualTo(tweet2.getContent());
     }
 
+// tag::unknown[],i.e. part of value instead of defining a script engine
+    @Test
+    @DataSet(value = "datasets/yml/colonContent-replacements.yml",cleanBefore = true, disableConstraints = true, executorId = "rules-it")
+    public void shouldLogWarningSinceColonIsPartOfValueAndImpliesNullScriptEngine() {
+        List<Tweet> tweets = emProvider.em().createQuery("select t from Tweet t").getResultList();
+        assertThat(tweets).isNotNull().hasSize(2);
+        Tweet tweet1 = tweets.get(0);
+        Tweet tweet2 = tweets.get(1);
+        assertThat(tweet1).isNotEqualTo(tweet2);
+
+        assertThat(tweet1.getContent()).isEqualTo("FOO:01"); // pure content, no (=null) script engine found, warn log 
+        assertThat(tweet2.getContent()).isEqualTo("FOO:02");
+        assertThat(tweet1.getDate()).isLessThanOrEqualTo(tweet2.getDate()); // groovy:new Date()'s
+    }
+// end::unknown[]
 
 }
