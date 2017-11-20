@@ -101,6 +101,7 @@ include::../../../../pom.xml[tags=version]
 #{----}
 #{deltaspike.testcontrol.use_test_class_as_cdi_bean=true}
 #{----}
+#{IMPORTANT: When using above configuration the JUnit `@Before` will not work as expected, see https://lists.apache.org/thread.html/60ae2ade9ff8c5588a53a138b64c94e505455185358c21f663a5fd33@%3Cusers.deltaspike.apache.org%3E[discussion here^].}
 #{======}
 Given DBUnit interceptor is enabled in your test beans.xml:
   """
