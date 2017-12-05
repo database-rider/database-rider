@@ -96,6 +96,18 @@ public class DatabaseRiderIt {
     // end::seedDatabase[]
 
     @Test
+    @DataSet(value = "datasets/yml/users.yml", strategy = SeedStrategy.TRUNCATE_INSERT, useSequenceFiltering = true)
+    public void shouldSeedUserDataSetUsingTruncateInsert(){
+        List<User> users  = EntityManagerProvider.em("rules-it").createQuery("select u from User u", User.class).getResultList();
+        assertThat(users).isNotNull();
+        assertThat(users.size()).isEqualTo(2);
+        assertThat(users.get(0).getId()).isEqualTo(1);
+        assertThat(users.get(0).getName()).isEqualTo("@realpestano");
+        assertThat(users.get(1).getId()).isEqualTo(2);
+        assertThat(users.get(1).getName()).isEqualTo("@dbunit");
+    }
+
+    @Test
     @DataSet(value = "datasets/yml/users.yml")
     public void shouldLoadUserFollowers() {
         User user = (User) EntityManagerProvider.em().createQuery("select u from User u join fetch u.tweets join fetch u.followers left join fetch u.followers where u.id = 1").getSingleResult();
