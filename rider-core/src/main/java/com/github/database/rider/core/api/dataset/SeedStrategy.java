@@ -4,7 +4,7 @@ package com.github.database.rider.core.api.dataset;
  * Created by pestano on 23/07/15.
  */
 
-import org.dbunit.operation.DatabaseOperation;
+import org.dbunit.operation.*;
 
 /**
  Same as arquillian persistence: https://docs.jboss.org/author/display/ARQ/Persistence
@@ -25,6 +25,7 @@ import org.dbunit.operation.DatabaseOperation;
  */
 public enum SeedStrategy {
     CLEAN_INSERT(DatabaseOperation.CLEAN_INSERT),
+    TRUNCATE_INSERT(new CompositeOperation(DatabaseOperation.TRUNCATE_TABLE, DatabaseOperation.INSERT)),
     INSERT(DatabaseOperation.INSERT),
     REFRESH(DatabaseOperation.REFRESH),
     UPDATE(DatabaseOperation.UPDATE);
