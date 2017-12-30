@@ -173,8 +173,8 @@ This module is the basis for subsequent modules. It contains a JUnit rule (shown
 ----
 <dependency>
       <groupId>com.github.database-rider</groupId>
-      <artifactId>database-rider</artifactId>
-      <version>1.2.2</version>
+      <artifactId>rider-core</artifactId>
+      <version>1.2.5</version>
       <scope>test</scope>
 </dependency>
 ----
