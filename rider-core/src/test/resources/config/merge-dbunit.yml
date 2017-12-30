@@ -1,4 +1,5 @@
 leakHunter: true
 properties:
   qualifiedTableNames: true
+  fetchSize: 200
   escapePattern: "[?]"
