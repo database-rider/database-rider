@@ -39,6 +39,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.github.database.rider.core.connection.RiderDataSource.DBType.POSTGRESQL;
+
 /**
  * Created by pestano on 26/07/15.
  */
@@ -552,11 +554,12 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     private String resolveSchema(ResultSet result) {
         try {
             if (schemaName == null) {
-                schemaName = result.getString("TABLE_SCHEMA");
+                schemaName = result.getString(getRiderDataSource().getDBType() == POSTGRESQL ? "TABLE_SCHEM"
+                        : "TABLE_SCHEMA");
             }
             return schemaName;
         } catch (Exception e) {
-
+            log.error("Could not resolve schema: " + e.getMessage(), e);
         }
         return null;
     }
