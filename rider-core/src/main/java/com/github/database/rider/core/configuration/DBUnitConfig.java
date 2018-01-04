@@ -1,12 +1,14 @@
 package com.github.database.rider.core.configuration;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.configuration.Orthography;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
+import org.yaml.snakeyaml.Yaml;
+
+import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * represents DBUnit configuration of a dataset executor.
@@ -14,32 +16,88 @@ import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 public class DBUnitConfig {
 
     private String executorId;
-
     private Boolean cacheConnection;
-
     private Boolean cacheTableNames;
-
     private Boolean leakHunter;
-
     private Orthography caseInsensitiveStrategy;
-
     private Map<String, Object> properties;
-
-    private ConnectionConfig connectionConfig = new ConnectionConfig();
+    private ConnectionConfig connectionConfig;
 
     public DBUnitConfig() {
-        this.executorId = DataSetExecutorImpl.DEFAULT_EXECUTOR_ID;
-        cacheConnection = false;
-        cacheTableNames = false;
-        leakHunter = false;
+        this(DataSetExecutorImpl.DEFAULT_EXECUTOR_ID);
     }
 
     public DBUnitConfig(String executor) {
-        properties = new HashMap<>();
         this.executorId = executor;
-        if ("".equals(this.executorId)) {
-            this.executorId = DataSetExecutorImpl.DEFAULT_EXECUTOR_ID;
+        initDefault();
+    }
+
+    private void initDefault() {
+        if ("".equals(executorId)) {
+            executorId = DataSetExecutorImpl.DEFAULT_EXECUTOR_ID;
         }
+
+        cacheConnection = true;
+        cacheTableNames = true;
+        leakHunter = false;
+        caseInsensitiveStrategy = Orthography.UPPERCASE;
+
+        initDefaultProperties();
+        initDefaultConnectionConfig();
+    }
+
+    private void initDefaultProperties() {
+        if (properties == null) {
+            properties = new HashMap<>();
+        }
+
+        putIfAbsent(properties, "batchedStatements", false);
+        putIfAbsent(properties, "qualifiedTableNames", false);
+        putIfAbsent(properties, "caseSensitiveTableNames", false);
+        putIfAbsent(properties, "batchSize", 100);
+        putIfAbsent(properties, "fetchSize", 100);
+        putIfAbsent(properties, "allowEmptyFields", false);
+    }
+
+    private <K, V> void putIfAbsent(Map<K, V> map, K key, V value) {
+        if (!map.containsKey(key)) {
+            map.put(key, value);
+        }
+    }
+
+    private void initDefaultConnectionConfig() {
+        if (connectionConfig == null) {
+            connectionConfig = new ConnectionConfig();
+        }
+
+        if (connectionConfig.getDriver() == null) {
+            connectionConfig.setDriver("");
+        }
+
+        if (connectionConfig.getUrl() == null) {
+            connectionConfig.setUrl("");
+        }
+
+        if (connectionConfig.getUser() == null) {
+            connectionConfig.setUser("");
+        }
+
+        if (connectionConfig.getPassword() == null) {
+            connectionConfig.setPassword("");
+        }
+    }
+
+    public static DBUnitConfig fromCustomGlobalFile() {
+        InputStream customConfiguration = Thread.currentThread().getContextClassLoader().getResourceAsStream("dbunit.yml");
+        if (customConfiguration != null) {
+            DBUnitConfig configFromFile = new Yaml().loadAs(customConfiguration, DBUnitConfig.class);
+            configFromFile.initDefaultProperties();
+            configFromFile.initDefaultConnectionConfig();
+
+            return configFromFile;
+        }
+
+        return new DBUnitConfig();
     }
 
     public static DBUnitConfig from(DBUnit dbUnit) {
