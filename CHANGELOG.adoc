@@ -9,6 +9,31 @@ endif::[]
 
 Below is an overview of what has changed on each `Database Rider` version.
 
+== https://github.com/database-rider/database-rider/releases/tag/1.2.6[1.2.6 (2018-04-01)^]
+
+Enhancements::
+    * Seed strategy for truncate insert (https://github.com/database-rider/database-rider/issues/62[#62])
+
+Bug fixes::
+    * Incorrect artifactId in readme (https://github.com/database-rider/database-rider/issues/64[#64])
+    * Merging default configuration with configuration in custom file (https://github.com/database-rider/database-rider/issues/65[#65])
+
+== https://github.com/database-rider/database-rider/releases/tag/1.2.5[1.2.5 (2017-06-11)^]
+
+Enhancements::
+    * Update to latest JUnit5 api (Jupiter 5.0.1) (https://github.com/database-rider/database-rider/issues/55[#55])
+
+Bug fixes::
+    * No algorithm found for in ScriptableTable bug (https://github.com/database-rider/database-rider/issues/53[#53])
+
+== https://github.com/database-rider/database-rider/releases/tag/1.2.4[1.2.4 (2017-30-10)^]
+
+Enhancements::
+    * executorId and multiple database tests (https://github.com/database-rider/database-rider/issues/47[#47])
+
+Bug fixes::
+    * FlatXmlDataSetLoader doesn't allow reading the dtd from the same folder as the xml (https://github.com/database-rider/database-rider/issues/50[#50])
+
 == https://github.com/database-rider/database-rider/releases/tag/1.2.3[1.2.3 (2017-20-10)^]
 
 Bug fixes::
