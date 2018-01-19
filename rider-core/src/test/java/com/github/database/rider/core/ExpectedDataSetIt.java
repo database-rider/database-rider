@@ -16,6 +16,7 @@ import org.junit.runners.JUnit4;
 
 import static com.github.database.rider.core.util.EntityManagerProvider.em;
 import static com.github.database.rider.core.util.EntityManagerProvider.tx;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by rmpestano on 6/15/16.
@@ -37,7 +38,7 @@ public class ExpectedDataSetIt {
     // tag::expected[]
     @Test
     @DataSet(cleanBefore = true)//<1>
-    @ExpectedDataSet(value = "yml/expectedUsers.yml",ignoreCols = "id")
+    @ExpectedDataSet(value = "yml/expectedUsers.yml", ignoreCols = "id")
     public void shouldMatchExpectedDataSet() {
         EntityManagerProvider instance = EntityManagerProvider.newInstance("rules-it");
         User u = new User();
@@ -53,7 +54,7 @@ public class ExpectedDataSetIt {
 
     @Test
     @DataSet(cleanBefore = true)
-    @ExpectedDataSet(value = "yml/expectedUsers.yml",ignoreCols = "id")
+    @ExpectedDataSet(value = "yml/expectedUsers.yml", ignoreCols = "id")
     public void shouldMatchExpectedDataSetClearingDataBaseBefore() {
         EntityManagerProvider instance = EntityManagerProvider.newInstance("rules-it");
         User u = new User();
@@ -69,7 +70,7 @@ public class ExpectedDataSetIt {
     @Ignore(value = "How to test failled comparisons?")
     // tag::faillingExpected[]
     @Test
-    @ExpectedDataSet(value = "yml/expectedUsers.yml",ignoreCols = "id")
+    @ExpectedDataSet(value = "yml/expectedUsers.yml", ignoreCols = "id")
     public void shouldNotMatchExpectedDataSet() {
         User u = new User();
         u.setName("non expected user1");
@@ -104,7 +105,7 @@ public class ExpectedDataSetIt {
     @ExpectedDataSet(value = "yml/expectedUser.yml", ignoreCols = "id")
     public void shouldMatchExpectedDataSetAfterSeedingDataBase() {
         tx().begin();
-        em().remove(EntityManagerProvider.em().find(User.class,1L));
+        em().remove(EntityManagerProvider.em().find(User.class, 1L));
         tx().commit();
     }
     // end::expectedWithSeeding[]
@@ -114,8 +115,8 @@ public class ExpectedDataSetIt {
     @ExpectedDataSet(value = "yml/empty.yml")
     public void shouldMatchEmptyYmlDataSet() {
         EntityManagerProvider.tx().begin();
-        EntityManagerProvider.em().remove(EntityManagerProvider.em().find(User.class,1L));
-        EntityManagerProvider.em().remove(EntityManagerProvider.em().find(User.class,2L));
+        EntityManagerProvider.em().remove(EntityManagerProvider.em().find(User.class, 1L));
+        EntityManagerProvider.em().remove(EntityManagerProvider.em().find(User.class, 2L));
         EntityManagerProvider.tx().commit();
     }
 
@@ -123,15 +124,15 @@ public class ExpectedDataSetIt {
     @DataSet(value = "yml/user.yml", disableConstraints = true, transactional = true)
     @ExpectedDataSet(value = "yml/empty.yml")
     public void shouldMatchEmptyYmlDataSetWithTransaction() {
-        EntityManagerProvider.em().remove(EntityManagerProvider.em().find(User.class,1L));
-        EntityManagerProvider.em().remove(EntityManagerProvider.em().find(User.class,2L));
+        EntityManagerProvider.em().remove(EntityManagerProvider.em().find(User.class, 1L));
+        EntityManagerProvider.em().remove(EntityManagerProvider.em().find(User.class, 2L));
     }
 
 
     @Test
-    @DataSet(cleanBefore = true,transactional = true)
-    @ExpectedDataSet(value = {"yml/user.yml","yml/tweet.yml"}, ignoreCols = {"id","user_id"})
-    public void shouldMatchMultipleDataSets(){
+    @DataSet(cleanBefore = true, transactional = true)
+    @ExpectedDataSet(value = {"yml/user.yml", "yml/tweet.yml"}, ignoreCols = {"id", "user_id"})
+    public void shouldMatchMultipleDataSets() {
         User u = new User();
         u.setName("@realpestano");
         User u2 = new User();
@@ -144,5 +145,19 @@ public class ExpectedDataSetIt {
         em().persist(t);
 
     }
+
+
+    @Test
+    @DataSet(value = "datasets/csv/USER.csv", cleanBefore = true, transactional = true)
+    @ExpectedDataSet(value = "datasets/csv/expected/USER.csv")
+    public void shouldMatchCsvDataSet() {
+        User user = (User) EntityManagerProvider.em().createQuery("select u from User u where u.id = 1").getSingleResult();
+        assertThat(user).isNotNull();
+        assertThat(user.getName()).isEqualTo("@realpestano");
+        user.setName("@dbrider");
+        assertThat(user.getTweets()).isNotNull().hasSize(1);
+        user.getTweets().get(0).setContent("database rider rules!");
+    }
+
 
 }
