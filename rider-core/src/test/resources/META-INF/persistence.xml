@@ -151,5 +151,25 @@
     </persistence-unit>
 
 
+     <persistence-unit name="postgre-it" transaction-type="RESOURCE_LOCAL">
+
+    <class>com.github.database.rider.core.model.lowercase.User</class>
+    <class>com.github.database.rider.core.model.lowercase.Tweet</class>
+    <class>com.github.database.rider.core.model.lowercase.Follower</class>
+
+        <properties>
+            <property name="javax.persistence.jdbc.driver" value="org.testcontainers.jdbc.ContainerDatabaseDriver" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:tc:postgresql://localhost/test"/>
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL9Dialect" />
+            <property name="javax.persistence.jdbc.user" value="test"/>
+            <property name="javax.persistence.jdbc.password" value="test"/>
+            <property name="eclipselink.logging.level.sql" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="false"/>
+        </properties>
+
+    </persistence-unit>
+
+
 
 </persistence>

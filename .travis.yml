@@ -1,9 +1,12 @@
-sudo: false
+dist: trusty
+sudo: required
 language: java
 jdk: oraclejdk8
 cache:
   directories:
   - "$HOME/.m2/repository"
+services:
+- docker
 env:
   global:
   - secure: NeGB3Dm+jI71QZnHrDB+5mbrKdnYAEzA724AzxKEx+ZQnjik8C9HGNc6M3LzED2gxPba5f06DjJAK55TP1dw/TVsvDC/8PvDtlpReucvCdvA0RSwFtCJlf95Itsz1CAdVZTzIsnKjdMT5CR5TNFyrPZ5NY0WNJiBPUcHfjrOD4vzYgvVYKAyXADxaPIrwUfOokcpbNupSBpFRM+N6/X3CcG8fwMyepGhBugsSaOvg/7pe1nduao4KthnTsP4urmTYZF9LUmrZyw/X5HlkEZWOUqi9q5e/HTTwHzwmYN+6g7ZPCh8KOUQDyNo+RbBip1LwiycutnxMtXPN7nNg7S4RUBTiG1Wf/F6fL6muyqIyBOxtgjNWn+OncTwRVY80MI5P3L1bJBXtJ9nCZ8sQRdieDuLO4Ss6E1a6hsovKcEtxWWCuRfRNrjhIOU5wCHXyKP6X0MloL9+avsSYSsluXXmUM2S6/MjsoojZ5UFSQs9LAXwV8GTQejMb9yNBs4KKDjVrtIeN7w6w6JLUASIZZkXktGmT/KJwapv4z53iSAXlSJ0/44c76PV7T3gBW/DG/KWj1NlWrhd8J01fwHZvQuxq3xeOPQq2TAJUq4apJ4KuYaINGOpndTnpwPNRoP7UVBj176Atc4+NrpNKCdIg0dBWVUpqVkbTkJM+c77b/SBws=
