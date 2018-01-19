@@ -55,7 +55,7 @@ public class DatabaseRiderIt {
     }
 
     @Test
-    @DataSet(value = "datasets/yml/users.yml", executeStatementsBefore = "SET DATABASE REFERENTIAL INTEGRITY FALSE;")
+    @DataSet(value = "datasets/yml/users.yml", executeStatementsBefore = "SET DATABASE REFERENTIAL INTEGRITY FALSE;", executeStatementsAfter = "SET DATABASE REFERENTIAL INTEGRITY TRUE;")
     public void shouldSeedDataSetDisablingContraintsViaStatement() {
         User user = (User) EntityManagerProvider.em().createQuery("select u from User u join fetch u.tweets join fetch u.followers join fetch u.tweets join fetch u.followers where u.id = 1").getSingleResult();
         assertThat(user).isNotNull();
@@ -179,6 +179,7 @@ public class DatabaseRiderIt {
         assertThat(user).isNotNull();
         assertThat(user.getName()).isEqualTo("@realpestano");
     }
+
 
     @Test
     @DataSet("xls/users.xls")
