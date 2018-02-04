@@ -147,4 +147,8 @@ public class DataSetProcessor {
             log.warn("Could not enable constraints.", e);
         }
     }
+
+    public DataSetExecutor getDataSetExecutor() {
+        return dataSetExecutor;
+    }
 }

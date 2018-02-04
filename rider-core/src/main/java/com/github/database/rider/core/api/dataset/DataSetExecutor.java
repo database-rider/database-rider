@@ -26,7 +26,7 @@ public interface DataSetExecutor{
 
     IDataSet loadDataSets(String[] datasets) throws DataSetException, IOException;
 
-    void initConnectionFromConfig(ConnectionConfig connectionConfig) throws SQLException;
+    void initConnectionFromConfig(ConnectionConfig connectionConfig);
 
     void clearDatabase(DataSetConfig dataset) throws SQLException;
 
@@ -49,7 +49,7 @@ public interface DataSetExecutor{
 
     DBUnitConfig getDBUnitConfig();
 
-    RiderDataSource getRiderDataSource() throws DatabaseUnitException, SQLException;
+    RiderDataSource getRiderDataSource() throws SQLException;
 
     void enableConstraints() throws SQLException ;
 

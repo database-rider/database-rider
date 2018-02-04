@@ -1,41 +1,30 @@
 package com.github.database.rider.core.leak;
 
 import com.github.database.rider.core.api.leak.LeakHunter;
-import com.github.database.rider.core.util.DriverUtils;
+import com.github.database.rider.core.connection.RiderDataSource;
 
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Created by pestano on 07/09/16.
  */
 public class LeakHunterFactory {
 
-    private static final Logger LOG = Logger.getLogger(LeakHunterFactory.class.getName());
+    public static LeakHunter from(RiderDataSource riderDataSource, String methodName) throws SQLException {
 
-    public static LeakHunter from(Connection connection) {
-        try {
-            if (connection == null || connection.isClosed()) {
-                throw new RuntimeException("Cannot create Leak Hunter from a null or closed connection");
-            }
-        } catch (SQLException e) {
-            LOG.log(Level.SEVERE, e.getMessage(), e);
+        switch (riderDataSource.getDBType()) {
+            case H2:
+                return new H2LeakHunter(riderDataSource.getConnection(), methodName);
+            case HSQLDB:
+                return new HsqlDBLeakHunter(riderDataSource.getConnection(), methodName);
+            case POSTGRESQL:
+                return new PostgreLeakHunter(riderDataSource.getConnection(), methodName);
+            case MYSQL:
+                return new MySqlLeakHunter(riderDataSource.getConnection(), methodName);
+            case ORACLE:
+                return new OracleLeakHunter(riderDataSource.getConnection(), methodName);
+            default:
+                throw new IllegalArgumentException("unknown db type");
         }
-        String driverName = DriverUtils.getDriverName(connection);
-
-        if (DriverUtils.isHsql(driverName)) {
-            return new HsqlDBLeakHunter(connection);
-        } else if(DriverUtils.isH2(driverName)) {
-            return new H2LeakHunter(connection);
-        } else if (DriverUtils.isPostgre(driverName)) {
-            return new PostgreLeakHunter(connection);
-        } else if (DriverUtils.isMysql(driverName)) {
-            return new MySqlLeakHunter(connection);
-        } else if (DriverUtils.isOracle(driverName)) {
-            return new OracleLeakHunter(connection);
-        }
-        return null;
     }
 }

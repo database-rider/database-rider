@@ -12,13 +12,21 @@ import java.sql.Statement;
  */
 public abstract class AbstractLeakHunter implements LeakHunter {
 
+    private final String methodName;
+    private Integer openConnectionsBeforeExecution;
+
+    public AbstractLeakHunter(String methodName) {
+        this.methodName = methodName;
+    }
+
     @Override
     public int openConnections() {
         try (Statement statement = getConnection().createStatement()) {
             try (ResultSet resultSet = statement.executeQuery(leakCountSql())) {
-                while (resultSet.next()) {
+                if (resultSet.next()) {
                     return resultSet.getInt(1);
                 }
+
                 return 0;
             }
         } catch (SQLException e) {
@@ -26,8 +34,25 @@ public abstract class AbstractLeakHunter implements LeakHunter {
         }
     }
 
+    @Override
+    public int measureConnectionsBeforeExecution() {
+        return openConnectionsBeforeExecution = openConnections();
+    }
+
+    @Override
+    public void checkConnectionsAfterExecution() throws LeakHunterException {
+        if (openConnectionsBeforeExecution == null) {
+            throw new IllegalStateException("unknown number of opened connections before execution");
+        }
+
+        int openConnectionsAfterExecution = openConnections();
+
+        if (openConnectionsAfterExecution > openConnectionsBeforeExecution) {
+            throw new LeakHunterException(methodName, openConnectionsAfterExecution - openConnectionsBeforeExecution);
+        }
+    }
+
     protected abstract String leakCountSql();
 
     protected abstract Connection getConnection();
-
 }

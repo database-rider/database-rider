@@ -12,7 +12,8 @@ class OracleLeakHunter extends AbstractLeakHunter {
 
     Connection connection;
 
-    public OracleLeakHunter(Connection connection){
+    public OracleLeakHunter(Connection connection, String methodName) {
+        super(methodName);
         this.connection = connection;
     }
 

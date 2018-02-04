@@ -2,19 +2,11 @@ package com.github.database.rider.junit5;
 
 import com.github.database.rider.core.api.dataset.DataSetExecutor;
 import com.github.database.rider.core.api.leak.LeakHunter;
-import com.github.database.rider.core.configuration.DataSetConfig;
 
 public class DBUnitTestContext {
-	
-	
-	private DataSetExecutor executor;
-	
-	private LeakHunter leakHunter;
-	
-	private DataSetConfig dataSetConfig;
-	
-	private int openConnections;
 
+	private DataSetExecutor executor;
+	private LeakHunter leakHunter;
 
 	public DataSetExecutor getExecutor() {
 		return executor;
@@ -33,29 +25,4 @@ public class DBUnitTestContext {
 		this.leakHunter = leakHunter;
 		return this;
 	}
-
-
-	public DataSetConfig getDataSetConfig() {
-		return dataSetConfig;
-	}
-	
-	public DBUnitTestContext setDataSetConfig(DataSetConfig dataSetConfig) {
-		this.dataSetConfig = dataSetConfig;
-		return this;
-	}
-
-	public int getOpenConnections() {
-		return openConnections;
-	}
-
-	public DBUnitTestContext setOpenConnections(int openConnections) {
-		this.openConnections = openConnections;
-		return this;
-	}
-
-	
-	
-
-	
-	
 }
