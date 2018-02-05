@@ -11,7 +11,8 @@ class PostgreLeakHunter extends AbstractLeakHunter {
 
     Connection connection;
 
-    public PostgreLeakHunter(Connection connection){
+    public PostgreLeakHunter(Connection connection, String methodName) {
+        super(methodName);
         this.connection = connection;
     }
 

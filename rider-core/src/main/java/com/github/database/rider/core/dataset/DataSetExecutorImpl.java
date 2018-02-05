@@ -9,7 +9,6 @@ import com.github.database.rider.core.assertion.DataSetAssertion;
 import com.github.database.rider.core.configuration.ConnectionConfig;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
-import com.github.database.rider.core.connection.ConnectionHolderImpl;
 import com.github.database.rider.core.connection.RiderDataSource;
 import com.github.database.rider.core.exception.DataBaseSeedingException;
 import com.github.database.rider.core.replacer.DateTimeReplacer;
@@ -79,10 +78,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     public static DataSetExecutorImpl instance(String executorId, ConnectionHolder connectionHolder) {
-        if (connectionHolder == null) {
-            throw new RuntimeException("Invalid connection");
-        }
-
         DataSetExecutorImpl instance = executors.get(executorId);
         if (instance == null) {
             instance = new DataSetExecutorImpl(executorId, connectionHolder,
@@ -92,6 +87,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         } else if (!instance.dbUnitConfig.isCacheConnection()) {
             instance.setConnectionHolder(connectionHolder);
         }
+
         return instance;
     }
 
@@ -404,11 +400,27 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     @Override
-    public void initConnectionFromConfig(ConnectionConfig connectionConfig) throws SQLException {
-        setConnectionHolder(new ConnectionHolderImpl(getConnectionFromConfig(connectionConfig)));
+    public void initConnectionFromConfig(final ConnectionConfig connectionConfig) {
+        setConnectionHolder(new ConnectionHolder() {
+
+            Connection connection;
+
+            @Override
+            public Connection getConnection() throws SQLException {
+                if (connection == null) {
+                    connection = getConnectionFromConfig(connectionConfig);
+                }
+
+                return connection;
+            }
+        });
     }
 
     private Connection getConnectionFromConfig(ConnectionConfig connectionConfig) throws SQLException {
+        if ("".equals(connectionConfig.getUrl()) || "".equals(connectionConfig.getUser())) {
+            throw new RuntimeException("Could not create JDBC connection, provide a connection at test level or via configuration, see documentation here: https://github.com/database-rider/database-rider#jdbc-connection");
+        }
+
         if (!"".equals(connectionConfig.getDriver())) {
             try {
                 Class.forName(connectionConfig.getDriver());
@@ -417,6 +429,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             }
 
         }
+
         return DriverManager.getConnection(connectionConfig.getUrl(), connectionConfig.getUser(),
                 connectionConfig.getPassword());
     }
@@ -727,6 +740,10 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     @Override
     public RiderDataSource getRiderDataSource() throws SQLException {
         if (riderDataSource == null) {
+            if (connectionHolder == null) {
+                initConnectionFromConfig(dbUnitConfig.getConnectionConfig());
+            }
+
             riderDataSource = new RiderDataSource(connectionHolder, dbUnitConfig);
         }
 

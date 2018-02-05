@@ -59,12 +59,10 @@ public class DBUnitInterceptorImpl implements Serializable {
                 em.getTransaction().begin();
             }
             LeakHunter leakHunter = null;
-            boolean leakHunterActivated = dbUnitConfig.isLeakHunter();
-            int openConnectionsBefore = 0;
             try {
-                if (leakHunterActivated) {
-                    leakHunter = LeakHunterFactory.from(dataSetProcessor.getConnection());
-                    openConnectionsBefore = leakHunter.openConnections();
+                if (dbUnitConfig.isLeakHunter()) {
+                    leakHunter = LeakHunterFactory.from(dataSetProcessor.getDataSetExecutor().getRiderDataSource(), invocationContext.getMethod().getName());
+                    leakHunter.measureConnectionsBeforeExecution();
                 }
                 proceed = invocationContext.proceed();
 
@@ -80,12 +78,8 @@ public class DBUnitInterceptorImpl implements Serializable {
                     em.getTransaction().rollback();
                 }
 
-                int openConnectionsAfter = 0;
                 if(leakHunter != null){
-                    openConnectionsAfter = leakHunter.openConnections();
-                    if(openConnectionsAfter > openConnectionsBefore){
-                        throw new LeakHunterException(invocationContext.getMethod().getName(),openConnectionsAfter - openConnectionsBefore);
-                    }
+                    leakHunter.checkConnectionsAfterExecution();
                 }
 
                 dataSetProcessor.exportDataSet(invocationContext.getMethod());

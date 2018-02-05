@@ -1,5 +1,7 @@
 package com.github.database.rider.core.api.leak;
 
+import com.github.database.rider.core.leak.LeakHunterException;
+
 /**
  * Created by pestano on 07/09/16.
  *
@@ -13,4 +15,14 @@ public interface LeakHunter {
      */
     int openConnections();
 
+    /**
+     * @return number of opened jdbc connections/sessions
+     */
+    int measureConnectionsBeforeExecution();
+
+    /**
+     * Check number of opened jdbc connections/sessions
+     * @throws LeakHunterException if the number of connections is greater than before execution
+     */
+    void checkConnectionsAfterExecution() throws LeakHunterException;
 }

@@ -13,10 +13,10 @@ class HsqlDBLeakHunter extends AbstractLeakHunter {
 
     private Connection connection;
 
-    public HsqlDBLeakHunter(Connection connection) {
+    public HsqlDBLeakHunter(Connection connection, String methodName) {
+        super(methodName);
         this.connection = connection;
     }
-
 
     @Override
     protected String leakCountSql() {

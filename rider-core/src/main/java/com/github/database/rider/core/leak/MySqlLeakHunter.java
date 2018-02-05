@@ -1,7 +1,5 @@
 package com.github.database.rider.core.leak;
 
-import com.github.database.rider.core.api.leak.LeakHunter;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,17 +8,16 @@ import java.sql.Statement;
 /**
  * Created by pestano on 07/09/16.
  */
-class MySqlLeakHunter implements LeakHunter {
-
+class MySqlLeakHunter extends AbstractLeakHunter {
 
     private final String sql = "SELECT COUNT(*) FROM v$session WHERE status = 'INACTIVE'";
 
     Connection connection;
 
-    public MySqlLeakHunter(Connection connection) {
+    public MySqlLeakHunter(Connection connection, String methodName) {
+        super(methodName);
         this.connection = connection;
     }
-
 
     @Override
     public int openConnections() {
@@ -39,5 +36,15 @@ class MySqlLeakHunter implements LeakHunter {
         } catch (SQLException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    @Override
+    protected String leakCountSql() {
+        return sql;
+    }
+
+    @Override
+    protected Connection getConnection() {
+        return connection;
     }
 }

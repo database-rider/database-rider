@@ -76,7 +76,7 @@ public class RiderDataSource {
         }
     }
 
-    private void configDatabaseProperties() throws SQLException {
+    private void configDatabaseProperties() {
         DatabaseConfig config = dbUnitConnection.getConfig();
         for (Map.Entry<String, Object> p : dbUnitConfig.getProperties().entrySet()) {
             ConfigProperty byShortName = DatabaseConfig.findByShortName(p.getKey());
@@ -104,7 +104,7 @@ public class RiderDataSource {
         }
     }
 
-    private DBType resolveDBType(String driverName) throws SQLException {
+    private DBType resolveDBType(String driverName) {
         if (DriverUtils.isHsql(driverName)) {
             return DBType.HSQLDB;
         } else if (DriverUtils.isH2(driverName)) {

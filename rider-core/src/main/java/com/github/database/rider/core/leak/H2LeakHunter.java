@@ -4,7 +4,7 @@ import java.sql.Connection;
 
 /**
  * Created by pestano on 07/09/16.
- *
+ * <p>
  * Leak hunter for H2
  */
 class H2LeakHunter extends AbstractLeakHunter {
@@ -13,12 +13,13 @@ class H2LeakHunter extends AbstractLeakHunter {
 
     private Connection connection;
 
-    public H2LeakHunter(Connection connection) {
+    public H2LeakHunter(Connection connection, String methodName) {
+        super(methodName);
         this.connection = connection;
     }
 
 
-     @Override
+    @Override
     protected String leakCountSql() {
         return sql;
     }
