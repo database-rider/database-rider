@@ -22,6 +22,7 @@
         <module>rider-cucumber</module>
         <module>rider-examples</module>
         <module>rider-junit5</module>
+        <module>rider-spring</module>
     </modules>
 
     <name>database-rider</name>

@@ -33,7 +33,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.database-rider</groupId>
-            <artifactId>rider-core</artifactId>
+            <artifactId>rider-spring</artifactId>
             <version>${project.parent.version}</version>
             <scope>test</scope>
         </dependency>
