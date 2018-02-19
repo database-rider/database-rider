@@ -749,4 +749,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
         return riderDataSource;
     }
+
+    public void clearRiderDataSource() {
+        this.riderDataSource = null;
+    }
 }

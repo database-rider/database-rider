@@ -989,6 +989,48 @@ public class DBRiderAnnotationIt {
 ----
 ====
 
+== Spring
+
+Add Database Rider Spring extension to your project
+
+[source,xml]
+----
+<dependency>
+    <groupId>com.github.database-rider</groupId>
+    <artifactId>rider-spring</artifactId>
+    <version>1.2.7</version>
+    <scope>test</scope>
+</dependency>
+----
+
+To enable Database Rider tests use `@DBRider` annotation, example:
+
+[source, java, linenums]
+----
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@DBRider
+public class SpringBootDBUnitTest {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Test
+    @DataSet("users.yml")
+    @ExpectedDataSet("expectedUsers.yml")
+    public void shouldDeleteUser() throws Exception {
+        assertThat(userRepository).isNotNull();
+        assertThat(userRepository.count()).isEqualTo(3);
+        userRepository.delete(userRepository.findOne(2L));
+    }
+}
+----
+
+Database Rider will access to database via dataSource registered in application context.
+
+TIP: Complete source code of example above can be found in the https://github.com/database-rider/database-rider/blob/master/rider-examples/spring-boot-dbunit-sample/src/test/java/com/github/database/rider/springboot/SpringBootDBUnitTest.java[sample^].
+
+
 == Leak Hunter
 
 Leak hunter is a component based on https://vladmihalcea.com/2016/07/12/the-best-way-to-detect-database-connection-leaks/[this blog post^] which counts open jdbc connections before and after test execution.
