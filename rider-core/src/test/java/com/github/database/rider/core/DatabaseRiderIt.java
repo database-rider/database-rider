@@ -15,15 +15,11 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.List;
 
-import static com.github.database.rider.core.util.EntityManagerProvider.em;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
 
 /**
- * Created by pestano on 23/07/15.
+ * Created by rmpestano on 23/07/15.
  */
-
-
 @RunWith(JUnit4.class)
 public class DatabaseRiderIt {
 

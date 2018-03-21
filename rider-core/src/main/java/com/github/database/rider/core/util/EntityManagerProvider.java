@@ -200,8 +200,11 @@ public class EntityManagerProvider implements TestRule {
 
             @Override
             public void evaluate() throws Throwable {
-                base.evaluate();
-                instance.em.clear();
+                try {
+                    base.evaluate();
+                } finally {
+                    instance.em.clear();
+                }
             }
 
         };
