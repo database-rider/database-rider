@@ -14,17 +14,17 @@ import org.junit.Test;
 import com.github.database.rider.core.model.Tweet;
 
 /**
- * Created by pestano on 15/02/16.
+ * Created by rmpestano on 15/02/16.
  */
 public class ScriptReplacementsIt {
 
     Calendar now;
 
     @Rule
-    public EntityManagerProvider emProvider = EntityManagerProvider.instance("rules-it");
+    public EntityManagerProvider emProvider = EntityManagerProvider.instance("rider-it");
 
     @Rule
-    public DBUnitRule dbUnitRule = DBUnitRule.instance("rules-it",emProvider.connection());
+    public DBUnitRule dbUnitRule = DBUnitRule.instance("rider-it",emProvider.connection());
 
     @Before
     public void setup(){
@@ -32,7 +32,7 @@ public class ScriptReplacementsIt {
     }
 
     @Test
-    @DataSet(value = "datasets/yml/js-with-date-replacements.yml",cleanBefore = true ,disableConstraints = true, executorId = "rules-it")
+    @DataSet(value = "datasets/yml/js-with-date-replacements.yml",cleanBefore = true ,disableConstraints = true, executorId = "rider-it")
     public void shouldReplaceDateUsingJavaScriptInDataset() {
         Tweet tweet = (Tweet) emProvider.em().createQuery("select t from Tweet t where t.id = '1'").
                 getSingleResult();
@@ -45,7 +45,7 @@ public class ScriptReplacementsIt {
 
 // tag::javascript-likes[]
     @Test
-    @DataSet(value = "datasets/yml/js-with-calc-replacements.yml",cleanBefore = true, disableConstraints = true, executorId = "rules-it")
+    @DataSet(value = "datasets/yml/js-with-calc-replacements.yml",cleanBefore = true, disableConstraints = true, executorId = "rider-it")
     public void shouldReplaceLikesUsingJavaScriptInDataset() {
         Tweet tweet = (Tweet) emProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
         assertThat(tweet).isNotNull();
@@ -56,7 +56,7 @@ public class ScriptReplacementsIt {
 
 // tag::groovy[]
     @Test
-    @DataSet(value = "datasets/yml/groovy-with-date-replacements.yml",cleanBefore = true, disableConstraints = true, executorId = "rules-it")
+    @DataSet(value = "datasets/yml/groovy-with-date-replacements.yml",cleanBefore = true, disableConstraints = true, executorId = "rider-it")
     public void shouldReplaceDateUsingGroovyInDataset() {
         Tweet tweet = (Tweet) emProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
         assertThat(tweet).isNotNull();
@@ -69,7 +69,7 @@ public class ScriptReplacementsIt {
 
 
     @Test
-    @DataSet(value = "datasets/yml/random-replacements.yml",cleanBefore = true, disableConstraints = true, executorId = "rules-it")
+    @DataSet(value = "datasets/yml/random-replacements.yml",cleanBefore = true, disableConstraints = true, executorId = "rider-it")
     public void shouldGenerateDifferentValuesInScriptEvaluation() {
         List<Tweet> tweets = emProvider.em().createQuery("select t from Tweet t").getResultList();
         assertThat(tweets).isNotNull().hasSize(2);
@@ -82,7 +82,7 @@ public class ScriptReplacementsIt {
 
 // tag::unknown[],i.e. part of value instead of defining a script engine
     @Test
-    @DataSet(value = "datasets/yml/colonContent-replacements.yml",cleanBefore = true, disableConstraints = true, executorId = "rules-it")
+    @DataSet(value = "datasets/yml/colonContent-replacements.yml",cleanBefore = true, disableConstraints = true, executorId = "rider-it")
     public void shouldLogWarningSinceColonIsPartOfValueAndImpliesNullScriptEngine() {
         List<Tweet> tweets = emProvider.em().createQuery("select t from Tweet t").getResultList();
         assertThat(tweets).isNotNull().hasSize(2);
