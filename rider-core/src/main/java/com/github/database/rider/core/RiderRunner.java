@@ -124,6 +124,10 @@ public class RiderRunner {
             } catch (SQLException e) {
                 logger.warn("Could not enable constraints.", e);
             }
+            
+             if (isEntityManagerActive()) {
+                 em().clear();
+             }
         }
     }
 
