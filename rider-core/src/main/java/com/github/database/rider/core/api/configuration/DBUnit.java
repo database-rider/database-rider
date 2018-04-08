@@ -8,6 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
+import org.dbunit.dataset.datatype.IDataTypeFactory;
 
 /**
  * Created by rafael-pestano on 30/08/2016. This annotation configures DBUnit properties
@@ -54,6 +55,11 @@ public @interface DBUnit {
      * @return boolean value which configures case-sensitive table names (also columns)
      */
     boolean caseSensitiveTableNames() default false;
+
+    /**
+     * @return value which configures DatabaseConfig.PROPERTY_DATATYPE_FACTORY
+     */
+    Class<? extends IDataTypeFactory> dataTypeFactoryClass() default IDataTypeFactory.class;
 
     /**
      * Specifies the orthography/letter-case strategy if {@link #caseSensitiveTableNames()} is set to <code>false</code>

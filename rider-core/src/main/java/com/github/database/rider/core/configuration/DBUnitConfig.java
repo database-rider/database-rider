@@ -3,6 +3,7 @@ package com.github.database.rider.core.configuration;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.configuration.Orthography;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
+import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
@@ -116,6 +117,16 @@ public class DBUnitConfig {
 
         if (!"".equals(dbUnit.escapePattern())) {
             dbUnitConfig.addDBUnitProperty("escapePattern", dbUnit.escapePattern());
+        }
+
+        if (!dbUnit.dataTypeFactoryClass().isInterface()) {
+            try {
+                IDataTypeFactory factory = dbUnit.dataTypeFactoryClass().newInstance();
+                dbUnitConfig.addDBUnitProperty("datatypeFactory", factory);
+            }
+            catch (Exception e) {
+                throw new RuntimeException("failed to instantiate datatypeFactory", e);
+            }
         }
 
         // declarative connection config

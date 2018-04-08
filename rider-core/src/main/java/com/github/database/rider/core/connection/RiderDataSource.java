@@ -8,6 +8,7 @@ import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConfig.ConfigProperty;
 import org.dbunit.database.DatabaseConnection;
+import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.dbunit.ext.h2.H2DataTypeFactory;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import org.dbunit.ext.mysql.MySqlDataTypeFactory;
@@ -85,22 +86,28 @@ public class RiderDataSource {
             }
         }
 
+        if (!dbUnitConfig.getProperties().containsKey("datatypeFactory")) {
+            IDataTypeFactory dataTypeFactory = getDataTypeFactory(dbType);
+            if (dataTypeFactory != null) {
+                config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, dataTypeFactory);
+            }
+        }
+    }
+
+    private IDataTypeFactory getDataTypeFactory(DBType dbType) {
         switch (dbType) {
-        case HSQLDB:
-            config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
-            break;
-        case H2:
-            config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new H2DataTypeFactory());
-            break;
-        case MYSQL:
-            config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
-            break;
-        case POSTGRESQL:
-            config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new PostgresqlDataTypeFactory());
-            break;
-        case ORACLE:
-            config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new Oracle10DataTypeFactory());
-            break;
+            case HSQLDB:
+                return new HsqldbDataTypeFactory();
+            case H2:
+                return new H2DataTypeFactory();
+            case MYSQL:
+                return new MySqlDataTypeFactory();
+            case POSTGRESQL:
+                return new PostgresqlDataTypeFactory();
+            case ORACLE:
+                return new Oracle10DataTypeFactory();
+            default:
+                return null;
         }
     }
 
