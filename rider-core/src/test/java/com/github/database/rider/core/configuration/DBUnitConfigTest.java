@@ -2,6 +2,8 @@ package com.github.database.rider.core.configuration;
 
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.configuration.Orthography;
+import org.dbunit.dataset.datatype.DataType;
+import org.dbunit.dataset.datatype.DataTypeException;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,7 +48,8 @@ public class DBUnitConfigTest {
                 containsEntry("batchSize", 100).
                 containsEntry("fetchSize", 100).
                 containsEntry("allowEmptyFields", false).
-                doesNotContainKey("escapePattern");
+                doesNotContainKey("escapePattern").
+                doesNotContainKey("datatypeFactory");
 
         assertThat(config.getConnectionConfig()).isNotNull()
                 .hasFieldOrPropertyWithValue("driver", "")
@@ -78,7 +82,8 @@ public class DBUnitConfigTest {
                 containsEntry("qualifiedTableNames", true).
                 containsEntry("batchSize", 200).
                 containsEntry("fetchSize", 200).
-                containsEntry("escapePattern", "[?]");
+                containsEntry("escapePattern", "[?]").
+                containsEntry("datatypeFactory", new MockDataTypeFactory());
     }
 
     @Test
@@ -120,6 +125,42 @@ public class DBUnitConfigTest {
                 containsEntry("qualifiedTableNames", false).
                 containsEntry("batchSize", 50).
                 containsEntry("fetchSize", 100).
-                doesNotContainKey("escapePattern");
+                doesNotContainKey("escapePattern").
+                doesNotContainKey("datatypeFactory");
     }
+
+    @Test
+    @DBUnit(dataTypeFactoryClass = MockDataTypeFactory.class)
+    public void shouldInstantiateDataTypeFactoryFromAnnotationIfSpecified() throws NoSuchMethodException {
+        Method method = getClass().getMethod("shouldInstantiateDataTypeFactoryFromAnnotationIfSpecified");
+        DBUnit dbUnit = method.getAnnotation(DBUnit.class);
+        DBUnitConfig dbUnitConfig = DBUnitConfig.from(dbUnit);
+
+        assertThat(dbUnitConfig.getProperties()).
+                containsEntry("datatypeFactory", new MockDataTypeFactory());
+    }
+
+    public static class MockDataTypeFactory implements org.dbunit.dataset.datatype.IDataTypeFactory {
+        @Override
+        public DataType createDataType(int i, String s) throws DataTypeException {
+            throw new UnsupportedOperationException("only for configuration tests");
+        }
+
+        @Override
+        public DataType createDataType(int i, String s, String s1, String s2) throws DataTypeException {
+            throw new UnsupportedOperationException("only for configuration tests");
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            return o != null && getClass() == o.getClass();
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getClass());
+        }
+    }
+
 }
