@@ -36,7 +36,7 @@ public @interface DataSet {
   boolean useSequenceFiltering() default true;
 
   /**
-   * @return a list of table names used to reorder DELETE operations to prevent failures due to circular dependencies
+   * @return a list of table names used to reorder INSERT and DELETE operations to prevent failures due to circular dependencies
    *
    */
   String[] tableOrdering() default {};
