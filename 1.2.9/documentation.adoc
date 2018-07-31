@@ -1,0 +1,1248 @@
+:toc: center
+:backend: pdf
+:doctitle: Database Rider Documentation
+:doctype: book
+:icons: font
+:numbered:
+:!linkcss:
+:sectanchors:
+:sectlink:
+:docinfo:
+:source-highlighter: highlightjs
+:toclevels: 3
+:revnumber: 1.2.9
+:hardbreaks:
+
+= *Database Rider Documentation*
+
+include::/home/travis/build/database-rider/database-rider/rider-core/target/test-classes/cukedoctor-intro.adoc[leveloffset=+1]
+
+
+[[Seeding-database, Seeding database]]
+== *Seeding database*
+
+****
+====
+[quote]
+____
+In order to insert data into database before test execution
+As a developer
+I want to easily use DBUnit in JUnit tests.
+____
+====
+
+Database Rider brings http://dbunit.sourceforge.net/[DBUnit^] to your http://junit.org/junit4/[JUnit tests] by means of:
+
+* https://github.com/junit-team/junit4/wiki/Rules[JUnit rules^] (for JUnit4 tests);
+* https://docs.jboss.org/weld/reference/latest/en-US/html_single/#interceptors[CDI interceptor^] (for `CDI` based tests)
+* http://junit.org/junit5/docs/current/user-guide/#extensions[JUnit5 extension^] (for JUnit5 tests).
+****
+
+=== Seed database with `DBUnit Rule`
+
+JUnit4 integrates with DBUnit through a https://github.com/junit-team/junit4/wiki/Rules[JUnit rule^] called `DBUnitRule` which reads *@Dataset* annotations in order to prepare the database state using DBUnit behind the scenes.
+
+NOTE: The rule just needs a https://docs.oracle.com/javase/tutorial/jdbc/[JDBC^] connection in order to be created.
+
+[discrete]
+==== *Dependencies*
+
+To use it add the following maven dependency:
+
+[source,xml]
+----
+<dependency>
+   <groupId>com.github.database-rider</groupId>
+   <artifactId>rider-core</artifactId>
+include::../../../../pom.xml[tags=version]
+   <scope>test</scope>
+</dependency>
+----
+
+****
+Given ::
+=====
+The following junit rules icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java]
+----
+@RunWith(JUnit4.class)
+public class DatabaseRiderIt {
+include::../../../src/test/java/com/github/database/rider/core/DatabaseRiderIt.java[tags=rules]
+}
+----
+[discrete]
+<1> `EntityManagerProvider` is a simple Junit rule that creates a JPA entityManager for each test. DBUnit rule don’t depend on EntityManagerProvider, it only needs a *JDBC connection*.
+[discrete]
+<2> DBUnit rule is responsible for reading `@DataSet` annotation and prepare the database for each test.
+
+
+******
+
+=====
+And ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+.src/test/resources/dataset/yml/users.yml
+----
+include::../../../src/test/resources/datasets/yml/users.yml[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java]
+----
+include::../../../src/test/java/com/github/database/rider/core/DatabaseRiderIt.java[tags=seedDatabase]
+----
+
+
+******
+
+TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/DatabaseRiderIt.java/#L31[found here^].
+
+=====
+Then ::
+=====
+The database should be seeded with the dataset content before test execution icon:thumbs-up[role="green",title="Passed"]
+=====
+****
+
+=== Seed database with `DBUnit Interceptor`
+
+DBUnit CDIfootnote:[http://docs.oracle.com/javaee/6/tutorial/doc/giwhb.html[Contexts and dependency for the Java EE^]] integration is done through a https://docs.jboss.org/weld/reference/latest/en-US/html_single/#interceptors[CDI interceptor^] which reads `@DataSet` to prepare database in CDI tests.
+
+[discrete]
+==== *Dependencies*
+
+To use this module just add the following maven dependency:
+
+[source,xml]
+----
+<dependency>
+   <groupId>com.github.database-rider</groupId>
+   <artifactId>rider-cdi</artifactId>
+include::../../../../pom.xml[tags=version]
+   <scope>test</scope>
+</dependency>
+----
+
+****
+Given ::
+=====
+DBUnit interceptor is enabled in your test beans.xml: icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+.src/test/resources/META-INF/beans.xml
+[discrete]
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://java.sun.com/xml/ns/javaee"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/beans_1_0.xsd">
+     <interceptors>
+            <class>com.github.database.rider.cdi.DBUnitInterceptorImpl</class>
+     </interceptors>
+</beans>
+----
+
+
+******
+
+[IMPORTANT]
+======
+
+Your test itself must be a CDI bean to be intercepted. if you’re using https://deltaspike.apache.org/documentation/test-control.html[Deltaspike test control^] just enable the following property in `test/resources/META-INF/apache-deltaspike.properties`:
+----
+
+deltaspike.testcontrol.use_test_class_as_cdi_bean=true
+----
+
+IMPORTANT: When using above configuration the JUnit `@Before` will not work as expected, see https://lists.apache.org/thread.html/60ae2ade9ff8c5588a53a138b64c94e505455185358c21f663a5fd33@%3Cusers.deltaspike.apache.org%3E[discussion here^].
+======
+
+=====
+And ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+.src/test/resources/dataset/yml/users.yml
+----
+include::../../../../rider-cdi/src/test/resources/datasets/yml/users.yml[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java]
+----
+include::../../../../rider-cdi/src/test/java/com/github/database/rider/cdi/DBUnitCDIIt.java[tags=cdi-declaration]
+include::../../../../rider-cdi/src/test/java/com/github/database/rider/cdi/DBUnitCDIIt.java[tags=seedDatabase]
+----
+[discrete]
+<1> https://deltaspike.apache.org/documentation/test-control.html[CdiTestRunner^] is provided by https://deltaspike.apache.org[Apache Deltaspike^] but you should be able to use other CDI test runners.
+[discrete]
+<2> Needed to activate DBUnit interceptor
+
+
+******
+
+TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/rider-cdi/src/test/java/com/github/database/rider/cdi/DBUnitCDIIt.java#L74[found here^].
+
+=====
+Then ::
+=====
+The database should be seeded with the dataset content before test execution icon:thumbs-up[role="green",title="Passed"]
+=====
+****
+
+=== Seed database with `JUnit 5 extension`
+
+DBUnit is enabled in JUnit 5 tests through an http://junit.org/junit5/docs/current/user-guide/#extensions[extension^] named *DBUnitExtension*.
+
+[discrete]
+==== *Dependencies*
+
+To use the extension just add the following maven dependency:
+
+[source,xml]
+----
+<dependency>
+   <groupId>com.github.database-rider</groupId>
+   <artifactId>rider-junit5</artifactId>
+include::../../../../pom.xml[tags=version]
+   <scope>test</scope>
+</dependency>
+----
+
+****
+Given ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+.src/test/resources/dataset/users.yml
+----
+include::../../../../rider-junit5/src/test/resources/datasets/users.yml[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following junit5 test is executed icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java]
+----
+include::../../../../rider-junit5/src/test/java/com/github/database/rider/junit5/DBUnitJUnit5It.java[tags=declaration;connectionField;test]
+----
+[discrete]
+<1> Enables DBUnit.
+[discrete]
+<2> JUnit 5 runner;
+[discrete]
+<3> As JUnit5 requires *Java8* you can use lambdas in your tests;
+[discrete]
+<4> DBUnitExtension will get connection by reflection so just declare a field or a method with `ConnectionHolder` as return type.
+
+
+******
+
+TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/rider-junit5/src/test/java/com/github/database/rider/junit5/DBUnitJUnit5It.java/#L24[found here^].
+
+[TIP]
+====
+
+Another way to activate DBUnit in JUnits 5 test is using *@DBRider* annotation (at method or class level):
+[source,java]
+----
+
+include::../../../../rider-junit5/src/test/java/com/github/database/rider/junit5/DBRiderAnnotationIt.java[tags=junit5-annotation]
+----
+
+<1> Shortcut for `@Test` and `@ExtendWith(DBUnitExtension.class)`
+====
+
+=====
+Then ::
+=====
+The database should be seeded with the dataset content before test execution icon:thumbs-up[role="green",title="Passed"]
+=====
+****
+
+=== Seeding database in BDD tests with `Rider Cucumber`
+
+DBUnit enters the BDD world through a dedicated JUNit runner which is based on https://cucumber.io/[Cucumber^] and https://deltaspike.apache.org/[Apache DeltaSpike^].
+
+This runner just starts CDI within your BDD tests so you just have to use <<_seed_database_with_code_dbunit_interceptor_code,Database Rider CDI interceptor>> on Cucumber steps, here is the so called Cucumber CDI runner declaration:
+
+[source,java]
+----
+include::../../../../rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactFeature.java[]
+----
+
+
+IMPORTANT: As cucumber doesn't work with JUnit Rules, see https://github.com/cucumber/cucumber-jvm/issues/393[this issue^], you won't be able to use Cucumber runner with _DBUnit Rule_, but you can use DataSetExecutor in `@Before`, see https://github.com/database-rider/database-rider/tree/master/rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/withoutcdi[example here^].
+
+[discrete]
+==== *Dependencies*
+Here is a set of maven dependencies needed by Database Rider Cucumber:
+
+NOTE: Most of the dependencies, except CDI container implementation, are brought by Database Rider Cucumber module transitively.
+
+[source,xml]
+----
+<dependency>
+   <groupId>com.github.database-rider</groupId>
+   <artifactId>rider-cucumber</artifactId>
+include::../../../../pom.xml[tags=version]
+   <scope>test</scope>
+</dependency>
+----
+
+.Cucumber dependencies
+[source,xml,indent=0]
+----
+include::../../../pom.xml[tags=cucumber-deps]
+----
+<1> You don't need to declare because it comes with Database Rider Cucumber module dependency.
+
+.DeltaSpike and CDI dependency
+[source,xml,indent=0]
+----
+include::../../../../rider-cdi/pom.xml[tags=deltaspike-cdi-deps]
+----
+<2> Also comes with Rider Cucumber.
+<3> You can use CDI implementation of your choice.
+
+****
+Given ::
+=====
+The following feature icon:thumbs-up[role="green",title="Passed"]
+******
+
+----
+include::../../../../rider-examples/jpa-productivity-boosters/src/test/resources/features/contacts.feature[]
+----
+
+
+******
+
+=====
+And ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"]
+******
+
+----
+include::../../../../rider-examples/jpa-productivity-boosters/src/test/resources/datasets/contacts.yml[]
+----
+
+
+******
+
+=====
+And ::
+=====
+The following Cucumber test icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java]
+----
+include::../../../../rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactFeature.java[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following cucumber steps are executed icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java]
+----
+include::../../../../rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactSteps.java[]
+----
+[discrete]
+<1> Activates DBUnit CDI interceptor
+[discrete]
+<2> As the Cucumber cdi runner enables CDI, you can use injection into your Cucumber steps.
+[discrete]
+<3> Dataset is prepared before step execution by `@DBUnitInterceptor`.
+
+
+******
+
+TIP: Source code for the example above can be https://github.com/database-rider/database-rider/blob/master/rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactSteps.java#L17[found here^].
+
+=====
+Then ::
+=====
+The database should be seeded with the dataset content before step execution icon:thumbs-up[role="green",title="Passed"]
+=====
+****
+
+[[DataSet-creation, DataSet creation]]
+== *DataSet creation*
+
+****
+====
+[quote]
+____
+In order to create datasets to feed tables
+As a developer
+I want to declare database state in external files.
+____
+====
+
+NOTE: It is a good practice to move database preparation or any infrastructure code outside test logic, it increases test maintainability.
+****
+
+=== Creating a `YAML` dataset
+
+*YAML* stands for `yet another markup language` and is a very simple, lightweight yet powerful format.
+
+IMPORTANT: YAML is based on spaces indentation so be careful because any missing or additional space can lead to an incorrect dataset.
+
+TIP: Source code of the examples below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/format/DataSetFormatIt.java/[found here^].
+
+****
+Given ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+.src/test/resources/dataset/yml/users.yml
+----
+include::../../../src/test/resources/datasets/yml/users.yml[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java,indent=0]
+----
+include::../../../src/test/java/com/github/database/rider/core/format/DataSetFormatIt.java[tags=yml]
+----
+
+
+******
+
+=====
+Then ::
+=====
+The database should be seeded with the dataset content before test execution icon:thumbs-up[role="green",title="Passed"]
+=====
+****
+
+=== Creating a `JSON` dataset
+
+****
+Given ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+.src/test/resources/dataset/json/users.json
+----
+include::../../../src/test/resources/datasets/json/users.json[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java,indent=0]
+----
+include::../../../src/test/java/com/github/database/rider/core/format/DataSetFormatIt.java[tags=json]
+----
+
+
+******
+
+=====
+Then ::
+=====
+The database should be seeded with the dataset content before test execution icon:thumbs-up[role="green",title="Passed"]
+=====
+****
+
+=== Creating a `XML` dataset
+
+****
+Given ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+.src/test/resources/dataset/xml/users.xml
+----
+include::../../../src/test/resources/datasets/xml/users.xml[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java,indent=0]
+----
+include::../../../src/test/java/com/github/database/rider/core/format/DataSetFormatIt.java[tags=xml]
+----
+
+
+******
+
+=====
+Then ::
+=====
+The database should be seeded with the dataset content before test execution icon:thumbs-up[role="green",title="Passed"]
+=====
+****
+
+=== Creating a `XLS` dataset
+
+****
+Given ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+.src/test/resources/dataset/xls/users.xls
+----
+ID	NAME
+1	@realpestano
+2	@dbunit
+----
+[discrete]
+[discrete]
+NOTE: Each Excell `sheet` name is the *table name*, first row is *columns names* and remaining rows/cells are values.
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java,indent=0]
+----
+include::../../../src/test/java/com/github/database/rider/core/format/DataSetFormatIt.java[tags=xls]
+----
+
+
+******
+
+=====
+Then ::
+=====
+The database should be seeded with the dataset content before test execution icon:thumbs-up[role="green",title="Passed"]
+=====
+****
+
+=== Creating a `CSV` dataset
+
+****
+Given ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+.src/test/resources/dataset/csv/USER.csv
+----
+include::../../../src/test/resources/datasets/csv/USER.csv[]
+----
+[discrete]
+[discrete]
+.src/test/resources/dataset/csv/TWEET.csv
+----
+include::../../../src/test/resources/datasets/csv/TWEET.csv[]
+----
+[discrete]
+[discrete]
+NOTE: File name is *table name* and first row is *column names*.
+[discrete]
+[discrete]
+.src/test/resources/dataset/csv/table-ordering.txt
+----
+include::../../../src/test/resources/datasets/csv/table-ordering.txt[]
+----
+[discrete]
+[discrete]
+IMPORTANT: CSV datasets are composed by multiple files (one per table) and a table ordering descriptor declaring the order of creation.
+[discrete]
+Also note that each csv dataset must be declared in its own folder because DBUnit will read all csv files present in dataset folder.
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java,indent=0]
+----
+include::../../../src/test/java/com/github/database/rider/core/format/DataSetFormatIt.java[tags=csv]
+----
+[discrete]
+<1> You need to declare just one csv dataset file. Database rider will take parent folder as dataset folder.
+
+
+******
+
+=====
+Then ::
+=====
+The database should be seeded with the dataset content before test execution icon:thumbs-up[role="green",title="Passed"]
+=====
+****
+
+[[Configuration, Configuration]]
+== *Configuration*
+
+****
+====
+[quote]
+____
+In order to handle various use cases
+As a developer
+I want to be able to configure DataBase Rider
+____
+====
+****
+
+=== DataSet configuration
+
+DataSet configuration is done via *@DataSet* annotation at *class* or *method* level:
+
+
+[source,java]
+----
+@Test
+@DataSet(value ="users.yml", strategy = SeedStrategy.UPDATE,
+  disableConstraints = true,cleanAfter = true,
+  useSequenceFiltering = true, tableOrdering = {"TWEET","USER"},
+  executeScriptsBefore = "script.sql", executeStatementsBefore = "DELETE from USER where 1=1"
+  transactional = true, cleanAfter=true)
+public void shouldCreateDataSet(){
+
+}
+----
+
+
+Table below illustrate the possible configurations:
+
+
+[cols="3*", options="header"]
+|===
+|Name | Description | Default
+|value| Dataset file name using test resources folder as root directory. Multiple, comma separated, dataset file names can be provided.| ""
+|executorId| Name of dataset executor for the given dataset.| DataSetExecutorImpl.DEFAULT_EXECUTOR_ID
+|strategy| DataSet seed strategy. Possible values are: CLEAN_INSERT, INSERT, REFRESH and UPDATE.| CLEAN_INSERT, meaning that DBUnit will clean and then insert data in tables present in provided dataset.
+|useSequenceFiltering| If true dbunit will look at constraints and dataset to try to determine the correct ordering for the SQL statements.| true
+|tableOrdering| A list of table names used to reorder DELETE operations to prevent failures due to circular dependencies.| ""
+|disableConstraints| Disable database constraints.| false
+|cleanBefore| If true Database Rider will try to delete database before test in a smart way by using table ordering and brute force.| false
+|cleanAfter| If true Database Rider will try to delete database after test in a smart way by using table ordering and brute force.| false
+|transactional| If true a transaction will be started before and committed after test execution. | false
+|executeStatementsBefore| A list of jdbc statements to execute before test.| {}
+|executeStatementsAfter| A list of jdbc statements to execute after test.| {}
+|executeScriptsBefore| A list of sql script files to execute before test. Note that commands inside sql file must be separated by `;`.| {}
+|executeScriptsAfter| A list of sql script files to execute after test. Note that commands inside sql file must be separated by `;`.| {}
+|===
+
+=== DBUnit configuration
+
+`DBUnit`, the tool doing the dirty work the scenes, can be configured by *@DBUnit* annotation (class or method level) and *dbunit.yml* file present in `test resources` folder.
+
+[source,java]
+----
+@Test
+@DBUnit(cacheConnection = true, cacheTableNames = false, allowEmptyFields = true,batchSize = 50)
+public void shouldLoadDBUnitConfigViaAnnotation() {
+
+}
+----
+
+Here is a dbunit.yml example, also the default values:
+
+.src/test/resources/dbunit.yml
+----
+cacheConnection: true <1>
+cacheTableNames: true <2>
+leakHunter: false <3>
+caseInsensitiveStrategy: !!com.github.database.rider.core.api.configuration.Orthography 'UPPERCASE' <4>
+properties:
+  batchedStatements:  false <5>
+  qualifiedTableNames: false <6>
+  caseSensitiveTableNames: false <7>
+  batchSize: 100 <8>
+  fetchSize: 100 <9>
+  allowEmptyFields: false <10>
+  escapePattern: <11>
+connectionConfig: <12>
+  driver: ""
+  url: ""
+  user: ""
+  password: ""
+----
+<1> Database connection will be reused among tests
+<2> Caches table names to avoid query connection metadata unnecessarily
+<3> Activate connection leak detection. In case a leak (open JDBC connections is increased after test execution) is found an exception is thrown and test fails.
+<4> When `caseSensitiveTableNames` is `false` will apply letter case based on configured strategy. Valid values are `UPPERCASE` and `LOWERCASE`.
+<5> Enables usage of JDBC batched statement
+<6> Enable or disable multiple schemas support. If enabled, Dbunit access tables with names fully qualified by schema using this format: SCHEMA.TABLE.
+<7> Enable or disable case sensitive table names. If enabled, Dbunit handles all table names in a case sensitive way.
+<8> Specifies the size of JDBC batch updates
+<9> Specifies statement fetch size for loading data into a result set table.
+<10> Allow to call INSERT/UPDATE with empty strings ('').
+<11> Allows schema, table and column names escaping. The property value is an escape pattern where the ? is replaced by the name. For example, the pattern "[?]" is expanded as "[MY_TABLE]" for a table named "MY_TABLE". The most common escape pattern is ""?"" which surrounds the table name with quotes (for the above example it would result in ""MY_TABLE""). As a fallback if no questionmark is in the given String and its length is one it is used to surround the table name on the left and right side. For example the escape pattern """ will have the same effect as the escape pattern ""?"".
+<12> JDBC connection configuration, it will be used in case you don't provide a connection inside test (except in CDI test where connection is inferred from entity manager).
+
+NOTE: `@DBUnit` annotation takes precedence over `dbunit.yml` global configuration which will be used only if the annotation is not present.
+
+[TIP]
+=====
+Since version 1.1.0 you can define only the properties of your interest, example:
+
+----
+cacheConnection: false
+properties:
+  caseSensitiveTableNames: true
+  escapePattern: ""?""
+----
+=====
+
+[[DataSet-assertion, DataSet assertion]]
+== *DataSet assertion*
+
+****
+====
+[quote]
+____
+In order to verify database state after test execution
+As a developer
+I want to assert database state with datasets.
+____
+====
+
+TIP: Complete source code of examples below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ExpectedDataSetIt.java#L23[found here^].
+****
+
+=== Assertion with yml dataset
+
+****
+Given ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+.expectedUsers.yml
+----
+include::../../../src/test/resources/datasets/yml/expectedUsers.yml[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java,indent=0]
+----
+include::../../../src/test/java/com/github/database/rider/core/ExpectedDataSetIt.java[tags=expectedDeclaration;expected]
+----
+[discrete]
+<1> Clear database before to avoid conflict with other tests.
+
+
+******
+
+=====
+Then ::
+=====
+Test must pass because database state is as in expected dataset. icon:thumbs-up[role="green",title="Passed"]
+=====
+****
+
+=== Assertion with regular expression in expected dataset
+
+****
+Given ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+.expectedUsersRegex.yml
+----
+include::../../../src/test/resources/datasets/yml/expectedUsersRegex.yml[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java,indent=0]
+----
+include::../../../src/test/java/com/github/database/rider/core/ExpectedDataSetIt.java[tags=expectedRegex]
+----
+
+
+******
+
+=====
+Then ::
+=====
+Test must pass because database state is as in expected dataset. icon:thumbs-up[role="green",title="Passed"]
+=====
+****
+
+=== Database assertion with seeding before test execution
+
+****
+Given ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+.user.yml
+----
+include::../../../src/test/resources/datasets/yml/user.yml[]
+----
+
+
+******
+
+=====
+And ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+.expectedUser.yml
+----
+include::../../../src/test/resources/datasets/yml/expectedUser.yml[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java,indent=0]
+----
+include::../../../src/test/java/com/github/database/rider/core/ExpectedDataSetIt.java[tags=expectedWithSeeding]
+----
+
+
+******
+
+=====
+Then ::
+=====
+Test must pass because database state is as in expected dataset. icon:thumbs-up[role="green",title="Passed"]
+=====
+****
+
+=== Failing assertion
+
+****
+Given ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+.expectedUsers.yml
+----
+include::../../../src/test/resources/datasets/yml/expectedUsers.yml[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java,indent=0]
+----
+include::../../../src/test/java/com/github/database/rider/core/ExpectedDataSetIt.java[tags=faillingExpected]
+----
+
+
+******
+
+=====
+Then ::
+=====
+Test must fail with following error: icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+IMPORTANT: junit.framework.ComparisonFailure: value (table=USER, row=0, col=name) expected:<[]expected user1> but was:<[non ]expected user1>  at org.dbunit.assertion.JUnitFailureFactory.createFailure(JUnitFailureFactory.java:39) at org.dbunit.assertion.DefaultFailureHandler.createFailure(DefaultFailureHandler.java:97) at org.dbunit.assertion.DefaultFailureHandler.handle(DefaultFailureHandler.java:223) at ...
+
+
+******
+
+=====
+****
+
+=== Assertion using automatic transaction
+
+****
+Given ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+.expectedUsersRegex.yml
+----
+include::../../../src/test/resources/datasets/yml/expectedUsersRegex.yml[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java,indent=0]
+----
+include::../../../src/test/java/com/github/database/rider/core/TransactionIt.java[tags=transaction]
+----
+
+
+******
+
+NOTE: `Transactional` attribute will make Database Rider start a transaction before test and commit the transaction *after* test execution but *before* expected dataset comparison.
+
+=====
+Then ::
+=====
+Test must pass because inserted users are commited to database and database state matches expected dataset. icon:thumbs-up[role="green",title="Passed"]
+=====
+****
+
+[[Dynamic-data-using-scritable-datasets, Dynamic data using scritable datasets]]
+== *Dynamic data using scritable datasets*
+
+****
+====
+[quote]
+____
+In order to have dynamic data in datasets
+As a developer
+I want to use scripts in DBUnit datasets.
+____
+====
+
+Scritable datasets are backed by JSR 223.footnote:[Scripting for the Java Platform, for more information access the official https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/prog_guide/api.html[docs here^]].
+
+TIP: Complete source code of examples below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java#L18[found here^].
+****
+
+=== Seed database with groovy script in dataset
+
+****
+Given ::
+=====
+Groovy script engine is on test classpath icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,xml,indent=0]
+----
+<dependency>
+    <groupId>org.codehaus.groovy</groupId>
+    <artifactId>groovy-all</artifactId>
+    <version>2.4.6</version>
+    <scope>test</scope>
+</dependency>
+----
+
+
+******
+
+=====
+And ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"]
+******
+
+----
+include::../../../src/test/resources/datasets/yml/groovy-with-date-replacements.yml[]
+----
+[discrete]
+<1> Groovy scripting is enabled by `groovy:` string.
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java,indent=0]
+----
+include::../../../src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java[tags=groovy]
+----
+
+
+******
+
+=====
+Then ::
+=====
+Dataset script should be interpreted while seeding the database icon:thumbs-up[role="green",title="Passed"]
+=====
+****
+
+=== Seed database with javascript in dataset
+
+NOTE: Javascript engine comes within JDK so no additional classpath dependency is necessary.
+
+****
+Given ::
+=====
+The following dataset icon:thumbs-up[role="green",title="Passed"]
+******
+
+----
+include::../../../src/test/resources/datasets/yml/js-with-calc-replacements.yml[]
+----
+[discrete]
+<1> Javascript scripting is enabled by `js:` string.
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java,indent=0]
+----
+include::../../../src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java[tags=javascript-likes]
+----
+
+
+******
+
+=====
+Then ::
+=====
+Dataset script should be interpreted while seeding the database icon:thumbs-up[role="green",title="Passed"]
+=====
+****
+
+[[Database-connection-leak-detection, Database connection leak detection]]
+== *Database connection leak detection*
+
+****
+====
+[quote]
+____
+In order to find JDBC connection leaks
+As a developer
+I want to make Database Rider monitor connections during tests execution.
+____
+====
+
+Leak hunter is a Database Rider component, based on https://vladmihalcea.com/2016/07/12/the-best-way-to-detect-database-connection-leaks/[this blog post^], which counts open jdbc connections before and after test execution.
+
+TIP: Complete source code of example below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/LeakHunterIt.java#L19[found here^].
+****
+
+=== Detecting connection leak
+
+[source,java,indent=0]
+----
+include::../../../src/test/java/com/github/database/rider/core/LeakHunterIt.java[tags=leak-hunter-declare;find-leak;create-leak]
+----
+<1> Enables connection leak detection.
+
+NOTE: If number of connections after test execution are greater than before then a *LeakHunterException* will be raised.
+
+[[DataSet-export, DataSet export]]
+== *DataSet export*
+
+****
+====
+[quote]
+____
+In order to easily create `dataset files`
+As a developer
+I want generate datasets based on database state.
+____
+====
+
+Manual creation of datasets is a very error prone task. In order to export database state after test execution into datasets files one can use @ExportDataSet Annotation or use DataSetExporter component or even using a https://forge.jboss.org/[JBoss Forge^] addon.
+
+TIP: Complete source code of examples below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/exporter/ExportDataSetIt.java#L31[found here^].
+****
+
+=== Export dataset with `@ExportDataSet` annotation
+
+[source,java,indent=0]
+----
+include::../../../src/test/java/com/github/database/rider/core/exporter/ExportDataSetIt.java[tags=export-annotation]
+----
+<1> Used here just to seed database, you could insert data manually or connect to a database which already has data.
+
+After above test execution all tables will be exported to a xml dataset.
+
+
+NOTE: *XML, YML, JSON, XLS and CSV* formats are supported.
+
+=== Programmatic export
+
+[source,java,indent=0]
+----
+include::../../../src/test/java/com/github/database/rider/core/exporter/ExportDataSetIt.java[tags=export-programmatically]
+----
+
+=== Configuration
+
+Following table shows all exporter configuration options:
+
+[cols="3*", options="header"]
+|===
+|Name | Description | Default
+|format| Exported dataset file format.| YML
+|includeTables| A list of table names to include in exported dataset.| Default is empty which means *ALL tables*.
+|queryList| A list of select statements which the result will used in exported dataset.| {}
+|dependentTables| If true will bring dependent tables of declared includeTables.| false
+|outputName| Name (and path) of output file.| ""
+|===
+
+=== Export using DBUnit Addon
+
+https://github.com/database-rider/dbunit-addon[DBUnit Addon^] exports DBUnit datasets based on a database connection.
+
+.Pre requisites
+
+You need https://forge.jboss.org/download[JBoss Forge^] installed in your IDE or available at command line.
+
+
+.Installation
+
+Use install addon from git command:
+
+----
+addon-install-from-git --url https://github.com/database-rider/dbunit-addon.git
+----
+
+
+.Usage
+
+. Setup database connection
++
+image::https://raw.githubusercontent.com/database-rider/dbunit-addon/master/setup_cmd.png["Setup command"]
+. Export database tables into *YAML*, *JSON*, *XML*, *XLS* and *CSV* datasets.
++
+image::https://raw.githubusercontent.com/database-rider/dbunit-addon/master/export_cmd.png["Export command"]
+
+.Export configuration
+
+* `Format`: Dataset format.
+* `Include tables`: Name of tables to include in generated dataset. If empty all tables will be exported.
+* `Dependent tables`: If true will bring dependent included tables. Works in conjunction with `includeTables`.
+* `Query list`: A list of SQL statements which resulting rows will be used in generated dataset.
+* `Output dir`: directory to generate dataset.
+* `Name`: name of resulting dataset. Format can be ommited in dataset name.
+
