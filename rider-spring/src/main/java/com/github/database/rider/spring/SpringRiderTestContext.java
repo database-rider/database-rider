@@ -3,6 +3,7 @@ package com.github.database.rider.spring;
 import com.github.database.rider.core.AbstractRiderTestContext;
 import com.github.database.rider.core.api.dataset.DataSetExecutor;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.test.context.TestContext;
 
@@ -45,11 +46,11 @@ class SpringRiderTestContext extends AbstractRiderTestContext {
 
     @Override
     public <T extends Annotation> T getMethodAnnotation(Class<T> clazz) {
-        return testContext.getTestMethod().getAnnotation(clazz);
+        return AnnotatedElementUtils.findMergedAnnotation(testContext.getTestMethod(), clazz);
     }
 
     @Override
     public <T extends Annotation> T getClassAnnotation(Class<T> clazz) {
-        return testContext.getTestClass().getAnnotation(clazz);
+        return AnnotatedElementUtils.findMergedAnnotation(testContext.getTestClass(), clazz);
     }
 }
