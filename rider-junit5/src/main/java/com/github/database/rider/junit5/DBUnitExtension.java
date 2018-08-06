@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 import org.junit.jupiter.api.extension.ExtensionContext.Store;
+import org.junit.platform.commons.util.AnnotationUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -36,9 +37,10 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
             EntityManagerProvider.em().clear();
         }
 
-        DataSet dataSet = extensionContext.getRequiredTestMethod().getAnnotation(DataSet.class);
+        DataSet dataSet = AnnotationUtils.findAnnotation(extensionContext.getRequiredTestMethod(), DataSet.class).orElse(null);
+
         if (dataSet == null) {
-            dataSet = extensionContext.getRequiredTestClass().getAnnotation(DataSet.class);
+            dataSet = AnnotationUtils.findAnnotation(extensionContext.getRequiredTestClass(), DataSet.class).orElse(null);
         }
 
         DataSetExecutor executor;
@@ -98,7 +100,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
                 if (!field.isAccessible()) {
                     field.setAccessible(true);
                 }
-                ConnectionHolder connectionHolder = ConnectionHolder.class.cast(field.get(extensionContext.getRequiredTestInstance()));
+                ConnectionHolder connectionHolder = (ConnectionHolder) field.get(extensionContext.getRequiredTestInstance());
                 if (connectionHolder == null) {
                     throw new RuntimeException("ConnectionHolder not initialized correctly");
                 }
@@ -116,7 +118,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
                 if (!method.isAccessible()) {
                     method.setAccessible(true);
                 }
-                ConnectionHolder connectionHolder = ConnectionHolder.class.cast(method.invoke(extensionContext.getRequiredTestInstance()));
+                ConnectionHolder connectionHolder = (ConnectionHolder) method.invoke(extensionContext.getRequiredTestInstance());
                 if (connectionHolder == null) {
                     throw new RuntimeException("ConnectionHolder not initialized correctly");
                 }
