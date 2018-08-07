@@ -3,6 +3,7 @@ package com.github.database.rider.junit5;
 import com.github.database.rider.core.AbstractRiderTestContext;
 import com.github.database.rider.core.api.dataset.DataSetExecutor;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.platform.commons.util.AnnotationUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -25,15 +26,12 @@ public class JUnit5RiderTestContext extends AbstractRiderTestContext {
 
     @Override
     public <T extends Annotation> T getMethodAnnotation(Class<T> clazz) {
-        return extensionContext.getTestMethod()
-                .map(m -> m.getAnnotation(clazz))
-                .orElse(null);
+        return AnnotationUtils.findAnnotation(extensionContext.getTestMethod(), clazz).orElse(null);
     }
 
     @Override
     public <T extends Annotation> T getClassAnnotation(Class<T> clazz) {
-        return extensionContext.getTestClass()
-                .map(cl -> cl.getAnnotation(clazz))
-                .orElse(null);
+        return AnnotationUtils.findAnnotation(extensionContext.getTestClass(), clazz).orElse(null);
+
     }
 }
