@@ -8,6 +8,8 @@ import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.connection.ConnectionHolderImpl;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.leak.LeakHunterFactory;
+import com.github.database.rider.core.util.AnnotationUtils;
+
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -52,9 +54,9 @@ public class DBUnitRule implements TestRule {
 
     @Override
     public Statement apply(final Statement statement, final Description description) {
-        DataSet dataSet = description.getAnnotation(DataSet.class);
+        DataSet dataSet = AnnotationUtils.findAnnotation(description, DataSet.class);
         if (dataSet == null) {
-            dataSet = description.getTestClass().getAnnotation(DataSet.class);
+            dataSet = AnnotationUtils.findAnnotation(description.getTestClass(),DataSet.class);
         }
 
         if (dataSet != null && !"".equals(dataSet.executorId().trim())) {

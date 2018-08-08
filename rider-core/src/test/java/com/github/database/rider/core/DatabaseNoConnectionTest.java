@@ -10,15 +10,11 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.List;
 
 import static com.github.database.rider.core.util.EntityManagerProvider.clear;
 import static com.github.database.rider.core.util.EntityManagerProvider.em;
-import static com.github.database.rider.core.util.EntityManagerProvider.emf;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
