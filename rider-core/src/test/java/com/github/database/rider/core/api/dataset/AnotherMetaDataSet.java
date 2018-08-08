@@ -1,7 +1,5 @@
 package com.github.database.rider.core.api.dataset;
 
-import com.github.database.rider.core.api.dataset.DataSet;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -540,6 +540,73 @@ user:
 The test remains the same as above but without the need to `ignore id column`.
 ====
 
+=== Meta Datasets
+
+With meta datasets you can create annotations which holds `@Dataset` configuration and (re)use this custom annotation in any test:
+
+.Custom annotation holding dataset configuration
+----
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.METHOD})
+@DataSet(value = "yml/users.yml", disableConstraints = true)
+public @interface MetaDataSet {
+
+}
+---- 
+
+.Test using metadataset, @DataSet config is extracted from custom annotation 
+----
+@RunWith(JUnit4.class)
+@MetaDataSet
+public class MetaDataSetIt {
+
+	@Rule
+	public EntityManagerProvider emProvider = EntityManagerProvider.instance("rules-it"); 
+
+	@Rule
+	public DBUnitRule dbUnitRule = DBUnitRule.instance(emProvider.connection()); 
+
+	@Test
+	public void testMetaAnnotationOnClass() {
+		List<User> users = em().createQuery("select u from User u").getResultList();
+		assertThat(users).isNotNull().isNotEmpty().hasSize(2);
+	}
+
+}
+
+----
+
+You can use another metadataset at method level which will take precedence:
+
+----
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.METHOD})
+@DataSet(value = "yml/expectedUser.yml", disableConstraints = true)
+public @interface AnotherMetaDataSet {
+
+}
+---- 
+ 
+
+----
+@RunWith(JUnit4.class)
+@MetaDataSet
+public class MetaDataSetIt {
+
+    //rules omitted for brevity
+
+    @Test
+	@AnotherMetaDataSet
+	public void testMetaAnnotationOnMethod() {
+		List<User> users = em().createQuery("select u from User u").getResultList();
+		assertThat(users).isNotNull().isNotEmpty().hasSize(1);
+	}
+----
+
+NOTE: This works with all Database Rider modules like `Spring`, `CDI` and `JUnit5`.
+
+TIP: See https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/MetaDataSetIt.java[MetaDatasetIt code^] for details. 
+
 === Transactional Tests
 
 In case of `ExpectedDataSet` you'll usually need a transaction to modify database in order to match expected dataset. In such case you can use a *transactional* test:
