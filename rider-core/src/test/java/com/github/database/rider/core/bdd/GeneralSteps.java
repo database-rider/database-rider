@@ -36,4 +36,17 @@ public class GeneralSteps {
     @Then("^Test must pass because inserted users are commited to database and database state matches expected dataset.$")
     public void Test_must_pass_because_inserted_users_are_commited_to_database_and_database_state_matches_in_expected_dataset() throws Throwable {
     }
+
+	@Then("^Test must use dataset declared in `MetaDataSet` annotation\\.$")
+	public void testMustUseDatasetDeclaredInMetaDatasetAnnotation() throws Throwable {
+		 
+	}
+
+	@Given("^The following metataset annotation$")
+	public void theFollowingMetatasetAnnotation(String arg1) throws Throwable {
+	}
+
+	@Then("^Test must use dataset declared in `AnotherMetaDataSet` annotation\\.$")
+	public void testMustUseDatasetDeclaredInAnotherMetaDatasetAnnotation() throws Throwable {
+	}
 }
