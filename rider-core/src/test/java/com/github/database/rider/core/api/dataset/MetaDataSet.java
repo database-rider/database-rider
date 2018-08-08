@@ -10,8 +10,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
 @DataSet(value = "yml/users.yml", disableConstraints = true)
-@Inherited
 public @interface MetaDataSet {
-
 
 }

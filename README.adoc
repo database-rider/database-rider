@@ -595,7 +595,7 @@ public class MetaDataSetIt {
 
     //rules omitted for brevity
 
-    @Test
+	@Test
 	@AnotherMetaDataSet
 	public void testMetaAnnotationOnMethod() {
 		List<User> users = em().createQuery("select u from User u").getResultList();
