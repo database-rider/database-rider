@@ -10,12 +10,12 @@
 :docinfo:
 :source-highlighter: highlightjs
 :toclevels: 3
-:revnumber: 1.2.10
+:revnumber: 1.2.10-SNAPSHOT
 :hardbreaks:
 
 = *Database Rider Documentation*
 
-include::/home/rmpestano/projects/database-rider/rider-core/target/test-classes/cukedoctor-intro.adoc[leveloffset=+1]
+include::/home/travis/build/database-rider/database-rider/rider-core/target/test-classes/cukedoctor-intro.adoc[leveloffset=+1]
 
 
 [[Seeding-database, Seeding database]]
