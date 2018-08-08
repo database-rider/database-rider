@@ -27,12 +27,14 @@ public final class AnnotationUtils {
 
 
 	/**
+	 * @param element
+	 * @param annotationType
+	 * 
 	 * Determine if an annotation of {@code annotationType} is either
 	 * <em>present</em> or <em>meta-present</em> on the supplied
 	 * {@code element}.
-	 *
-	 * @see #findAnnotation(AnnotatedElement, Class)
-	 * @see org.junit.platform.commons.support.AnnotationSupport#isAnnotated(AnnotatedElement, Class)
+	 * 
+	 * @return true element is annotated
 	 */
 	public static boolean isAnnotated(AnnotatedElement element, Class<? extends Annotation> annotationType) {
 		return findAnnotation(element, annotationType) != null;
@@ -40,12 +42,22 @@ public final class AnnotationUtils {
 
 
 	/**
-	 * @see org.junit.platform.commons.support.AnnotationSupport#findAnnotation(AnnotatedElement, Class)
+	 *  
+	 * @param element
+	 * @param annotationType
+	 * @return
 	 */
 	public static <A extends Annotation> A findAnnotation(AnnotatedElement element, Class<A> annotationType) {
 		return findAnnotation(element, annotationType, new HashSet<Annotation>());
 	}
 
+	/**
+	 * 
+	 * @param element
+	 * @param annotationType
+	 * @param visited
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	private static <A extends Annotation> A findAnnotation(AnnotatedElement element, Class<A> annotationType,
 			Set<Annotation> visited) {
@@ -103,6 +115,14 @@ public final class AnnotationUtils {
 		return findMetaAnnotation(annotationType, element.getAnnotations(), key, visited);
 	}
 
+	/**
+	 * 
+	 * @param annotationType
+	 * @param candidates
+	 * @param key
+	 * @param visited
+	 * @return
+	 */
 	private static <A extends Annotation> A findMetaAnnotation(Class<A> annotationType,
 			Annotation[] candidates, AnnotationCacheKey key, Set<Annotation> visited) {
 
