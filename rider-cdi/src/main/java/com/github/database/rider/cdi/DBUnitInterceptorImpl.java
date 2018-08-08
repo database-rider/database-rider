@@ -1,19 +1,21 @@
 package com.github.database.rider.cdi;
 
-import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.core.api.leak.LeakHunter;
-import com.github.database.rider.cdi.api.DBUnitInterceptor;
-import com.github.database.rider.core.configuration.DBUnitConfig;
-import com.github.database.rider.core.configuration.DataSetConfig;
-import com.github.database.rider.core.api.dataset.ExpectedDataSet;
-import com.github.database.rider.core.leak.LeakHunterFactory;
+import java.io.Serializable;
 
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import javax.persistence.EntityManager;
-import java.io.Serializable;
+
+import com.github.database.rider.cdi.api.DBUnitInterceptor;
+import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.ExpectedDataSet;
+import com.github.database.rider.core.api.leak.LeakHunter;
+import com.github.database.rider.core.configuration.DBUnitConfig;
+import com.github.database.rider.core.configuration.DataSetConfig;
+import com.github.database.rider.core.leak.LeakHunterFactory;
+import com.github.database.rider.core.util.AnnotationUtils;
 
 /**
  * Created by pestano on 26/07/15.
@@ -118,9 +120,9 @@ public class DBUnitInterceptorImpl implements Serializable {
     }
 
     private DataSet resolveDataSet(InvocationContext invocationContext) {
-        DataSet usingDataSet = invocationContext.getMethod().getAnnotation(DataSet.class);
+        DataSet usingDataSet = AnnotationUtils.findAnnotation(invocationContext.getMethod(), DataSet.class);
         if (usingDataSet == null) {
-            usingDataSet = invocationContext.getMethod().getDeclaringClass().getAnnotation(DataSet.class);
+            usingDataSet = AnnotationUtils.findAnnotation(invocationContext.getMethod().getDeclaringClass(),DataSet.class);
         }
 
         return usingDataSet;

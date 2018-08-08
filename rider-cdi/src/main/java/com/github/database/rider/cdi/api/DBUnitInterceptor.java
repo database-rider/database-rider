@@ -1,9 +1,12 @@
 package com.github.database.rider.cdi.api;
 
-import com.github.database.rider.core.api.dataset.DataSet;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 import javax.interceptor.InterceptorBinding;
-import java.lang.annotation.*;
 
 /**
  * Created by rafael-pestano on 22/07/2015.
