@@ -10,12 +10,12 @@
 :docinfo:
 :source-highlighter: highlightjs
 :toclevels: 3
-:revnumber: 1.2.4-SNAPSHOT
+:revnumber: 1.2.10
 :hardbreaks:
 
 = *Database Rider Documentation*
 
-include::/home/travis/build/database-rider/database-rider/rider-core/target/test-classes/cukedoctor-intro.adoc[leveloffset=+1]
+include::/home/rmpestano/projects/database-rider/rider-core/target/test-classes/cukedoctor-intro.adoc[leveloffset=+1]
 
 
 [[Seeding-database, Seeding database]]
@@ -171,6 +171,8 @@ Your test itself must be a CDI bean to be intercepted. if you’re using https:/
 
 deltaspike.testcontrol.use_test_class_as_cdi_bean=true
 ----
+
+IMPORTANT: When using above configuration the JUnit `@Before` will not work as expected, see https://lists.apache.org/thread.html/60ae2ade9ff8c5588a53a138b64c94e505455185358c21f663a5fd33@%3Cusers.deltaspike.apache.org%3E[discussion here^].
 ======
 
 =====
@@ -1243,4 +1245,102 @@ image::https://raw.githubusercontent.com/database-rider/dbunit-addon/master/expo
 * `Query list`: A list of SQL statements which resulting rows will be used in generated dataset.
 * `Output dir`: directory to generate dataset.
 * `Name`: name of resulting dataset. Format can be ommited in dataset name.
+
+[[MetaDataSet, MetaDataSet]]
+== *MetaDataSet*
+
+****
+====
+[quote]
+____
+In order to reuse datasets
+As a developer
+I want to create a custom annotation which holds my dataset and use it among tests.
+____
+====
+
+TIP: Complete source code of examples below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/MetaDataSetIt.java#L21[found here^].
+
+TIP: See https://github.com/database-rider/database-rider/blob/master/rider-spring/src/test/java/com/github/database/rider/spring/dataset/MetaDataSetIT.java[Rider Spring^], https://github.com/database-rider/database-rider/blob/master/rider-junit5/src/test/java/com/github/database/rider/junit5/MetaDataSetIt.java[JUnit5^] and https://github.com/database-rider/database-rider/blob/master/rider-cdi/src/test/java/com/github/database/rider/cdi/MetaDataSetIt.java[CDI^] examples.
+****
+
+=== Class level metadataset
+
+****
+Given ::
+=====
+The following metataset annotation icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+.MetaDataSet.java
+----
+include::../../../src/test/java/com/github/database/rider/core/api/dataset/MetaDataSet.java[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java,indent=0]
+----
+include::../../../src/test/java/com/github/database/rider/core/MetaDataSetIt.java[tags=declaration;class-level]
+}
+----
+
+
+******
+
+=====
+Then ::
+=====
+Test must use dataset declared in `MetaDataSet` annotation. icon:thumbs-up[role="green",title="Passed"]
+=====
+****
+
+=== Method level metadaset
+
+****
+Given ::
+=====
+The following metataset annotation icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+.MetaDataSet.java
+----
+include::../../../src/test/java/com/github/database/rider/core/api/dataset/AnotherMetaDataSet.java[]
+----
+
+
+******
+
+=====
+When ::
+=====
+The following test is executed: icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java,indent=0]
+----
+include::../../../src/test/java/com/github/database/rider/core/MetaDataSetIt.java[tags=declaration;method-level]
+}
+----
+
+
+******
+
+=====
+Then ::
+=====
+Test must use dataset declared in `AnotherMetaDataSet` annotation. icon:thumbs-up[role="green",title="Passed"]
+=====
+****
 

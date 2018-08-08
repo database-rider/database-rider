@@ -525,7 +525,7 @@ table.CodeRay td.code>pre{padding:0}
   <div id="header"> 
    <h1>Database Rider Documentation</h1> 
    <div class="details"> 
-    <span id="revnumber">version 1.2.4-SNAPSHOT</span> 
+    <span id="revnumber">version 1.2.10</span> 
    </div> 
    <div id="toc" class="toc"> 
     <div id="toctitle">
@@ -576,6 +576,11 @@ table.CodeRay td.code>pre{padding:0}
        <li><a href="#_programmatic_export">8.2. Programmatic export</a></li> 
        <li><a href="#_configuration">8.3. Configuration</a></li> 
        <li><a href="#_export_using_dbunit_addon">8.4. Export using DBUnit Addon</a></li> 
+      </ul> </li> 
+     <li><a href="#MetaDataSet">9. <strong>MetaDataSet</strong></a> 
+      <ul class="sectlevel2"> 
+       <li><a href="#_class_level_metadataset">9.1. Class level metadataset</a></li> 
+       <li><a href="#_method_level_metadaset">9.2. Method level metadaset</a></li> 
       </ul> </li> 
     </ul> 
    </div> 
@@ -693,7 +698,7 @@ table.CodeRay td.code>pre{padding:0}
         <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
    <span class="tag">&lt;groupId&gt;</span>com.github.database-rider<span class="tag">&lt;/groupId&gt;</span>
    <span class="tag">&lt;artifactId&gt;</span>rider-core<span class="tag">&lt;/artifactId&gt;</span>
-   <span class="tag">&lt;version&gt;</span>1.2.4-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+   <span class="tag">&lt;version&gt;</span>1.2.10<span class="tag">&lt;/version&gt;</span>
    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
        </div> 
@@ -862,7 +867,7 @@ FOLLOWER:
         <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
    <span class="tag">&lt;groupId&gt;</span>com.github.database-rider<span class="tag">&lt;/groupId&gt;</span>
    <span class="tag">&lt;artifactId&gt;</span>rider-cdi<span class="tag">&lt;/artifactId&gt;</span>
-   <span class="tag">&lt;version&gt;</span>1.2.4-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+   <span class="tag">&lt;version&gt;</span>1.2.10<span class="tag">&lt;/version&gt;</span>
    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
        </div> 
@@ -913,6 +918,16 @@ FOLLOWER:
                 <div class="content"> 
                  <pre>deltaspike.testcontrol.use_test_class_as_cdi_bean=true</pre> 
                 </div> 
+               </div> 
+               <div class="admonitionblock important"> 
+                <table> 
+                 <tbody> 
+                  <tr> 
+                   <td class="icon"> <i class="fa icon-important" title="Important"></i> </td> 
+                   <td class="content"> When using above configuration the JUnit <code>@Before</code> will not work as expected, see <a href="https://lists.apache.org/thread.html/60ae2ade9ff8c5588a53a138b64c94e505455185358c21f663a5fd33@%3Cusers.deltaspike.apache.org%3E" target="_blank" rel="noopener">discussion here</a>. </td> 
+                  </tr> 
+                 </tbody> 
+                </table> 
                </div> </td> 
              </tr> 
             </tbody> 
@@ -1057,7 +1072,7 @@ FOLLOWER:
         <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
    <span class="tag">&lt;groupId&gt;</span>com.github.database-rider<span class="tag">&lt;/groupId&gt;</span>
    <span class="tag">&lt;artifactId&gt;</span>rider-junit5<span class="tag">&lt;/artifactId&gt;</span>
-   <span class="tag">&lt;version&gt;</span>1.2.4-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+   <span class="tag">&lt;version&gt;</span>1.2.10<span class="tag">&lt;/version&gt;</span>
    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
        </div> 
@@ -1270,7 +1285,7 @@ FOLLOWER:
         <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
    <span class="tag">&lt;groupId&gt;</span>com.github.database-rider<span class="tag">&lt;/groupId&gt;</span>
    <span class="tag">&lt;artifactId&gt;</span>rider-cucumber<span class="tag">&lt;/artifactId&gt;</span>
-   <span class="tag">&lt;version&gt;</span>1.2.4-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+   <span class="tag">&lt;version&gt;</span>1.2.10<span class="tag">&lt;/version&gt;</span>
    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
        </div> 
@@ -2446,7 +2461,7 @@ properties:
 
     <span class="annotation">@Test</span>
     <span class="annotation">@DataSet</span>(cleanBefore = <span class="predefined-constant">true</span>)<i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="annotation">@ExpectedDataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">yml/expectedUsers.yml</span><span class="delimiter">"</span></span>,ignoreCols = <span class="string"><span class="delimiter">"</span><span class="content">id</span><span class="delimiter">"</span></span>)
+    <span class="annotation">@ExpectedDataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">yml/expectedUsers.yml</span><span class="delimiter">"</span></span>, ignoreCols = <span class="string"><span class="delimiter">"</span><span class="content">id</span><span class="delimiter">"</span></span>)
     <span class="directive">public</span> <span class="type">void</span> shouldMatchExpectedDataSet() {
         EntityManagerProvider instance = EntityManagerProvider.newInstance(<span class="string"><span class="delimiter">"</span><span class="content">rules-it</span><span class="delimiter">"</span></span>);
         User u = <span class="keyword">new</span> User();
@@ -2660,7 +2675,7 @@ properties:
 <span class="annotation">@ExpectedDataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">yml/expectedUser.yml</span><span class="delimiter">"</span></span>, ignoreCols = <span class="string"><span class="delimiter">"</span><span class="content">id</span><span class="delimiter">"</span></span>)
 <span class="directive">public</span> <span class="type">void</span> shouldMatchExpectedDataSetAfterSeedingDataBase() {
     tx().begin();
-    em().remove(EntityManagerProvider.em().find(User.class,<span class="integer">1L</span>));
+    em().remove(EntityManagerProvider.em().find(User.class, <span class="integer">1L</span>));
     tx().commit();
 }</code></pre> 
              </div> 
@@ -2737,7 +2752,7 @@ properties:
             <div class="listingblock"> 
              <div class="content"> 
               <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
-<span class="annotation">@ExpectedDataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">yml/expectedUsers.yml</span><span class="delimiter">"</span></span>,ignoreCols = <span class="string"><span class="delimiter">"</span><span class="content">id</span><span class="delimiter">"</span></span>)
+<span class="annotation">@ExpectedDataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">yml/expectedUsers.yml</span><span class="delimiter">"</span></span>, ignoreCols = <span class="string"><span class="delimiter">"</span><span class="content">id</span><span class="delimiter">"</span></span>)
 <span class="directive">public</span> <span class="type">void</span> shouldNotMatchExpectedDataSet() {
     User u = <span class="keyword">new</span> User();
     u.setName(<span class="string"><span class="delimiter">"</span><span class="content">non expected user1</span><span class="delimiter">"</span></span>);
@@ -2999,7 +3014,7 @@ properties:
             <div class="listingblock"> 
              <div class="content"> 
               <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
-<span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">datasets/yml/groovy-with-date-replacements.yml</span><span class="delimiter">"</span></span>,cleanBefore = <span class="predefined-constant">true</span>, disableConstraints = <span class="predefined-constant">true</span>, executorId = <span class="string"><span class="delimiter">"</span><span class="content">rules-it</span><span class="delimiter">"</span></span>)
+<span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">datasets/yml/groovy-with-date-replacements.yml</span><span class="delimiter">"</span></span>,cleanBefore = <span class="predefined-constant">true</span>, disableConstraints = <span class="predefined-constant">true</span>, executorId = <span class="string"><span class="delimiter">"</span><span class="content">rider-it</span><span class="delimiter">"</span></span>)
 <span class="directive">public</span> <span class="type">void</span> shouldReplaceDateUsingGroovyInDataset() {
     Tweet tweet = (Tweet) emProvider.em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select t from Tweet t where t.id = '1'</span><span class="delimiter">"</span></span>).getSingleResult();
     assertThat(tweet).isNotNull();
@@ -3099,7 +3114,7 @@ properties:
             <div class="listingblock"> 
              <div class="content"> 
               <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
-<span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">datasets/yml/js-with-calc-replacements.yml</span><span class="delimiter">"</span></span>,cleanBefore = <span class="predefined-constant">true</span>, disableConstraints = <span class="predefined-constant">true</span>, executorId = <span class="string"><span class="delimiter">"</span><span class="content">rules-it</span><span class="delimiter">"</span></span>)
+<span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">datasets/yml/js-with-calc-replacements.yml</span><span class="delimiter">"</span></span>,cleanBefore = <span class="predefined-constant">true</span>, disableConstraints = <span class="predefined-constant">true</span>, executorId = <span class="string"><span class="delimiter">"</span><span class="content">rider-it</span><span class="delimiter">"</span></span>)
 <span class="directive">public</span> <span class="type">void</span> shouldReplaceLikesUsingJavaScriptInDataset() {
     Tweet tweet = (Tweet) emProvider.em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select t from Tweet t where t.id = '1'</span><span class="delimiter">"</span></span>).getSingleResult();
     assertThat(tweet).isNotNull();
@@ -3410,6 +3425,224 @@ properties:
      </div> 
     </div> 
    </div> 
+   <div class="sect1"> 
+    <h2 id="MetaDataSet"><a class="anchor" href="#MetaDataSet"></a>9. <strong>MetaDataSet</strong></h2> 
+    <div class="sectionbody"> 
+     <div class="sidebarblock"> 
+      <div class="content"> 
+       <div class="exampleblock"> 
+        <div class="content"> 
+         <div class="quoteblock"> 
+          <blockquote> 
+           <div class="paragraph"> 
+            <p>In order to reuse datasets<br> As a developer<br> I want to create a custom annotation which holds my dataset and use it among tests.</p> 
+           </div> 
+          </blockquote> 
+         </div> 
+        </div> 
+       </div> 
+       <div class="admonitionblock tip"> 
+        <table> 
+         <tbody> 
+          <tr> 
+           <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
+           <td class="content"> Complete source code of examples below can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/MetaDataSetIt.java#L21" target="_blank" rel="noopener">found here</a>. </td> 
+          </tr> 
+         </tbody> 
+        </table> 
+       </div> 
+       <div class="admonitionblock tip"> 
+        <table> 
+         <tbody> 
+          <tr> 
+           <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
+           <td class="content"> See <a href="https://github.com/database-rider/database-rider/blob/master/rider-spring/src/test/java/com/github/database/rider/spring/dataset/MetaDataSetIT.java" target="_blank" rel="noopener">Rider Spring</a>, <a href="https://github.com/database-rider/database-rider/blob/master/rider-junit5/src/test/java/com/github/database/rider/junit5/MetaDataSetIt.java" target="_blank" rel="noopener">JUnit5</a> and <a href="https://github.com/database-rider/database-rider/blob/master/rider-cdi/src/test/java/com/github/database/rider/cdi/MetaDataSetIt.java" target="_blank" rel="noopener">CDI</a> examples. </td> 
+          </tr> 
+         </tbody> 
+        </table> 
+       </div> 
+      </div> 
+     </div> 
+     <div class="sect2"> 
+      <h3 id="_class_level_metadataset"><a class="anchor" href="#_class_level_metadataset"></a>9.1. Class level metadataset</h3> 
+      <div class="sidebarblock"> 
+       <div class="content"> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Given 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following metataset annotation <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="title">
+               MetaDataSet.java 
+             </div> 
+             <div class="content"> 
+              <pre>package com.github.database.rider.core.api.dataset;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.METHOD})
+@DataSet(value = "yml/users.yml", disableConstraints = true)
+public @interface MetaDataSet {
+
+}</pre> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            When 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="content"> 
+              <pre class="CodeRay highlight"><code data-lang="java">        <span class="annotation">@Test</span>
+        <span class="directive">public</span> <span class="type">void</span> testMetaAnnotationOnClass() {
+                <span class="predefined-type">List</span>&lt;User&gt; users = em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
+                assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">2</span>);
+        }
+}</code></pre> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Then 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>Test must use dataset declared in <code>MetaDataSet</code> annotation. <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+         </div> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+     <div class="sect2"> 
+      <h3 id="_method_level_metadaset"><a class="anchor" href="#_method_level_metadaset"></a>9.2. Method level metadaset</h3> 
+      <div class="sidebarblock"> 
+       <div class="content"> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Given 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following metataset annotation <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="title">
+               MetaDataSet.java 
+             </div> 
+             <div class="content"> 
+              <pre>package com.github.database.rider.core.api.dataset;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.METHOD})
+@DataSet(value = "yml/expectedUser.yml", disableConstraints = true)
+public @interface AnotherMetaDataSet {
+
+}</pre> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            When 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="content"> 
+              <pre class="CodeRay highlight"><code data-lang="java">        <span class="annotation">@Test</span>
+        <span class="annotation">@AnotherMetaDataSet</span>
+        <span class="directive">public</span> <span class="type">void</span> testMetaAnnotationOnMethod() {
+                <span class="predefined-type">List</span>&lt;User&gt; users = em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
+                assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">1</span>);
+        }
+}</code></pre> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Then 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>Test must use dataset declared in <code>AnotherMetaDataSet</code> annotation. <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+         </div> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+    </div> 
+   </div> 
   </div> 
   <div id="footnotes"> 
    <hr> 
@@ -3424,8 +3657,8 @@ properties:
   </div> 
   <div id="footer" style="color:gray;font-size:11px">
     Generated by 
-   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.7</a> - Oct 30, 2017 4:38:28 PM 
-   <span style="float:right;font-size:11px"> Execution time: 7.76 seconds</span> 
+   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.7</a> - 08/08/2018 09:58:03 
+   <span style="float:right;font-size:11px"> Execution time: 6.947 seconds</span> 
   </div> 
   <style>  
 
