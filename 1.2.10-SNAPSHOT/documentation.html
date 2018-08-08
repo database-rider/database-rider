@@ -577,6 +577,11 @@ table.CodeRay td.code>pre{padding:0}
        <li><a href="#_configuration">8.3. Configuration</a></li> 
        <li><a href="#_export_using_dbunit_addon">8.4. Export using DBUnit Addon</a></li> 
       </ul> </li> 
+     <li><a href="#MetaDataSet">9. <strong>MetaDataSet</strong></a> 
+      <ul class="sectlevel2"> 
+       <li><a href="#_class_level_metadataset">9.1. Class level metadataset</a></li> 
+       <li><a href="#_method_level_metadaset">9.2. Method level metadaset</a></li> 
+      </ul> </li> 
     </ul> 
    </div> 
   </div> 
@@ -3420,6 +3425,224 @@ properties:
      </div> 
     </div> 
    </div> 
+   <div class="sect1"> 
+    <h2 id="MetaDataSet"><a class="anchor" href="#MetaDataSet"></a>9. <strong>MetaDataSet</strong></h2> 
+    <div class="sectionbody"> 
+     <div class="sidebarblock"> 
+      <div class="content"> 
+       <div class="exampleblock"> 
+        <div class="content"> 
+         <div class="quoteblock"> 
+          <blockquote> 
+           <div class="paragraph"> 
+            <p>In order to reuse datasets<br> As a developer<br> I want to create a custom annotation which holds my dataset and use it among tests.</p> 
+           </div> 
+          </blockquote> 
+         </div> 
+        </div> 
+       </div> 
+       <div class="admonitionblock tip"> 
+        <table> 
+         <tbody> 
+          <tr> 
+           <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
+           <td class="content"> Complete source code of examples below can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/MetaDataSetIt.java#L21" target="_blank" rel="noopener">found here</a>. </td> 
+          </tr> 
+         </tbody> 
+        </table> 
+       </div> 
+       <div class="admonitionblock tip"> 
+        <table> 
+         <tbody> 
+          <tr> 
+           <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
+           <td class="content"> See <a href="https://github.com/database-rider/database-rider/blob/master/rider-spring/src/test/java/com/github/database/rider/spring/dataset/MetaDataSetIT.java" target="_blank" rel="noopener">Rider Spring</a>, <a href="https://github.com/database-rider/database-rider/blob/master/rider-junit5/src/test/java/com/github/database/rider/junit5/MetaDataSetIt.java" target="_blank" rel="noopener">JUnit5</a> and <a href="https://github.com/database-rider/database-rider/blob/master/rider-cdi/src/test/java/com/github/database/rider/cdi/MetaDataSetIt.java" target="_blank" rel="noopener">CDI</a> examples. </td> 
+          </tr> 
+         </tbody> 
+        </table> 
+       </div> 
+      </div> 
+     </div> 
+     <div class="sect2"> 
+      <h3 id="_class_level_metadataset"><a class="anchor" href="#_class_level_metadataset"></a>9.1. Class level metadataset</h3> 
+      <div class="sidebarblock"> 
+       <div class="content"> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Given 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following metataset annotation <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="title">
+               MetaDataSet.java 
+             </div> 
+             <div class="content"> 
+              <pre>package com.github.database.rider.core.api.dataset;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.METHOD})
+@DataSet(value = "yml/users.yml", disableConstraints = true)
+public @interface MetaDataSet {
+
+}</pre> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            When 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="content"> 
+              <pre class="CodeRay highlight"><code data-lang="java">        <span class="annotation">@Test</span>
+        <span class="directive">public</span> <span class="type">void</span> testMetaAnnotationOnClass() {
+                <span class="predefined-type">List</span>&lt;User&gt; users = em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
+                assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">2</span>);
+        }
+}</code></pre> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Then 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>Test must use dataset declared in <code>MetaDataSet</code> annotation. <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+         </div> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+     <div class="sect2"> 
+      <h3 id="_method_level_metadaset"><a class="anchor" href="#_method_level_metadaset"></a>9.2. Method level metadaset</h3> 
+      <div class="sidebarblock"> 
+       <div class="content"> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Given 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following metataset annotation <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="title">
+               MetaDataSet.java 
+             </div> 
+             <div class="content"> 
+              <pre>package com.github.database.rider.core.api.dataset;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.METHOD})
+@DataSet(value = "yml/expectedUser.yml", disableConstraints = true)
+public @interface AnotherMetaDataSet {
+
+}</pre> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            When 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="content"> 
+              <pre class="CodeRay highlight"><code data-lang="java">        <span class="annotation">@Test</span>
+        <span class="annotation">@AnotherMetaDataSet</span>
+        <span class="directive">public</span> <span class="type">void</span> testMetaAnnotationOnMethod() {
+                <span class="predefined-type">List</span>&lt;User&gt; users = em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
+                assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">1</span>);
+        }
+}</code></pre> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Then 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>Test must use dataset declared in <code>AnotherMetaDataSet</code> annotation. <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+         </div> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+    </div> 
+   </div> 
   </div> 
   <div id="footnotes"> 
    <hr> 
@@ -3434,8 +3657,8 @@ properties:
   </div> 
   <div id="footer" style="color:gray;font-size:11px">
     Generated by 
-   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.7</a> - Aug 8, 2018 11:25:27 AM 
-   <span style="float:right;font-size:11px"> Execution time: 8.379 seconds</span> 
+   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.7</a> - Aug 8, 2018 12:11:35 PM 
+   <span style="float:right;font-size:11px"> Execution time: 8.815 seconds</span> 
   </div> 
   <style>  
 
