@@ -2,8 +2,8 @@ package com.github.database.rider.core.configuration;
 
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.configuration.Orthography;
+import com.github.database.rider.core.replacers.CustomReplacer;
 import org.dbunit.dataset.datatype.DataType;
-import org.dbunit.dataset.datatype.DataTypeException;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,6 +50,7 @@ public class DBUnitConfigTest {
                 containsEntry("batchSize", 100).
                 containsEntry("fetchSize", 100).
                 containsEntry("allowEmptyFields", false).
+                containsKey("replacers").
                 doesNotContainKey("escapePattern").
                 doesNotContainKey("datatypeFactory");
 
@@ -83,7 +86,8 @@ public class DBUnitConfigTest {
                 containsEntry("batchSize", 200).
                 containsEntry("fetchSize", 200).
                 containsEntry("escapePattern", "[?]").
-                containsEntry("datatypeFactory", new MockDataTypeFactory());
+                containsEntry("datatypeFactory", new MockDataTypeFactory()).
+                containsEntry("replacers", new ArrayList<>(Arrays.asList(new CustomReplacer())));
     }
 
     @Test
@@ -142,12 +146,12 @@ public class DBUnitConfigTest {
 
     public static class MockDataTypeFactory implements org.dbunit.dataset.datatype.IDataTypeFactory {
         @Override
-        public DataType createDataType(int i, String s) throws DataTypeException {
+        public DataType createDataType(int i, String s) {
             throw new UnsupportedOperationException("only for configuration tests");
         }
 
         @Override
-        public DataType createDataType(int i, String s, String s1, String s2) throws DataTypeException {
+        public DataType createDataType(int i, String s, String s1, String s2) {
             throw new UnsupportedOperationException("only for configuration tests");
         }
 

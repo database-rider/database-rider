@@ -3,13 +3,16 @@ package com.github.database.rider.core.configuration;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.configuration.Orthography;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
+import com.github.database.rider.core.replacers.DateTimeReplacer;
+import com.github.database.rider.core.replacers.NullReplacer;
+import com.github.database.rider.core.replacers.Replacer;
+import com.github.database.rider.core.replacers.UnixTimestampReplacer;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * represents DBUnit configuration of a dataset executor.
@@ -58,6 +61,8 @@ public class DBUnitConfig {
         putIfAbsent(properties, "batchSize", 100);
         putIfAbsent(properties, "fetchSize", 100);
         putIfAbsent(properties, "allowEmptyFields", false);
+        putIfAbsent(properties, "replacers", new ArrayList<>(
+                Arrays.asList(new DateTimeReplacer(), new UnixTimestampReplacer(), new NullReplacer())));
     }
 
     private <K, V> void putIfAbsent(Map<K, V> map, K key, V value) {
@@ -128,6 +133,24 @@ public class DBUnitConfig {
                 throw new RuntimeException("failed to instantiate datatypeFactory", e);
             }
         }
+
+        List<Replacer> dbUnitReplacers = new ArrayList<>();
+        for (Class<? extends Replacer> replacerClass : dbUnit.replacers()) {
+            try {
+                dbUnitReplacers.add(replacerClass.newInstance());
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new IllegalArgumentException(replacerClass.getName() + " could not be instantiated as Replacer");
+            }
+        }
+
+        @SuppressWarnings("unchecked") List<Replacer> defaultReplacers = (List<Replacer>) dbUnitConfig.getProperties().get("replacers");
+        if (defaultReplacers != null && defaultReplacers.size() > 0) {
+            // merge replacers
+            dbUnitReplacers.addAll(defaultReplacers);
+        }
+
+        dbUnitConfig.addDBUnitProperty("replacers", dbUnitReplacers);
+
 
         // declarative connection config
         dbUnitConfig.driver(dbUnit.driver())

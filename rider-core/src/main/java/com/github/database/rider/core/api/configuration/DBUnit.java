@@ -1,14 +1,10 @@
 package com.github.database.rider.core.api.configuration;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
+import com.github.database.rider.core.replacers.Replacer;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
+
+import java.lang.annotation.*;
 
 /**
  * Created by rafael-pestano on 30/08/2016. This annotation configures DBUnit properties
@@ -60,6 +56,11 @@ public @interface DBUnit {
      * @return value which configures DatabaseConfig.PROPERTY_DATATYPE_FACTORY
      */
     Class<? extends IDataTypeFactory> dataTypeFactoryClass() default IDataTypeFactory.class;
+
+    /**
+     * @return implementations of {@link Replacer}, which are merged with default replacers
+     */
+    Class<? extends Replacer>[] replacers() default {};
 
     /**
      * Specifies the orthography/letter-case strategy if {@link #caseSensitiveTableNames()} is set to <code>false</code>

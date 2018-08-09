@@ -23,5 +23,9 @@ TWEET:
     CONTENT: "dbunit rules!"
     DATE: "[HOUR,PLUS_ONE]"
     USER_ID: 1
+  - ID: "7"
+    CONTENT: "dbunit rules!"
+    USER_ID: 1
+    TIMESTAMP: "[UNIX_TIMESTAMP]"
 
 

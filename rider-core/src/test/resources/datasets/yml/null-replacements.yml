@@ -1,0 +1,7 @@
+TWEET:
+- ID: "1"
+  CONTENT: "[null]"
+  USER_ID: 1
+- ID: "2"
+  CONTENT: "null"
+  USER_ID: 1
