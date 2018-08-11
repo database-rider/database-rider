@@ -11,7 +11,7 @@ import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.connection.RiderDataSource;
 import com.github.database.rider.core.exception.DataBaseSeedingException;
-import com.github.database.rider.core.replacer.DateTimeReplacer;
+import com.github.database.rider.core.replacers.Replacer;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.database.DatabaseSequenceFilter;
@@ -29,11 +29,9 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.JarURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -389,9 +387,23 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         }
     }
 
+    /**
+     * Perform replacements from all {@link Replacer} implementations, registered in {@link #dbUnitConfig}.
+     */
+    @SuppressWarnings("unchecked")
     private IDataSet performReplacements(IDataSet dataSet) {
-        IDataSet replace = DateTimeReplacer.replace(dataSet);
-        return replace;
+        if (!dbUnitConfig.getProperties().containsKey("replacers"))
+            return dataSet;
+
+        ReplacementDataSet replacementSet = new ReplacementDataSet(dataSet);
+
+        // convert to set to remove duplicates
+        Set<Replacer> replacers = new HashSet<>((List<Replacer>) dbUnitConfig.getProperties().get("replacers"));
+        for (Replacer replacer : replacers) {
+            replacer.addReplacements(replacementSet);
+        }
+
+        return replacementSet;
     }
 
     private void setConnectionHolder(ConnectionHolder connectionHolder) {
@@ -628,7 +640,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         InputStreamReader r = null;
         try {
             conn = (JarURLConnection) new URL(jarEntry).openConnection();
-            r = new InputStreamReader(conn.getInputStream(), "UTF-8");
+            r = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
             StringBuilder sb = new StringBuilder();
             int data = r.read();
             while (data != -1) {

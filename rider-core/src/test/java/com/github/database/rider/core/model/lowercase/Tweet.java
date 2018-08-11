@@ -22,6 +22,8 @@ public class Tweet {
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar date;
 
+    private Long timestamp;
+
     @ManyToOne
     User user;
 
@@ -64,6 +66,14 @@ public class Tweet {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
     }
 
     @Override

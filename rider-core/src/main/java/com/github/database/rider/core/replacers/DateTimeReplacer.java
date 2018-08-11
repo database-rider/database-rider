@@ -1,7 +1,6 @@
-package com.github.database.rider.core.replacer;
+package com.github.database.rider.core.replacers;
 
 import com.github.database.rider.core.api.replacer.*;
-import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ReplacementDataSet;
 
 import java.text.SimpleDateFormat;
@@ -11,55 +10,46 @@ import java.util.Date;
 /**
  * based on: http://marcin-michalski.pl/2012/10/22/decorating-dbunit-datasets-power-of-replacementdataset/
  */
-public class DateTimeReplacer {
+public class DateTimeReplacer implements Replacer {
 
     public static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static final String PLACEHOLDER_FORMAT = "[%s,%s]"; // [prefix:placeholderName]
 
-    private static DateTimeReplacer instance;
 
-    private DateTimeReplacer(){
-
-    }
-
-    public static IDataSet replace(IDataSet dataset) {
-        if (instance == null){
-            instance = new DateTimeReplacer();
-        }
+    @Override
+    public void addReplacements(ReplacementDataSet dataSet) {
         Date currentDate = new Date();
-        ReplacementDataSet replacementDataSet = new ReplacementDataSet(dataset);
-        instance.replaceDays(currentDate, replacementDataSet);
-        instance.replaceHours(currentDate, replacementDataSet);
-        instance.replaceMinutes(currentDate, replacementDataSet);
-        instance.replaceSeconds(currentDate, replacementDataSet);
-        return replacementDataSet;
+        replaceDays(currentDate, dataSet);
+        replaceHours(currentDate, dataSet);
+        replaceMinutes(currentDate, dataSet);
+        replaceSeconds(currentDate, dataSet);
     }
 
     private void replaceDays(Date currentDate, ReplacementDataSet replacementDataSet) {
         for (DayReplacerType type : DayReplacerType.values()) {
             Date calculatedDate = addDays(currentDate, type.getDays());
-            replacementDataSet.addReplacementSubstring(instance.getPlaceholderPattern(type), FORMAT.format(calculatedDate));
+            replacementDataSet.addReplacementSubstring(getPlaceholderPattern(type), FORMAT.format(calculatedDate));
         }
     }
 
     private void replaceHours(Date currentDate, ReplacementDataSet replacementDataSet) {
         for (HourReplacerType type : HourReplacerType.values()) {
             Date calculatedDate = addHours(currentDate, type.getHours());
-            replacementDataSet.addReplacementSubstring(instance.getPlaceholderPattern(type), FORMAT.format(calculatedDate));
+            replacementDataSet.addReplacementSubstring(getPlaceholderPattern(type), FORMAT.format(calculatedDate));
         }
     }
 
     private void replaceMinutes(Date currentDate, ReplacementDataSet replacementDataSet) {
         for (MinuteReplacerType type : MinuteReplacerType.values()) {
             Date calculatedDate = addMinutes(currentDate, type.getMinutes());
-            replacementDataSet.addReplacementSubstring(instance.getPlaceholderPattern(type), FORMAT.format(calculatedDate));
+            replacementDataSet.addReplacementSubstring(getPlaceholderPattern(type), FORMAT.format(calculatedDate));
         }
     }
 
     private void replaceSeconds(Date currentDate, ReplacementDataSet replacementDataSet) {
         for (SecondReplacerType type : SecondReplacerType.values()) {
             Date calculatedDate = addSeconds(currentDate, type.getSeconds());
-            replacementDataSet.addReplacementSubstring(instance.getPlaceholderPattern(type), FORMAT.format(calculatedDate));
+            replacementDataSet.addReplacementSubstring(getPlaceholderPattern(type), FORMAT.format(calculatedDate));
         }
     }
 

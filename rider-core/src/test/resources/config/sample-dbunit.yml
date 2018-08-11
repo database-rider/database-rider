@@ -9,3 +9,4 @@ properties:
   allowEmptyFields: true
   escapePattern: "[?]"
   datatypeFactory: !!com.github.database.rider.core.configuration.DBUnitConfigTest$MockDataTypeFactory {}
+  replacers: [!!com.github.database.rider.core.replacers.CustomReplacer {}]
