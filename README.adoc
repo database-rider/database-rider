@@ -311,7 +311,7 @@ DBUnit Configuration:: this basically setup `DBUnit` itself. It can be configure
     }
 ----
 +
-Here is a dbunit.yml example, also the default values:
+Here is a dbunit.yml example, also the default values :
 +
 .src/test/resources/dbunit.yml
 ----
@@ -327,6 +327,7 @@ properties:
   fetchSize: 100
   allowEmptyFields: false
   escapePattern:
+  datatypeFactory: !!com.github.database.rider.core.configuration.DBUnitConfigTest$MockDataTypeFactory {} <2>
 connectionConfig:
   driver: ""
   url: ""
@@ -334,9 +335,9 @@ connectionConfig:
   password: ""
 ----
 <1> Only applied when `caseSensitiveTableNames` is `false`. Valid values are `UPPERCASE` and `LOWERCASE`.
+<2> Make it possible to define a datatype factory, https://github.com/database-rider/database-rider/issues/30[see issue #30^] for details.
 +
 NOTE: `@DBUnit` annotation takes precedence over `dbunit.yml` global configuration which will be used only if the annotation is not present.
-
 
 TIP: Both configuration mechanisms work for all Database Rider modules.
 
@@ -606,6 +607,166 @@ public class MetaDataSetIt {
 NOTE: This works with all Database Rider modules like `Spring`, `CDI` and `JUnit5`.
 
 TIP: See https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/MetaDataSetIt.java[MetaDatasetIt code^] for details. 
+
+=== DataSet Replacers
+
+A DataSet replacer is a `placeholder` used in a dataset file which will be replaced during test execution. 
+
+DBRider comes with a `Date Replacer`, `Null replacer` and a `Custom replacer`.
+
+TIP: For complete source code of replacers examples https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/replacers/[Look here^].
+
+
+==== Date replacer
+
+Following is an example test using a date replacer:
+
+.date-replacements.yml 
+----
+TWEET:
+  - ID: "1"
+    CONTENT: "dbunit rules!"
+    DATE: "[DAY,NOW]"
+    USER_ID: 1
+----
+
+
+.DateReplacementsIt.java
+
+[source,java]
+----
+    @Before
+    public void setup(){
+        now = Calendar.getInstance();
+    }
+
+    @Test
+    @DataSet(value = "date-replacements.yml",disableConstraints = true) //disabled constraints so we can have a TWEET with inexistent USER_ID
+    public void shouldReplaceDateWithNowPlaceHolder() {
+        Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
+        assertThat(tweet).isNotNull();
+        assertThat(tweet.getDate().get(Calendar.DAY_OF_MONTH)).isEqualTo(now.get(Calendar.DAY_OF_MONTH));
+        assertThat(tweet.getDate().get(Calendar.HOUR_OF_DAY)).isEqualTo(now.get(Calendar.HOUR_OF_DAY));
+    }
+----
+
+==== Null replacer
+
+.null-replacements.yml
+----
+TWEET:
+- ID: "1"
+  CONTENT: "[null]"
+  USER_ID: 1
+- ID: "2"
+  CONTENT: "null"
+  USER_ID: 1
+----
+
+.NullReplacementsIt.java
+[source,java]
+----
+    @Test
+    @DataSet(value = "null-replacements.yml", disableConstraints = true)
+    public void shouldReplaceNullPlaceholder() {
+        Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
+        assertThat(tweet).isNotNull();
+        assertThat(tweet.getContent()).isNull();
+
+        Tweet tweet2 = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '2'").getSingleResult();
+        assertThat(tweet2).isNotNull();
+        assertThat(tweet2.getContent()).isNotNull().isEqualTo("null");
+    }
+----
+
+
+==== Custom replacer
+
+The custom replacer makes it possible to create your own replacers. 
+
+First we need to implement the `Replacer` interface:
+
+.CustomReplacer.java
+[source,java]
+----
+/**
+ * Example implementation of Replacer which replaces string 'FOO' for 'BAR'
+ *
+ */
+public class CustomReplacer implements Replacer {
+
+    @Override
+    public void addReplacements(ReplacementDataSet dataSet) {
+        dataSet.addReplacementSubstring("FOO", "BAR");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        return o != null && getClass() == o.getClass();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getClass());
+    }
+}
+----
+
+.custom-replacements.yml
+----
+TWEET:
+- ID: "1"
+  CONTENT: "FOO"
+  USER_ID: 1
+----
+
+
+.CustomReplacementIt.java
+[source,java]
+----
+@DBUnit(replacers = CustomReplacer.class) <1>
+public class CustomReplacementIt {
+
+    @Rule
+    public EntityManagerProvider emProvider = EntityManagerProvider.instance("rules-it");
+
+    @Rule
+    public DBUnitRule dbUnitRule = DBUnitRule.instance("rules-it", emProvider.connection());
+
+    @Test
+    @DataSet(value = "datasets/yml/custom-replacements.yml", disableConstraints = true, executorId = "rules-it")
+    public void shouldReplaceFoo() {
+        Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
+        assertThat(tweet).isNotNull();
+        assertThat(tweet.getContent()).isNotNull().isEqualTo("BAR");
+    }
+}
+----
+<1> Custom replacer is enabled via `@DBUnit` annotation `replacers` attribute.
+
+
+[TIP]
+====
+You can also register a custom replacer in `dbunit-config.yml`:
+
+.src/test/resources/config/sample-dbunit.yml:
+----
+cacheConnection: false
+cacheTableNames: false
+leakHunter: true
+properties:
+  batchedStatements:  true
+  qualifiedTableNames: true
+  batchSize: 200
+  fetchSize: 200
+  allowEmptyFields: true
+  escapePattern: "[?]"
+  datatypeFactory: !!com.github.database.rider.core.configuration.DBUnitConfigTest$MockDataTypeFactory {}
+  replacers: [!!com.github.database.rider.core.replacers.CustomReplacer {}]
+----
+
+====
 
 === Transactional Tests
 
