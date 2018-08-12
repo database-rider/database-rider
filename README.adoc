@@ -545,7 +545,7 @@ Now we don't need to `ignore id column` in the above example:
 ----
     @Test
     @ExpectedDataSet(value = "yml/expectedUsers.yml")
-    public void shouldMatchExpectedDataSet() {
+    public void shouldMatchExpectedDataSetUsingRegex() {
         User u = new User();
         u.setName("expected user1");
         User u2 = new User();
@@ -559,7 +559,7 @@ Now we don't need to `ignore id column` in the above example:
 
 === Meta Datasets
 
-With meta datasets you can create annotations which holds `@Dataset` configuration and (re)use this custom annotation in any test:
+With meta datasets you can create annotations which holds `@DataSet` configuration and (re)use this custom annotation in any test:
 
 .Custom annotation holding dataset configuration
 ----
