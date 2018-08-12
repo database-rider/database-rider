@@ -465,12 +465,13 @@ Also note that the same can be done using @Rule but pay attention that you must 
      }
 ----
 
-<1> *exec1* is the id of executor reponsible for dataset1-pu
+<1> *exec1* is the id of executor responsible for dataset1-pu
 <2> executorId must match id provided in @Rule annotation
 
 === Expected DataSet
 Using `@ExpectedDataSet` annotation you can specify the database state you expect after test execution, example:
 
+.expectedUsers.yml
 ----
 user:
   - id: 1
@@ -526,20 +527,35 @@ Actual   :non expected user1
 	at com.github.database.rider.assertion.DataSetAssert.compareData(DataSetAssert.java:94)
 ----
 
-[TIP]
-====
+==== Expected DataSet with regular expressions
+
 You can also use `regular expressions` in expected DataSet, for that just prepend column value with `regex:`:
 
 ----
 user:
   - id: "regex:\\d+" #any number
-    name: regex:^expected user.*  #starts with regex
+    name: regex:^expected user.*  #'starts with' regex
   - id: "regex:\\d+"
-    name: regex:.*user2$   #ends with example
+    name: regex:.*user2$   #'ends with' regex
 ----
 
-The test remains the same as above but without the need to `ignore id column`.
-====
+Now we don't need to `ignore id column` in the above example:
+
+[source,java]
+----
+    @Test
+    @ExpectedDataSet(value = "yml/expectedUsers.yml")
+    public void shouldMatchExpectedDataSet() {
+        User u = new User();
+        u.setName("expected user1");
+        User u2 = new User();
+        u2.setName("expected user2");
+        emProvider.tx().begin();
+        emProvider.em().persist(u);
+        emProvider.em().persist(u2);
+        emProvider.tx().commit();
+    }
+----
 
 === Meta Datasets
 
