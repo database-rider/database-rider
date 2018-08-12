@@ -557,7 +557,7 @@ Now we don't need to `ignore id column` in the above example:
     }
 ----
 
-=== Meta Datasets
+=== Meta DataSets
 
 With meta datasets you can create annotations which holds `@DataSet` configuration and (re)use this custom annotation in any test:
 
