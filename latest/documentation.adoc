@@ -10,7 +10,7 @@
 :docinfo:
 :source-highlighter: highlightjs
 :toclevels: 3
-:revnumber: 1.2.11
+:revnumber: 1.2.12-SNAPSHOT
 :hardbreaks:
 
 = *Database Rider Documentation*
