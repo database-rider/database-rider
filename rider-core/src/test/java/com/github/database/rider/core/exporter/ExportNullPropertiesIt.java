@@ -60,6 +60,22 @@ public class ExportNullPropertiesIt {
     }
 
     @Test
+    public void shouldNotExportNullColumnsInXMLAndDtdDataSet() throws SQLException, DatabaseUnitException{
+        DataSetExporter.getInstance().export(new DatabaseConnection(emProvider.connection()), new DataSetExportConfig().
+                dataSetFormat(DataSetFormat.XML_DTD).outputFileName("target/userWithNullProperty_xmldtd.xml"));
+        File xmlDataSet = new File("target/userWithNullProperty_xmldtd.xml");
+        assertThat(xmlDataSet).exists();
+        assertThat(contentOf(xmlDataSet).replaceAll("\r","")).isEqualTo(("<?xml version='1.0' encoding='UTF-8'?>" + NEW_LINE +
+                "<dataset>" + NEW_LINE +
+                "  <FOLLOWER/>" + NEW_LINE +
+                "  <SEQUENCE SEQ_NAME=\"SEQ_GEN\" SEQ_COUNT=\"50\"/>" + NEW_LINE +
+                "  <TWEET/>" + NEW_LINE +
+                "  <USER ID=\"1\"/>" + NEW_LINE +
+                "</dataset>" + NEW_LINE).replaceAll("\r", ""));
+
+    }
+    
+    @Test
     public void shouldNotExportNullColumnsInXMLDataSet() throws SQLException, DatabaseUnitException{
         DataSetExporter.getInstance().export(new DatabaseConnection(emProvider.connection()), new DataSetExportConfig().
                 dataSetFormat(DataSetFormat.XML).outputFileName("target/userWithNullProperty.xml"));
