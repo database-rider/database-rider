@@ -9,6 +9,7 @@ import org.dbunit.database.search.TablesDependencyHelper;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.csv.CsvDataSetWriter;
 import org.dbunit.dataset.excel.XlsDataSetWriter;
+import org.dbunit.dataset.xml.FlatDtdDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 
 import java.io.File;
@@ -114,6 +115,7 @@ public class DataSetExporter {
 
 
         FileOutputStream fos = null;
+        FileOutputStream fosDtd = null;
         try {
             if(outputFile.contains(System.getProperty("file.separator"))){
                 String pathWithoutFileName = outputFile.substring(0,outputFile.lastIndexOf(System.getProperty("file.separator"))+1);
@@ -121,6 +123,15 @@ public class DataSetExporter {
             }
             fos = new FileOutputStream(outputFile);
             switch (dataSetExportConfig.getDataSetFormat()) {
+            		case XML_DTD: {
+            			FlatXmlDataSet.write(dataSet, fos);
+
+            			//dtd file has the same name but other file extension
+            			fosDtd = new FileOutputStream(outputFile.substring(0, outputFile.lastIndexOf('.')) + ".dtd");
+                  FlatDtdDataSet.write(dataSet, fosDtd);
+                  
+                  break;
+            		}
                 case XML: {
                     FlatXmlDataSet.write(dataSet, fos);
                     break;
@@ -164,6 +175,13 @@ public class DataSetExporter {
                 } catch (IOException e) {
                     log.log(Level.SEVERE, "Could not close file output stream.", e);
                 }
+            }
+            if(fosDtd != null){
+              try {
+                  fosDtd.close();
+              } catch (IOException e) {
+                  log.log(Level.SEVERE, "Could not close file output stream for dtd file.", e);
+              }
             }
             //set back default ResultSetTableFactory
             config.setProperty(DatabaseConfig.PROPERTY_RESULTSET_TABLE_FACTORY, new CachedResultSetTableFactory());
