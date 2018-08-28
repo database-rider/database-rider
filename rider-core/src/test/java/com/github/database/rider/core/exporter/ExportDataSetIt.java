@@ -52,7 +52,7 @@ public class ExportDataSetIt {
     @Test
     @DataSet("datasets/yml/users.yml")
     @ExportDataSet(format = DataSetFormat.XML_DTD, outputName = "target/exported/xml_dtd/allTables.xml")
-    public void shouldExportAllTablesInXMLAndDtdFormat() {
+    public void shouldExportAllTablesInXMLAndDTDFormat() {
     }
     
     @Test
@@ -139,7 +139,7 @@ public class ExportDataSetIt {
     @Test
     @DataSet("datasets/yml/users.yml")
     @ExportDataSet(format = DataSetFormat.XML_DTD, queryList = {"select * from USER u where u.ID = 1"}, outputName = "target/exported/xml_dtd/filtered.xml")
-    public void shouldExportXMLAndDtdDataSetUsingQueryToFilterRows() {
+    public void shouldExportXMLAndDTDDataSetUsingQueryToFilterRows() {
 
     }
     
@@ -179,7 +179,7 @@ public class ExportDataSetIt {
     @Test
     @DataSet("datasets/yml/users.yml")
     @ExportDataSet(format = DataSetFormat.XML_DTD, queryList = {"select * from USER u where u.ID = 1"}, includeTables = {"TWEET"}, outputName = "target/exported/xml_dtd/filteredIncludes.xml")
-    public void shouldExportXMLAndDtdDataSetUsingQueryAndIncludesToFilterRows() {
+    public void shouldExportXMLAndDTDDataSetUsingQueryAndIncludesToFilterRows() {
 
     }
     
@@ -200,7 +200,7 @@ public class ExportDataSetIt {
     @Test
     @DataSet("datasets/yml/users.yml")
     @ExportDataSet(format = DataSetFormat.XML_DTD, includeTables = "USER", outputName = "target/exported/xml_dtd/includes.xml")
-    public void shouldExportXMLAndDtdDataSetWithTablesInIncludes() {
+    public void shouldExportXMLAndDTDDataSetWithTablesInIncludes() {
 
     }
     
@@ -221,7 +221,7 @@ public class ExportDataSetIt {
     @Test
     @DataSet("datasets/yml/users.yml")
     @ExportDataSet(format = DataSetFormat.XML_DTD, includeTables = "USER", dependentTables = true, outputName = "target/exported/xml_dtd/dependentTables.xml")
-    public void shouldExportXMLAndDtdDataSetUsingIncludesWithDependentTables() {
+    public void shouldExportXMLAndDTDDataSetUsingIncludesWithDependentTables() {
 
     }
     
