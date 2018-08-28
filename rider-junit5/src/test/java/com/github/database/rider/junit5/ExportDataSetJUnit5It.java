@@ -88,8 +88,7 @@ public class ExportDataSetJUnit5It {
                 		"<!ATTLIST USER\n" + 
                 		"    ID CDATA #REQUIRED\n" + 
                 		"    NAME CDATA #IMPLIED\n" + 
-                		">\n" + 
-                		"\n");
+                		">\n");
     }
     
     private static void assertXMLFileContent(String filename) {

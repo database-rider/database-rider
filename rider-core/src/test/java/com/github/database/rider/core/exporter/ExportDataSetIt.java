@@ -236,7 +236,9 @@ public class ExportDataSetIt {
     @AfterClass
     public static void assertGeneratedDataSets() {
     		assertXMLFileContent("target/exported/xml/allTables.xml");
+    		
     		assertXMLFileContent("target/exported/xml_dtd/allTables.xml");
+    		assertDTDFileContent("target/exported/xml_dtd/allTables.dtd");
     		
         //xmlDataSetWithAllTables.delete();
 
@@ -277,8 +279,10 @@ public class ExportDataSetIt {
         assertThat(followerCsvDataSet).exists();
 
         assertXMLFileContentFiltered("target/exported/xml/filtered.xml");
+        
         assertXMLFileContentFiltered("target/exported/xml_dtd/filtered.xml");
-
+        assertDTDFileContentFiltered("target/exported/xml_dtd/filtered.dtd");
+        
         File ymlFilteredDataSet = new File("target/exported/yml/filtered.yml");
         assertThat(ymlFilteredDataSet).exists();
         assertThat(contentOf(ymlFilteredDataSet)).contains("USER:" + NEW_LINE +
@@ -286,9 +290,11 @@ public class ExportDataSetIt {
                 "    NAME: \"@realpestano\"");
 
 
-        assertXMLFileContentIncludes("target/exported/xml/filteredIncludes.xml");
-        assertXMLFileContentIncludes("target/exported/xml_dtd/filteredIncludes.xml");
-
+        assertXMLFileContentFilteredIncludes("target/exported/xml/filteredIncludes.xml");
+        
+        assertXMLFileContentFilteredIncludes("target/exported/xml_dtd/filteredIncludes.xml");
+        assertDTDFileContentFilteredIncludes("target/exported/xml_dtd/filteredIncludes.dtd");
+        
         File ymlFilteredIncludesDataSet = new File("target/exported/yml/filteredIncludes.yml");
         assertThat(ymlFilteredIncludesDataSet).exists();
         assertThat(contentOf(ymlFilteredIncludesDataSet)).contains("USER:" + NEW_LINE +
@@ -302,8 +308,9 @@ public class ExportDataSetIt {
 
 
         assertXMLFileContentDependent("target/exported/xml/dependentTables.xml");
+        
         assertXMLFileContentDependent("target/exported/xml_dtd/dependentTables.xml");
-
+        assertDTDFileContentDependent("target/exported/xml_dtd/dependentTables.dtd");
 
         File ymlDependentTablesDataSet = new File("target/exported/yml/dependentTables.yml");
         assertThat(ymlDependentTablesDataSet).exists();
@@ -342,8 +349,8 @@ public class ExportDataSetIt {
       	.contains("<USER ID=\"2\" NAME=\"@dbunit\"/>")
       	.contains("<FOLLOWER ID=\"1\" USER_ID=\"1\" FOLLOWER_ID=\"2\"/>");
     }
-    
-    private static void assertXMLFileContentIncludes(String filename) {
+
+    private static void assertXMLFileContentFilteredIncludes(String filename) {
       File xmlDataSet = new File(filename);
       
       assertThat(xmlDataSet).exists();
@@ -352,7 +359,7 @@ public class ExportDataSetIt {
       	.doesNotContain("<USER ID=\"2\" NAME=\"@dbunit\"/>")
       	.doesNotContain("<FOLLOWER ID=\"1\" USER_ID=\"1\" FOLLOWER_ID=\"2\"/>");
     }
-
+    
     private static void assertXMLFileContentDependent(String filename) {
       File xmlDataSet = new File(filename);
       
@@ -363,6 +370,123 @@ public class ExportDataSetIt {
       	.contains("<TWEET ID=\"abcdef12345\" CONTENT=\"dbunit rules!\"");
     }
 
+    private static void assertDTDFileContent(String filename) {
+      File dtdDataSet = new File(filename);
+      
+      assertThat(dtdDataSet).exists();
+      assertThat(contentOf(dtdDataSet)).
+              contains("<!ELEMENT dataset (\n" + 
+              		"    FOLLOWER*,\n" + 
+              		"    SEQUENCE*,\n" + 
+              		"    TWEET*,\n" + 
+              		"    USER*)>\n" + 
+              		"\n" + 
+              		"<!ELEMENT FOLLOWER EMPTY>\n" + 
+              		"<!ATTLIST FOLLOWER\n" + 
+              		"    ID CDATA #REQUIRED\n" + 
+              		"    USER_ID CDATA #IMPLIED\n" + 
+              		"    FOLLOWER_ID CDATA #IMPLIED\n" + 
+              		">\n" + 
+              		"\n" + 
+              		"<!ELEMENT SEQUENCE EMPTY>\n" + 
+              		"<!ATTLIST SEQUENCE\n" + 
+              		"    SEQ_NAME CDATA #REQUIRED\n" + 
+              		"    SEQ_COUNT CDATA #IMPLIED\n" + 
+              		">\n" + 
+              		"\n" + 
+              		"<!ELEMENT TWEET EMPTY>\n" + 
+              		"<!ATTLIST TWEET\n" + 
+              		"    ID CDATA #REQUIRED\n" + 
+              		"    CONTENT CDATA #IMPLIED\n" + 
+              		"    DATE CDATA #IMPLIED\n" + 
+              		"    LIKES CDATA #IMPLIED\n" + 
+              		"    TIMESTAMP CDATA #IMPLIED\n" + 
+              		"    USER_ID CDATA #IMPLIED\n" + 
+              		">\n" + 
+              		"\n" + 
+              		"<!ELEMENT USER EMPTY>\n" + 
+              		"<!ATTLIST USER\n" + 
+              		"    ID CDATA #REQUIRED\n" + 
+              		"    NAME CDATA #IMPLIED\n" + 
+              		">\n" + 
+              		"\n");
+    }
 
-
+    private static void assertDTDFileContentDependent(String filename) {
+      File dtdDataSet = new File(filename);
+      
+      assertThat(dtdDataSet).exists();
+      assertThat(contentOf(dtdDataSet)).
+              contains("<!ELEMENT dataset (\n" + 
+              		"    TWEET*,\n" + 
+              		"    USER*,\n" + 
+              		"    FOLLOWER*)>\n" + 
+              		"\n" + 
+              		"<!ELEMENT TWEET EMPTY>\n" + 
+              		"<!ATTLIST TWEET\n" + 
+              		"    ID CDATA #REQUIRED\n" + 
+              		"    CONTENT CDATA #IMPLIED\n" + 
+              		"    DATE CDATA #IMPLIED\n" + 
+              		"    LIKES CDATA #IMPLIED\n" + 
+              		"    TIMESTAMP CDATA #IMPLIED\n" + 
+              		"    USER_ID CDATA #IMPLIED\n" + 
+              		">\n" + 
+              		"\n" + 
+              		"<!ELEMENT USER EMPTY>\n" + 
+              		"<!ATTLIST USER\n" + 
+              		"    ID CDATA #REQUIRED\n" + 
+              		"    NAME CDATA #IMPLIED\n" + 
+              		">\n" + 
+              		"\n" + 
+              		"<!ELEMENT FOLLOWER EMPTY>\n" + 
+              		"<!ATTLIST FOLLOWER\n" + 
+              		"    ID CDATA #REQUIRED\n" + 
+              		"    USER_ID CDATA #IMPLIED\n" + 
+              		"    FOLLOWER_ID CDATA #IMPLIED\n" + 
+              		">\n" + 
+              		"\n");
+    }
+    
+    private static void assertDTDFileContentFiltered(String filename) {
+      File dtdDataSet = new File(filename);
+      
+      assertThat(dtdDataSet).exists();
+      assertThat(contentOf(dtdDataSet)).
+              contains("<!ELEMENT dataset (\n" + 
+              		"    USER*)>\n" + 
+              		"\n" + 
+              		"<!ELEMENT USER EMPTY>\n" + 
+              		"<!ATTLIST USER\n" + 
+              		"    ID CDATA #REQUIRED\n" + 
+              		"    NAME CDATA #IMPLIED\n" + 
+              		">\n" + 
+              		"\n");
+    }
+    
+    private static void assertDTDFileContentFilteredIncludes(String filename) {
+      File dtdDataSet = new File(filename);
+      
+      assertThat(dtdDataSet).exists();
+      assertThat(contentOf(dtdDataSet)).
+              contains("<!ELEMENT dataset (\n" + 
+              		"    TWEET*,\n" + 
+              		"    USER*)>\n" + 
+              		"\n" + 
+              		"<!ELEMENT TWEET EMPTY>\n" + 
+              		"<!ATTLIST TWEET\n" + 
+              		"    ID CDATA #REQUIRED\n" + 
+              		"    CONTENT CDATA #IMPLIED\n" + 
+              		"    DATE CDATA #IMPLIED\n" + 
+              		"    LIKES CDATA #IMPLIED\n" + 
+              		"    TIMESTAMP CDATA #IMPLIED\n" + 
+              		"    USER_ID CDATA #IMPLIED\n" + 
+              		">\n" + 
+              		"\n" + 
+              		"<!ELEMENT USER EMPTY>\n" + 
+              		"<!ATTLIST USER\n" + 
+              		"    ID CDATA #REQUIRED\n" + 
+              		"    NAME CDATA #IMPLIED\n" + 
+              		">\n" + 
+              		"\n");
+    }
 }
