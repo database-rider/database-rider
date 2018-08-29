@@ -68,7 +68,7 @@ public class ExportDataSetJUnit5It {
         //XML + DTD generator
     		assertXMLFileContent("target/exported/xml_dtd/allTables.xml");
     		
-        File dtdDataSetWithAllTables = new File("target/exported/xml/allTables.dtd");
+        File dtdDataSetWithAllTables = new File("target/exported/xml_dtd/allTables.dtd");
         assertThat(dtdDataSetWithAllTables).exists();
         assertThat(contentOf(dtdDataSetWithAllTables)).
                 contains("<!ELEMENT dataset (\n" + 
