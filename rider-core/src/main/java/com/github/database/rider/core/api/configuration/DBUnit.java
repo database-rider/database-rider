@@ -72,6 +72,12 @@ public @interface DBUnit {
      * @return The {@link Orthography} constant
      */
     Orthography caseInsensitiveStrategy() default Orthography.UPPERCASE;
+    
+    /**
+     * 
+     * @return IEnable or disable dataset merging. If enabled then datasets declared at class/test level AND method will be merged into one dataset to seed database. 
+     */
+    boolean mergeDataSets() default false;
 
     /**
      * Allow to call INSERT/UPDATE with empty strings ('').

@@ -23,6 +23,7 @@ public class DBUnitConfig {
     private Boolean cacheConnection;
     private Boolean cacheTableNames;
     private Boolean leakHunter;
+    private Boolean mergeDataSets;
     private Orthography caseInsensitiveStrategy;
     private Map<String, Object> properties;
     private ConnectionConfig connectionConfig;
@@ -45,6 +46,7 @@ public class DBUnitConfig {
         cacheTableNames = true;
         leakHunter = false;
         caseInsensitiveStrategy = Orthography.UPPERCASE;
+        mergeDataSets = Boolean.FALSE;
 
         initDefaultProperties();
         initDefaultConnectionConfig();
@@ -112,6 +114,7 @@ public class DBUnitConfig {
         dbUnitConfig.cacheConnection(dbUnit.cacheConnection())
                 .cacheTableNames(dbUnit.cacheTableNames())
                 .leakHunter(dbUnit.leakHunter())
+                .mergeDataSets(dbUnit.mergeDataSets())
                 .addDBUnitProperty("batchedStatements", dbUnit.batchedStatements())
                 .addDBUnitProperty("batchSize", dbUnit.batchSize())
                 .addDBUnitProperty("allowEmptyFields", dbUnit.allowEmptyFields())
@@ -196,6 +199,11 @@ public class DBUnitConfig {
         this.cacheTableNames = cacheTables;
         return this;
     }
+    
+    public DBUnitConfig mergeDataSets(boolean mergeDataSets) {
+        this.mergeDataSets = mergeDataSets;
+        return this;
+    }
 
     public DBUnitConfig caseInsensitiveStrategy(Orthography orthography) {
         this.caseInsensitiveStrategy = orthography;
@@ -253,6 +261,11 @@ public class DBUnitConfig {
         return cacheTableNames;
     }
 
+    public Boolean isMergeDataSets() {
+        return mergeDataSets;
+    }
+    
+
     public Boolean isLeakHunter() {
         return leakHunter;
     }
@@ -280,4 +293,9 @@ public class DBUnitConfig {
     public void setConnectionConfig(ConnectionConfig connectionConfig) {
         this.connectionConfig = connectionConfig;
     }
+
+    public void setMergeDataSets(Boolean mergeDataSets) {
+        this.mergeDataSets = mergeDataSets;
+    }
+    
 }
