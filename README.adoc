@@ -682,7 +682,7 @@ public class MergeDataSetsIt {
 <3> tweets comes from `tweet.yml` declared on class level dataset.
 <4> User with id = 10 was inserted by `addUser.sql` from class level dataset.
 
-TIP: Source codeof example above can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/MergeDataSetsIt.java[found here^].
+TIP: Source code of example above can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/MergeDataSetsIt.java[found here^].
 
 TIP: Junit5 example can be https://github.com/database-rider/database-rider/blob/master/rider-junit5/src/test/java/com/github/database/rider/junit5/MergeDataSetsJUnit5It.java[found here^] and CDI https://github.com/database-rider/database-rider/blob/master/rider-cdi/src/test/java/com/github/database/rider/cdi/MergeDataSetsCDIIt.java[example here^].
 
