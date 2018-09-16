@@ -14,10 +14,9 @@ import org.junit.runners.JUnit4;
 
 import java.util.List;
 
-import static com.github.database.rider.core.util.EntityManagerProvider.em;
-import static com.github.database.rider.core.util.EntityManagerProvider.tx;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
+import org.junit.After;
 
 /**
  * Created by pestano on 27/02/16.
@@ -34,8 +33,7 @@ public class ScriptsIt {
 
     @BeforeClass
     public static void before() {
-        EntityManagerProvider provider = EntityManagerProvider.instance("rules-it");
-        EntityManagerProvider.tx().begin();
+        EntityManagerProvider.tx("rules-it").begin();
         EntityManagerProvider.em().createNativeQuery("DELETE FROM USER").executeUpdate();
         EntityManagerProvider.em().createNativeQuery("INSERT INTO USER VALUES (6,'user6')").executeUpdate();
         EntityManagerProvider.em().flush();
@@ -58,6 +56,11 @@ public class ScriptsIt {
 
     private List<User> listUsers(String sql) {
         return EntityManagerProvider.newInstance("rules-it").em().createQuery(sql).getResultList();
+    }
+    
+    @After
+    public void aTest() {
+        System.out.println("");
     }
 
     @AfterClass
