@@ -23,7 +23,8 @@ public class MergeDataSetsJUnit5It {
             -> EntityManagerProvider.instance("junit5-pu").connection();
 
     @DBRider
-    @DataSet(value = "users.yml", executeScriptsAfter = "tweets.sql", executeStatementsBefore = "INSERT INTO USER VALUES (9,'user9')", strategy = SeedStrategy.INSERT)
+    @DataSet(value = "users.yml", executeScriptsAfter = "tweets.sql", cleanBefore = true,
+    executeStatementsBefore = "INSERT INTO USER VALUES (9,'user9')", strategy = SeedStrategy.INSERT)
     public void shouldMergeDataSetsFromClassAndMethod() {
         List<User> users = em().createQuery("select u from User u").getResultList(); //2 users from user.yml plus 1 from  class level 'executeStatementsBefore' and 1 user from method level 'executeStatementsBefore'
 		assertThat(users).isNotNull().isNotEmpty().hasSize(4);
