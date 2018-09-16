@@ -21,15 +21,17 @@ public abstract class AbstractRiderTestContext implements RiderTestContext {
 
     @Override
     public <T extends Annotation> T getAnnotation(Class<T> clazz) {
-        if(executor.getDBUnitConfig().isMergeDataSets() && clazz.isAssignableFrom(DataSet.class)) {
-          return (T) AnnotationUtils.mergeDataSetAnnotations((DataSet)getClassAnnotation(clazz), (DataSet)getMethodAnnotation(clazz));
-        }
-        T annotation = getMethodAnnotation(clazz);
 
-        if (annotation == null) {
-            annotation = getClassAnnotation(clazz);
+        T classAnnotation = getClassAnnotation(clazz);
+        T methodAnnotation = getMethodAnnotation(clazz);
+        
+        if (executor.getDBUnitConfig().isMergeDataSets() && clazz.isAssignableFrom(DataSet.class) && (classAnnotation != null && methodAnnotation != null)) {
+            return (T) AnnotationUtils.mergeDataSetAnnotations((DataSet) classAnnotation, (DataSet) methodAnnotation);
+        }
+        if (methodAnnotation != null) {
+           return methodAnnotation;
         }
 
-        return annotation;
+        return classAnnotation;
     }
 }
