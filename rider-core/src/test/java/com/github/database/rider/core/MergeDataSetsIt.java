@@ -30,17 +30,6 @@ public class MergeDataSetsIt {
 	@Rule
 	public DBUnitRule dbUnitRule = DBUnitRule.instance(emProvider.connection()); 
     
-    @AfterClass
-    public static void afterTest() {
-        em().clear();//caches
-        User user = (User) em().createQuery("select u from User u where u.id = 10").getSingleResult();//scripts after
-        assertThat(user).isNotNull();
-        assertThat(user.getId()).isEqualTo(10); 
-        
-        Tweet tweet = (Tweet) em().createQuery("select t from Tweet t where t.id = 10").getSingleResult();//scripts after
-        assertThat(tweet).isNotNull();
-        assertThat(tweet.getId()).isEqualTo("10"); 
-    }
 	
 	@Test
     @DataSet(value="yml/user.yml", executeScriptsAfter = "tweets.sql", executeStatementsBefore = "INSERT INTO USER VALUES (9,'user9')", strategy = SeedStrategy.INSERT)
@@ -56,5 +45,16 @@ public class MergeDataSetsIt {
         assertThat(user.getTweets()).isNotEmpty(); //tweets comes from class level annotation merged with method level
         assertThat(user.getTweets().get(0).getContent()).isEqualTo("dbunit rules again!"); 
 	}
+	
+	@AfterClass
+    public static void afterTest() {
+        User user = (User) em().createQuery("select u from User u where u.id = 10").getSingleResult();//scripts after
+        assertThat(user).isNotNull();
+        assertThat(user.getId()).isEqualTo(10); 
+        
+        Tweet tweet = (Tweet) em().createQuery("select t from Tweet t where t.id = 10").getSingleResult();//scripts after
+        assertThat(tweet).isNotNull();
+        assertThat(tweet.getId()).isEqualTo("10"); 
+    }
     
 }

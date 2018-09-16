@@ -131,7 +131,6 @@ public class DBUnitInterceptorImpl implements Serializable {
 		DataSet classAnnotation = AnnotationUtils.findAnnotation(invocationContext.getMethod().getDeclaringClass(),
 				DataSet.class);
 
-		Class<?> declaringClass = invocationContext.getMethod().getDeclaringClass();
 		if (config.isMergeDataSets() && (classAnnotation != null && methodAnnotation != null)) {
 			return AnnotationUtils.mergeDataSetAnnotations(classAnnotation, methodAnnotation);
 		}
