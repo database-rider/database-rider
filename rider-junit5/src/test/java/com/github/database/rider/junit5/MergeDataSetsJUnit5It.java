@@ -20,8 +20,7 @@ import org.junit.jupiter.api.AfterEach;
 public class MergeDataSetsJUnit5It {
 
     private ConnectionHolder connectionHolder = ()
-            ->
-            EntityManagerProvider.instance("junit5-pu").connection();
+            -> EntityManagerProvider.instance("junit5-pu").connection();
 
     @DBRider
     @DataSet(value = "users.yml", executeScriptsAfter = "tweets.sql", executeStatementsBefore = "INSERT INTO USER VALUES (9,'user9')", strategy = SeedStrategy.INSERT)
@@ -44,7 +43,7 @@ public class MergeDataSetsJUnit5It {
         assertThat(user).isNotNull();
         assertThat(user.getId()).isEqualTo(10);
 
-        Tweet tweet = (Tweet) em().createQuery("select t from Tweet t where t.id = 10").getSingleResult();//scripts after
+        Tweet tweet = (Tweet) em().createQuery("select t from Tweet t where t.id = '10'").getSingleResult();//scripts after
         assertThat(tweet).isNotNull();
         assertThat(tweet.getId()).isEqualTo("10");
     }
