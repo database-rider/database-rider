@@ -22,6 +22,8 @@ import java.lang.annotation.Annotation;
  * @author rmpestano
  */
 public class DataSetImpl implements DataSet {
+    
+    private static DataSetImpl instance;
 
     private String[] value;
     private String executorId;
@@ -37,6 +39,9 @@ public class DataSetImpl implements DataSet {
     private boolean cleanAfter;
     private boolean transactional;
 
+    public DataSetImpl() {
+    }
+    
     public DataSetImpl(String[] value, String executorId, SeedStrategy strategy, boolean useSequenceFiltering, String[] tableOrdering, boolean disableConstraints, String[] executeStatementsBefore, String[] executeScriptsAfter, String[] executeScriptsBefore, String[] executeStatementsAfter, boolean cleanBefore, boolean cleanAfter, boolean transactional) {
         this.value = value;
         this.executorId = executorId;
@@ -52,6 +57,41 @@ public class DataSetImpl implements DataSet {
         this.cleanAfter = cleanAfter;
         this.transactional = transactional;
     }
+    
+    public static DataSetImpl instance() {
+        instance = new DataSetImpl();
+        return instance;
+    }
+    
+    public DataSetImpl withValue(String... value) {
+        instance.value = value;
+        return instance;
+    } 
+    
+    public DataSetImpl withExecuteScriptsBefore(String... executeScriptsBefore) {
+        instance.executeScriptsBefore = executeScriptsBefore;
+        return instance;
+    } 
+    
+    public DataSetImpl withExecuteScriptsAfter(String... executeScriptsAfter) {
+        instance.executeScriptsAfter = executeScriptsAfter;
+        return instance;
+    } 
+    
+     public DataSetImpl withExecuteStatementsBefore(String... executeStatementsBefore) {
+        instance.executeStatementsBefore = executeStatementsBefore;
+        return instance;
+    } 
+    
+    public DataSetImpl withExecuteStatementsAfter(String... executeStatementsAfter) {
+        instance.executeStatementsAfter = executeStatementsAfter;
+        return instance;
+    } 
+    
+     public DataSetImpl withTableOrdering(String... tableOrdering) {
+        instance.tableOrdering = tableOrdering;
+        return instance;
+    } 
     
 
     @Override

@@ -198,15 +198,19 @@ public final class AnnotationUtils {
     private static String[] joinArray(String[]... arrays) {
         int length = 0;
         for (String[] array : arrays) {
-            length += array.length;
+            if(array != null) {
+                length += array.length;
+            }
         }
 
         final String[] result = new String[length];
 
         int offset = 0;
         for (String[] array : arrays) {
-            System.arraycopy(array, 0, result, offset, array.length);
-            offset += array.length;
+            if(array != null){
+                System.arraycopy(array, 0, result, offset, array.length);
+                offset += array.length;
+            }
         }
 
         return result;

@@ -31,7 +31,7 @@ public class MergeDataSetsIt {
 	
 	@Test
     @DataSet(value="yml/user.yml")
-	public void testMetaAnnotationOnClass() {
+	public void shouldMergeDataSetsFromClassAndMethod() {
 		List<User> users = em().createQuery("select u from User u").getResultList();
 		assertThat(users).isNotNull().isNotEmpty().hasSize(2);
         
@@ -42,7 +42,7 @@ public class MergeDataSetsIt {
     
 	@Test
 	@AnotherMetaDataSet
-	public void testMetaAnnotationOnMethod() {
+	public void shouldMergeDataSetsUsingMetaAnnotation() {
 		List<User> users = em().createQuery("select u from User u").getResultList();
 		assertThat(users).isNotNull().isNotEmpty().hasSize(1); //metadataset dataset has 1 user
         Tweet tweet = (Tweet) em().createQuery("select t from Tweet t where t.id = 'abcdef12345'").getSingleResult();
