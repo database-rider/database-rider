@@ -22,14 +22,14 @@ import com.github.database.rider.core.api.dataset.SeedStrategy;
 @DBUnitInterceptor
 @DBUnit(mergeDataSets = true)
 @RunWith(CdiTestRunner.class)
-@DataSet(value = "yml/tweet.yml", executeScriptsAfter = "addUser.sql", executeStatementsBefore = "INSERT INTO USER VALUES (8,'user8')")
+@DataSet(value = "yml/tweet.yml", executeScriptsAfter = "addUser.sql", executeStatementsBefore = {"DELETE FROM USER WHERE 1=1", "INSERT INTO USER VALUES (8,'user8')"})
 public class MergeDataSetsCDIIt {
 
     @Inject
     EntityManager em;
 
     @Test
-    @DataSet(value = "yml/usersWithoutTweets.yml", executeScriptsAfter = "tweets.sql", executeStatementsBefore = {"DELETE FROM USER WHERE 1=1", "INSERT INTO USER VALUES (9,'user9')}", strategy = SeedStrategy.INSERT)
+    @DataSet(value = "yml/usersWithoutTweets.yml", executeScriptsAfter = "tweets.sql", executeStatementsBefore = "INSERT INTO USER VALUES (9,'user9')", strategy = SeedStrategy.INSERT)
     public void shouldMergeDataSetsFromClassAndMethod() {
         List<User> users = em.createQuery("select u from User u").getResultList(); //2 users from user.yml plus 1 from  class level 'executeStatementsBefore' and 1 user from method level 'executeStatementsBefore'
         assertThat(users).isNotNull().isNotEmpty().hasSize(4);
