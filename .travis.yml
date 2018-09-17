@@ -13,14 +13,17 @@ env:
   - secure: FDiyW6XID+f2qOU8kFey9ckZXf5/jNYZirpAYJBGgsFxyMdb9BEoqcF+nOj40tOzO6aqGmd8Zd8yEDsE2dtiqtZArj3XYRp4etNNmjS+cDfl7PVjPuTgcdsxrmfjDpRFrYnPy5Re1ZTCnvvdBzPcIXpbM6hVA/0A3BLwhvzavHSK4S+S/RuOHpu4L6kvIEnJ+TEDIy4taleGU2GFv8Zv/d4uydgbKQaXiqyyLJ2vWCW7RwPmx4se/2k3cMiN+USs257Zj7GOEo9M8vuhy5iH5FQfJPxp831iRlhOISNY/EqXQ+10EmJB/gGkHWUwUNVOljcGRZdGk6CS/Lg8eUDYxteCVvhnoH+E10mwGMqBwk+OthJcDyjZiTrK2SmX+ESeTAFDH4qBuBBUNymbx0Q27wJJKtvA3p8R5s6aIFW3Jpp5+I34iCp5drzrk0/HE4QscIYAGH13lnluPJl+Xb7A7uO4VU8HbDZrwjxzxphYqiiRxsi9kX75bvf3OYRVID3YWQHu/urT6+MqG8E/In5GpZlm214jXCJCDe8OGHq2cLS5IdG14GFjfaM+DkpX3QpLRIUDz35n9HLlVNukgXTvOjg03DQrx978bbwj8pvc/YAWRJaLGHOEWrj/tGStn6BUCLpaFv0/6c+IU0/TgBsmbJ+lP9ZfEJGH+Vm5Vfc/VMQ=
   - secure: HR4TIRrFok/RBmeDFVNlGUGoMH7OyJt8izwyDGo/Q+XXMimm370uu84TRmqNhEGpHUaN5zEDdG4+DzD2RYaW0Pyrl726ONpvQjwbs/CXN4lEOhoy+YqxEyWTiwzOHDHziUDnbVnA9qqFTGFlbIeeJoJ2D2PcRqNJOOO7zsO49J4g9KqQxNyhY4qDvSBwKUbH5kc1Md9fwAFc6VQOwHBnlJ/asDRgYLvNlXeQ4LVN2s5S9jEflJMBsUJMileEAOFJHfFIgiw9vDtr0Bp6xioyF6UjOCVFTeBT8YTHKbm3ILDrBkoZoGL/5lxBCLoHiosvxhDnT7kz85WRMKCn+46rxEk1m7xJb6mH5wjCuHdt/OuuLjEnj5dkpQwJK9C9Jq2MxSb8gf7Y/91lBAyWpMwAebHP9OO7AnGMXKnkhx/1Ykok7fEbHotPEsgXhKralX/mrt4DxcZzOS0s1l1p4zSng/ZZKe+67x78sACNkvkOI6id5Vo1ACu4I7H1+9E8cVljx3HqzZc57PekLI4dU26+igQL9HT+TZjoj56ib6kcz7LDifeNDiCkUz/aQ0njKlcR2juvVJ0RiEEZoSU7wB4veov/GrX3dxzekXCchBoKY5Y6IHelQWB2Tb2NGGMn7wSZEScg1J359Z5pZS/hlm+2gBtZRSnuZvpuPmuMoq8dPHg=
   - secure: jLKdajVD1s/ocrK+5KzwPG6UFKFPoww+Aqta7mgg1yaxSZNjMWauTzFxmvkcxhDYBf1uNSKIKOJ3Ot7VnYa38NoljKCNzoBWTrU1i4EJ5C1w9/hzZY8Q1NbmtZwt1PrU7yZgB/QO6vR+qPipPfAZXRQgJiD+83qvsS88LJuFxJRfWtct74OlA2Rgse9DRb1UWqb+eZOF4DUsfAVYLZVBlBlA3170xzKpho96jAUmoaKYGjuceYaUrfpsay5ZRaCO6nidnaAg7XeLBTXiBFJYWM9v8POvXJmZCOruBXfKPd1hZ6YcnBFMiAsx4rLNKQnJTCev8Puf2bzPM+8+SMlmnmjhTMae5Iino5jwrvf9KBUoDN0NO+gRDHDsv9j2JVVdbcAQB2VdLoFak+ko1yZ2vQwyI7T9HoTgkzyz+j3O+zRBY9exWdxkyESPhj/ho6lyZOUsB1fzMaNwU1gDQsXc0bRP45nCGYfS4CKElsVBz7peOU/7Hb5OPk/dhXGdgISzyt1R2jNQNsUzoYrefFErH1XU06Uy/+FldVysgfZLo+Ht7dWZ1FlRIiLzarsyfiwNSKvpiDd3yKd2xCJ6P0UrfreFBwffZytfzhUaTr2pIMKoAefMhwsd+SvzrbYAF+5mnDg8t5zasojYVA4B/0RxP/La7lW55xALq6Je2F+aH/Q=
+  - secure: jad8UY7JuKapKO3XI1b7HzAT4eyNoye9f5gzDJEb1ou4nTeyPwsB9a9jq407R4IEDEAPDOWmjLml9jSEjvdd7O00W2EArsuXtRIJvgShP0uQci08HpTJs5Ip2CFoUg9LaSoNz83yAhraYjFtyDABFxJR0jwC7xRsq/Ds54iOUwTEZ+JAhn3027D3CiLgL46lBfWzLNWOGE3o/xxeZcYXBjZVMsoCTFBJKb7VvL5fBzUKJqCVfOCrxwfuykJ92muC4weEYQzSqultFkqvdnJfMQBbFD+53RqTv6xo43JHi9Az91FzEi76f80+dVkDOjpWr3w1HmcSKeYdmRWXV/0vHUFoIWg/mwHBKuaDUrJNPxsOX6ZEviBk0E0ArB7YqWwOxRQG2GalZKejevI7S8oy3U2USvybFcExW5FPPmCJmlF4/XTE65Vg7Imtsceu4Zu26ckQZAs0Sx+SrhniaB6hXYiWoO3nJBvjmhKaAeLJb3yAqJQrj8Zbk25f1Ho3vrl1Rl9pVEbKNruRbDrOmEqFvNO1suHxQoZAbGlbQdVa7q49ujzXo3xf+Zf5n4f8gK4OX/I1Hqt2rYmDvNoBXHUlkXJx8cpuaCHVWeSxXj4EZ5DE2Ql5y3b1D+zbB37y9/oaZo8AvnKDSG0IqXduP0a6T75gzauGXKgU9EyIDw1209M=
 before_script:
 - git config --global user.name rmpestano
 - git config --global user.email rmpestano@gmail.com
 script:
 - mvn clean install jacoco:report coveralls:report -Pcoverage surefire-report:report-only
-- cd rider-core && mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs   
-- if [[ $TRAVIS_COMMIT_MESSAGE == *"prepare release"* ]]; then mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs -Prelease ; fi ;
+- cd rider-core && mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs
+- if [[ $TRAVIS_COMMIT_MESSAGE == *"prepare release"* ]]; then mvn -q cukedoctor:execute
+  scm-publish:publish-scm -Pdocs -Prelease ; fi ;
 after_script:
 - cd .. && python html2text.py target/site/surefire-report.html
-- mvn sonar:sonar -Dsonar.organization=database-rider -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${SONAR_KEY}
+- mvn sonar:sonar -Dsonar.organization=database-rider -Dsonar.host.url=https://sonarcloud.io
+  -Dsonar.login=${SONAR_KEY}
 - mvn deploy --settings settings.xml -DskipTests=true
