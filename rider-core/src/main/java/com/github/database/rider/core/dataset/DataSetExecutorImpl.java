@@ -45,13 +45,14 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private static final Logger log = LoggerFactory.getLogger(DataSetExecutorImpl.class);
 
-    private static Map<String, DataSetExecutorImpl> executors = new ConcurrentHashMap<>();
+    private static final Map<String, DataSetExecutorImpl> executors = new ConcurrentHashMap<>();
 
-    private AtomicBoolean printDBUnitConfig = new AtomicBoolean(true);
+    private static final String SEQUENCE_TABLE_NAME;
+    
+    private final AtomicBoolean printDBUnitConfig = new AtomicBoolean(true);
 
     private DBUnitConfig dbUnitConfig;
 
-    private static String SEQUENCE_TABLE_NAME;
 
     private RiderDataSource riderDataSource;
 

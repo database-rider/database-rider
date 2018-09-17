@@ -1,0 +1,5 @@
+TWEET:
+  - ID: "abcdef12345"
+    CONTENT: "dbunit rules again!"
+    likes: 10
+    USER_ID: 1

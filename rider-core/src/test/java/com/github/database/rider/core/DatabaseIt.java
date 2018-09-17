@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Created by pestano on 23/07/15.
  */
 @RunWith(JUnit4.class)
-public class DatabaseTest {
+public class DatabaseIt {
 
     @Rule
     public DBUnitRule dbUnitRule = DBUnitRule.instance(JDBCConnection());
