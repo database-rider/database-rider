@@ -18,12 +18,10 @@ before_script:
 - git config --global user.name rmpestano
 - git config --global user.email rmpestano@gmail.com
 script:
-- mvn clean install jacoco:report coveralls:report -Pcoverage surefire-report:report-only
+- mvn clean install jacoco:report coveralls:report -Pcoverage surefire-report:report-only && mvn sonar:sonar -Dsonar.organization=database-rider -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${SONAR_KEY} 
 - cd rider-core && mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs
 - if [[ $TRAVIS_COMMIT_MESSAGE == *"prepare release"* ]]; then mvn -q cukedoctor:execute
   scm-publish:publish-scm -Pdocs -Prelease ; fi ;
 after_script:
 - cd .. && python html2text.py target/site/surefire-report.html
-- mvn sonar:sonar -Dsonar.organization=database-rider -Dsonar.host.url=https://sonarcloud.io
-  -Dsonar.login=${SONAR_KEY}
 - mvn deploy --settings settings.xml -DskipTests=true
