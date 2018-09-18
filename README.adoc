@@ -30,7 +30,7 @@ ____
 image:https://travis-ci.org/database-rider/database-rider.svg[Build Status (Travis CI), link=https://travis-ci.org/database-rider/database-rider]
 image:https://coveralls.io/repos/database-rider/database-rider/badge.png[Coverage, link=https://coveralls.io/r/database-rider/database-rider]
 image:https://img.shields.io/maven-central/v/com.github.database-rider/rider-core.svg?label=Maven%20Central["Maven Central",link="https://search.maven.org/search?q=g:com.github.database-rider"]
-
+image:https://sonarcloud.io/api/project_badges/measure?project=com.github.database-rider:rider-parent&metric=alert_status["Sonar", link="https://sonarcloud.io/dashboard?id=com.github.database-rider%3Arider-parent"]
 
 
 
