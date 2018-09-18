@@ -45,19 +45,19 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private static final Logger log = LoggerFactory.getLogger(DataSetExecutorImpl.class);
 
-    private static Map<String, DataSetExecutorImpl> executors = new ConcurrentHashMap<>();
+    private static final Map<String, DataSetExecutorImpl> executors = new ConcurrentHashMap<>();
 
-    private AtomicBoolean printDBUnitConfig = new AtomicBoolean(true);
+    private static final String SEQUENCE_TABLE_NAME;
+
+    private final AtomicBoolean printDBUnitConfig = new AtomicBoolean(true);
 
     private DBUnitConfig dbUnitConfig;
-
-    private static String SEQUENCE_TABLE_NAME;
 
     private RiderDataSource riderDataSource;
 
     private ConnectionHolder connectionHolder;
 
-    private String executorId;
+    private final String executorId;
 
     private List<String> tableNames;
 
@@ -159,7 +159,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     /**
      * @param name one or more (comma separated) dataset names to instance
-     * @return loaded dataset (in case of multiple dataSets they will be merged in one using composite dataset)
+     * @return loaded dataset (in case of multiple dataSets they will be merged
+     * in one using composite dataset)
      */
     @Override
     public IDataSet loadDataSet(String name) throws DataSetException, IOException {
@@ -171,33 +172,33 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             String dataSetName = dataSet.trim();
             String extension = dataSetName.substring(dataSetName.lastIndexOf('.') + 1).toLowerCase();
             switch (extension) {
-            case "yml": {
-                target = new ScriptableDataSet(new YamlDataSet(getDataSetStream(dataSetName), dbUnitConfig));
-                break;
-            }
-            case "xml": {
-                try {
-                    target = new ScriptableDataSet(new FlatXmlDataSetBuilder().build(getDataSetUrl(dataSetName)));
-                }catch (Exception e) {
-                    target = new ScriptableDataSet(new FlatXmlDataSetBuilder().build(getDataSetStream(dataSetName)));
+                case "yml": {
+                    target = new ScriptableDataSet(new YamlDataSet(getDataSetStream(dataSetName), dbUnitConfig));
+                    break;
                 }
-                break;
-            }
-            case "csv": {
-                target = new ScriptableDataSet(new CsvDataSet(
-                        new File(getClass().getClassLoader().getResource(dataSetName).getFile()).getParentFile()));
-                break;
-            }
-            case "xls": {
-                target = new ScriptableDataSet(new XlsDataSet(getDataSetStream(dataSetName)));
-                break;
-            }
-            case "json": {
-                target = new ScriptableDataSet(new JSONDataSet(getDataSetStream(dataSetName)));
-                break;
-            }
-            default:
-                log.error("Unsupported dataset extension");
+                case "xml": {
+                    try {
+                        target = new ScriptableDataSet(new FlatXmlDataSetBuilder().build(getDataSetUrl(dataSetName)));
+                    } catch (Exception e) {
+                        target = new ScriptableDataSet(new FlatXmlDataSetBuilder().build(getDataSetStream(dataSetName)));
+                    }
+                    break;
+                }
+                case "csv": {
+                    target = new ScriptableDataSet(new CsvDataSet(
+                            new File(getClass().getClassLoader().getResource(dataSetName).getFile()).getParentFile()));
+                    break;
+                }
+                case "xls": {
+                    target = new ScriptableDataSet(new XlsDataSet(getDataSetStream(dataSetName)));
+                    break;
+                }
+                case "json": {
+                    target = new ScriptableDataSet(new JSONDataSet(getDataSetStream(dataSetName)));
+                    break;
+                }
+                default:
+                    log.error("Unsupported dataset extension");
             }
 
             if (target != null) {
@@ -213,7 +214,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     private URL getDataSetUrl(String dataSet) {
-         if (!dataSet.startsWith("/")) {
+        if (!dataSet.startsWith("/")) {
             dataSet = "/" + dataSet;
         }
         URL resource = getClass().getResource(dataSet);
@@ -257,56 +258,60 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     private void disableConstraints() throws SQLException {
-        switch (getRiderDataSource().getDBType()) {
-        case HSQLDB:
-            getRiderDataSource().getConnection().createStatement().execute("SET DATABASE REFERENTIAL INTEGRITY FALSE;");
-            break;
-        case H2:
-            getRiderDataSource().getConnection().createStatement().execute("SET foreign_key_checks = 0;");
-            break;
-        case MYSQL:
-            getRiderDataSource().getConnection().createStatement().execute(" SET FOREIGN_KEY_CHECKS=0;");
-            break;
-        case POSTGRESQL:
-            /*
+
+        try (Statement statement = getRiderDataSource().getConnection().createStatement()) {
+
+            switch (getRiderDataSource().getDBType()) {
+                case HSQLDB:
+                    statement.execute("SET DATABASE REFERENTIAL INTEGRITY FALSE;");
+                    break;
+                case H2:
+                    statement.execute("SET foreign_key_checks = 0;");
+                    break;
+                case MYSQL:
+                    statement.execute(" SET FOREIGN_KEY_CHECKS=0;");
+                    break;
+                case POSTGRESQL:
+                    /*
              * preferable way because constraints are automatically re-enabled afer transaction. The only downside is
              * that constrains need to be marked as deferrable: ALTER TABLE table_name ADD CONSTRAINT constraint_uk
              * UNIQUE(column_1, column_2) DEFERRABLE INITIALLY IMMEDIATE;
-             */
-            getRiderDataSource().getConnection().createStatement().execute("SET CONSTRAINTS ALL DEFERRED;");
-            break;
-        case ORACLE:
-            // adapted from Unitils:
-            // https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
-            Connection connection = null;
-            Statement queryStatement = null;
-            ResultSet resultSet = null;
-            String schemaName = "";
-            String tableName = "";
-            try {
-                connection = getRiderDataSource().getConnection();
-                queryStatement = connection.createStatement();
-                schemaName = resolveSchema();// default schema
-                // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
-                // filtered out.
-                resultSet = queryStatement.executeQuery(
-                        "select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' "
+                     */
+                    statement.execute("SET CONSTRAINTS ALL DEFERRED;");
+                    break;
+                case ORACLE:
+                    // adapted from Unitils:
+                    // https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
+                    ResultSet resultSet = null;
+                    String tableName = "";
+                    try {
+                        schemaName = resolveSchema();// default schema
+                        // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
+                        // filtered out.
+                        resultSet = statement.executeQuery(
+                                "select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' "
                                 + (schemaName != null ? "and OWNER = '" + schemaName + "'" : "")
                                 + " and CONSTRAINT_NAME not like 'BIN$%' and STATUS <> 'DISABLED'");
-                while (resultSet.next()) {
-                    schemaName = resolveSchema(resultSet);// result set schema
-                    tableName = resultSet.getString("TABLE_NAME");
-                    boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
-                    String constraintName = resultSet.getString("CONSTRAINT_NAME");
-                    String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'"
-                            : "'" + tableName + "'";
-                    executeStatements(
-                            "alter table " + qualifiedTableName + " disable constraint '" + constraintName + "'");
-                }
-                break;
-            } catch (Exception e) {
-                throw new RuntimeException("Error while disabling referential constraints on schema " + schemaName, e);
+                        while (resultSet.next()) {
+                            schemaName = resolveSchema(resultSet);// result set schema
+                            tableName = resultSet.getString("TABLE_NAME");
+                            boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
+                            String constraintName = resultSet.getString("CONSTRAINT_NAME");
+                            String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'"
+                                    : "'" + tableName + "'";
+                            executeStatements(
+                                    "alter table " + qualifiedTableName + " disable constraint '" + constraintName + "'");
+                        }
+                        break;
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error while disabling referential constraints on schema " + schemaName, e);
+                    } finally {
+                        if(resultSet != null) {
+                            resultSet.close();
+                        }
+                    }
             }
+
         }
 
         isContraintsDisabled = true;
@@ -316,62 +321,64 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     @Override
     public void enableConstraints() throws SQLException {
         if (isContraintsDisabled) {
-            switch (getRiderDataSource().getDBType()) {
-            case HSQLDB:
-                getRiderDataSource().getConnection().createStatement()
-                        .execute("SET DATABASE REFERENTIAL INTEGRITY TRUE;");
-                break;
-            case H2:
-                getRiderDataSource().getConnection().createStatement().execute("SET foreign_key_checks = 1;");
-                break;
-            case MYSQL:
-                getRiderDataSource().getConnection().createStatement().execute(" SET FOREIGN_KEY_CHECKS=1;");
-                break;
-            case ORACLE:
-                // adapted from Unitils:
-                // https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
-                Connection connection = null;
-                Statement queryStatement = null;
-                ResultSet resultSet = null;
-                String schemaName = "";
-                String tableName = "";
-                try {
-                    connection = getRiderDataSource().getConnection();
-                    queryStatement = connection.createStatement();
-                    schemaName = resolveSchema();
-                    // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
-                    // filtered out.
-                    resultSet = queryStatement.executeQuery(
-                            "select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' "
+            try (Statement statement = getRiderDataSource().getConnection().createStatement()) {
+                switch (getRiderDataSource().getDBType()) {
+                    case HSQLDB:
+                        statement.execute("SET DATABASE REFERENTIAL INTEGRITY TRUE;");
+                        break;
+                    case H2:
+                        statement.execute("SET foreign_key_checks = 1;");
+                        break;
+                    case MYSQL:
+                        statement.execute(" SET FOREIGN_KEY_CHECKS=1;");
+                        break;
+                    case ORACLE:
+                        // adapted from Unitils:
+                        // https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
+                        ResultSet resultSet = null;
+                        String tableName = "";
+                        try {
+                            String schemaName = resolveSchema();
+                            // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
+                            // filtered out.
+                            resultSet = statement.executeQuery(
+                                    "select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' "
                                     + (schemaName != null ? "and OWNER = '" + schemaName + "'" : "")
                                     + " and CONSTRAINT_NAME not like 'BIN$%' and STATUS = 'DISABLED'");
-                    while (resultSet.next()) {
-                        tableName = resultSet.getString("TABLE_NAME");
-                        boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
-                        String constraintName = resultSet.getString("CONSTRAINT_NAME");
-                        String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'"
-                                : "'" + tableName + "'";
-                        executeStatements(
-                                "alter table " + qualifiedTableName + " enable constraint '" + constraintName + "'");
-                    }
-                    break;
-                } catch (Exception e) {
-                    throw new RuntimeException("Error while enabling referential constraints on schema " + schemaName,
-                            e);
+                            while (resultSet.next()) {
+                                tableName = resultSet.getString("TABLE_NAME");
+                                boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
+                                String constraintName = resultSet.getString("CONSTRAINT_NAME");
+                                String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'"
+                                        : "'" + tableName + "'";
+                                executeStatements(
+                                        "alter table " + qualifiedTableName + " enable constraint '" + constraintName + "'");
+                            }
+                            break;
+                        } catch (Exception e) {
+                            throw new RuntimeException("Error while enabling referential constraints on schema " + schemaName,
+                                    e);
+                        } finally {
+                            if (resultSet != null) {
+                                resultSet.close();
+                            }
+                        }
                 }
+
+                isContraintsDisabled = false;
             }
 
-            isContraintsDisabled = false;
         }
     }
 
     @Override
     public void executeStatements(String... statements) {
         if (statements != null && statements.length > 0 && !"".equals(statements[0].trim())) {
+            java.sql.Statement statement = null;
             try {
                 boolean autoCommit = getRiderDataSource().getConnection().getAutoCommit();
                 getRiderDataSource().getConnection().setAutoCommit(false);
-                java.sql.Statement statement = getRiderDataSource().getConnection().createStatement(
+                statement = getRiderDataSource().getConnection().createStatement(
                         ResultSet.TYPE_SCROLL_SENSITIVE,
                         ResultSet.CONCUR_UPDATABLE);
                 for (String stm : statements) {
@@ -382,18 +389,29 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 getRiderDataSource().getConnection().setAutoCommit(autoCommit);
             } catch (Exception e) {
                 log.error("Could execute statements:" + e.getMessage(), e);
+            } finally {
+                if (statement != null) {
+                    try {
+                        statement.close();
+                    } catch (SQLException ex) {
+                        log.error("Could close statement.", ex);
+
+                    }
+                }
             }
 
         }
     }
 
     /**
-     * Perform replacements from all {@link Replacer} implementations, registered in {@link #dbUnitConfig}.
+     * Perform replacements from all {@link Replacer} implementations,
+     * registered in {@link #dbUnitConfig}.
      */
     @SuppressWarnings("unchecked")
     private IDataSet performReplacements(IDataSet dataSet) {
-        if (!dbUnitConfig.getProperties().containsKey("replacers"))
+        if (!dbUnitConfig.getProperties().containsKey("replacers")) {
             return dataSet;
+        }
 
         ReplacementDataSet replacementSet = new ReplacementDataSet(dataSet);
 
@@ -553,7 +571,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         try {
             DatabaseMetaData metaData = con.getMetaData();
 
-            result = metaData.getTables(null, null, "%", new String[] { "TABLE" });
+            result = metaData.getTables(null, null, "%", new String[]{"TABLE"});
 
             while (result.next()) {
                 String schema = resolveSchema(result);
@@ -591,7 +609,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             if (schemaName == null) {
                 DatabaseMetaData metaData = getRiderDataSource().getConnection().getMetaData();
 
-                ResultSet result = metaData.getTables(null, null, "%", new String[] { "TABLE" });
+                ResultSet result = metaData.getTables(null, null, "%", new String[]{"TABLE"});
                 schemaName = resolveSchema(result);
             }
             return schemaName;

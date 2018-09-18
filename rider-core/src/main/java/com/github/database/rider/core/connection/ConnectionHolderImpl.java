@@ -9,7 +9,7 @@ import java.sql.Connection;
  */
 public class ConnectionHolderImpl implements ConnectionHolder {
 
-    private Connection connection;
+    private final transient Connection connection;
 
     public ConnectionHolderImpl(Connection connection) {
         this.connection = connection;

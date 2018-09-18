@@ -1,1 +1,1 @@
-INSERT INTO Tweet (id,content,user_id) VALUES (10,'tweet10',10)
+INSERT INTO Tweet (id,content,likes, date,user_id) VALUES (10,'tweet10',10, '2018-09-16 08:31:22',10)

@@ -1,0 +1,1 @@
+INSERT INTO USER VALUES (10,'user10');
