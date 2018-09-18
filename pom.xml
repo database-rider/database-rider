@@ -241,6 +241,7 @@
                                 <exclude>**/*Flyway*.*</exclude>
                                 <exclude>**/*DefaultCatalog.*</exclude>
                                 <exclude>**/*Tables.*</exclude>
+                                <exclude>**/org/example/*</exclude>
                             </excludes>
                         </configuration>
 
@@ -367,7 +368,6 @@
                 <sonar.language>java</sonar.language>
                 <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
                 <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-  		<sonar.exclusions>org/example/jpadomain/**/*, org/example/**/*, /**/models/*, **/*Repository.*, **/*UserController.*,**/*Contact*,**/*Tables.*</sonar.exclusions>
             </properties>
             
             <build>
