@@ -318,7 +318,7 @@ Here is a dbunit.yml example, also the default values :
 cacheConnection: true
 cacheTableNames: true
 leakHunter: false
-mergeDataSets; false
+mergeDataSets: false
 caseInsensitiveStrategy: !!com.github.database.rider.core.api.configuration.Orthography 'UPPERCASE' <1>
 properties:
   batchedStatements:  false
