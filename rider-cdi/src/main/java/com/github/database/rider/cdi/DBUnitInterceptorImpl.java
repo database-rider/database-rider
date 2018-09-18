@@ -11,7 +11,8 @@ import javax.persistence.EntityManager;
 
 import org.junit.After;
 import org.junit.Before;
-
+import org.junit.BeforeClass;
+import org.junit.AfterClass;
 import com.github.database.rider.cdi.api.DBUnitInterceptor;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
@@ -38,7 +39,7 @@ public class DBUnitInterceptorImpl implements Serializable {
 	public Object intercept(InvocationContext invocationContext) throws Exception {
 
 		Method method = invocationContext.getMethod();
-		if(method.isAnnotationPresent(Before.class) || method.isAnnotationPresent(After.class)) {
+		if(method.isAnnotationPresent(Before.class) || method.isAnnotationPresent(BeforeClass.class) || method.isAnnotationPresent(After.class) || method.isAnnotationPresent(AfterClass.class)) {
 			return invocationContext.proceed();
 		}
 		Object proceed = null;
