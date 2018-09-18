@@ -57,7 +57,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private ConnectionHolder connectionHolder;
 
-    private String executorId;
+    private final String executorId;
 
     private List<String> tableNames;
 
@@ -258,56 +258,60 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     private void disableConstraints() throws SQLException {
-        switch (getRiderDataSource().getDBType()) {
-            case HSQLDB:
-                getRiderDataSource().getConnection().createStatement().execute("SET DATABASE REFERENTIAL INTEGRITY FALSE;");
-                break;
-            case H2:
-                getRiderDataSource().getConnection().createStatement().execute("SET foreign_key_checks = 0;");
-                break;
-            case MYSQL:
-                getRiderDataSource().getConnection().createStatement().execute(" SET FOREIGN_KEY_CHECKS=0;");
-                break;
-            case POSTGRESQL:
-                /*
+
+        try (Statement statement = getRiderDataSource().getConnection().createStatement()) {
+
+            switch (getRiderDataSource().getDBType()) {
+                case HSQLDB:
+                    statement.execute("SET DATABASE REFERENTIAL INTEGRITY FALSE;");
+                    break;
+                case H2:
+                    statement.execute("SET foreign_key_checks = 0;");
+                    break;
+                case MYSQL:
+                    statement.execute(" SET FOREIGN_KEY_CHECKS=0;");
+                    break;
+                case POSTGRESQL:
+                    /*
              * preferable way because constraints are automatically re-enabled afer transaction. The only downside is
              * that constrains need to be marked as deferrable: ALTER TABLE table_name ADD CONSTRAINT constraint_uk
              * UNIQUE(column_1, column_2) DEFERRABLE INITIALLY IMMEDIATE;
-                 */
-                getRiderDataSource().getConnection().createStatement().execute("SET CONSTRAINTS ALL DEFERRED;");
-                break;
-            case ORACLE:
-                // adapted from Unitils:
-                // https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
-                Connection connection = null;
-                Statement queryStatement = null;
-                ResultSet resultSet = null;
-                String schemaName = "";
-                String tableName = "";
-                try {
-                    connection = getRiderDataSource().getConnection();
-                    queryStatement = connection.createStatement();
-                    schemaName = resolveSchema();// default schema
-                    // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
-                    // filtered out.
-                    resultSet = queryStatement.executeQuery(
-                            "select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' "
-                            + (schemaName != null ? "and OWNER = '" + schemaName + "'" : "")
-                            + " and CONSTRAINT_NAME not like 'BIN$%' and STATUS <> 'DISABLED'");
-                    while (resultSet.next()) {
-                        schemaName = resolveSchema(resultSet);// result set schema
-                        tableName = resultSet.getString("TABLE_NAME");
-                        boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
-                        String constraintName = resultSet.getString("CONSTRAINT_NAME");
-                        String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'"
-                                : "'" + tableName + "'";
-                        executeStatements(
-                                "alter table " + qualifiedTableName + " disable constraint '" + constraintName + "'");
-                    }
+                     */
+                    statement.execute("SET CONSTRAINTS ALL DEFERRED;");
                     break;
-                } catch (Exception e) {
-                    throw new RuntimeException("Error while disabling referential constraints on schema " + schemaName, e);
-                }
+                case ORACLE:
+                    // adapted from Unitils:
+                    // https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
+                    ResultSet resultSet = null;
+                    String tableName = "";
+                    try {
+                        schemaName = resolveSchema();// default schema
+                        // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
+                        // filtered out.
+                        resultSet = statement.executeQuery(
+                                "select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' "
+                                + (schemaName != null ? "and OWNER = '" + schemaName + "'" : "")
+                                + " and CONSTRAINT_NAME not like 'BIN$%' and STATUS <> 'DISABLED'");
+                        while (resultSet.next()) {
+                            schemaName = resolveSchema(resultSet);// result set schema
+                            tableName = resultSet.getString("TABLE_NAME");
+                            boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
+                            String constraintName = resultSet.getString("CONSTRAINT_NAME");
+                            String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'"
+                                    : "'" + tableName + "'";
+                            executeStatements(
+                                    "alter table " + qualifiedTableName + " disable constraint '" + constraintName + "'");
+                        }
+                        break;
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error while disabling referential constraints on schema " + schemaName, e);
+                    } finally {
+                        if(resultSet != null) {
+                            resultSet.close();
+                        }
+                    }
+            }
+
         }
 
         isContraintsDisabled = true;
@@ -386,11 +390,11 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             } catch (Exception e) {
                 log.error("Could execute statements:" + e.getMessage(), e);
             } finally {
-                if(statement != null) {
+                if (statement != null) {
                     try {
                         statement.close();
                     } catch (SQLException ex) {
-                            log.error("Could close statement.", ex);
+                        log.error("Could close statement.", ex);
 
                     }
                 }
