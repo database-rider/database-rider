@@ -58,10 +58,6 @@ public class ScriptsIt {
         return EntityManagerProvider.newInstance("rules-it").em().createQuery(sql).getResultList();
     }
     
-    @After
-    public void aTest() {
-        System.out.println("");
-    }
 
     @AfterClass
     public static void after() throws InterruptedException {
