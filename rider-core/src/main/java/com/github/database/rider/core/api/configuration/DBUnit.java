@@ -75,7 +75,8 @@ public @interface DBUnit {
     
     /**
      * 
-     * @return IEnable or disable dataset merging. If enabled then datasets declared at class/test level AND method will be merged into one dataset to seed database. 
+     * @return Enable or disable dataset merging. If enabled then datasets declared at class/test level AND method will be merged into one dataset to seed database. 
+     * Note that only array properties of @DataSet annotation like 'value' and 'executeStatementsBefore' will be merged.
      */
     boolean mergeDataSets() default false;
 
