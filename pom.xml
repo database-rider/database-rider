@@ -241,6 +241,7 @@
                                 <exclude>**/*Flyway*.*</exclude>
                                 <exclude>**/*DefaultCatalog.*</exclude>
                                 <exclude>**/*Tables.*</exclude>
+                                <exclude>**/org/example/*</exclude>
                             </excludes>
                         </configuration>
 
