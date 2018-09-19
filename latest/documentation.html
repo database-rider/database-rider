@@ -582,6 +582,10 @@ table.CodeRay td.code>pre{padding:0}
        <li><a href="#_class_level_metadataset">9.1. Class level metadataset</a></li> 
        <li><a href="#_method_level_metadaset">9.2. Method level metadaset</a></li> 
       </ul> </li> 
+     <li><a href="#DataSet-merging">10. <strong>DataSet merging</strong></a> 
+      <ul class="sectlevel2"> 
+       <li><a href="#_merging_datasets">10.1. Merging datasets</a></li> 
+      </ul> </li> 
     </ul> 
    </div> 
   </div> 
@@ -3643,6 +3647,137 @@ public @interface AnotherMetaDataSet {
      </div> 
     </div> 
    </div> 
+   <div class="sect1"> 
+    <h2 id="DataSet-merging"><a class="anchor" href="#DataSet-merging"></a>10. <strong>DataSet merging</strong></h2> 
+    <div class="sectionbody"> 
+     <div class="sidebarblock"> 
+      <div class="content"> 
+       <div class="exampleblock"> 
+        <div class="content"> 
+         <div class="quoteblock"> 
+          <blockquote> 
+           <div class="paragraph"> 
+            <p>In order to reuse dataset configuration between test methods<br> As a developer<br> I want merge <code>class level</code> with <code>test level</code> dataset configuration</p> 
+           </div> 
+          </blockquote> 
+         </div> 
+        </div> 
+       </div> 
+       <div class="admonitionblock tip"> 
+        <table> 
+         <tbody> 
+          <tr> 
+           <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
+           <td class="content"> Complete source code of examples below can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/MergeDataSetsIt.java#L25" target="_blank" rel="noopener">found here</a>. </td> 
+          </tr> 
+         </tbody> 
+        </table> 
+       </div> 
+       <div class="admonitionblock tip"> 
+        <table> 
+         <tbody> 
+          <tr> 
+           <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
+           <td class="content"> See <a href="https://github.com/database-rider/database-rider/blob/master/rider-junit5/src/test/java/com/github/database/rider/junit5/MergeDataSetsJUnit5It.java#L20" target="_blank" rel="noopener">Rider JUnit5</a> and <a href="https://github.com/database-rider/database-rider/blob/master/rider-cdi/src/test/java/com/github/database/rider/cdi/MergeDataSetsCDIIt.java#L26" target="_blank" rel="noopener">CDI</a> examples. </td> 
+          </tr> 
+         </tbody> 
+        </table> 
+       </div> 
+      </div> 
+     </div> 
+     <div class="sect2"> 
+      <h3 id="_merging_datasets"><a class="anchor" href="#_merging_datasets"></a>10.1. Merging datasets</h3> 
+      <div class="sidebarblock"> 
+       <div class="content"> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Given 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following class level dataset configuration <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="content"> 
+              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(JUnit4.class)
+<span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">yml/tweet.yml</span><span class="delimiter">"</span></span>, executeScriptsAfter = <span class="string"><span class="delimiter">"</span><span class="content">addUser.sql</span><span class="delimiter">"</span></span>, executeStatementsBefore = <span class="string"><span class="delimiter">"</span><span class="content">INSERT INTO USER VALUES (8,'user8')</span><span class="delimiter">"</span></span>)
+<span class="annotation">@DBUnit</span>(mergeDataSets = <span class="predefined-constant">true</span>) <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">MergeDataSetsIt</span> {
+
+}</code></pre> 
+             </div> 
+            </div> 
+            <div class="colist arabic"> 
+             <table> 
+              <tbody> 
+               <tr> 
+                <td><i class="conum" data-value="1"></i><b>1</b></td> 
+                <td>This enables dataset merging so @DataSet declared on test class will be merged with test/method one.</td> 
+               </tr> 
+              </tbody> 
+             </table> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            When 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="sidebarblock"> 
+           <div class="content"> 
+            <div class="listingblock"> 
+             <div class="content"> 
+              <pre class="CodeRay highlight"><code data-lang="java"></code></pre> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Then 
+          </dt> 
+         </dl> 
+        </div> 
+        <div class="exampleblock"> 
+         <div class="content"> 
+          <div class="paragraph"> 
+           <p>Test and method dataset configuration will be merged in one dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </div> 
+          <div class="listingblock"> 
+           <div class="content"> 
+            <pre>IMPORTANT: Only array properties such as `value`and `executeScriptsBefore` of @DataSet will be merged.
+
+WARNING: Class level dataset configuration will come before method level if a property is defined in both datasets, like `executeStatementsBefore` in example above.
+
+TIP: You can enable dataset merging for all tests with 'mergeDataSets=true` on `dbunit.yml` configuraton file.</pre> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+    </div> 
+   </div> 
   </div> 
   <div id="footnotes"> 
    <hr> 
@@ -3657,8 +3792,8 @@ public @interface AnotherMetaDataSet {
   </div> 
   <div id="footer" style="color:gray;font-size:11px">
     Generated by 
-   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.7</a> - Sep 18, 2018 11:03:42 PM 
-   <span style="float:right;font-size:11px"> Execution time: 7.256 seconds</span> 
+   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.7</a> - Sep 19, 2018 3:44:40 AM 
+   <span style="float:right;font-size:11px"> Execution time: 8.505 seconds</span> 
   </div> 
   <style>  
 
