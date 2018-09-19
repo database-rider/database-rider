@@ -1,7 +1,5 @@
 package com.github.database.rider.core;
 
-import static com.github.database.rider.core.util.EntityManagerProvider.em;
-import static com.github.database.rider.core.util.EntityManagerProvider.tx;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;

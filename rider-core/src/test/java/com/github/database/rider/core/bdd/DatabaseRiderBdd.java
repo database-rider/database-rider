@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
         "src/test/resources/features/scriptable/scriptable-dataset.feature",
         "src/test/resources/features/leak/leak-hunter.feature",
         "src/test/resources/features/export/dataset-export.feature",
+        "src/test/resources/features/mergedatasets/dataset-merging.feature",
         "src/test/resources/features/metadataset/metadataset.feature"
 },
         plugin = "json:target/dbunit-rules.json")

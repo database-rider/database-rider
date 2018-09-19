@@ -45,8 +45,18 @@ public class GeneralSteps {
 	@Given("^The following metataset annotation$")
 	public void theFollowingMetatasetAnnotation(String arg1) throws Throwable {
 	}
-
+    
+    @Given("^The following class level dataset configuration$")
+	public void theFollowingClassLevelDataSetConfiguration(String arg1) throws Throwable {
+	}
+    
 	@Then("^Test must use dataset declared in `AnotherMetaDataSet` annotation\\.$")
 	public void testMustUseDatasetDeclaredInAnotherMetaDatasetAnnotation() throws Throwable {
 	}
+    
+    @Then("^Test and method dataset configuration will be merged in one dataset$")
+	public void testAndMethodDatasetConfigurationWillBeMerged(String arg1) throws Throwable {
+	}
+    
+    
 }
