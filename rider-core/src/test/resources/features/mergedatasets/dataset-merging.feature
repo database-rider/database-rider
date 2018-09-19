@@ -20,7 +20,7 @@ TIP: See https://github.com/database-rider/database-rider/blob/master/rider-juni
 """
 [source,java,indent=0]
 ----
-include::../../../src/test/java/com/github/database/rider/core/MergeDataSetsIt.java[tags=declaration]
+include::../../../src/test/java/com/github/database/rider/core/MergeDataSetIt.java[tags=declaration]
 }
 ----
 <1> This enables dataset merging so @DataSet declared on test class will be merged with test/method one. 
@@ -32,10 +32,11 @@ include::../../../src/test/java/com/github/database/rider/core/MergeDataSetsIt.j
 """
 [source,java,indent=0]
 ----
-include::../../../src/test/java/com/github/database/rider/core/MergeDataSetsIt.java[tags=test-method;after-test]
+include::../../../src/test/java/com/github/database/rider/core/MergeDataSetIt.java[tags=test-method;after-test]
 ----
-
 """
+
+#cukedoctor-discrete
     Then Test and method dataset configuration will be merged in one dataset
 
 """
