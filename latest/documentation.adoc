@@ -1373,11 +1373,11 @@ The following class level dataset configuration icon:thumbs-up[role="green",titl
 [discrete]
 [source,java,indent=0]
 ----
-include::../../../src/test/java/com/github/database/rider/core/MergeDataSetIt.java[tags=declaration]
+include::../../../src/test/java/com/github/database/rider/core/MergeDataSetsIt.java[tags=declaration]
 }
 ----
 [discrete]
-<1> This enables dataset merging so @DataSet declared on test class will be merged with test/method one. 
+<1> Enables dataset merging so @DataSet declared on test class will be merged with test/method one. 
 
 
 ******
@@ -1391,7 +1391,7 @@ The following test is executed: icon:thumbs-up[role="green",title="Passed"]
 [discrete]
 [source,java,indent=0]
 ----
-include::../../../src/test/java/com/github/database/rider/core/MergeDataSetIt.java[tags=test-method;after-test]
+include::../../../src/test/java/com/github/database/rider/core/MergeDataSetsIt.java[tags=test-method;after-test]
 ----
 
 
@@ -1404,7 +1404,7 @@ Test and method dataset configuration will be merged in one dataset icon:thumbs-
 ******
 
 [discrete]
-IMPORTANT: Only array properties such as `value`and `executeScriptsBefore` of @DataSet will be merged.
+IMPORTANT: Only array properties such as `value` and `executeScriptsBefore` of @DataSet will be merged.
 [discrete]
 [discrete]
 WARNING: Class level dataset configuration will come before method level if a property is defined in both datasets, like `executeStatementsBefore` in example above.

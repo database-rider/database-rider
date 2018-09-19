@@ -3527,11 +3527,31 @@ public @interface MetaDataSet {
            <div class="content"> 
             <div class="listingblock"> 
              <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java">        <span class="annotation">@Test</span>
+              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(JUnit4.class)
+<span class="annotation">@MetaDataSet</span>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">MetaDataSetIt</span> {
+
+        <span class="annotation">@Rule</span>
+        <span class="directive">public</span> EntityManagerProvider emProvider = EntityManagerProvider.instance(<span class="string"><span class="delimiter">"</span><span class="content">rules-it</span><span class="delimiter">"</span></span>);
+
+        <span class="annotation">@Rule</span>
+        <span class="directive">public</span> DBUnitRule dbUnitRule = DBUnitRule.instance(emProvider.connection());
+
+<span class="comment">// end::declaration[]</span>
+
+        <span class="annotation">@Test</span>
         <span class="directive">public</span> <span class="type">void</span> testMetaAnnotationOnClass() {
                 <span class="predefined-type">List</span>&lt;User&gt; users = em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
                 assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">2</span>);
         }
+
+        <span class="annotation">@Test</span>
+        <span class="annotation">@AnotherMetaDataSet</span>
+        <span class="directive">public</span> <span class="type">void</span> testMetaAnnotationOnMethod() {
+                <span class="predefined-type">List</span>&lt;User&gt; users = em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
+                assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">1</span>);
+        }
+}
 }</code></pre> 
              </div> 
             </div> 
@@ -3615,12 +3635,31 @@ public @interface AnotherMetaDataSet {
            <div class="content"> 
             <div class="listingblock"> 
              <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java">        <span class="annotation">@Test</span>
+              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(JUnit4.class)
+<span class="annotation">@MetaDataSet</span>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">MetaDataSetIt</span> {
+
+        <span class="annotation">@Rule</span>
+        <span class="directive">public</span> EntityManagerProvider emProvider = EntityManagerProvider.instance(<span class="string"><span class="delimiter">"</span><span class="content">rules-it</span><span class="delimiter">"</span></span>);
+
+        <span class="annotation">@Rule</span>
+        <span class="directive">public</span> DBUnitRule dbUnitRule = DBUnitRule.instance(emProvider.connection());
+
+<span class="comment">// end::declaration[]</span>
+
+        <span class="annotation">@Test</span>
+        <span class="directive">public</span> <span class="type">void</span> testMetaAnnotationOnClass() {
+                <span class="predefined-type">List</span>&lt;User&gt; users = em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
+                assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">2</span>);
+        }
+
+        <span class="annotation">@Test</span>
         <span class="annotation">@AnotherMetaDataSet</span>
         <span class="directive">public</span> <span class="type">void</span> testMetaAnnotationOnMethod() {
                 <span class="predefined-type">List</span>&lt;User&gt; users = em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
                 assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">1</span>);
         }
+}
 }</code></pre> 
              </div> 
             </div> 
@@ -3705,7 +3744,11 @@ public @interface AnotherMetaDataSet {
            <div class="content"> 
             <div class="listingblock"> 
              <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java">Unresolved directive in documentation.adoc - include::../../../src/test/java/com/github/database/rider/core/MergeDataSetIt.java[tags=declaration]
+              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(JUnit4.class)
+<span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">yml/tweet.yml</span><span class="delimiter">"</span></span>, executeScriptsAfter = <span class="string"><span class="delimiter">"</span><span class="content">addUser.sql</span><span class="delimiter">"</span></span>, executeStatementsBefore = <span class="string"><span class="delimiter">"</span><span class="content">INSERT INTO USER VALUES (8,'user8')</span><span class="delimiter">"</span></span>)
+<span class="annotation">@DBUnit</span>(mergeDataSets = <span class="predefined-constant">true</span>) <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="directive">public</span> <span class="type">class</span> <span class="class">MergeDataSetsIt</span> {
+
 }</code></pre> 
              </div> 
             </div> 
@@ -3714,7 +3757,7 @@ public @interface AnotherMetaDataSet {
               <tbody> 
                <tr> 
                 <td><i class="conum" data-value="1"></i><b>1</b></td> 
-                <td>This enables dataset merging so @DataSet declared on test class will be merged with test/method one.</td> 
+                <td>Enables dataset merging so @DataSet declared on test class will be merged with test/method one.</td> 
                </tr> 
               </tbody> 
              </table> 
@@ -3739,7 +3782,7 @@ public @interface AnotherMetaDataSet {
            <div class="content"> 
             <div class="listingblock"> 
              <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java">Unresolved directive in documentation.adoc - include::../../../src/test/java/com/github/database/rider/core/MergeDataSetIt.java[tags=test-method;after-test]</code></pre> 
+              <pre class="CodeRay highlight"><code data-lang="java"></code></pre> 
              </div> 
             </div> 
            </div> 
@@ -3765,7 +3808,7 @@ public @interface AnotherMetaDataSet {
               <tbody> 
                <tr> 
                 <td class="icon"> <i class="fa icon-important" title="Important"></i> </td> 
-                <td class="content"> Only array properties such as <code>value`and `executeScriptsBefore</code> of @DataSet will be merged. </td> 
+                <td class="content"> Only array properties such as <code>value</code> and <code>executeScriptsBefore</code> of @DataSet will be merged. </td> 
                </tr> 
               </tbody> 
              </table> 
@@ -3813,8 +3856,8 @@ public @interface AnotherMetaDataSet {
   </div> 
   <div id="footer" style="color:gray;font-size:11px">
     Generated by 
-   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.7</a> - Sep 19, 2018 1:01:57 PM 
-   <span style="float:right;font-size:11px"> Execution time: 8.635 seconds</span> 
+   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.7</a> - Sep 19, 2018 1:50:16 PM 
+   <span style="float:right;font-size:11px"> Execution time: 7.198 seconds</span> 
   </div> 
   <style>  
 
