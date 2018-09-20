@@ -31,9 +31,7 @@ public class MergeDataSetsIt {
     @Rule
     public DBUnitRule dbUnitRule = DBUnitRule.instance(emProvider.connection());
 
-    
 // tag::test-method[]    
-    
     @Test
     @DataSet(value = "yml/user.yml", executeScriptsAfter = "tweets.sql", executeStatementsBefore = "INSERT INTO USER VALUES (9,'user9')", strategy = SeedStrategy.INSERT)
     public void shouldMergeDataSetsFromClassAndMethod() {

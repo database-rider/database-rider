@@ -23,7 +23,7 @@ TIP: See https://github.com/database-rider/database-rider/blob/master/rider-juni
 include::../../../src/test/java/com/github/database/rider/core/MergeDataSetsIt.java[tags=declaration]
 }
 ----
-<1> This enables dataset merging so @DataSet declared on test class will be merged with test/method one. 
+<1> Enables dataset merging so @DataSet declared on test class will be merged with test/method one. 
 
 """
 
@@ -34,12 +34,13 @@ include::../../../src/test/java/com/github/database/rider/core/MergeDataSetsIt.j
 ----
 include::../../../src/test/java/com/github/database/rider/core/MergeDataSetsIt.java[tags=test-method;after-test]
 ----
-
 """
+
+#cukedoctor-discrete
     Then Test and method dataset configuration will be merged in one dataset
 
 """
-IMPORTANT: Only array properties such as `value`and `executeScriptsBefore` of @DataSet will be merged.
+IMPORTANT: Only array properties such as `value` and `executeScriptsBefore` of @DataSet will be merged.
 
 WARNING: Class level dataset configuration will come before method level if a property is defined in both datasets, like `executeStatementsBefore` in example above.
 

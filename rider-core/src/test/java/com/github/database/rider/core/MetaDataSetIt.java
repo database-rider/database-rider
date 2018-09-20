@@ -16,7 +16,7 @@ import com.github.database.rider.core.util.EntityManagerProvider;
 import static com.github.database.rider.core.util.EntityManagerProvider.*;
 
 
-//tag::expectedDeclaration[]
+//tag::declaration[]
 @RunWith(JUnit4.class)
 @MetaDataSet
 public class MetaDataSetIt {
@@ -27,7 +27,7 @@ public class MetaDataSetIt {
 	@Rule
 	public DBUnitRule dbUnitRule = DBUnitRule.instance(emProvider.connection()); 
 	
-// end::expectedDeclaration[]	
+// end::declaration[]	
 
 // tag::class-level[]
 	@Test
