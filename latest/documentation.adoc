@@ -12,6 +12,8 @@
 :toclevels: 3
 :revnumber: 1.2.12-SNAPSHOT
 :hardbreaks:
+:chapter-label: Chapter
+:version-label: Version
 
 = *Database Rider Documentation*
 
@@ -59,9 +61,8 @@ include::../../../../pom.xml[tags=version]
 </dependency>
 ----
 
-****
+==========
 Given ::
-=====
 The following junit rules icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -81,9 +82,7 @@ include::../../../src/test/java/com/github/database/rider/core/DatabaseRiderIt.j
 
 ******
 
-=====
 And ::
-=====
 The following dataset icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -96,9 +95,7 @@ include::../../../src/test/resources/datasets/yml/users.yml[]
 
 ******
 
-=====
 When ::
-=====
 The following test is executed: icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -113,12 +110,9 @@ include::../../../src/test/java/com/github/database/rider/core/DatabaseRiderIt.j
 
 TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/DatabaseRiderIt.java/#L31[found here^].
 
-=====
 Then ::
-=====
 The database should be seeded with the dataset content before test execution icon:thumbs-up[role="green",title="Passed"]
-=====
-****
+==========
 
 === Seed database with `DBUnit Interceptor`
 
@@ -139,9 +133,8 @@ include::../../../../pom.xml[tags=version]
 </dependency>
 ----
 
-****
+==========
 Given ::
-=====
 DBUnit interceptor is enabled in your test beans.xml: icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -175,9 +168,7 @@ deltaspike.testcontrol.use_test_class_as_cdi_bean=true
 IMPORTANT: When using above configuration the JUnit `@Before` will not work as expected, see https://lists.apache.org/thread.html/60ae2ade9ff8c5588a53a138b64c94e505455185358c21f663a5fd33@%3Cusers.deltaspike.apache.org%3E[discussion here^].
 ======
 
-=====
 And ::
-=====
 The following dataset icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -190,9 +181,7 @@ include::../../../../rider-cdi/src/test/resources/datasets/yml/users.yml[]
 
 ******
 
-=====
 When ::
-=====
 The following test is executed: icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -212,12 +201,9 @@ include::../../../../rider-cdi/src/test/java/com/github/database/rider/cdi/DBUni
 
 TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/rider-cdi/src/test/java/com/github/database/rider/cdi/DBUnitCDIIt.java#L74[found here^].
 
-=====
 Then ::
-=====
 The database should be seeded with the dataset content before test execution icon:thumbs-up[role="green",title="Passed"]
-=====
-****
+==========
 
 === Seed database with `JUnit 5 extension`
 
@@ -238,9 +224,8 @@ include::../../../../pom.xml[tags=version]
 </dependency>
 ----
 
-****
+==========
 Given ::
-=====
 The following dataset icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -253,9 +238,7 @@ include::../../../../rider-junit5/src/test/resources/datasets/users.yml[]
 
 ******
 
-=====
 When ::
-=====
 The following junit5 test is executed icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -291,12 +274,9 @@ include::../../../../rider-junit5/src/test/java/com/github/database/rider/junit5
 <1> Shortcut for `@Test` and `@ExtendWith(DBUnitExtension.class)`
 ====
 
-=====
 Then ::
-=====
 The database should be seeded with the dataset content before test execution icon:thumbs-up[role="green",title="Passed"]
-=====
-****
+==========
 
 === Seeding database in BDD tests with `Rider Cucumber`
 
@@ -343,9 +323,8 @@ include::../../../../rider-cdi/pom.xml[tags=deltaspike-cdi-deps]
 <2> Also comes with Rider Cucumber.
 <3> You can use CDI implementation of your choice.
 
-****
+==========
 Given ::
-=====
 The following feature icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -356,9 +335,7 @@ include::../../../../rider-examples/jpa-productivity-boosters/src/test/resources
 
 ******
 
-=====
 And ::
-=====
 The following dataset icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -369,9 +346,7 @@ include::../../../../rider-examples/jpa-productivity-boosters/src/test/resources
 
 ******
 
-=====
 And ::
-=====
 The following Cucumber test icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -384,9 +359,7 @@ include::../../../../rider-examples/jpa-productivity-boosters/src/test/java/com/
 
 ******
 
-=====
 When ::
-=====
 The following cucumber steps are executed icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -407,12 +380,9 @@ include::../../../../rider-examples/jpa-productivity-boosters/src/test/java/com/
 
 TIP: Source code for the example above can be https://github.com/database-rider/database-rider/blob/master/rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactSteps.java#L17[found here^].
 
-=====
 Then ::
-=====
 The database should be seeded with the dataset content before step execution icon:thumbs-up[role="green",title="Passed"]
-=====
-****
+==========
 
 [[DataSet-creation, DataSet creation]]
 == *DataSet creation*
@@ -438,9 +408,8 @@ IMPORTANT: YAML is based on spaces indentation so be careful because any missing
 
 TIP: Source code of the examples below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/format/DataSetFormatIt.java/[found here^].
 
-****
+==========
 Given ::
-=====
 The following dataset icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -453,9 +422,7 @@ include::../../../src/test/resources/datasets/yml/users.yml[]
 
 ******
 
-=====
 When ::
-=====
 The following test is executed: icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -468,18 +435,14 @@ include::../../../src/test/java/com/github/database/rider/core/format/DataSetFor
 
 ******
 
-=====
 Then ::
-=====
 The database should be seeded with the dataset content before test execution icon:thumbs-up[role="green",title="Passed"]
-=====
-****
+==========
 
 === Creating a `JSON` dataset
 
-****
+==========
 Given ::
-=====
 The following dataset icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -492,9 +455,7 @@ include::../../../src/test/resources/datasets/json/users.json[]
 
 ******
 
-=====
 When ::
-=====
 The following test is executed: icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -507,18 +468,14 @@ include::../../../src/test/java/com/github/database/rider/core/format/DataSetFor
 
 ******
 
-=====
 Then ::
-=====
 The database should be seeded with the dataset content before test execution icon:thumbs-up[role="green",title="Passed"]
-=====
-****
+==========
 
 === Creating a `XML` dataset
 
-****
+==========
 Given ::
-=====
 The following dataset icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -531,9 +488,7 @@ include::../../../src/test/resources/datasets/xml/users.xml[]
 
 ******
 
-=====
 When ::
-=====
 The following test is executed: icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -546,18 +501,14 @@ include::../../../src/test/java/com/github/database/rider/core/format/DataSetFor
 
 ******
 
-=====
 Then ::
-=====
 The database should be seeded with the dataset content before test execution icon:thumbs-up[role="green",title="Passed"]
-=====
-****
+==========
 
 === Creating a `XLS` dataset
 
-****
+==========
 Given ::
-=====
 The following dataset icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -575,9 +526,7 @@ NOTE: Each Excell `sheet` name is the *table name*, first row is *columns names*
 
 ******
 
-=====
 When ::
-=====
 The following test is executed: icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -590,18 +539,14 @@ include::../../../src/test/java/com/github/database/rider/core/format/DataSetFor
 
 ******
 
-=====
 Then ::
-=====
 The database should be seeded with the dataset content before test execution icon:thumbs-up[role="green",title="Passed"]
-=====
-****
+==========
 
 === Creating a `CSV` dataset
 
-****
+==========
 Given ::
-=====
 The following dataset icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -634,9 +579,7 @@ Also note that each csv dataset must be declared in its own folder because DBUni
 
 ******
 
-=====
 When ::
-=====
 The following test is executed: icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -651,12 +594,9 @@ include::../../../src/test/java/com/github/database/rider/core/format/DataSetFor
 
 ******
 
-=====
 Then ::
-=====
 The database should be seeded with the dataset content before test execution icon:thumbs-up[role="green",title="Passed"]
-=====
-****
+==========
 
 [[Configuration, Configuration]]
 == *Configuration*
@@ -792,9 +732,8 @@ TIP: Complete source code of examples below can be https://github.com/database-r
 
 === Assertion with yml dataset
 
-****
+==========
 Given ::
-=====
 The following dataset icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -807,9 +746,7 @@ include::../../../src/test/resources/datasets/yml/expectedUsers.yml[]
 
 ******
 
-=====
 When ::
-=====
 The following test is executed: icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -824,18 +761,14 @@ include::../../../src/test/java/com/github/database/rider/core/ExpectedDataSetIt
 
 ******
 
-=====
 Then ::
-=====
 Test must pass because database state is as in expected dataset. icon:thumbs-up[role="green",title="Passed"]
-=====
-****
+==========
 
 === Assertion with regular expression in expected dataset
 
-****
+==========
 Given ::
-=====
 The following dataset icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -848,9 +781,7 @@ include::../../../src/test/resources/datasets/yml/expectedUsersRegex.yml[]
 
 ******
 
-=====
 When ::
-=====
 The following test is executed: icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -863,18 +794,14 @@ include::../../../src/test/java/com/github/database/rider/core/ExpectedDataSetIt
 
 ******
 
-=====
 Then ::
-=====
 Test must pass because database state is as in expected dataset. icon:thumbs-up[role="green",title="Passed"]
-=====
-****
+==========
 
 === Database assertion with seeding before test execution
 
-****
+==========
 Given ::
-=====
 The following dataset icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -887,9 +814,7 @@ include::../../../src/test/resources/datasets/yml/user.yml[]
 
 ******
 
-=====
 And ::
-=====
 The following dataset icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -902,9 +827,7 @@ include::../../../src/test/resources/datasets/yml/expectedUser.yml[]
 
 ******
 
-=====
 When ::
-=====
 The following test is executed: icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -917,18 +840,14 @@ include::../../../src/test/java/com/github/database/rider/core/ExpectedDataSetIt
 
 ******
 
-=====
 Then ::
-=====
 Test must pass because database state is as in expected dataset. icon:thumbs-up[role="green",title="Passed"]
-=====
-****
+==========
 
 === Failing assertion
 
-****
+==========
 Given ::
-=====
 The following dataset icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -941,9 +860,7 @@ include::../../../src/test/resources/datasets/yml/expectedUsers.yml[]
 
 ******
 
-=====
 When ::
-=====
 The following test is executed: icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -956,9 +873,7 @@ include::../../../src/test/java/com/github/database/rider/core/ExpectedDataSetIt
 
 ******
 
-=====
 Then ::
-=====
 Test must fail with following error: icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -968,14 +883,12 @@ IMPORTANT: junit.framework.ComparisonFailure: value (table=USER, row=0, col=name
 
 ******
 
-=====
-****
+==========
 
 === Assertion using automatic transaction
 
-****
+==========
 Given ::
-=====
 The following dataset icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -988,9 +901,7 @@ include::../../../src/test/resources/datasets/yml/expectedUsersRegex.yml[]
 
 ******
 
-=====
 When ::
-=====
 The following test is executed: icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -1005,12 +916,9 @@ include::../../../src/test/java/com/github/database/rider/core/TransactionIt.jav
 
 NOTE: `Transactional` attribute will make Database Rider start a transaction before test and commit the transaction *after* test execution but *before* expected dataset comparison.
 
-=====
 Then ::
-=====
 Test must pass because inserted users are commited to database and database state matches expected dataset. icon:thumbs-up[role="green",title="Passed"]
-=====
-****
+==========
 
 [[Dynamic-data-using-scritable-datasets, Dynamic data using scritable datasets]]
 == *Dynamic data using scritable datasets*
@@ -1032,9 +940,8 @@ TIP: Complete source code of examples below can be https://github.com/database-r
 
 === Seed database with groovy script in dataset
 
-****
+==========
 Given ::
-=====
 Groovy script engine is on test classpath icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -1052,9 +959,7 @@ Groovy script engine is on test classpath icon:thumbs-up[role="green",title="Pas
 
 ******
 
-=====
 And ::
-=====
 The following dataset icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -1067,9 +972,7 @@ include::../../../src/test/resources/datasets/yml/groovy-with-date-replacements.
 
 ******
 
-=====
 When ::
-=====
 The following test is executed: icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -1082,20 +985,16 @@ include::../../../src/test/java/com/github/database/rider/core/ScriptReplacement
 
 ******
 
-=====
 Then ::
-=====
 Dataset script should be interpreted while seeding the database icon:thumbs-up[role="green",title="Passed"]
-=====
-****
+==========
 
 === Seed database with javascript in dataset
 
 NOTE: Javascript engine comes within JDK so no additional classpath dependency is necessary.
 
-****
+==========
 Given ::
-=====
 The following dataset icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -1108,9 +1007,7 @@ include::../../../src/test/resources/datasets/yml/js-with-calc-replacements.yml[
 
 ******
 
-=====
 When ::
-=====
 The following test is executed: icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -1123,12 +1020,9 @@ include::../../../src/test/java/com/github/database/rider/core/ScriptReplacement
 
 ******
 
-=====
 Then ::
-=====
 Dataset script should be interpreted while seeding the database icon:thumbs-up[role="green",title="Passed"]
-=====
-****
+==========
 
 [[Database-connection-leak-detection, Database connection leak detection]]
 == *Database connection leak detection*
@@ -1266,9 +1160,8 @@ TIP: See https://github.com/database-rider/database-rider/blob/master/rider-spri
 
 === Class level metadataset
 
-****
+==========
 Given ::
-=====
 The following metataset annotation icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -1281,9 +1174,7 @@ include::../../../src/test/java/com/github/database/rider/core/api/dataset/MetaD
 
 ******
 
-=====
 When ::
-=====
 The following test is executed: icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -1297,18 +1188,14 @@ include::../../../src/test/java/com/github/database/rider/core/MetaDataSetIt.jav
 
 ******
 
-=====
 Then ::
-=====
 Test must use dataset declared in `MetaDataSet` annotation. icon:thumbs-up[role="green",title="Passed"]
-=====
-****
+==========
 
 === Method level metadaset
 
-****
+==========
 Given ::
-=====
 The following metataset annotation icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -1321,9 +1208,7 @@ include::../../../src/test/java/com/github/database/rider/core/api/dataset/Anoth
 
 ******
 
-=====
 When ::
-=====
 The following test is executed: icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -1337,12 +1222,9 @@ include::../../../src/test/java/com/github/database/rider/core/MetaDataSetIt.jav
 
 ******
 
-=====
 Then ::
-=====
 Test must use dataset declared in `AnotherMetaDataSet` annotation. icon:thumbs-up[role="green",title="Passed"]
-=====
-****
+==========
 
 [[DataSet-merging, DataSet merging]]
 == *DataSet merging*
@@ -1364,9 +1246,8 @@ TIP: See https://github.com/database-rider/database-rider/blob/master/rider-juni
 
 === Merging datasets
 
-****
+==========
 Given ::
-=====
 The following class level dataset configuration icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -1382,9 +1263,7 @@ include::../../../src/test/java/com/github/database/rider/core/MergeDataSetsIt.j
 
 ******
 
-=====
 When ::
-=====
 The following test is executed: icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -1397,9 +1276,7 @@ include::../../../src/test/java/com/github/database/rider/core/MergeDataSetsIt.j
 
 ******
 
-=====
 Then ::
-=====
 Test and method dataset configuration will be merged in one dataset icon:thumbs-up[role="green",title="Passed"]
 ******
 
@@ -1415,6 +1292,5 @@ TIP: You can enable dataset merging for all tests with 'mergeDataSets=true` on `
 
 ******
 
-=====
-****
+==========
 

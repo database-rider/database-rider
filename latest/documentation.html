@@ -653,6 +653,8 @@ table.CodeRay td.code>pre{padding:0}
    <div class="sect1"> 
     <h2 id="Seeding-database"><a class="anchor" href="#Seeding-database"></a>2. <strong>Seeding database</strong></h2> 
     <div class="sectionbody"> 
+     <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('Seeding-database');document.getElementById('hidden-Seeding-database').style.display = 'inline';this.style.display = 'none'"> </span> 
+     <span id="hidden-Seeding-database" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('Seeding-database');this.style.display = 'none'"> </span> 
      <div class="sidebarblock"> 
       <div class="content"> 
        <div class="exampleblock"> 
@@ -707,25 +709,23 @@ table.CodeRay td.code>pre{padding:0}
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
        </div> 
       </div> 
-      <div class="sidebarblock"> 
+      <div class="exampleblock"> 
        <div class="content"> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Given 
           </dt> 
+          <dd> 
+           <p>The following junit rules <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following junit rules <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(JUnit4.class)
+            <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(JUnit4.class)
 <span class="directive">public</span> <span class="type">class</span> <span class="class">DatabaseRiderIt</span> {
 
     <span class="annotation">@Rule</span>
@@ -734,23 +734,21 @@ table.CodeRay td.code>pre{padding:0}
     <span class="annotation">@Rule</span>
     <span class="directive">public</span> DBUnitRule dbUnitRule = DBUnitRule.instance(emProvider.connection()); <i class="conum" data-value="2"></i><b>(2)</b>
 }</code></pre> 
-             </div> 
-            </div> 
-            <div class="colist arabic"> 
-             <table> 
-              <tbody> 
-               <tr> 
-                <td><i class="conum" data-value="1"></i><b>1</b></td> 
-                <td><code>EntityManagerProvider</code> is a simple Junit rule that creates a JPA entityManager for each test. DBUnit rule don’t depend on EntityManagerProvider, it only needs a <strong>JDBC connection</strong>.</td> 
-               </tr> 
-               <tr> 
-                <td><i class="conum" data-value="2"></i><b>2</b></td> 
-                <td>DBUnit rule is responsible for reading <code>@DataSet</code> annotation and prepare the database for each test.</td> 
-               </tr> 
-              </tbody> 
-             </table> 
-            </div> 
            </div> 
+          </div> 
+          <div class="colist arabic"> 
+           <table> 
+            <tbody> 
+             <tr> 
+              <td><i class="conum" data-value="1"></i><b>1</b></td> 
+              <td><code>EntityManagerProvider</code> is a simple Junit rule that creates a JPA entityManager for each test. DBUnit rule don’t depend on EntityManagerProvider, it only needs a <strong>JDBC connection</strong>.</td> 
+             </tr> 
+             <tr> 
+              <td><i class="conum" data-value="2"></i><b>2</b></td> 
+              <td>DBUnit rule is responsible for reading <code>@DataSet</code> annotation and prepare the database for each test.</td> 
+             </tr> 
+            </tbody> 
+           </table> 
           </div> 
          </div> 
         </div> 
@@ -759,21 +757,19 @@ table.CodeRay td.code>pre{padding:0}
           <dt class="hdlist1">
             And 
           </dt> 
+          <dd> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
+           <div class="title">
+             src/test/resources/dataset/yml/users.yml 
+           </div> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="title">
-               src/test/resources/dataset/yml/users.yml 
-             </div> 
-             <div class="content"> 
-              <pre>USER:
+            <pre>USER:
   - ID: 1
     NAME: "@realpestano"
   - ID: 2
@@ -787,8 +783,6 @@ FOLLOWER:
   - ID: 1
     USER_ID: 1
     FOLLOWER_ID: 2</pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -798,18 +792,16 @@ FOLLOWER:
           <dt class="hdlist1">
             When 
           </dt> 
+          <dd> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java">    <span class="annotation">@Test</span>
+            <pre class="CodeRay highlight"><code data-lang="java">    <span class="annotation">@Test</span>
     <span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">datasets/yml/users.yml</span><span class="delimiter">"</span></span>, useSequenceFiltering = <span class="predefined-constant">true</span>)
     <span class="directive">public</span> <span class="type">void</span> shouldSeedUserDataSet() {
         User user = (User) EntityManagerProvider.em().
@@ -824,35 +816,29 @@ FOLLOWER:
         assertThat(date.get(<span class="predefined-type">Calendar</span>.DAY_OF_MONTH)).
                 isEqualTo(now.get(<span class="predefined-type">Calendar</span>.DAY_OF_MONTH));
     }</code></pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
-          <div class="admonitionblock tip"> 
-           <table> 
-            <tbody> 
-             <tr> 
-              <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
-              <td class="content"> Source code of the above example can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/DatabaseRiderIt.java/#L31" target="_blank" rel="noopener">found here</a>. </td> 
-             </tr> 
-            </tbody> 
-           </table> 
-          </div> 
          </div> 
+        </div> 
+        <div class="admonitionblock tip"> 
+         <table> 
+          <tbody> 
+           <tr> 
+            <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
+            <td class="content"> Source code of the above example can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/DatabaseRiderIt.java/#L31" target="_blank" rel="noopener">found here</a>. </td> 
+           </tr> 
+          </tbody> 
+         </table> 
         </div> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Then 
           </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
+          <dd> 
            <p>The database should be seeded with the dataset content before test execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-         </div> 
+          </dd> 
+         </dl> 
         </div> 
        </div> 
       </div> 
@@ -876,28 +862,26 @@ FOLLOWER:
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
        </div> 
       </div> 
-      <div class="sidebarblock"> 
+      <div class="exampleblock"> 
        <div class="content"> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Given 
           </dt> 
+          <dd> 
+           <p>DBUnit interceptor is enabled in your test beans.xml: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>DBUnit interceptor is enabled in your test beans.xml: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
+           <div class="title">
+             src/test/resources/META-INF/beans.xml 
+           </div> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="title">
-               src/test/resources/META-INF/beans.xml 
-             </div> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="xml"><span class="preprocessor">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+            <pre class="CodeRay highlight"><code data-lang="xml"><span class="preprocessor">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
 <span class="tag">&lt;beans</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">"</span><span class="content">http://java.sun.com/xml/ns/javaee</span><span class="delimiter">"</span></span>
      <span class="attribute-name">xmlns:xsi</span>=<span class="string"><span class="delimiter">"</span><span class="content">http://www.w3.org/2001/XMLSchema-instance</span><span class="delimiter">"</span></span>
      <span class="attribute-name">xsi:schemaLocation</span>=<span class="string"><span class="delimiter">"</span><span class="content">http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/beans_1_0.xsd</span><span class="delimiter">"</span></span><span class="tag">&gt;</span>
@@ -905,60 +889,56 @@ FOLLOWER:
             <span class="tag">&lt;class&gt;</span>com.github.database.rider.cdi.DBUnitInterceptorImpl<span class="tag">&lt;/class&gt;</span>
      <span class="tag">&lt;/interceptors&gt;</span>
 <span class="tag">&lt;/beans&gt;</span></code></pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
-          <div class="admonitionblock important"> 
-           <table> 
-            <tbody> 
-             <tr> 
-              <td class="icon"> <i class="fa icon-important" title="Important"></i> </td> 
-              <td class="content"> 
-               <div class="paragraph"> 
-                <p>Your test itself must be a CDI bean to be intercepted. if you’re using <a href="https://deltaspike.apache.org/documentation/test-control.html" target="_blank" rel="noopener">Deltaspike test control</a> just enable the following property in <code>test/resources/META-INF/apache-deltaspike.properties</code>:</p> 
-               </div> 
-               <div class="listingblock"> 
-                <div class="content"> 
-                 <pre>deltaspike.testcontrol.use_test_class_as_cdi_bean=true</pre> 
-                </div> 
-               </div> 
-               <div class="admonitionblock important"> 
-                <table> 
-                 <tbody> 
-                  <tr> 
-                   <td class="icon"> <i class="fa icon-important" title="Important"></i> </td> 
-                   <td class="content"> When using above configuration the JUnit <code>@Before</code> will not work as expected, see <a href="https://lists.apache.org/thread.html/60ae2ade9ff8c5588a53a138b64c94e505455185358c21f663a5fd33@%3Cusers.deltaspike.apache.org%3E" target="_blank" rel="noopener">discussion here</a>. </td> 
-                  </tr> 
-                 </tbody> 
-                </table> 
-               </div> </td> 
-             </tr> 
-            </tbody> 
-           </table> 
-          </div> 
          </div> 
+        </div> 
+        <div class="admonitionblock important"> 
+         <table> 
+          <tbody> 
+           <tr> 
+            <td class="icon"> <i class="fa icon-important" title="Important"></i> </td> 
+            <td class="content"> 
+             <div class="paragraph"> 
+              <p>Your test itself must be a CDI bean to be intercepted. if you’re using <a href="https://deltaspike.apache.org/documentation/test-control.html" target="_blank" rel="noopener">Deltaspike test control</a> just enable the following property in <code>test/resources/META-INF/apache-deltaspike.properties</code>:</p> 
+             </div> 
+             <div class="listingblock"> 
+              <div class="content"> 
+               <pre>deltaspike.testcontrol.use_test_class_as_cdi_bean=true</pre> 
+              </div> 
+             </div> 
+             <div class="admonitionblock important"> 
+              <table> 
+               <tbody> 
+                <tr> 
+                 <td class="icon"> <i class="fa icon-important" title="Important"></i> </td> 
+                 <td class="content"> When using above configuration the JUnit <code>@Before</code> will not work as expected, see <a href="https://lists.apache.org/thread.html/60ae2ade9ff8c5588a53a138b64c94e505455185358c21f663a5fd33@%3Cusers.deltaspike.apache.org%3E" target="_blank" rel="noopener">discussion here</a>. </td> 
+                </tr> 
+               </tbody> 
+              </table> 
+             </div> </td> 
+           </tr> 
+          </tbody> 
+         </table> 
         </div> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             And 
           </dt> 
+          <dd> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
+           <div class="title">
+             src/test/resources/dataset/yml/users.yml 
+           </div> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="title">
-               src/test/resources/dataset/yml/users.yml 
-             </div> 
-             <div class="content"> 
-              <pre>USER:
+            <pre>USER:
   - ID: 1
     NAME: "@realpestano"
   - ID: 2
@@ -977,8 +957,6 @@ FOLLOWER:
   - ID: 1
     USER_ID: 1
     FOLLOWER_ID: 2</pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -988,18 +966,16 @@ FOLLOWER:
           <dt class="hdlist1">
             When 
           </dt> 
+          <dd> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(CdiTestRunner.class) <i class="conum" data-value="1"></i><b>(1)</b>
+            <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(CdiTestRunner.class) <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="annotation">@DBUnitInterceptor</span> <i class="conum" data-value="2"></i><b>(2)</b>
 <span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">yml/users.yml</span><span class="delimiter">"</span></span>)
 <span class="directive">public</span> <span class="type">class</span> <span class="class">DBUnitCDIIt</span> {
@@ -1015,49 +991,43 @@ FOLLOWER:
         <span class="predefined-type">List</span>&lt;Tweet&gt; tweetsUser1 = users.get(<span class="integer">0</span>).getTweets();
         assertThat(tweetsUser1).isNotNull().hasSize(<span class="integer">1</span>).contains(tweetUser1);
     }</code></pre> 
-             </div> 
-            </div> 
-            <div class="colist arabic"> 
-             <table> 
-              <tbody> 
-               <tr> 
-                <td><i class="conum" data-value="1"></i><b>1</b></td> 
-                <td><a href="https://deltaspike.apache.org/documentation/test-control.html" target="_blank" rel="noopener">CdiTestRunner</a> is provided by <a href="https://deltaspike.apache.org" target="_blank" rel="noopener">Apache Deltaspike</a> but you should be able to use other CDI test runners.</td> 
-               </tr> 
-               <tr> 
-                <td><i class="conum" data-value="2"></i><b>2</b></td> 
-                <td>Needed to activate DBUnit interceptor</td> 
-               </tr> 
-              </tbody> 
-             </table> 
-            </div> 
            </div> 
           </div> 
-          <div class="admonitionblock tip"> 
+          <div class="colist arabic"> 
            <table> 
             <tbody> 
              <tr> 
-              <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
-              <td class="content"> Source code of the above example can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-cdi/src/test/java/com/github/database/rider/cdi/DBUnitCDIIt.java#L74" target="_blank" rel="noopener">found here</a>. </td> 
+              <td><i class="conum" data-value="1"></i><b>1</b></td> 
+              <td><a href="https://deltaspike.apache.org/documentation/test-control.html" target="_blank" rel="noopener">CdiTestRunner</a> is provided by <a href="https://deltaspike.apache.org" target="_blank" rel="noopener">Apache Deltaspike</a> but you should be able to use other CDI test runners.</td> 
+             </tr> 
+             <tr> 
+              <td><i class="conum" data-value="2"></i><b>2</b></td> 
+              <td>Needed to activate DBUnit interceptor</td> 
              </tr> 
             </tbody> 
            </table> 
           </div> 
          </div> 
         </div> 
+        <div class="admonitionblock tip"> 
+         <table> 
+          <tbody> 
+           <tr> 
+            <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
+            <td class="content"> Source code of the above example can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-cdi/src/test/java/com/github/database/rider/cdi/DBUnitCDIIt.java#L74" target="_blank" rel="noopener">found here</a>. </td> 
+           </tr> 
+          </tbody> 
+         </table> 
+        </div> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Then 
           </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
+          <dd> 
            <p>The database should be seeded with the dataset content before test execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-         </div> 
+          </dd> 
+         </dl> 
         </div> 
        </div> 
       </div> 
@@ -1081,34 +1051,30 @@ FOLLOWER:
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
        </div> 
       </div> 
-      <div class="sidebarblock"> 
+      <div class="exampleblock"> 
        <div class="content"> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Given 
           </dt> 
+          <dd> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
+           <div class="title">
+             src/test/resources/dataset/users.yml 
+           </div> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="title">
-               src/test/resources/dataset/users.yml 
-             </div> 
-             <div class="content"> 
-              <pre>USER:
+            <pre>USER:
   - ID: 1
     NAME: "@realpestano"
   - ID: 2
     NAME: "@dbunit"</pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -1118,18 +1084,16 @@ FOLLOWER:
           <dt class="hdlist1">
             When 
           </dt> 
+          <dd> 
+           <p>The following junit5 test is executed <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following junit5 test is executed <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@ExtendWith</span>(DBUnitExtension.class) <i class="conum" data-value="1"></i><b>(1)</b>
+            <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@ExtendWith</span>(DBUnitExtension.class) <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="annotation">@RunWith</span>(JUnitPlatform.class) <i class="conum" data-value="2"></i><b>(2)</b>
 <span class="annotation">@DataSet</span>(cleanBefore = <span class="predefined-constant">true</span>)
 <span class="directive">public</span> <span class="type">class</span> <span class="class">DBUnitJUnit5It</span> {
@@ -1143,54 +1107,54 @@ FOLLOWER:
         <span class="predefined-type">List</span>&lt;User&gt; users = EntityManagerProvider.em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
         assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">2</span>);
     }</code></pre> 
-             </div> 
-            </div> 
-            <div class="colist arabic"> 
-             <table> 
-              <tbody> 
-               <tr> 
-                <td><i class="conum" data-value="1"></i><b>1</b></td> 
-                <td>Enables DBUnit.</td> 
-               </tr> 
-               <tr> 
-                <td><i class="conum" data-value="2"></i><b>2</b></td> 
-                <td>JUnit 5 runner;</td> 
-               </tr> 
-               <tr> 
-                <td><i class="conum" data-value="3"></i><b>3</b></td> 
-                <td>As JUnit5 requires <strong>Java8</strong> you can use lambdas in your tests;</td> 
-               </tr> 
-               <tr> 
-                <td><i class="conum" data-value="4"></i><b>4</b></td> 
-                <td>DBUnitExtension will get connection by reflection so just declare a field or a method with <code>ConnectionHolder</code> as return type.</td> 
-               </tr> 
-              </tbody> 
-             </table> 
-            </div> 
            </div> 
           </div> 
-          <div class="admonitionblock tip"> 
+          <div class="colist arabic"> 
            <table> 
             <tbody> 
              <tr> 
-              <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
-              <td class="content"> Source code of the above example can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-junit5/src/test/java/com/github/database/rider/junit5/DBUnitJUnit5It.java/#L24" target="_blank" rel="noopener">found here</a>. </td> 
+              <td><i class="conum" data-value="1"></i><b>1</b></td> 
+              <td>Enables DBUnit.</td> 
+             </tr> 
+             <tr> 
+              <td><i class="conum" data-value="2"></i><b>2</b></td> 
+              <td>JUnit 5 runner;</td> 
+             </tr> 
+             <tr> 
+              <td><i class="conum" data-value="3"></i><b>3</b></td> 
+              <td>As JUnit5 requires <strong>Java8</strong> you can use lambdas in your tests;</td> 
+             </tr> 
+             <tr> 
+              <td><i class="conum" data-value="4"></i><b>4</b></td> 
+              <td>DBUnitExtension will get connection by reflection so just declare a field or a method with <code>ConnectionHolder</code> as return type.</td> 
              </tr> 
             </tbody> 
            </table> 
           </div> 
-          <div class="admonitionblock tip"> 
-           <table> 
-            <tbody> 
-             <tr> 
-              <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
-              <td class="content"> 
-               <div class="paragraph"> 
-                <p>Another way to activate DBUnit in JUnits 5 test is using <strong>@DBRider</strong> annotation (at method or class level):</p> 
-               </div> 
-               <div class="listingblock"> 
-                <div class="content"> 
-                 <pre class="CodeRay highlight"><code data-lang="java">    <span class="annotation">@DBRider</span> <span class="comment">//shortcut for @ExtendWith(DBUnitExtension.class) and @Test</span>
+         </div> 
+        </div> 
+        <div class="admonitionblock tip"> 
+         <table> 
+          <tbody> 
+           <tr> 
+            <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
+            <td class="content"> Source code of the above example can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-junit5/src/test/java/com/github/database/rider/junit5/DBUnitJUnit5It.java/#L24" target="_blank" rel="noopener">found here</a>. </td> 
+           </tr> 
+          </tbody> 
+         </table> 
+        </div> 
+        <div class="admonitionblock tip"> 
+         <table> 
+          <tbody> 
+           <tr> 
+            <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
+            <td class="content"> 
+             <div class="paragraph"> 
+              <p>Another way to activate DBUnit in JUnits 5 test is using <strong>@DBRider</strong> annotation (at method or class level):</p> 
+             </div> 
+             <div class="listingblock"> 
+              <div class="content"> 
+               <pre class="CodeRay highlight"><code data-lang="java">    <span class="annotation">@DBRider</span> <span class="comment">//shortcut for @ExtendWith(DBUnitExtension.class) and @Test</span>
     <span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">usersWithTweet.yml</span><span class="delimiter">"</span></span>)
     <span class="directive">public</span> <span class="type">void</span> shouldListUsers() {
         <span class="predefined-type">List</span> users = EntityManagerProvider.em().
@@ -1198,37 +1162,31 @@ FOLLOWER:
         assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">2</span>);
         assertThat(users.get(<span class="integer">0</span>)).isEqualTo(<span class="keyword">new</span> User(<span class="integer">1</span>));
     }</code></pre> 
-                </div> 
-               </div> 
-               <div class="colist arabic"> 
-                <table> 
-                 <tbody> 
-                  <tr> 
-                   <td><i class="conum" data-value="1"></i><b>1</b></td> 
-                   <td>Shortcut for <code>@Test</code> and <code>@ExtendWith(DBUnitExtension.class)</code></td> 
-                  </tr> 
-                 </tbody> 
-                </table> 
-               </div> </td> 
-             </tr> 
-            </tbody> 
-           </table> 
-          </div> 
-         </div> 
+              </div> 
+             </div> 
+             <div class="colist arabic"> 
+              <table> 
+               <tbody> 
+                <tr> 
+                 <td><i class="conum" data-value="1"></i><b>1</b></td> 
+                 <td>Shortcut for <code>@Test</code> and <code>@ExtendWith(DBUnitExtension.class)</code></td> 
+                </tr> 
+               </tbody> 
+              </table> 
+             </div> </td> 
+           </tr> 
+          </tbody> 
+         </table> 
         </div> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Then 
           </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
+          <dd> 
            <p>The database should be seeded with the dataset content before test execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-         </div> 
+          </dd> 
+         </dl> 
         </div> 
        </div> 
       </div> 
@@ -1334,25 +1292,23 @@ FOLLOWER:
         </tbody> 
        </table> 
       </div> 
-      <div class="sidebarblock"> 
+      <div class="exampleblock"> 
        <div class="content"> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Given 
           </dt> 
+          <dd> 
+           <p>The following feature <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following feature <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre>Feature: Contacts test
+            <pre>Feature: Contacts test
   As a user of contacts repository
   I want to crud contacts
   So that I can expose contacts service
@@ -1376,8 +1332,6 @@ FOLLOWER:
     Given we have a list of contacts
     When we delete contact by id 1
     Then we should not find contact 1</pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -1387,18 +1341,16 @@ FOLLOWER:
           <dt class="hdlist1">
             And 
           </dt> 
+          <dd> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre>CONTACT:
+            <pre>CONTACT:
   - ID: 1
     NAME: "deltaspike"
     EMAIL: "users@deltaspike.apache.org"
@@ -1421,8 +1373,6 @@ COMPANY:
     NAME: "Pivotal"
   - ID: 4
     NAME: "Google"</pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -1432,18 +1382,16 @@ COMPANY:
           <dt class="hdlist1">
             And 
           </dt> 
+          <dd> 
+           <p>The following Cucumber test <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following Cucumber test <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.github.database.rider.examples.cucumber</span>;
+            <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.github.database.rider.examples.cucumber</span>;
 
 <span class="keyword">import</span> <span class="include">com.github.database.rider.cucumber.CdiCucumberTestRunner</span>;
 <span class="keyword">import</span> <span class="include">cucumber.api.CucumberOptions</span>;
@@ -1458,8 +1406,6 @@ COMPANY:
 )
 <span class="directive">public</span> <span class="type">class</span> <span class="class">ContactFeature</span> {
 }</code></pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -1469,18 +1415,16 @@ COMPANY:
           <dt class="hdlist1">
             When 
           </dt> 
+          <dd> 
+           <p>The following cucumber steps are executed <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following cucumber steps are executed <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.github.database.rider.examples.cucumber</span>;
+            <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.github.database.rider.examples.cucumber</span>;
 
 <span class="keyword">import</span> <span class="include">com.github.database.rider.core.api.dataset.DataSet</span>;
 <span class="keyword">import</span> <span class="include">com.github.database.rider.cdi.api.DBUnitInterceptor</span>;
@@ -1533,53 +1477,47 @@ COMPANY:
         assertEquals(result, count);
     }
 }</code></pre> 
-             </div> 
-            </div> 
-            <div class="colist arabic"> 
-             <table> 
-              <tbody> 
-               <tr> 
-                <td><i class="conum" data-value="1"></i><b>1</b></td> 
-                <td>Activates DBUnit CDI interceptor</td> 
-               </tr> 
-               <tr> 
-                <td><i class="conum" data-value="2"></i><b>2</b></td> 
-                <td>As the Cucumber cdi runner enables CDI, you can use injection into your Cucumber steps.</td> 
-               </tr> 
-               <tr> 
-                <td><i class="conum" data-value="3"></i><b>3</b></td> 
-                <td>Dataset is prepared before step execution by <code>@DBUnitInterceptor</code>.</td> 
-               </tr> 
-              </tbody> 
-             </table> 
-            </div> 
            </div> 
           </div> 
-          <div class="admonitionblock tip"> 
+          <div class="colist arabic"> 
            <table> 
             <tbody> 
              <tr> 
-              <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
-              <td class="content"> Source code for the example above can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactSteps.java#L17" target="_blank" rel="noopener">found here</a>. </td> 
+              <td><i class="conum" data-value="1"></i><b>1</b></td> 
+              <td>Activates DBUnit CDI interceptor</td> 
+             </tr> 
+             <tr> 
+              <td><i class="conum" data-value="2"></i><b>2</b></td> 
+              <td>As the Cucumber cdi runner enables CDI, you can use injection into your Cucumber steps.</td> 
+             </tr> 
+             <tr> 
+              <td><i class="conum" data-value="3"></i><b>3</b></td> 
+              <td>Dataset is prepared before step execution by <code>@DBUnitInterceptor</code>.</td> 
              </tr> 
             </tbody> 
            </table> 
           </div> 
          </div> 
         </div> 
+        <div class="admonitionblock tip"> 
+         <table> 
+          <tbody> 
+           <tr> 
+            <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
+            <td class="content"> Source code for the example above can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactSteps.java#L17" target="_blank" rel="noopener">found here</a>. </td> 
+           </tr> 
+          </tbody> 
+         </table> 
+        </div> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Then 
           </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
+          <dd> 
            <p>The database should be seeded with the dataset content before step execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-         </div> 
+          </dd> 
+         </dl> 
         </div> 
        </div> 
       </div> 
@@ -1589,6 +1527,8 @@ COMPANY:
    <div class="sect1"> 
     <h2 id="DataSet-creation"><a class="anchor" href="#DataSet-creation"></a>3. <strong>DataSet creation</strong></h2> 
     <div class="sectionbody"> 
+     <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('DataSet-creation');document.getElementById('hidden-DataSet-creation').style.display = 'inline';this.style.display = 'none'"> </span> 
+     <span id="hidden-DataSet-creation" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('DataSet-creation');this.style.display = 'none'"> </span> 
      <div class="sidebarblock"> 
       <div class="content"> 
        <div class="exampleblock"> 
@@ -1639,28 +1579,26 @@ COMPANY:
         </tbody> 
        </table> 
       </div> 
-      <div class="sidebarblock"> 
+      <div class="exampleblock"> 
        <div class="content"> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Given 
           </dt> 
+          <dd> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
+           <div class="title">
+             src/test/resources/dataset/yml/users.yml 
+           </div> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="title">
-               src/test/resources/dataset/yml/users.yml 
-             </div> 
-             <div class="content"> 
-              <pre>USER:
+            <pre>USER:
   - ID: 1
     NAME: "@realpestano"
   - ID: 2
@@ -1674,8 +1612,6 @@ FOLLOWER:
   - ID: 1
     USER_ID: 1
     FOLLOWER_ID: 2</pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -1685,25 +1621,21 @@ FOLLOWER:
           <dt class="hdlist1">
             When 
           </dt> 
+          <dd> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+            <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
 <span class="annotation">@DataSet</span>(<span class="string"><span class="delimiter">"</span><span class="content">yml/users.yml</span><span class="delimiter">"</span></span>)
 <span class="directive">public</span> <span class="type">void</span> shouldSeedDatabaseWithYAMLDataSet() {
    <span class="predefined-type">List</span>&lt;User&gt; users = em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
    assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">2</span>);
 }</code></pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -1713,42 +1645,36 @@ FOLLOWER:
           <dt class="hdlist1">
             Then 
           </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
+          <dd> 
            <p>The database should be seeded with the dataset content before test execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-         </div> 
+          </dd> 
+         </dl> 
         </div> 
        </div> 
       </div> 
      </div> 
      <div class="sect2"> 
       <h3 id="_creating_a_code_json_code_dataset"><a class="anchor" href="#_creating_a_code_json_code_dataset"></a>3.2. Creating a <code>JSON</code> dataset</h3> 
-      <div class="sidebarblock"> 
+      <div class="exampleblock"> 
        <div class="content"> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Given 
           </dt> 
+          <dd> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
+           <div class="title">
+             src/test/resources/dataset/json/users.json 
+           </div> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="title">
-               src/test/resources/dataset/json/users.json 
-             </div> 
-             <div class="content"> 
-              <pre>{
+            <pre>{
   "USER": [
     {
       "id": 1,
@@ -1775,8 +1701,6 @@ FOLLOWER:
     }
   ]
 }</pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -1786,25 +1710,21 @@ FOLLOWER:
           <dt class="hdlist1">
             When 
           </dt> 
+          <dd> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+            <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
 <span class="annotation">@DataSet</span>(<span class="string"><span class="delimiter">"</span><span class="content">json/users.json</span><span class="delimiter">"</span></span>)
 <span class="directive">public</span> <span class="type">void</span> shouldSeedDatabaseWithJSONDataSet() {
    <span class="predefined-type">List</span>&lt;User&gt; users = em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
    assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">2</span>);
 }</code></pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -1814,49 +1734,41 @@ FOLLOWER:
           <dt class="hdlist1">
             Then 
           </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
+          <dd> 
            <p>The database should be seeded with the dataset content before test execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-         </div> 
+          </dd> 
+         </dl> 
         </div> 
        </div> 
       </div> 
      </div> 
      <div class="sect2"> 
       <h3 id="_creating_a_code_xml_code_dataset"><a class="anchor" href="#_creating_a_code_xml_code_dataset"></a>3.3. Creating a <code>XML</code> dataset</h3> 
-      <div class="sidebarblock"> 
+      <div class="exampleblock"> 
        <div class="content"> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Given 
           </dt> 
+          <dd> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
+           <div class="title">
+             src/test/resources/dataset/xml/users.xml 
+           </div> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="title">
-               src/test/resources/dataset/xml/users.xml 
-             </div> 
-             <div class="content"> 
-              <pre>&lt;dataset&gt;
+            <pre>&lt;dataset&gt;
     &lt;USER id="1" name="@realpestano" /&gt;
     &lt;USER id="2" name="@dbunit" /&gt;
     &lt;TWEET id="abcdef12345" content="dbunit rules flat xml example" user_id="1"/&gt;
     &lt;FOLLOWER id="1" user_id="1" follower_id="2"/&gt;
 &lt;/dataset&gt;</pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -1866,25 +1778,21 @@ FOLLOWER:
           <dt class="hdlist1">
             When 
           </dt> 
+          <dd> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+            <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
 <span class="annotation">@DataSet</span>(<span class="string"><span class="delimiter">"</span><span class="content">xml/users.xml</span><span class="delimiter">"</span></span>)
 <span class="directive">public</span> <span class="type">void</span> shouldSeedDatabaseWithXMLDataSet() {
    <span class="predefined-type">List</span>&lt;User&gt; users = em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
    assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">2</span>);
 }</code></pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -1894,57 +1802,49 @@ FOLLOWER:
           <dt class="hdlist1">
             Then 
           </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
+          <dd> 
            <p>The database should be seeded with the dataset content before test execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-         </div> 
+          </dd> 
+         </dl> 
         </div> 
        </div> 
       </div> 
      </div> 
      <div class="sect2"> 
       <h3 id="_creating_a_code_xls_code_dataset"><a class="anchor" href="#_creating_a_code_xls_code_dataset"></a>3.4. Creating a <code>XLS</code> dataset</h3> 
-      <div class="sidebarblock"> 
+      <div class="exampleblock"> 
        <div class="content"> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Given 
           </dt> 
+          <dd> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
+           <div class="title">
+             src/test/resources/dataset/xls/users.xls 
+           </div> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="title">
-               src/test/resources/dataset/xls/users.xls 
-             </div> 
-             <div class="content"> 
-              <pre>ID	NAME
+            <pre>ID	NAME
 1	@realpestano
 2	@dbunit</pre> 
-             </div> 
-            </div> 
-            <div class="admonitionblock note"> 
-             <table> 
-              <tbody> 
-               <tr> 
-                <td class="icon"> <i class="fa icon-note" title="Note"></i> </td> 
-                <td class="content"> Each Excell <code>sheet</code> name is the <strong>table name</strong>, first row is <strong>columns names</strong> and remaining rows/cells are values. </td> 
-               </tr> 
-              </tbody> 
-             </table> 
-            </div> 
            </div> 
+          </div> 
+          <div class="admonitionblock note"> 
+           <table> 
+            <tbody> 
+             <tr> 
+              <td class="icon"> <i class="fa icon-note" title="Note"></i> </td> 
+              <td class="content"> Each Excell <code>sheet</code> name is the <strong>table name</strong>, first row is <strong>columns names</strong> and remaining rows/cells are values. </td> 
+             </tr> 
+            </tbody> 
+           </table> 
           </div> 
          </div> 
         </div> 
@@ -1953,25 +1853,21 @@ FOLLOWER:
           <dt class="hdlist1">
             When 
           </dt> 
+          <dd> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+            <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
 <span class="annotation">@DataSet</span>(<span class="string"><span class="delimiter">"</span><span class="content">xls/users.xls</span><span class="delimiter">"</span></span>)
 <span class="directive">public</span> <span class="type">void</span> shouldSeedDatabaseWithXLSDataSet() {
     <span class="predefined-type">List</span>&lt;User&gt; users = em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
     assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">2</span>);
 }</code></pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -1981,89 +1877,81 @@ FOLLOWER:
           <dt class="hdlist1">
             Then 
           </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
+          <dd> 
            <p>The database should be seeded with the dataset content before test execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-         </div> 
+          </dd> 
+         </dl> 
         </div> 
        </div> 
       </div> 
      </div> 
      <div class="sect2"> 
       <h3 id="_creating_a_code_csv_code_dataset"><a class="anchor" href="#_creating_a_code_csv_code_dataset"></a>3.5. Creating a <code>CSV</code> dataset</h3> 
-      <div class="sidebarblock"> 
+      <div class="exampleblock"> 
        <div class="content"> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Given 
           </dt> 
+          <dd> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
+           <div class="title">
+             src/test/resources/dataset/csv/USER.csv 
+           </div> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="title">
-               src/test/resources/dataset/csv/USER.csv 
-             </div> 
-             <div class="content"> 
-              <pre>ID, NAME
+            <pre>ID, NAME
 "1","@realpestano"
 "2","@dbunit"</pre> 
-             </div> 
-            </div> 
-            <div class="listingblock"> 
-             <div class="title">
-               src/test/resources/dataset/csv/TWEET.csv 
-             </div> 
-             <div class="content"> 
-              <pre>ID, CONTENT, DATE, LIKES, USER_ID
+           </div> 
+          </div> 
+          <div class="listingblock"> 
+           <div class="title">
+             src/test/resources/dataset/csv/TWEET.csv 
+           </div> 
+           <div class="content"> 
+            <pre>ID, CONTENT, DATE, LIKES, USER_ID
 "abcdef12345","dbunit rules!","2016-09-12 22:46:20.0",null,"1"</pre> 
-             </div> 
-            </div> 
-            <div class="admonitionblock note"> 
-             <table> 
-              <tbody> 
-               <tr> 
-                <td class="icon"> <i class="fa icon-note" title="Note"></i> </td> 
-                <td class="content"> File name is <strong>table name</strong> and first row is <strong>column names</strong>. </td> 
-               </tr> 
-              </tbody> 
-             </table> 
-            </div> 
-            <div class="listingblock"> 
-             <div class="title">
-               src/test/resources/dataset/csv/table-ordering.txt 
-             </div> 
-             <div class="content"> 
-              <pre>FOLLOWER
+           </div> 
+          </div> 
+          <div class="admonitionblock note"> 
+           <table> 
+            <tbody> 
+             <tr> 
+              <td class="icon"> <i class="fa icon-note" title="Note"></i> </td> 
+              <td class="content"> File name is <strong>table name</strong> and first row is <strong>column names</strong>. </td> 
+             </tr> 
+            </tbody> 
+           </table> 
+          </div> 
+          <div class="listingblock"> 
+           <div class="title">
+             src/test/resources/dataset/csv/table-ordering.txt 
+           </div> 
+           <div class="content"> 
+            <pre>FOLLOWER
 TWEET
 USER</pre> 
-             </div> 
-            </div> 
-            <div class="admonitionblock important"> 
-             <table> 
-              <tbody> 
-               <tr> 
-                <td class="icon"> <i class="fa icon-important" title="Important"></i> </td> 
-                <td class="content"> CSV datasets are composed by multiple files (one per table) and a table ordering descriptor declaring the order of creation. </td> 
-               </tr> 
-              </tbody> 
-             </table> 
-            </div> 
-            <div class="paragraph"> 
-             <p>Also note that each csv dataset must be declared in its own folder because DBUnit will read all csv files present in dataset folder.</p> 
-            </div> 
            </div> 
+          </div> 
+          <div class="admonitionblock important"> 
+           <table> 
+            <tbody> 
+             <tr> 
+              <td class="icon"> <i class="fa icon-important" title="Important"></i> </td> 
+              <td class="content"> CSV datasets are composed by multiple files (one per table) and a table ordering descriptor declaring the order of creation. </td> 
+             </tr> 
+            </tbody> 
+           </table> 
+          </div> 
+          <div class="paragraph"> 
+           <p>Also note that each csv dataset must be declared in its own folder because DBUnit will read all csv files present in dataset folder.</p> 
           </div> 
          </div> 
         </div> 
@@ -2072,36 +1960,32 @@ USER</pre>
           <dt class="hdlist1">
             When 
           </dt> 
+          <dd> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+            <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
 <span class="annotation">@DataSet</span>(<span class="string"><span class="delimiter">"</span><span class="content">datasets/csv/USER.csv</span><span class="delimiter">"</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="directive">public</span> <span class="type">void</span> shouldSeedDatabaseWithCSVDataSet() {
     <span class="predefined-type">List</span>&lt;User&gt; users = em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u</span><span class="delimiter">"</span></span>).getResultList();
     assertThat(users).isNotNull().isNotEmpty().hasSize(<span class="integer">2</span>);
 }</code></pre> 
-             </div> 
-            </div> 
-            <div class="colist arabic"> 
-             <table> 
-              <tbody> 
-               <tr> 
-                <td><i class="conum" data-value="1"></i><b>1</b></td> 
-                <td>You need to declare just one csv dataset file. Database rider will take parent folder as dataset folder.</td> 
-               </tr> 
-              </tbody> 
-             </table> 
-            </div> 
            </div> 
+          </div> 
+          <div class="colist arabic"> 
+           <table> 
+            <tbody> 
+             <tr> 
+              <td><i class="conum" data-value="1"></i><b>1</b></td> 
+              <td>You need to declare just one csv dataset file. Database rider will take parent folder as dataset folder.</td> 
+             </tr> 
+            </tbody> 
+           </table> 
           </div> 
          </div> 
         </div> 
@@ -2110,14 +1994,10 @@ USER</pre>
           <dt class="hdlist1">
             Then 
           </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
+          <dd> 
            <p>The database should be seeded with the dataset content before test execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-         </div> 
+          </dd> 
+         </dl> 
         </div> 
        </div> 
       </div> 
@@ -2127,6 +2007,8 @@ USER</pre>
    <div class="sect1"> 
     <h2 id="Configuration"><a class="anchor" href="#Configuration"></a>4. <strong>Configuration</strong></h2> 
     <div class="sectionbody"> 
+     <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('Configuration');document.getElementById('hidden-Configuration').style.display = 'inline';this.style.display = 'none'"> </span> 
+     <span id="hidden-Configuration" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('Configuration');this.style.display = 'none'"> </span> 
      <div class="sidebarblock"> 
       <div class="content"> 
        <div class="exampleblock"> 
@@ -2377,6 +2259,8 @@ properties:
    <div class="sect1"> 
     <h2 id="DataSet-assertion"><a class="anchor" href="#DataSet-assertion"></a>5. <strong>DataSet assertion</strong></h2> 
     <div class="sectionbody"> 
+     <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('DataSet-assertion');document.getElementById('hidden-DataSet-assertion').style.display = 'inline';this.style.display = 'none'"> </span> 
+     <span id="hidden-DataSet-assertion" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('DataSet-assertion');this.style.display = 'none'"> </span> 
      <div class="sidebarblock"> 
       <div class="content"> 
        <div class="exampleblock"> 
@@ -2404,34 +2288,30 @@ properties:
      </div> 
      <div class="sect2"> 
       <h3 id="_assertion_with_yml_dataset"><a class="anchor" href="#_assertion_with_yml_dataset"></a>5.1. Assertion with yml dataset</h3> 
-      <div class="sidebarblock"> 
+      <div class="exampleblock"> 
        <div class="content"> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Given 
           </dt> 
+          <dd> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
+           <div class="title">
+             expectedUsers.yml 
+           </div> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="title">
-               expectedUsers.yml 
-             </div> 
-             <div class="content"> 
-              <pre>USER:
+            <pre>USER:
   - ID: 1
     NAME: "expected user1"
   - ID: 2
     NAME: "expected user2"</pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -2441,18 +2321,16 @@ properties:
           <dt class="hdlist1">
             When 
           </dt> 
+          <dd> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(JUnit4.class)
+            <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(JUnit4.class)
 <span class="annotation">@DBUnit</span>(cacheConnection = <span class="predefined-constant">true</span>)
 <span class="directive">public</span> <span class="type">class</span> <span class="class">ExpectedDataSetIt</span> {
 
@@ -2477,19 +2355,17 @@ properties:
         instance.em().persist(u2);
         instance.tx().commit();
     }</code></pre> 
-             </div> 
-            </div> 
-            <div class="colist arabic"> 
-             <table> 
-              <tbody> 
-               <tr> 
-                <td><i class="conum" data-value="1"></i><b>1</b></td> 
-                <td>Clear database before to avoid conflict with other tests.</td> 
-               </tr> 
-              </tbody> 
-             </table> 
-            </div> 
            </div> 
+          </div> 
+          <div class="colist arabic"> 
+           <table> 
+            <tbody> 
+             <tr> 
+              <td><i class="conum" data-value="1"></i><b>1</b></td> 
+              <td>Clear database before to avoid conflict with other tests.</td> 
+             </tr> 
+            </tbody> 
+           </table> 
           </div> 
          </div> 
         </div> 
@@ -2498,48 +2374,40 @@ properties:
           <dt class="hdlist1">
             Then 
           </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
+          <dd> 
            <p>Test must pass because database state is as in expected dataset. <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-         </div> 
+          </dd> 
+         </dl> 
         </div> 
        </div> 
       </div> 
      </div> 
      <div class="sect2"> 
       <h3 id="_assertion_with_regular_expression_in_expected_dataset"><a class="anchor" href="#_assertion_with_regular_expression_in_expected_dataset"></a>5.2. Assertion with regular expression in expected dataset</h3> 
-      <div class="sidebarblock"> 
+      <div class="exampleblock"> 
        <div class="content"> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Given 
           </dt> 
+          <dd> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
+           <div class="title">
+             expectedUsersRegex.yml 
+           </div> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="title">
-               expectedUsersRegex.yml 
-             </div> 
-             <div class="content"> 
-              <pre>USER:
+            <pre>USER:
   - ID: "regex:\\d+"
     NAME: regex:^expected user.* #expected user1
   - ID: "regex:\\d+"
     NAME: regex:.*user2$ #expected user2</pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -2549,18 +2417,16 @@ properties:
           <dt class="hdlist1">
             When 
           </dt> 
+          <dd> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+            <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
 <span class="annotation">@DataSet</span>(cleanBefore = <span class="predefined-constant">true</span>)
 <span class="annotation">@ExpectedDataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">yml/expectedUsersRegex.yml</span><span class="delimiter">"</span></span>)
 <span class="directive">public</span> <span class="type">void</span> shouldMatchExpectedDataSetUsingRegex() {
@@ -2573,8 +2439,6 @@ properties:
     EntityManagerProvider.em().persist(u2);
     EntityManagerProvider.tx().commit();
 }</code></pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -2584,48 +2448,40 @@ properties:
           <dt class="hdlist1">
             Then 
           </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
+          <dd> 
            <p>Test must pass because database state is as in expected dataset. <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-         </div> 
+          </dd> 
+         </dl> 
         </div> 
        </div> 
       </div> 
      </div> 
      <div class="sect2"> 
       <h3 id="_database_assertion_with_seeding_before_test_execution"><a class="anchor" href="#_database_assertion_with_seeding_before_test_execution"></a>5.3. Database assertion with seeding before test execution</h3> 
-      <div class="sidebarblock"> 
+      <div class="exampleblock"> 
        <div class="content"> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Given 
           </dt> 
+          <dd> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
+           <div class="title">
+             user.yml 
+           </div> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="title">
-               user.yml 
-             </div> 
-             <div class="content"> 
-              <pre>USER:
+            <pre>USER:
   - ID: 1
     NAME: "@realpestano"
   - ID: 2
     NAME: "@dbunit"</pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -2635,25 +2491,21 @@ properties:
           <dt class="hdlist1">
             And 
           </dt> 
+          <dd> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
+           <div class="title">
+             expectedUser.yml 
+           </div> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="title">
-               expectedUser.yml 
-             </div> 
-             <div class="content"> 
-              <pre>USER:
+            <pre>USER:
   - ID: 2
     NAME: "@dbunit"</pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -2663,18 +2515,16 @@ properties:
           <dt class="hdlist1">
             When 
           </dt> 
+          <dd> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+            <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
 <span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">yml/user.yml</span><span class="delimiter">"</span></span>, disableConstraints = <span class="predefined-constant">true</span>)
 <span class="annotation">@ExpectedDataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">yml/expectedUser.yml</span><span class="delimiter">"</span></span>, ignoreCols = <span class="string"><span class="delimiter">"</span><span class="content">id</span><span class="delimiter">"</span></span>)
 <span class="directive">public</span> <span class="type">void</span> shouldMatchExpectedDataSetAfterSeedingDataBase() {
@@ -2682,8 +2532,6 @@ properties:
     em().remove(EntityManagerProvider.em().find(User.class, <span class="integer">1L</span>));
     tx().commit();
 }</code></pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -2693,48 +2541,40 @@ properties:
           <dt class="hdlist1">
             Then 
           </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
+          <dd> 
            <p>Test must pass because database state is as in expected dataset. <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-         </div> 
+          </dd> 
+         </dl> 
         </div> 
        </div> 
       </div> 
      </div> 
      <div class="sect2"> 
       <h3 id="_failing_assertion"><a class="anchor" href="#_failing_assertion"></a>5.4. Failing assertion</h3> 
-      <div class="sidebarblock"> 
+      <div class="exampleblock"> 
        <div class="content"> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Given 
           </dt> 
+          <dd> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
+           <div class="title">
+             expectedUsers.yml 
+           </div> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="title">
-               expectedUsers.yml 
-             </div> 
-             <div class="content"> 
-              <pre>USER:
+            <pre>USER:
   - ID: 1
     NAME: "expected user1"
   - ID: 2
     NAME: "expected user2"</pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -2744,18 +2584,16 @@ properties:
           <dt class="hdlist1">
             When 
           </dt> 
+          <dd> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+            <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
 <span class="annotation">@ExpectedDataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">yml/expectedUsers.yml</span><span class="delimiter">"</span></span>, ignoreCols = <span class="string"><span class="delimiter">"</span><span class="content">id</span><span class="delimiter">"</span></span>)
 <span class="directive">public</span> <span class="type">void</span> shouldNotMatchExpectedDataSet() {
     User u = <span class="keyword">new</span> User();
@@ -2767,8 +2605,6 @@ properties:
     EntityManagerProvider.em().persist(u2);
     EntityManagerProvider.tx().commit();
 }</code></pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -2778,26 +2614,22 @@ properties:
           <dt class="hdlist1">
             Then 
           </dt> 
+          <dd> 
+           <p>Test must fail with following error: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>Test must fail with following error: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
-           <div class="content"> 
-            <div class="admonitionblock important"> 
-             <table> 
-              <tbody> 
-               <tr> 
-                <td class="icon"> <i class="fa icon-important" title="Important"></i> </td> 
-                <td class="content"> junit.framework.ComparisonFailure: value (table=USER, row=0, col=name) expected:&lt;[]expected user1&gt; but was:&lt;[non ]expected user1&gt; at org.dbunit.assertion.JUnitFailureFactory.createFailure(JUnitFailureFactory.java:39) at org.dbunit.assertion.DefaultFailureHandler.createFailure(DefaultFailureHandler.java:97) at org.dbunit.assertion.DefaultFailureHandler.handle(DefaultFailureHandler.java:223) at …​ </td> 
-               </tr> 
-              </tbody> 
-             </table> 
-            </div> 
-           </div> 
+          <div class="admonitionblock important"> 
+           <table> 
+            <tbody> 
+             <tr> 
+              <td class="icon"> <i class="fa icon-important" title="Important"></i> </td> 
+              <td class="content"> junit.framework.ComparisonFailure: value (table=USER, row=0, col=name) expected:&lt;[]expected user1&gt; but was:&lt;[non ]expected user1&gt; at org.dbunit.assertion.JUnitFailureFactory.createFailure(JUnitFailureFactory.java:39) at org.dbunit.assertion.DefaultFailureHandler.createFailure(DefaultFailureHandler.java:97) at org.dbunit.assertion.DefaultFailureHandler.handle(DefaultFailureHandler.java:223) at …​ </td> 
+             </tr> 
+            </tbody> 
+           </table> 
           </div> 
          </div> 
         </div> 
@@ -2806,34 +2638,30 @@ properties:
      </div> 
      <div class="sect2"> 
       <h3 id="_assertion_using_automatic_transaction"><a class="anchor" href="#_assertion_using_automatic_transaction"></a>5.5. Assertion using automatic transaction</h3> 
-      <div class="sidebarblock"> 
+      <div class="exampleblock"> 
        <div class="content"> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Given 
           </dt> 
+          <dd> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
+           <div class="title">
+             expectedUsersRegex.yml 
+           </div> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="title">
-               expectedUsersRegex.yml 
-             </div> 
-             <div class="content"> 
-              <pre>USER:
+            <pre>USER:
   - ID: "regex:\\d+"
     NAME: regex:^expected user.* #expected user1
   - ID: "regex:\\d+"
     NAME: regex:.*user2$ #expected user2</pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -2843,18 +2671,16 @@ properties:
           <dt class="hdlist1">
             When 
           </dt> 
+          <dd> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+            <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
 <span class="annotation">@DataSet</span>(cleanBefore = <span class="predefined-constant">true</span>, transactional = <span class="predefined-constant">true</span>,executorId = <span class="string"><span class="delimiter">"</span><span class="content">TransactionIt</span><span class="delimiter">"</span></span>)
 <span class="annotation">@ExpectedDataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">yml/expectedUsersRegex.yml</span><span class="delimiter">"</span></span>)
 <span class="annotation">@DBUnit</span>(cacheConnection = <span class="predefined-constant">true</span>)
@@ -2866,35 +2692,29 @@ properties:
     EntityManagerProvider.em().persist(u);
     EntityManagerProvider.em().persist(u2);
 }</code></pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
-          <div class="admonitionblock note"> 
-           <table> 
-            <tbody> 
-             <tr> 
-              <td class="icon"> <i class="fa icon-note" title="Note"></i> </td> 
-              <td class="content"> <code>Transactional</code> attribute will make Database Rider start a transaction before test and commit the transaction <strong>after</strong> test execution but <strong>before</strong> expected dataset comparison. </td> 
-             </tr> 
-            </tbody> 
-           </table> 
-          </div> 
          </div> 
+        </div> 
+        <div class="admonitionblock note"> 
+         <table> 
+          <tbody> 
+           <tr> 
+            <td class="icon"> <i class="fa icon-note" title="Note"></i> </td> 
+            <td class="content"> <code>Transactional</code> attribute will make Database Rider start a transaction before test and commit the transaction <strong>after</strong> test execution but <strong>before</strong> expected dataset comparison. </td> 
+           </tr> 
+          </tbody> 
+         </table> 
         </div> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Then 
           </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
+          <dd> 
            <p>Test must pass because inserted users are commited to database and database state matches expected dataset. <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-         </div> 
+          </dd> 
+         </dl> 
         </div> 
        </div> 
       </div> 
@@ -2904,6 +2724,8 @@ properties:
    <div class="sect1"> 
     <h2 id="Dynamic-data-using-scritable-datasets"><a class="anchor" href="#Dynamic-data-using-scritable-datasets"></a>6. <strong>Dynamic data using scritable datasets</strong></h2> 
     <div class="sectionbody"> 
+     <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('Dynamic-data-using-scritable-datasets');document.getElementById('hidden-Dynamic-data-using-scritable-datasets').style.display = 'inline';this.style.display = 'none'"> </span> 
+     <span id="hidden-Dynamic-data-using-scritable-datasets" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('Dynamic-data-using-scritable-datasets');this.style.display = 'none'"> </span> 
      <div class="sidebarblock"> 
       <div class="content"> 
        <div class="exampleblock"> 
@@ -2934,32 +2756,28 @@ properties:
      </div> 
      <div class="sect2"> 
       <h3 id="_seed_database_with_groovy_script_in_dataset"><a class="anchor" href="#_seed_database_with_groovy_script_in_dataset"></a>6.1. Seed database with groovy script in dataset</h3> 
-      <div class="sidebarblock"> 
+      <div class="exampleblock"> 
        <div class="content"> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Given 
           </dt> 
+          <dd> 
+           <p>Groovy script engine is on test classpath <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>Groovy script engine is on test classpath <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
+            <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
     <span class="tag">&lt;groupId&gt;</span>org.codehaus.groovy<span class="tag">&lt;/groupId&gt;</span>
     <span class="tag">&lt;artifactId&gt;</span>groovy-all<span class="tag">&lt;/artifactId&gt;</span>
     <span class="tag">&lt;version&gt;</span>2.4.6<span class="tag">&lt;/version&gt;</span>
     <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -2969,35 +2787,31 @@ properties:
           <dt class="hdlist1">
             And 
           </dt> 
+          <dd> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre>TWEET:
+            <pre>TWEET:
   - ID: "1"
     CONTENT: "dbunit rules!"
     DATE: "groovy:new Date()" <i class="conum" data-value="1"></i><b>(1)</b>
     USER_ID: 1</pre> 
-             </div> 
-            </div> 
-            <div class="colist arabic"> 
-             <table> 
-              <tbody> 
-               <tr> 
-                <td><i class="conum" data-value="1"></i><b>1</b></td> 
-                <td>Groovy scripting is enabled by <code>groovy:</code> string.</td> 
-               </tr> 
-              </tbody> 
-             </table> 
-            </div> 
            </div> 
+          </div> 
+          <div class="colist arabic"> 
+           <table> 
+            <tbody> 
+             <tr> 
+              <td><i class="conum" data-value="1"></i><b>1</b></td> 
+              <td>Groovy scripting is enabled by <code>groovy:</code> string.</td> 
+             </tr> 
+            </tbody> 
+           </table> 
           </div> 
          </div> 
         </div> 
@@ -3006,18 +2820,16 @@ properties:
           <dt class="hdlist1">
             When 
           </dt> 
+          <dd> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+            <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
 <span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">datasets/yml/groovy-with-date-replacements.yml</span><span class="delimiter">"</span></span>,cleanBefore = <span class="predefined-constant">true</span>, disableConstraints = <span class="predefined-constant">true</span>, executorId = <span class="string"><span class="delimiter">"</span><span class="content">rider-it</span><span class="delimiter">"</span></span>)
 <span class="directive">public</span> <span class="type">void</span> shouldReplaceDateUsingGroovyInDataset() {
     Tweet tweet = (Tweet) emProvider.em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select t from Tweet t where t.id = '1'</span><span class="delimiter">"</span></span>).getSingleResult();
@@ -3027,8 +2839,6 @@ properties:
     assertThat(tweet.getDate(). get(<span class="predefined-type">Calendar</span>.HOUR_OF_DAY)).
             isEqualTo(now.get(<span class="predefined-type">Calendar</span>.HOUR_OF_DAY));
 }</code></pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -3038,14 +2848,10 @@ properties:
           <dt class="hdlist1">
             Then 
           </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
+          <dd> 
            <p>Dataset script should be interpreted while seeding the database <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-         </div> 
+          </dd> 
+         </dl> 
         </div> 
        </div> 
       </div> 
@@ -3062,42 +2868,38 @@ properties:
         </tbody> 
        </table> 
       </div> 
-      <div class="sidebarblock"> 
+      <div class="exampleblock"> 
        <div class="content"> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Given 
           </dt> 
+          <dd> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre>TWEET:
+            <pre>TWEET:
   - ID: "1"
     CONTENT: "dbunit rules!"
     LIKES: "js:(5+5)*10/2" <i class="conum" data-value="1"></i><b>(1)</b>
     USER_ID: 1</pre> 
-             </div> 
-            </div> 
-            <div class="colist arabic"> 
-             <table> 
-              <tbody> 
-               <tr> 
-                <td><i class="conum" data-value="1"></i><b>1</b></td> 
-                <td>Javascript scripting is enabled by <code>js:</code> string.</td> 
-               </tr> 
-              </tbody> 
-             </table> 
-            </div> 
            </div> 
+          </div> 
+          <div class="colist arabic"> 
+           <table> 
+            <tbody> 
+             <tr> 
+              <td><i class="conum" data-value="1"></i><b>1</b></td> 
+              <td>Javascript scripting is enabled by <code>js:</code> string.</td> 
+             </tr> 
+            </tbody> 
+           </table> 
           </div> 
          </div> 
         </div> 
@@ -3106,26 +2908,22 @@ properties:
           <dt class="hdlist1">
             When 
           </dt> 
+          <dd> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+            <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
 <span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">datasets/yml/js-with-calc-replacements.yml</span><span class="delimiter">"</span></span>,cleanBefore = <span class="predefined-constant">true</span>, disableConstraints = <span class="predefined-constant">true</span>, executorId = <span class="string"><span class="delimiter">"</span><span class="content">rider-it</span><span class="delimiter">"</span></span>)
 <span class="directive">public</span> <span class="type">void</span> shouldReplaceLikesUsingJavaScriptInDataset() {
     Tweet tweet = (Tweet) emProvider.em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select t from Tweet t where t.id = '1'</span><span class="delimiter">"</span></span>).getSingleResult();
     assertThat(tweet).isNotNull();
     assertThat(tweet.getLikes()).isEqualTo(<span class="integer">50</span>);
 }</code></pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -3135,14 +2933,10 @@ properties:
           <dt class="hdlist1">
             Then 
           </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
+          <dd> 
            <p>Dataset script should be interpreted while seeding the database <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-         </div> 
+          </dd> 
+         </dl> 
         </div> 
        </div> 
       </div> 
@@ -3152,6 +2946,8 @@ properties:
    <div class="sect1"> 
     <h2 id="Database-connection-leak-detection"><a class="anchor" href="#Database-connection-leak-detection"></a>7. <strong>Database connection leak detection</strong></h2> 
     <div class="sectionbody"> 
+     <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('Database-connection-leak-detection');document.getElementById('hidden-Database-connection-leak-detection').style.display = 'inline';this.style.display = 'none'"> </span> 
+     <span id="hidden-Database-connection-leak-detection" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('Database-connection-leak-detection');this.style.display = 'none'"> </span> 
      <div class="sidebarblock"> 
       <div class="content"> 
        <div class="exampleblock"> 
@@ -3238,6 +3034,8 @@ properties:
    <div class="sect1"> 
     <h2 id="DataSet-export"><a class="anchor" href="#DataSet-export"></a>8. <strong>DataSet export</strong></h2> 
     <div class="sectionbody"> 
+     <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('DataSet-export');document.getElementById('hidden-DataSet-export').style.display = 'inline';this.style.display = 'none'"> </span> 
+     <span id="hidden-DataSet-export" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('DataSet-export');this.style.display = 'none'"> </span> 
      <div class="sidebarblock"> 
       <div class="content"> 
        <div class="exampleblock"> 
@@ -3432,6 +3230,8 @@ properties:
    <div class="sect1"> 
     <h2 id="MetaDataSet"><a class="anchor" href="#MetaDataSet"></a>9. <strong>MetaDataSet</strong></h2> 
     <div class="sectionbody"> 
+     <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('MetaDataSet');document.getElementById('hidden-MetaDataSet').style.display = 'inline';this.style.display = 'none'"> </span> 
+     <span id="hidden-MetaDataSet" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('MetaDataSet');this.style.display = 'none'"> </span> 
      <div class="sidebarblock"> 
       <div class="content"> 
        <div class="exampleblock"> 
@@ -3469,28 +3269,26 @@ properties:
      </div> 
      <div class="sect2"> 
       <h3 id="_class_level_metadataset"><a class="anchor" href="#_class_level_metadataset"></a>9.1. Class level metadataset</h3> 
-      <div class="sidebarblock"> 
+      <div class="exampleblock"> 
        <div class="content"> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Given 
           </dt> 
+          <dd> 
+           <p>The following metataset annotation <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following metataset annotation <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
+           <div class="title">
+             MetaDataSet.java 
+           </div> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="title">
-               MetaDataSet.java 
-             </div> 
-             <div class="content"> 
-              <pre>package com.github.database.rider.core.api.dataset;
+            <pre>package com.github.database.rider.core.api.dataset;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -3505,8 +3303,6 @@ import java.lang.annotation.Target;
 public @interface MetaDataSet {
 
 }</pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -3516,18 +3312,16 @@ public @interface MetaDataSet {
           <dt class="hdlist1">
             When 
           </dt> 
+          <dd> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(JUnit4.class)
+            <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(JUnit4.class)
 <span class="annotation">@MetaDataSet</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">MetaDataSetIt</span> {
 
@@ -3553,8 +3347,6 @@ public @interface MetaDataSet {
         }
 }
 }</code></pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -3564,42 +3356,36 @@ public @interface MetaDataSet {
           <dt class="hdlist1">
             Then 
           </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
+          <dd> 
            <p>Test must use dataset declared in <code>MetaDataSet</code> annotation. <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-         </div> 
+          </dd> 
+         </dl> 
         </div> 
        </div> 
       </div> 
      </div> 
      <div class="sect2"> 
       <h3 id="_method_level_metadaset"><a class="anchor" href="#_method_level_metadaset"></a>9.2. Method level metadaset</h3> 
-      <div class="sidebarblock"> 
+      <div class="exampleblock"> 
        <div class="content"> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Given 
           </dt> 
+          <dd> 
+           <p>The following metataset annotation <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following metataset annotation <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
+           <div class="title">
+             MetaDataSet.java 
+           </div> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="title">
-               MetaDataSet.java 
-             </div> 
-             <div class="content"> 
-              <pre>package com.github.database.rider.core.api.dataset;
+            <pre>package com.github.database.rider.core.api.dataset;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -3613,8 +3399,6 @@ import java.lang.annotation.Target;
 public @interface AnotherMetaDataSet {
 
 }</pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -3624,18 +3408,16 @@ public @interface AnotherMetaDataSet {
           <dt class="hdlist1">
             When 
           </dt> 
+          <dd> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(JUnit4.class)
+            <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(JUnit4.class)
 <span class="annotation">@MetaDataSet</span>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">MetaDataSetIt</span> {
 
@@ -3661,8 +3443,6 @@ public @interface AnotherMetaDataSet {
         }
 }
 }</code></pre> 
-             </div> 
-            </div> 
            </div> 
           </div> 
          </div> 
@@ -3672,14 +3452,10 @@ public @interface AnotherMetaDataSet {
           <dt class="hdlist1">
             Then 
           </dt> 
-         </dl> 
-        </div> 
-        <div class="exampleblock"> 
-         <div class="content"> 
-          <div class="paragraph"> 
+          <dd> 
            <p>Test must use dataset declared in <code>AnotherMetaDataSet</code> annotation. <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-         </div> 
+          </dd> 
+         </dl> 
         </div> 
        </div> 
       </div> 
@@ -3689,6 +3465,8 @@ public @interface AnotherMetaDataSet {
    <div class="sect1"> 
     <h2 id="DataSet-merging"><a class="anchor" href="#DataSet-merging"></a>10. <strong>DataSet merging</strong></h2> 
     <div class="sectionbody"> 
+     <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('DataSet-merging');document.getElementById('hidden-DataSet-merging').style.display = 'inline';this.style.display = 'none'"> </span> 
+     <span id="hidden-DataSet-merging" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('DataSet-merging');this.style.display = 'none'"> </span> 
      <div class="sidebarblock"> 
       <div class="content"> 
        <div class="exampleblock"> 
@@ -3726,43 +3504,39 @@ public @interface AnotherMetaDataSet {
      </div> 
      <div class="sect2"> 
       <h3 id="_merging_datasets"><a class="anchor" href="#_merging_datasets"></a>10.1. Merging datasets</h3> 
-      <div class="sidebarblock"> 
+      <div class="exampleblock"> 
        <div class="content"> 
         <div class="dlist"> 
          <dl> 
           <dt class="hdlist1">
             Given 
           </dt> 
+          <dd> 
+           <p>The following class level dataset configuration <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following class level dataset configuration <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(JUnit4.class)
+            <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(JUnit4.class)
 <span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">yml/tweet.yml</span><span class="delimiter">"</span></span>, executeScriptsAfter = <span class="string"><span class="delimiter">"</span><span class="content">addUser.sql</span><span class="delimiter">"</span></span>, executeStatementsBefore = <span class="string"><span class="delimiter">"</span><span class="content">INSERT INTO USER VALUES (8,'user8')</span><span class="delimiter">"</span></span>)
 <span class="annotation">@DBUnit</span>(mergeDataSets = <span class="predefined-constant">true</span>) <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="directive">public</span> <span class="type">class</span> <span class="class">MergeDataSetsIt</span> {
 
 }</code></pre> 
-             </div> 
-            </div> 
-            <div class="colist arabic"> 
-             <table> 
-              <tbody> 
-               <tr> 
-                <td><i class="conum" data-value="1"></i><b>1</b></td> 
-                <td>Enables dataset merging so @DataSet declared on test class will be merged with test/method one.</td> 
-               </tr> 
-              </tbody> 
-             </table> 
-            </div> 
            </div> 
+          </div> 
+          <div class="colist arabic"> 
+           <table> 
+            <tbody> 
+             <tr> 
+              <td><i class="conum" data-value="1"></i><b>1</b></td> 
+              <td>Enables dataset merging so @DataSet declared on test class will be merged with test/method one.</td> 
+             </tr> 
+            </tbody> 
+           </table> 
           </div> 
          </div> 
         </div> 
@@ -3771,20 +3545,16 @@ public @interface AnotherMetaDataSet {
           <dt class="hdlist1">
             When 
           </dt> 
+          <dd> 
+           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>The following test is executed: <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-          </div> 
-          <div class="sidebarblock"> 
+          <div class="listingblock"> 
            <div class="content"> 
-            <div class="listingblock"> 
-             <div class="content"> 
-              <pre class="CodeRay highlight"><code data-lang="java"></code></pre> 
-             </div> 
-            </div> 
+            <pre class="CodeRay highlight"><code data-lang="java"></code></pre> 
            </div> 
           </div> 
          </div> 
@@ -3794,46 +3564,42 @@ public @interface AnotherMetaDataSet {
           <dt class="hdlist1">
             Then 
           </dt> 
+          <dd> 
+           <p>Test and method dataset configuration will be merged in one dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
          </dl> 
         </div> 
-        <div class="exampleblock"> 
+        <div class="sidebarblock"> 
          <div class="content"> 
-          <div class="paragraph"> 
-           <p>Test and method dataset configuration will be merged in one dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          <div class="admonitionblock important"> 
+           <table> 
+            <tbody> 
+             <tr> 
+              <td class="icon"> <i class="fa icon-important" title="Important"></i> </td> 
+              <td class="content"> Only array properties such as <code>value</code> and <code>executeScriptsBefore</code> of @DataSet will be merged. </td> 
+             </tr> 
+            </tbody> 
+           </table> 
           </div> 
-          <div class="sidebarblock"> 
-           <div class="content"> 
-            <div class="admonitionblock important"> 
-             <table> 
-              <tbody> 
-               <tr> 
-                <td class="icon"> <i class="fa icon-important" title="Important"></i> </td> 
-                <td class="content"> Only array properties such as <code>value</code> and <code>executeScriptsBefore</code> of @DataSet will be merged. </td> 
-               </tr> 
-              </tbody> 
-             </table> 
-            </div> 
-            <div class="admonitionblock warning"> 
-             <table> 
-              <tbody> 
-               <tr> 
-                <td class="icon"> <i class="fa icon-warning" title="Warning"></i> </td> 
-                <td class="content"> Class level dataset configuration will come before method level if a property is defined in both datasets, like <code>executeStatementsBefore</code> in example above. </td> 
-               </tr> 
-              </tbody> 
-             </table> 
-            </div> 
-            <div class="admonitionblock tip"> 
-             <table> 
-              <tbody> 
-               <tr> 
-                <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
-                <td class="content"> You can enable dataset merging for all tests with 'mergeDataSets=true` on <code>dbunit.yml</code> configuraton file. </td> 
-               </tr> 
-              </tbody> 
-             </table> 
-            </div> 
-           </div> 
+          <div class="admonitionblock warning"> 
+           <table> 
+            <tbody> 
+             <tr> 
+              <td class="icon"> <i class="fa icon-warning" title="Warning"></i> </td> 
+              <td class="content"> Class level dataset configuration will come before method level if a property is defined in both datasets, like <code>executeStatementsBefore</code> in example above. </td> 
+             </tr> 
+            </tbody> 
+           </table> 
+          </div> 
+          <div class="admonitionblock tip"> 
+           <table> 
+            <tbody> 
+             <tr> 
+              <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
+              <td class="content"> You can enable dataset merging for all tests with 'mergeDataSets=true` on <code>dbunit.yml</code> configuraton file. </td> 
+             </tr> 
+            </tbody> 
+           </table> 
           </div> 
          </div> 
         </div> 
@@ -3856,8 +3622,8 @@ public @interface AnotherMetaDataSet {
   </div> 
   <div id="footer" style="color:gray;font-size:11px">
     Generated by 
-   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.0.7</a> - Sep 19, 2018 1:50:16 PM 
-   <span style="float:right;font-size:11px"> Execution time: 7.198 seconds</span> 
+   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.2.0</a> - Sep 20, 2018 4:07:46 PM 
+   <span style="float:right;font-size:11px"> Execution time: 9.927 seconds</span> 
   </div> 
   <style>  
 
@@ -3865,7 +3631,8 @@ public @interface AnotherMetaDataSet {
 .sidebarblock, .sectionbody, .content{
 overflow:auto!important;
 }
-</style> 
+div.sidebarblock {overflow-y:hidden;overflow-x:auto}
+ body .exampleblock > .content{ background:#fff}</style> 
   <script type="text/javascript">  
 
 document.addEventListener("DOMContentLoaded", function(event) { 
