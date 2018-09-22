@@ -30,10 +30,12 @@ include::../../../src/test/java/com/github/database/rider/core/MergeDataSetsIt.j
 #cukedoctor-discrete
     When The following test is executed:
 """
+
 [source,java,indent=0]
 ----
-include::../../../src/test/java/com/github/database/rider/core/MergeDataSetsIt.java[tags=test-method;after-test]
+include::../../../src/test/java/com/github/database/rider/core/MergeDataSetsIt.java[tags=method;after]
 ----
+
 """
 
 #cukedoctor-discrete

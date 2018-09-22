@@ -18,7 +18,7 @@ import com.github.database.rider.core.util.EntityManagerProvider;
 import static com.github.database.rider.core.util.EntityManagerProvider.*;
 import org.junit.AfterClass;
 
-// tag::declaration[]
+//tag::declaration[]
 @RunWith(JUnit4.class)
 @DataSet(value = "yml/tweet.yml", executeScriptsAfter = "addUser.sql", executeStatementsBefore = "INSERT INTO USER VALUES (8,'user8')")
 @DBUnit(mergeDataSets = true) //<1>
@@ -31,7 +31,7 @@ public class MergeDataSetsIt {
     @Rule
     public DBUnitRule dbUnitRule = DBUnitRule.instance(emProvider.connection());
 
-// tag::test-method[]    
+// tag::method[]
     @Test
     @DataSet(value = "yml/user.yml", executeScriptsAfter = "tweets.sql", executeStatementsBefore = "INSERT INTO USER VALUES (9,'user9')", strategy = SeedStrategy.INSERT)
     public void shouldMergeDataSetsFromClassAndMethod() {
@@ -46,9 +46,9 @@ public class MergeDataSetsIt {
         assertThat(user.getTweets()).isNotEmpty(); //tweets comes from class level annotation merged with method level
         assertThat(user.getTweets().get(0).getContent()).isEqualTo("dbunit rules again!");
     }
-// end::test-method[]     
+// end::method[]
 
-// tag::after-test[]       
+// tag::after[]
     @AfterClass
     public static void afterTest() {
         User user = (User) em().createQuery("select u from User u where u.id = 10").getSingleResult();//scripts after from class level dataset
@@ -61,4 +61,4 @@ public class MergeDataSetsIt {
     }
 
 }
-//end::after-test[]    
+//end::after[]
