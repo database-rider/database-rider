@@ -90,12 +90,11 @@ public class DBUnitInterceptorImpl implements Serializable {
 
 				dataSetProcessor.exportDataSet(invocationContext.getMethod());
 
-				if (!"".equals(usingDataSet.executeStatementsAfter())) {
+				if (usingDataSet.executeStatementsAfter().length > 0) {
 					dataSetProcessor.executeStatements(dataSetConfig.getExecuteStatementsAfter());
 				}
 
-				if (usingDataSet.executeScriptsAfter().length > 0
-						&& !"".equals(usingDataSet.executeScriptsAfter()[0])) {
+				if (usingDataSet.executeScriptsAfter().length > 0) {
 					for (int i = 0; i < usingDataSet.executeScriptsAfter().length; i++) {
 						dataSetProcessor.executeScript(usingDataSet.executeScriptsAfter()[i]);
 					}

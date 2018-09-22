@@ -473,6 +473,11 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
     public boolean equals(Object other) {
         if (other instanceof DataSetExecutorImpl == false) {
             return false;
@@ -537,8 +542,10 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     // https://github.com/rmpestano/dbunit-rules/issues/26
                     continue;
                 }
-                connection.createStatement().executeUpdate("DELETE FROM " + table + " where 1=1");
-                connection.commit();
+                try (Statement statement = connection.createStatement()) {
+                    statement.executeUpdate("DELETE FROM " + table + " where 1=1");
+                    connection.commit();
+                }
             }
         }
         // clear remaining tables in any order(if there are any, also no problem clearing again)
@@ -548,8 +555,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 // tables containing 'SEQ' will NOT be cleared see https://github.com/rmpestano/dbunit-rules/issues/26
                 continue;
             }
-            try {
-                connection.createStatement().executeUpdate("DELETE FROM " + tableName + " where 1=1");
+            try (Statement statement = connection.createStatement()) {
+                statement.executeUpdate("DELETE FROM " + tableName + " where 1=1");
                 connection.commit();
             } catch (Exception e) {
                 log.warn("Could not clear table " + tableName + ", message:" + e.getMessage() + ", cause: "
