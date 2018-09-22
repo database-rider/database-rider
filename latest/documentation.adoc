@@ -1268,9 +1268,10 @@ The following test is executed: icon:thumbs-up[role="green",title="Passed"]
 ******
 
 [discrete]
+[discrete]
 [source,java,indent=0]
 ----
-include::../../../src/test/java/com/github/database/rider/core/MergeDataSetsIt.java[tags=test-method;after-test]
+include::../../../src/test/java/com/github/database/rider/core/MergeDataSetsIt.java[tags=method;after]
 ----
 
 
