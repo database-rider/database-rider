@@ -145,7 +145,7 @@ public class DBUnitConfig {
                 dbUnitConfig.addDBUnitProperty("metadataHandler", factory);
             }
             catch (Exception e) {
-                throw new RuntimeException("failed to instantiate datatypeFactory", e);
+                throw new RuntimeException("failed to instantiate metadataHandler", e);
             }
         }
         
