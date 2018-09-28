@@ -3,6 +3,8 @@ package com.github.database.rider.core.configuration;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.configuration.Orthography;
 import com.github.database.rider.core.replacers.CustomReplacer;
+
+import org.dbunit.database.IMetadataHandler;
 import org.dbunit.dataset.datatype.DataType;
 import org.junit.After;
 import org.junit.Test;
@@ -14,6 +16,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
@@ -143,6 +148,17 @@ public class DBUnitConfigTest {
         assertThat(dbUnitConfig.getProperties()).
                 containsEntry("datatypeFactory", new MockDataTypeFactory());
     }
+    
+    @Test
+    @DBUnit(metaDataHandler = MockMetadataHandler.class)
+    public void shouldInstantiateMetadataHandlerFromAnnotationIfSpecified() throws NoSuchMethodException, SecurityException {
+    	Method method = getClass().getMethod("shouldInstantiateMetadataHandlerFromAnnotationIfSpecified");
+        DBUnit dbUnit = method.getAnnotation(DBUnit.class);
+        DBUnitConfig dbUnitConfig = DBUnitConfig.from(dbUnit);
+
+        assertThat(dbUnitConfig.getProperties()).
+                containsEntry("metadataHandler", new MockMetadataHandler());
+    }
 
     public static class MockDataTypeFactory implements org.dbunit.dataset.datatype.IDataTypeFactory {
         @Override
@@ -166,5 +182,62 @@ public class DBUnitConfigTest {
             return Objects.hash(getClass());
         }
     }
+    
+    public static class MockMetadataHandler implements IMetadataHandler {
+
+		@Override
+		public ResultSet getColumns(DatabaseMetaData databaseMetaData, String schemaName, String tableName)
+				throws SQLException {
+			throw new UnsupportedOperationException("only for configuration tests");
+		}
+
+		@Override
+		public boolean matches(ResultSet resultSet, String schema, String table, boolean caseSensitive)
+				throws SQLException {
+			throw new UnsupportedOperationException("only for configuration tests");		}
+
+		@Override
+		public boolean matches(ResultSet resultSet, String catalog, String schema, String table, String column,
+				boolean caseSensitive) throws SQLException {
+			throw new UnsupportedOperationException("only for configuration tests");
+		}
+
+		@Override
+		public String getSchema(ResultSet resultSet) throws SQLException {
+			throw new UnsupportedOperationException("only for configuration tests");
+		}
+
+		@Override
+		public boolean tableExists(DatabaseMetaData databaseMetaData, String schemaName, String tableName)
+				throws SQLException {
+			throw new UnsupportedOperationException("only for configuration tests");
+		}
+
+		@Override
+		public ResultSet getTables(DatabaseMetaData databaseMetaData, String schemaName, String[] tableTypes)
+				throws SQLException {
+			throw new UnsupportedOperationException("only for configuration tests");
+		}
+
+		@Override
+		public ResultSet getPrimaryKeys(DatabaseMetaData databaseMetaData, String schemaName, String tableName)
+				throws SQLException {
+			// TODO Auto-generated method stub
+			throw new UnsupportedOperationException("only for configuration tests");
+		}
+		
+       @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            return o != null && getClass() == o.getClass();
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getClass());
+        }		
+    	
+    }
+    
 
 }
