@@ -7,6 +7,8 @@ import com.github.database.rider.core.replacers.DateTimeReplacer;
 import com.github.database.rider.core.replacers.NullReplacer;
 import com.github.database.rider.core.replacers.Replacer;
 import com.github.database.rider.core.replacers.UnixTimestampReplacer;
+
+import org.dbunit.database.IMetadataHandler;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.yaml.snakeyaml.Yaml;
 
@@ -137,6 +139,17 @@ public class DBUnitConfig {
             }
         }
 
+        if (!dbUnit.metaDataHandler().isInterface()) {
+            try {
+                IMetadataHandler factory = dbUnit.metaDataHandler().newInstance();
+                dbUnitConfig.addDBUnitProperty("metadataHandler", factory);
+            }
+            catch (Exception e) {
+                throw new RuntimeException("failed to instantiate datatypeFactory", e);
+            }
+        }
+        
+        
         List<Replacer> dbUnitReplacers = new ArrayList<>();
         for (Class<? extends Replacer> replacerClass : dbUnit.replacers()) {
             try {

@@ -28,6 +28,10 @@ public class DriverUtils {
     public static boolean isOracle(String driverName) {
         return driverName != null && driverName.contains("oracle");
     }
+    
+    public static boolean isDB2(String driverName) {
+    	return driverName != null && driverName.contains("db2");
+    }
 
     public static String getDriverName(Connection connection) {
         try {

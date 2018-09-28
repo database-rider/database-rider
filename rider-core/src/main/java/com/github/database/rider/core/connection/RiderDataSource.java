@@ -8,7 +8,11 @@ import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConfig.ConfigProperty;
 import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.DefaultMetadataHandler;
+import org.dbunit.database.IMetadataHandler;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
+import org.dbunit.ext.db2.Db2DataTypeFactory;
+import org.dbunit.ext.db2.Db2MetadataHandler;
 import org.dbunit.ext.h2.H2DataTypeFactory;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import org.dbunit.ext.mysql.MySqlDataTypeFactory;
@@ -25,7 +29,7 @@ import com.github.database.rider.core.util.DriverUtils;
 public class RiderDataSource {
 
     public enum DBType {
-        HSQLDB, H2, MYSQL, ORACLE, POSTGRESQL, UNKNOWN
+        HSQLDB, H2, MYSQL, ORACLE, POSTGRESQL, DB2, UNKNOWN
     }
 
     private final ConnectionHolder connectionHolder;
@@ -92,6 +96,13 @@ public class RiderDataSource {
                 config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, dataTypeFactory);
             }
         }
+        if (!dbUnitConfig.getProperties().containsKey("metadataHandler")) {
+            IMetadataHandler metadataHandler = getMetadataHandler(dbType);
+            if (metadataHandler != null) {
+                config.setProperty(DatabaseConfig.PROPERTY_METADATA_HANDLER, metadataHandler);
+            }
+        }
+
     }
 
     private IDataTypeFactory getDataTypeFactory(DBType dbType) {
@@ -106,9 +117,19 @@ public class RiderDataSource {
                 return new PostgresqlDataTypeFactory();
             case ORACLE:
                 return new Oracle10DataTypeFactory();
+            case DB2:
+            	return new Db2DataTypeFactory();
             default:
                 return null;
         }
+    }
+    
+    private IMetadataHandler getMetadataHandler(DBType dbType) {
+    	if (dbType == DBType.DB2) {
+			return new Db2MetadataHandler();
+		} else {
+			return null;
+		}
     }
 
     private DBType resolveDBType(String driverName) {
@@ -122,6 +143,8 @@ public class RiderDataSource {
             return DBType.POSTGRESQL;
         } else if (DriverUtils.isOracle(driverName)) {
             return DBType.ORACLE;
+        } else if (DriverUtils.isDB2(driverName)) {
+        	return DBType.DB2;
         } else {
             return DBType.UNKNOWN;
         }
