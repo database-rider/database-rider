@@ -162,7 +162,7 @@ public class RiderRunner {
         ExpectedDataSet expectedDataSet = riderTestContext.getAnnotation(ExpectedDataSet.class);
 
         if (expectedDataSet != null) {
-            riderTestContext.getDataSetExecutor().compareCurrentDataSetWith(new DataSetConfig(expectedDataSet.value()).disableConstraints(true), expectedDataSet.ignoreCols());
+            riderTestContext.getDataSetExecutor().compareCurrentDataSetWith(new DataSetConfig(expectedDataSet.value()).disableConstraints(true), expectedDataSet.ignoreCols(),expectedDataSet.replacers());
         }
     }
 }

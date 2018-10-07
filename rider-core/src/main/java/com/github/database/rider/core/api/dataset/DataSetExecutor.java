@@ -4,6 +4,8 @@ import com.github.database.rider.core.configuration.ConnectionConfig;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.connection.RiderDataSource;
+import com.github.database.rider.core.replacers.Replacer;
+
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
@@ -44,6 +46,14 @@ public interface DataSetExecutor{
      */
     void compareCurrentDataSetWith(DataSetConfig expected, String[] ignoreCols) throws DatabaseUnitException;
 
+    /**
+     * compares dataset from executor's database connection with a given dataset
+     * @param expected configuration
+     * @param ignoreCols name of column to ignore
+     * @return implementations of {@link Replacer}, called during reading expected dataset before comparison
+     * @throws DatabaseUnitException if current dataset is not equal current dataset
+     */
+    void compareCurrentDataSetWith(DataSetConfig expected, String[] ignoreCols, Class<? extends Replacer>[] replacers) throws DatabaseUnitException;
 
     void setDBUnitConfig(DBUnitConfig dbUnitConfig);
 
