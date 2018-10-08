@@ -402,7 +402,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
         }
     }
-
+    
     /**
      * Perform replacements from all {@link Replacer} implementations,
      * registered in {@link #dbUnitConfig}.
@@ -412,11 +412,21 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         if (!dbUnitConfig.getProperties().containsKey("replacers")) {
             return dataSet;
         }
+        return performReplacements(dataSet,(List<Replacer>) dbUnitConfig.getProperties().get("replacers"));
+    }
 
+    /**
+     * Perform replacements from all {@link Replacer} implementations to given dataset
+     * registered in {@link #dbUnitConfig}.
+     */
+    private IDataSet performReplacements(IDataSet dataSet, List<Replacer> replacersList) {
+
+    	if (replacersList==null || replacersList.isEmpty())
+    		return dataSet;
+    	
         ReplacementDataSet replacementSet = new ReplacementDataSet(dataSet);
-
         // convert to set to remove duplicates
-        Set<Replacer> replacers = new HashSet<>((List<Replacer>) dbUnitConfig.getProperties().get("replacers"));
+        Set<Replacer> replacers = new HashSet<>((List<Replacer>)replacersList);
         for (Replacer replacer : replacers) {
             replacer.addReplacements(replacementSet);
         }
@@ -728,13 +738,26 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     @Override
-    public void compareCurrentDataSetWith(DataSetConfig expectedDataSetConfig, String[] excludeCols)
-            throws DatabaseUnitException {
+	public void compareCurrentDataSetWith(DataSetConfig expectedDataSetConfig, String[] excludeCols,
+			Class<? extends Replacer>[] replacers) throws DatabaseUnitException {
         IDataSet current = null;
         IDataSet expected = null;
+        List<Replacer> expectedDataSetReplacers = new ArrayList<>();
+        if (replacers!=null && replacers.length>0) {
+        	for (Class<? extends Replacer> replacerClass : replacers) {
+        		try {
+        			expectedDataSetReplacers.add(replacerClass.newInstance());
+        		} catch (InstantiationException | IllegalAccessException e) {
+        			throw new IllegalArgumentException(replacerClass.getName() + " could not be instantiated as Replacer");
+        		}
+        	}
+        }
         try {
             current = getRiderDataSource().getDBUnitConnection().createDataSet();
             expected = loadDataSets(expectedDataSetConfig.getDatasets());
+            if (!expectedDataSetReplacers.isEmpty()) {
+            	expected = performReplacements(expected, expectedDataSetReplacers);
+            }
         } catch (Exception e) {
             throw new RuntimeException("Could not create dataset to compare.", e);
         }
@@ -760,6 +783,12 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         }
 
     }
+    
+    @Override
+    public void compareCurrentDataSetWith(DataSetConfig expectedDataSetConfig, String[] excludeCols)
+            throws DatabaseUnitException {
+    	compareCurrentDataSetWith(expectedDataSetConfig,excludeCols,null);
+	}
 
     @Override
     public void setDBUnitConfig(DBUnitConfig dbUnitConfig) {
@@ -790,4 +819,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     public void clearRiderDataSource() {
         this.riderDataSource = null;
     }
+
+
 }
