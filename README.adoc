@@ -528,6 +528,8 @@ Actual   :non expected user1
 	at com.github.database.rider.assertion.DataSetAssert.compareData(DataSetAssert.java:94)
 ----
 
+NOTE: Since `v1.4.0` you can use <<DataSet Replacers>> in expected dataset.
+
 ==== Expected DataSet with regular expressions
 
 You can also use `regular expressions` in expected DataSet, for that just prepend column value with `regex:`:
