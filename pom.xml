@@ -13,7 +13,7 @@
     <artifactId>rider-parent</artifactId>
     <packaging>pom</packaging>
     <!-- tag::version[] -->
-    <version>1.4.0</version>
+    <version>1.4.1-SNAPSHOT</version>
     <!-- end::version[] -->
 
     <modules>
