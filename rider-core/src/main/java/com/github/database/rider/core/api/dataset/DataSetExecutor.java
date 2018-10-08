@@ -50,7 +50,7 @@ public interface DataSetExecutor{
      * compares dataset from executor's database connection with a given dataset
      * @param expected configuration
      * @param ignoreCols name of column to ignore
-     * @return implementations of {@link Replacer}, called during reading expected dataset before comparison
+     * @param replacers implementations of {@link Replacer}, called during reading expected dataset before comparison
      * @throws DatabaseUnitException if current dataset is not equal current dataset
      */
     void compareCurrentDataSetWith(DataSetConfig expected, String[] ignoreCols, Class<? extends Replacer>[] replacers) throws DatabaseUnitException;
