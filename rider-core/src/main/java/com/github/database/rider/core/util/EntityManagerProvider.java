@@ -32,13 +32,17 @@ public class EntityManagerProvider implements TestRule {
 
     private Connection conn;
 
+    private static PropertyResolutionUtil propertyResolutionUtil = new PropertyResolutionUtil();
+    
+    private static Map<String, String> overridingProperties;
+    
     private static EntityManagerProvider instance;
 
     private static Logger log = LoggerFactory.getLogger(EntityManagerProvider.class);
 
     private EntityManagerProvider() {
     }
-
+    
     public static synchronized EntityManagerProvider instance(String unitName) {
         instance = providers.get(unitName);
         if (instance == null) {
@@ -54,8 +58,20 @@ public class EntityManagerProvider implements TestRule {
 
         return instance;
     }
-
-
+    
+    /**
+     * Allows to pass in overriding Properties that may be specific to the JPA Vendor.
+     *
+     * @param unitName unit name
+     * @param overridingPersistenceProps properties to override persistence.xml props or define additions to them
+     *
+     * @return EntityManagerProvider instance
+     */
+    public static synchronized EntityManagerProvider instance(String unitName, Map<String,String> overridingPersistenceProps) {
+        overridingProperties = overridingPersistenceProps;
+        return instance(unitName);
+    }
+    
     /**
      * @param unitName unit name
      * clear entities on underlying context
@@ -75,9 +91,11 @@ public class EntityManagerProvider implements TestRule {
 
     private void init(String unitName) {
         if (emf == null) {
-            log.debug("creating emf for unit "+unitName);
-            emf = Persistence.createEntityManagerFactory(unitName);
-            em = emf.createEntityManager();
+            log.debug("creating emf for unit {}", unitName);
+            Map<String,String> dbConfig = getDbPropertyConfig();
+            log.debug("using dbConfig '{}' to create emf", dbConfig);
+            emf = dbConfig == null ? Persistence.createEntityManagerFactory(unitName) : Persistence.createEntityManagerFactory(unitName, dbConfig);
+            em =  emf.createEntityManager();
             tx = em.getTransaction();
             if (isHibernateOnClasspath() && em.getDelegate() instanceof Session) {
                 conn = ((SessionImpl) em.unwrap(Session.class)).connection();
@@ -93,8 +111,16 @@ public class EntityManagerProvider implements TestRule {
         }
         emf.getCache().evictAll();
     }
-
-
+    
+    private Map<String, String> getDbPropertyConfig() {
+        if(overridingProperties == null) {
+            return propertyResolutionUtil.getSystemJavaxPersistenceOverrides();
+        }
+        
+        return propertyResolutionUtil.persistencePropertiesOverrides(overridingProperties);
+    }
+    
+    
     /**
      *
      * @param puName unit name
