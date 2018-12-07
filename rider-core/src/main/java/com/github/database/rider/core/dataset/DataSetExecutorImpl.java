@@ -739,7 +739,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     @Override
 	public void compareCurrentDataSetWith(DataSetConfig expectedDataSetConfig, String[] excludeCols,
-			Class<? extends Replacer>[] replacers) throws DatabaseUnitException {
+			Class<? extends Replacer>[] replacers, String[] orderBy) throws DatabaseUnitException {
         IDataSet current = null;
         IDataSet expected = null;
         List<Replacer> expectedDataSetReplacers = new ArrayList<>();
@@ -777,6 +777,17 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             } catch (DataSetException e) {
                 throw new RuntimeException("DataSet comparison failed due to following exception: ", e);
             }
+            if (orderBy != null && orderBy.length > 0) {
+                for (int i=0; i<expectedTable.getRowCount(); i++) {
+                    for (String orderColumn : orderBy) {
+                        if (expectedTable.getValue(i, orderColumn).toString().startsWith("regex:")) {
+                            throw new IllegalArgumentException("The orderBy columns cannot use regex matching");
+                        }
+                    }
+                }
+                expectedTable = new SortedTable(expectedTable, orderBy);
+                actualTable = new SortedTable(actualTable, orderBy);
+            }
             ITable filteredActualTable = DefaultColumnFilter.includedColumnsTable(actualTable,
                     expectedTable.getTableMetaData().getColumns());
             DataSetAssertion.assertEqualsIgnoreCols(expectedTable, filteredActualTable, excludeCols);
@@ -787,7 +798,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     @Override
     public void compareCurrentDataSetWith(DataSetConfig expectedDataSetConfig, String[] excludeCols)
             throws DatabaseUnitException {
-    	compareCurrentDataSetWith(expectedDataSetConfig,excludeCols,null);
+    	compareCurrentDataSetWith(expectedDataSetConfig,excludeCols,null,null);
 	}
 
     @Override
