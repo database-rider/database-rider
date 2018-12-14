@@ -111,6 +111,23 @@ public class ExpectedDataSetIt {
     // end::expectedWithSeeding[]
 
     @Test
+    @DataSet(value = "yml/empty.yml", disableConstraints = true)
+    @ExpectedDataSet(value = "yml/expectedUsersIgnoreOrder.yml", orderBy = "name")
+    public void shouldMatchExpectedDataSetIgnoringRowOrder() {
+        User u1 = new User();
+        u1.setName("@arhohuttunen");
+        User u2 = new User();
+        u2.setName("@realpestano");
+        User u3 = new User();
+        u3.setName("@dbunit");
+        tx().begin();
+        em().persist(u1);
+        em().persist(u2);
+        em().persist(u3);
+        tx().commit();
+    }
+
+    @Test
     @DataSet(value = "yml/user.yml", disableConstraints = true, cleanBefore = true)
     @ExpectedDataSet(value = "yml/empty.yml")
     public void shouldMatchEmptyYmlDataSet() {

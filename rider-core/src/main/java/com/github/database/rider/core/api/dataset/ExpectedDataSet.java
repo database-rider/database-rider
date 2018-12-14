@@ -28,4 +28,9 @@ public @interface ExpectedDataSet {
    * @return implementations of {@link Replacer} called during reading expected dataset before comparison
    */
   Class<? extends Replacer>[] replacers() default {};
+
+  /**
+   * @return column names to sort the dataset with
+   */
+  String[] orderBy() default {};
 }

@@ -14,6 +14,7 @@ import com.github.database.rider.core.model.Follower;
 import com.github.database.rider.core.util.EntityManagerProvider;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.exception.DataBaseSeedingException;
+import org.dbunit.DatabaseUnitException;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -173,5 +174,12 @@ public class DataSetExecutorIt {
 	    assertThat(users.get(1).getName()).isEqualTo("@dbunit");
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowAnExceptionIfExpectedDataSetHasBothOrderByAndRegex() throws DatabaseUnitException {
+        DataSetConfig DataSetConfig = new DataSetConfig("datasets/yml/users.yml");
+        executor.createDataSet(DataSetConfig);
+        DataSetConfig ExpectedDataSetConfig = new DataSetConfig("datasets/yml/expectedUsersRegex.yml");
+        executor.compareCurrentDataSetWith(ExpectedDataSetConfig, null, null, new String[] {"name"});
+    }
 
 }
