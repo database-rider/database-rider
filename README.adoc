@@ -732,7 +732,6 @@ DBRider comes with a `Date Replacer`, `Null replacer` and a `Custom replacer`.
 
 TIP: For complete source code of replacers examples https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/replacers/[Look here^].
 
-
 ==== Date replacer
 
 Following is an example test using a date replacer:
@@ -794,7 +793,6 @@ TWEET:
         assertThat(tweet2.getContent()).isNotNull().isEqualTo("null");
     }
 ----
-
 
 ==== Custom replacer
 
@@ -883,6 +881,51 @@ properties:
 ----
 
 ====
+
+=== Dynamic connection config
+
+In order to have dynamic JDBC connection on your tests one can use system properties, see example below:
+
+[source,java]
+----
+@RunWith(JUnit4.class)
+public class EntityManagerSystemConfigOverrideTestIt {
+    private static final String PROP_KEY_URL = "javax.persistence.jdbc.url";
+    private static final String PROP_VALUE_URL = "jdbc:hsqldb:mem:susi;DB_CLOSE_DELAY=-1";
+    private static final String PROP_KEY_DRIVER = "javax.persistence.jdbc.driver";
+    private static final String PROP_KEY_USER = "javax.persistence.jdbc.user";
+    private static final String PROP_KEY_PASSWORD = "javax.persistence.jdbc.password";
+
+    @Rule
+    public EntityManagerProvider emProvider = EntityManagerProvider.instance("rules-it");
+
+    @Rule
+    public DBUnitRule dbUnitRule = DBUnitRule.instance(emProvider.connection());
+
+    @BeforeClass
+    public static void setup() {
+        System.clearProperty(PROP_KEY_URL);
+        System.clearProperty(PROP_KEY_DRIVER);
+        System.clearProperty(PROP_KEY_USER);
+        System.clearProperty(PROP_KEY_PASSWORD);
+        System.setProperty(PROP_KEY_URL, "jdbc:hsqldb:mem:susi;DB_CLOSE_DELAY=-1");
+        System.setProperty(PROP_KEY_DRIVER, "org.hsqldb.jdbc.JDBCDriver");
+        System.setProperty(PROP_KEY_USER, "sa");
+        System.setProperty(PROP_KEY_PASSWORD, "");
+    }
+
+    @AfterClass
+    public static void tearDown() {
+        System.clearProperty(PROP_KEY_URL);
+        System.clearProperty(PROP_KEY_DRIVER);
+        System.clearProperty(PROP_KEY_USER);
+        System.clearProperty(PROP_KEY_PASSWORD);
+    }
+
+    //tests using new connection
+----
+
+This way the https://github.com/database-rider/database-rider/blob/78b0ae11eeed17354f8adc6c35640a160a1447ee/rider-core/src/test/resources/META-INF/persistence.xml#L4-L20[original persistence.xml^] configuration was replaced dynamically before test execution.
 
 === Transactional Tests
 
