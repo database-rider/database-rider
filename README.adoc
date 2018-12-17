@@ -396,7 +396,6 @@ In example below <<EntityManagerProvider rule>> executes *before* `DBUnit rule`:
             around(DBUnitRule.instance(emProvider.connection()));
 ----
 
-
 === Multiple Databases
 Each executor has a JDBC connection so multiple databases can be handled by using multiple dataset executors:
 
@@ -559,6 +558,43 @@ Now we don't need to `ignore id column` in the above example:
         emProvider.tx().commit();
     }
 ----
+
+==== Expected Dataset with order by column
+
+To ignore how order in expected dataset one can use **orderBy** attribute in expected dataset.
+
+This way both actual and expected datasets will be ordered by same column:
+
+.expectedUsersIgnoreOrder.yml
+----
+USER:
+  - NAME: "@realpestano"
+  - NAME: "@arhohuttunen"
+  - NAME: "@dbunit"
+
+----
+
+[source, java]
+----
+    @Test
+    @DataSet(value = "yml/empty.yml", disableConstraints = true)
+    @ExpectedDataSet(value = "yml/expectedUsersIgnoreOrder.yml", orderBy = "name")
+    public void shouldMatchExpectedDataSetIgnoringRowOrder() {
+        User u1 = new User();
+        u1.setName("@arhohuttunen");
+        User u2 = new User();
+        u2.setName("@realpestano");
+        User u3 = new User();
+        u3.setName("@dbunit");
+        tx().begin();
+        em().persist(u1);
+        em().persist(u2);
+        em().persist(u3);
+        tx().commit();
+    }
+----
+
+Note on the example above that the order of insertion is different from declared on the dataset but the test passes because of `orderBy`.
 
 === Meta DataSets
 
