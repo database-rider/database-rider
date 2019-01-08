@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DBUnit(caseSensitiveTableNames = true, escapePattern = "\"?\"")
 public class PostgreSQLDatabaseIt {
 
-    private static final PostgreSQLContainer postgres = new PostgreSQLContainer();
+    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:9.4.20");
 
     @Rule
     public EntityManagerProvider emProvider = EntityManagerProvider.instance("postgre-it");

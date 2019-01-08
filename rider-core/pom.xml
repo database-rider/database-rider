@@ -17,6 +17,12 @@
         <dependency>
             <groupId>org.dbunit</groupId>
             <artifactId>dbunit</artifactId>
+            <exclusions>
+            	<exclusion>
+            		<groupId>postgresql</groupId>
+            		<artifactId>postgresql</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>
@@ -70,7 +76,7 @@
             <scope>test</scope>
         </dependency>
 
-          <dependency>
+        <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
             <version>1.5.1</version>
@@ -80,7 +86,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.0.0</version>
+            <version>42.2.5</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
