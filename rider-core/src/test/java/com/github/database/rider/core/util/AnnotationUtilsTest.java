@@ -15,6 +15,7 @@ public class AnnotationUtilsTest {
 	public void shouldFindDBUnitAnnotationOnSuperClass() {
 		DBUnit dbUnit = AnnotationUtils.findAnnotation(MyTest.class, DBUnit.class);
 		assertThat(dbUnit).isNotNull();
+		assertThat(dbUnit.caseSensitiveTableNames()).isTrue();
 	}
 
 	@DBUnit(caseSensitiveTableNames = true)
