@@ -1,8 +1,5 @@
 package com.github.database.rider.core.util;
 
-import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.core.api.dataset.DataSetImpl;
-import com.github.database.rider.core.api.dataset.SeedStrategy;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
@@ -13,6 +10,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.junit.runner.Description;
+
+import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.DataSetImpl;
 
 /**
  * Adpated from JUnit5 AnnotationUtils:
@@ -109,7 +109,7 @@ public final class AnnotationUtils {
         annotation = element.getAnnotation(annotationType);
         if (annotation != null) {
             annotationCache.put(key, annotation);
-            return null;
+            return annotation;
         }
 
         // Meta-present on indirectly present annotations?
