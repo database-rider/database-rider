@@ -24,4 +24,4 @@ script:
 - if [[ $TRAVIS_COMMIT_MESSAGE == *"prepare release"* ]]; then mvn -q cukedoctor:execute
   scm-publish:publish-scm -Pdocs -Prelease ; fi ;
 after_script:
-- if [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_BRANCH == "master" ]]; then mvn deploy --settings settings.xml -DskipTests=true ; fi;
+- if [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_BRANCH == "master" ]]; then cd ../ && mvn deploy --settings settings.xml -DskipTests=true ; fi;
