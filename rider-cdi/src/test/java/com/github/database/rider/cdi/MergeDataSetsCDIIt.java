@@ -22,7 +22,7 @@ import com.github.database.rider.core.api.dataset.SeedStrategy;
 @DBUnitInterceptor
 @DBUnit(mergeDataSets = true)
 @RunWith(CdiTestRunner.class)
-@DataSet(value = "yml/tweet.yml", executeScriptsAfter = "addUser.sql", executeStatementsBefore = {"DELETE FROM USER WHERE 1=1", "INSERT INTO USER VALUES (8,'user8')"})
+@DataSet(value = "yml/tweet.yml", executeScriptsAfter = "addUser.sql", executeStatementsBefore = {"DELETE FROM FOLLOWER WHERE 1=1", "DELETE FROM TWEET WHERE 1=1", "DELETE FROM USER WHERE 1=1", "INSERT INTO USER VALUES (8,'user8')"})
 public class MergeDataSetsCDIIt {
 
     @Inject
