@@ -1,10 +1,9 @@
 package com.github.database.rider.core;
 
 import com.github.database.rider.core.api.configuration.DBUnit;
+import com.github.database.rider.core.api.dataset.CompareOperation;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
-import com.github.database.rider.core.api.dataset.SeedStrategy;
-import com.github.database.rider.core.model.Follower;
 import com.github.database.rider.core.model.Tweet;
 import com.github.database.rider.core.util.EntityManagerProvider;
 import com.github.database.rider.core.model.User;
@@ -174,6 +173,16 @@ public class ExpectedDataSetIt {
         user.setName("@dbrider");
         assertThat(user.getTweets()).isNotNull().hasSize(1);
         user.getTweets().get(0).setContent("database rider rules!");
+    }
+
+    @Test
+    @DataSet(value = "yml/user.yml", transactional = true)
+    @ExpectedDataSet(value = "yml/expectedUsersContains.yml", compareOperation = CompareOperation.CONTAINS)
+    public void shouldMatchExpectedDataSetContains() {
+        User u = new User();
+        u.setId(3);
+        u.setName("@dbrider");
+        em().persist(u);
     }
 
 

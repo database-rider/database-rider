@@ -1,10 +1,7 @@
 package com.github.database.rider.core.dataset;
 
 import com.github.database.rider.core.api.connection.ConnectionHolder;
-import com.github.database.rider.core.api.dataset.DataSetExecutor;
-import com.github.database.rider.core.api.dataset.JSONDataSet;
-import com.github.database.rider.core.api.dataset.ScriptableDataSet;
-import com.github.database.rider.core.api.dataset.YamlDataSet;
+import com.github.database.rider.core.api.dataset.*;
 import com.github.database.rider.core.assertion.DataSetAssertion;
 import com.github.database.rider.core.configuration.ConnectionConfig;
 import com.github.database.rider.core.configuration.DBUnitConfig;
@@ -15,8 +12,10 @@ import com.github.database.rider.core.replacers.Replacer;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.database.DatabaseSequenceFilter;
+import org.dbunit.database.PrimaryKeyFilteredTableWrapper;
 import org.dbunit.dataset.*;
 import org.dbunit.dataset.csv.CsvDataSet;
+import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.excel.XlsDataSet;
 import org.dbunit.dataset.filter.DefaultColumnFilter;
 import org.dbunit.dataset.filter.ITableFilter;
@@ -739,7 +738,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     @Override
 	public void compareCurrentDataSetWith(DataSetConfig expectedDataSetConfig, String[] excludeCols,
-			Class<? extends Replacer>[] replacers, String[] orderBy) throws DatabaseUnitException {
+			Class<? extends Replacer>[] replacers, String[] orderBy, CompareOperation compareOperation) throws DatabaseUnitException {
         IDataSet current = null;
         IDataSet expected = null;
         List<Replacer> expectedDataSetReplacers = new ArrayList<>();
@@ -790,9 +789,28 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             }
             ITable filteredActualTable = DefaultColumnFilter.includedColumnsTable(actualTable,
                     expectedTable.getTableMetaData().getColumns());
+
+            if (compareOperation == CompareOperation.CONTAINS) {
+                filteredActualTable = filterTableByPrimaryKey(expectedTable, filteredActualTable);
+            }
+
             DataSetAssertion.assertEqualsIgnoreCols(expectedTable, filteredActualTable, excludeCols);
         }
 
+    }
+
+    private ITable filterTableByPrimaryKey(ITable expectedDataSet, ITable actualDataSet) throws DataSetException {
+        //PrimaryKeyFilteredTableWrapper uses Set.contains to check PK values, so types should be the same in both datasets
+        DataType dataType = actualDataSet.getTableMetaData().getPrimaryKeys()[0].getDataType();
+        String pkName = actualDataSet.getTableMetaData().getPrimaryKeys()[0].getColumnName();
+
+        Set<Object> pkSet = new HashSet<>();
+
+        for (int i = 0; i < expectedDataSet.getRowCount(); i++) {
+            pkSet.add(dataType.typeCast(expectedDataSet.getValue(i, pkName)));
+        }
+
+        return new PrimaryKeyFilteredTableWrapper(actualDataSet, pkSet);
     }
     
     @Override
@@ -800,6 +818,11 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             throws DatabaseUnitException {
     	compareCurrentDataSetWith(expectedDataSetConfig,excludeCols,null,null);
 	}
+
+    @Override
+    public void compareCurrentDataSetWith(DataSetConfig expectedDataSetConfig, String[] excludeCols, Class<? extends Replacer>[] replacers, String[] orderBy) throws DatabaseUnitException {
+        compareCurrentDataSetWith(expectedDataSetConfig, excludeCols, replacers, orderBy, CompareOperation.EQUALS);
+    }
 
     @Override
     public void setDBUnitConfig(DBUnitConfig dbUnitConfig) {
