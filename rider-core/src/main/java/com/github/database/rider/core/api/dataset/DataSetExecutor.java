@@ -56,6 +56,17 @@ public interface DataSetExecutor{
      */
     void compareCurrentDataSetWith(DataSetConfig expected, String[] ignoreCols, Class<? extends Replacer>[] replacers, String[] orderBy) throws DatabaseUnitException;
 
+    /**
+     * compares dataset from executor's database connection with a given dataset
+     * @param expected configuration
+     * @param ignoreCols name of column to ignore
+     * @param replacers implementations of {@link Replacer}, called during reading expected dataset before comparison
+     * @param orderBy name of columns to sort the dataset with
+     * @param compareOperation dataset comparison strategy
+     * @throws DatabaseUnitException if current dataset is not equal current dataset
+     */
+    void compareCurrentDataSetWith(DataSetConfig expected, String[] ignoreCols, Class<? extends Replacer>[] replacers, String[] orderBy, CompareOperation compareOperation) throws DatabaseUnitException;
+
     void setDBUnitConfig(DBUnitConfig dbUnitConfig);
 
     DBUnitConfig getDBUnitConfig();

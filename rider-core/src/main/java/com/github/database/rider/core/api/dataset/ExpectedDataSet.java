@@ -33,4 +33,6 @@ public @interface ExpectedDataSet {
    * @return column names to sort the dataset with
    */
   String[] orderBy() default {};
+
+  CompareOperation compareOperation() default CompareOperation.EQUALS;
 }
