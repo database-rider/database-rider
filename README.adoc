@@ -1326,7 +1326,7 @@ http://junit.org/junit5/[JUnit 5] is the new version of JUnit and comes with a n
 ----
 <dependency>
     <groupId>com.github.database-rider</groupId>
-    <artifactId>junit5</artifactId>
+    <artifactId>rider-junit5</artifactId>
     <version>1.5.1</version>
     <scope>test</scope>
 </dependency>
