@@ -596,6 +596,49 @@ USER:
 
 Note on the example above that the order of insertion is different from declared on the dataset but the test passes because of `orderBy`.
 
+==== Using `CONTAINS` in expected datatset
+
+By default the dataset you use in `@ExpectedDataSet` must be *EQUAL* to the state of the database after test execution which means same rows. 
+
+Since `v1.5.2` expected dataset can be configured to use a *CONTAINS* operation and in this case its rows must be present in actual database after test.
+
+NOTE: It `don't need` to have ALL rows as in the default behaviour of expected datataset.
+
+Consider following datasets:
+
+.users.yml
+----
+USER:
+  - ID: 1
+    NAME: "@realpestano"
+  - ID: 2
+    NAME: "@dbunit"
+----
+
+.expectedUsersContains.yml
+----
+USER:
+  - ID: 3
+    NAME: "@dbrider"
+----
+
+And the integration test below:
+
+[source,java]
+----
+@Test
+    @DataSet(value = "user.yml", transactional = true)
+    @ExpectedDataSet(value = "yml/expectedUsersContains.yml", compareOperation = CompareOperation.CONTAINS)
+    public void shouldMatchExpectedDataSetContains() {
+        User u = new User();
+        u.setId(3);
+        u.setName("@dbrider");
+        em().persist(u);
+    }
+----
+
+NOTE: This test will pass if, and only if, database state after test contains a row in user table with id=3 and name = @dbrider. Other rows doesn't matter.
+
 === Meta DataSets
 
 With meta datasets you can create annotations which holds `@DataSet` configuration and (re)use this custom annotation in any test:
