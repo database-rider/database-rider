@@ -602,7 +602,6 @@ By default the dataset you use in `@ExpectedDataSet` must be *EQUAL* to the stat
 
 Since `v1.5.2` expected dataset can be configured to use a *CONTAINS* operation and in this case its rows must be present in actual database after test.
 
-NOTE: It `don't need` to have ALL rows as in the default behaviour of expected datataset.
 
 Consider following datasets:
 
@@ -637,7 +636,7 @@ And the integration test below:
     }
 ----
 
-NOTE: This test will pass if, and only if, database state after test contains a row in user table with id=3 and name = @dbrider. Other rows doesn't matter.
+NOTE: This test will pass if database state after test contains a row in user table with id=3 and name = @dbrider. Other rows doesn't matter.
 
 === Meta DataSets
 
