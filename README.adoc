@@ -626,9 +626,9 @@ And the integration test below:
 
 [source,java]
 ----
-@Test
+    @Test
     @DataSet(value = "user.yml", transactional = true)
-    @ExpectedDataSet(value = "yml/expectedUsersContains.yml", compareOperation = CompareOperation.CONTAINS)
+    @ExpectedDataSet(value = "expectedUsersContains.yml", compareOperation = CompareOperation.CONTAINS)
     public void shouldMatchExpectedDataSetContains() {
         User u = new User();
         u.setId(3);
