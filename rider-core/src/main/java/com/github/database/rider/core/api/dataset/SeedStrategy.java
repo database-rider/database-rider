@@ -4,6 +4,7 @@ package com.github.database.rider.core.api.dataset;
  * Created by pestano on 23/07/15.
  */
 
+import org.dbunit.ext.mssql.InsertIdentityOperation;
 import org.dbunit.operation.*;
 
 /**
@@ -28,7 +29,8 @@ public enum SeedStrategy {
     TRUNCATE_INSERT(new CompositeOperation(DatabaseOperation.TRUNCATE_TABLE, DatabaseOperation.INSERT)),
     INSERT(DatabaseOperation.INSERT),
     REFRESH(DatabaseOperation.REFRESH),
-    UPDATE(DatabaseOperation.UPDATE);
+    UPDATE(DatabaseOperation.UPDATE),
+    INSERT_IDENTITY(InsertIdentityOperation.CLEAN_INSERT);
 
     private final DatabaseOperation operation;
 
