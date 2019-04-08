@@ -23,6 +23,8 @@ public class LeakHunterFactory {
                 return new MySqlLeakHunter(riderDataSource.getConnection(), methodName);
             case ORACLE:
                 return new OracleLeakHunter(riderDataSource.getConnection(), methodName);
+            case MSSQL:
+                return new MsSqlLeakHunter(riderDataSource.getConnection(), methodName);
             default:
                 throw new IllegalArgumentException("unknown db type");
         }

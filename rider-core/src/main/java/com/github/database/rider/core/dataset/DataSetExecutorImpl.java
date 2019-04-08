@@ -21,6 +21,8 @@ import org.dbunit.dataset.filter.DefaultColumnFilter;
 import org.dbunit.dataset.filter.ITableFilter;
 import org.dbunit.dataset.filter.SequenceTableFilter;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
+import org.dbunit.ext.mssql.InsertIdentityOperation;
+import org.dbunit.operation.CompositeOperation;
 import org.dbunit.operation.DatabaseOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,7 +146,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
                     resultingDataSet = performReplacements(resultingDataSet);
 
-                    DatabaseOperation operation = dataSetConfig.getstrategy().getOperation();
+                    DatabaseOperation operation = getOperation(dataSetConfig);
 
                     operation.execute(getRiderDataSource().getDBUnitConnection(), resultingDataSet);
                 }
@@ -154,6 +156,20 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             }
 
         }
+    }
+
+    private DatabaseOperation getOperation(DataSetConfig dataSetConfig) throws SQLException {
+        SeedStrategy strategy = dataSetConfig.getstrategy();
+        if (getRiderDataSource().getDBType() == RiderDataSource.DBType.MSSQL && dataSetConfig.isFillIdentityColumns()) {
+            switch (strategy) {
+                case INSERT: return InsertIdentityOperation.INSERT;
+                case REFRESH: return InsertIdentityOperation.REFRESH;
+                case CLEAN_INSERT: return InsertIdentityOperation.CLEAN_INSERT;
+                case TRUNCATE_INSERT: return new CompositeOperation(DatabaseOperation.TRUNCATE_TABLE,
+                        InsertIdentityOperation.INSERT);
+            }
+        }
+        return strategy.getOperation();
     }
 
     /**
@@ -282,7 +298,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     // adapted from Unitils:
                     // https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
                     ResultSet resultSet = null;
-                    String tableName = "";
                     try {
                         schemaName = resolveSchema();// default schema
                         // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
@@ -293,7 +308,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                                 + " and CONSTRAINT_NAME not like 'BIN$%' and STATUS <> 'DISABLED'");
                         while (resultSet.next()) {
                             schemaName = resolveSchema(resultSet);// result set schema
-                            tableName = resultSet.getString("TABLE_NAME");
+                            String tableName = resultSet.getString("TABLE_NAME");
                             boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
                             String constraintName = resultSet.getString("CONSTRAINT_NAME");
                             String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'"
@@ -301,7 +316,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                             executeStatements(
                                     "alter table " + qualifiedTableName + " disable constraint '" + constraintName + "'");
                         }
-                        break;
                     } catch (Exception e) {
                         throw new RuntimeException("Error while disabling referential constraints on schema " + schemaName, e);
                     } finally {
@@ -309,6 +323,29 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                             resultSet.close();
                         }
                     }
+                    break;
+                case MSSQL:
+                    resultSet = null;
+                    try {
+                        String schemaName = resolveSchema();
+                        boolean hasSchema = schemaName != null && !schemaName.isEmpty();
+                        resultSet = statement.executeQuery(
+                                "select t.name as [Table] from sys.tables t, sys.schemas s where t.schema_id = s.schema_id" +
+                                        (hasSchema ? " and s.name = '" + schemaName + "'" : ""));
+                        while (resultSet.next()) {
+                            String tableName = resultSet.getString("Table");
+                            String qualifiedTableName = (hasSchema ? "'" + schemaName + "'." : "")
+                                    + "'" + tableName + "'";
+                            executeStatements("alter table " + qualifiedTableName + " nocheck constraint all");
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error while disabling referential constraints on schema " + schemaName, e);
+                    } finally {
+                        if (resultSet != null) {
+                            resultSet.close();
+                        }
+                    }
+                    break;
             }
 
         }
@@ -335,7 +372,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         // adapted from Unitils:
                         // https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
                         ResultSet resultSet = null;
-                        String tableName = "";
                         try {
                             String schemaName = resolveSchema();
                             // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
@@ -345,7 +381,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                                     + (schemaName != null ? "and OWNER = '" + schemaName + "'" : "")
                                     + " and CONSTRAINT_NAME not like 'BIN$%' and STATUS = 'DISABLED'");
                             while (resultSet.next()) {
-                                tableName = resultSet.getString("TABLE_NAME");
+                                String tableName = resultSet.getString("TABLE_NAME");
                                 boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
                                 String constraintName = resultSet.getString("CONSTRAINT_NAME");
                                 String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'"
@@ -353,7 +389,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                                 executeStatements(
                                         "alter table " + qualifiedTableName + " enable constraint '" + constraintName + "'");
                             }
-                            break;
                         } catch (Exception e) {
                             throw new RuntimeException("Error while enabling referential constraints on schema " + schemaName,
                                     e);
@@ -362,6 +397,29 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                                 resultSet.close();
                             }
                         }
+                        break;
+                    case MSSQL:
+                        resultSet = null;
+                        try {
+                            String schemaName = resolveSchema();
+                            boolean hasSchema = schemaName != null && !schemaName.isEmpty();
+                            resultSet = statement.executeQuery(
+                                    "select t.name as [Table] from sys.tables t, sys.schemas s where t.schema_id = s.schema_id" +
+                                            (hasSchema ? " and s.name = '" + schemaName + "'" : ""));
+                            while (resultSet.next()) {
+                                String tableName = resultSet.getString("Table");
+                                String qualifiedTableName = (hasSchema ? "'" + schemaName + "'." : "")
+                                        + "'" + tableName + "'";
+                                executeStatements("alter table " + qualifiedTableName + " with check check constraint all");
+                            }
+                        } catch (Exception e) {
+                            throw new RuntimeException("Error while enabling referential constraints on schema " + schemaName, e);
+                        } finally {
+                            if (resultSet != null) {
+                                resultSet.close();
+                            }
+                        }
+                        break;
                 }
 
                 isContraintsDisabled = false;
