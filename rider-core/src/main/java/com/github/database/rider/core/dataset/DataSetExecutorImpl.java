@@ -283,8 +283,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     String tableName = "";
                     try {
                     	schemaName = resolveSchema();// default schema
-                        boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
-                        
                         // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
                         // filtered out.
                         resultSet = statement.executeQuery(
@@ -293,6 +291,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                                 + " and CONSTRAINT_NAME not like 'BIN$%' and STATUS <> 'DISABLED'");
                         while (resultSet.next()) {
                             schemaName = resolveSchema(resultSet);// result set schema
+                            boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
                             tableName = resultSet.getString("TABLE_NAME");
                             String constraintName = resultSet.getString("CONSTRAINT_NAME");
                             String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'"
@@ -341,8 +340,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         // https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
                         ResultSet resultSet = null;
                         String tableName = "";
-                        schemaName = resolveSchema();
-                        boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
+                        schemaName = resolveSchema();//default schema
                         try {
                             // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
                             // filtered out.
@@ -351,6 +349,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                                     + (schemaName != null ? "and OWNER = '" + schemaName + "'" : "")
                                     + " and CONSTRAINT_NAME not like 'BIN$%' and STATUS = 'DISABLED'");
                             while (resultSet.next()) {
+                                schemaName = resolveSchema(resultSet);// result set schema
+                            	boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
                                 tableName = resultSet.getString("TABLE_NAME");
                                 String constraintName = resultSet.getString("CONSTRAINT_NAME");
                                 String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'"
