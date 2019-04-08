@@ -259,7 +259,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     private void disableConstraints() throws SQLException {
 
         try (Statement statement = getRiderDataSource().getConnection().createStatement()) {
-
+        	schemaName = resolveSchema();
+        	boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
+        	
             switch (getRiderDataSource().getDBType()) {
                 case HSQLDB:
                     statement.execute("SET DATABASE REFERENTIAL INTEGRITY FALSE;");
@@ -271,12 +273,12 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     statement.execute(" SET FOREIGN_KEY_CHECKS=0;");
                     break;
                 case POSTGRESQL:
-                    /*
-             * preferable way because constraints are automatically re-enabled afer transaction. The only downside is
-             * that constrains need to be marked as deferrable: ALTER TABLE table_name ADD CONSTRAINT constraint_uk
-             * UNIQUE(column_1, column_2) DEFERRABLE INITIALLY IMMEDIATE;
-                     */
-                    statement.execute("SET CONSTRAINTS ALL DEFERRED;");
+                	List<String> tables = getTableNames(getRiderDataSource().getConnection());
+                    for (String tableName : tables) {
+                    	String qualifiedTableName = hasSchema ? "" + schemaName + "'.'" + tableName + ""
+                                : "" + tableName + "";
+                      statement.execute("ALTER TABLE \""+ qualifiedTableName + "\" DISABLE TRIGGER ALL;");
+                    }
                     break;
                 case ORACLE:
                     // adapted from Unitils:
@@ -294,7 +296,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         while (resultSet.next()) {
                             schemaName = resolveSchema(resultSet);// result set schema
                             tableName = resultSet.getString("TABLE_NAME");
-                            boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
                             String constraintName = resultSet.getString("CONSTRAINT_NAME");
                             String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'"
                                     : "'" + tableName + "'";
@@ -321,6 +322,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     public void enableConstraints() throws SQLException {
         if (isContraintsDisabled) {
             try (Statement statement = getRiderDataSource().getConnection().createStatement()) {
+                String schemaName = resolveSchema();
+                boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
                 switch (getRiderDataSource().getDBType()) {
                     case HSQLDB:
                         statement.execute("SET DATABASE REFERENTIAL INTEGRITY TRUE;");
@@ -331,13 +334,20 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     case MYSQL:
                         statement.execute(" SET FOREIGN_KEY_CHECKS=1;");
                         break;
+                    case POSTGRESQL:
+	                    List<String> tables = getTableNames(getRiderDataSource().getConnection());
+	                    for (String tableName : tables) {
+	                    	String qualifiedTableName = hasSchema ? "" + schemaName + "'.'" + tableName + ""
+	                                : "" + tableName + "";
+	                      statement.execute("ALTER TABLE \""+ qualifiedTableName + "\" ENABLE TRIGGER ALL;");
+	                    }
+                        break;
                     case ORACLE:
                         // adapted from Unitils:
                         // https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
                         ResultSet resultSet = null;
                         String tableName = "";
                         try {
-                            String schemaName = resolveSchema();
                             // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
                             // filtered out.
                             resultSet = statement.executeQuery(
@@ -346,7 +356,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                                     + " and CONSTRAINT_NAME not like 'BIN$%' and STATUS = 'DISABLED'");
                             while (resultSet.next()) {
                                 tableName = resultSet.getString("TABLE_NAME");
-                                boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
                                 String constraintName = resultSet.getString("CONSTRAINT_NAME");
                                 String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'"
                                         : "'" + tableName + "'";
