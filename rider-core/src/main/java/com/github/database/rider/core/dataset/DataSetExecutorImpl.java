@@ -7,6 +7,7 @@ import com.github.database.rider.core.configuration.ConnectionConfig;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.connection.RiderDataSource;
+import com.github.database.rider.core.connection.RiderDataSource.DBType;
 import com.github.database.rider.core.exception.DataBaseSeedingException;
 import com.github.database.rider.core.replacers.Replacer;
 import org.dbunit.DatabaseUnitException;
@@ -259,9 +260,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     private void disableConstraints() throws SQLException {
 
         try (Statement statement = getRiderDataSource().getConnection().createStatement()) {
-        	schemaName = resolveSchema();
-        	boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
-        	
             switch (getRiderDataSource().getDBType()) {
                 case HSQLDB:
                     statement.execute("SET DATABASE REFERENTIAL INTEGRITY FALSE;");
@@ -275,9 +273,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 case POSTGRESQL:
                 	List<String> tables = getTableNames(getRiderDataSource().getConnection());
                     for (String tableName : tables) {
-                    	String qualifiedTableName = hasSchema ? "" + schemaName + "'.'" + tableName + ""
-                                : "" + tableName + "";
-                      statement.execute("ALTER TABLE \""+ qualifiedTableName + "\" DISABLE TRIGGER ALL;");
+                      statement.execute("ALTER TABLE " + tableName + " DISABLE TRIGGER ALL;");
                     }
                     break;
                 case ORACLE:
@@ -286,7 +282,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     ResultSet resultSet = null;
                     String tableName = "";
                     try {
-                        schemaName = resolveSchema();// default schema
+                    	schemaName = resolveSchema();// default schema
+                        boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
+                        
                         // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
                         // filtered out.
                         resultSet = statement.executeQuery(
@@ -322,8 +320,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     public void enableConstraints() throws SQLException {
         if (isContraintsDisabled) {
             try (Statement statement = getRiderDataSource().getConnection().createStatement()) {
-                String schemaName = resolveSchema();
-                boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
                 switch (getRiderDataSource().getDBType()) {
                     case HSQLDB:
                         statement.execute("SET DATABASE REFERENTIAL INTEGRITY TRUE;");
@@ -337,9 +333,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     case POSTGRESQL:
 	                    List<String> tables = getTableNames(getRiderDataSource().getConnection());
 	                    for (String tableName : tables) {
-	                    	String qualifiedTableName = hasSchema ? "" + schemaName + "'.'" + tableName + ""
-	                                : "" + tableName + "";
-	                      statement.execute("ALTER TABLE \""+ qualifiedTableName + "\" ENABLE TRIGGER ALL;");
+	                    	statement.execute("ALTER TABLE " + tableName + " ENABLE TRIGGER ALL;");
 	                    }
                         break;
                     case ORACLE:
@@ -347,6 +341,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         // https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
                         ResultSet resultSet = null;
                         String tableName = "";
+                        schemaName = resolveSchema();
+                        boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
                         try {
                             // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
                             // filtered out.
@@ -620,7 +616,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     private String resolveSchema(ResultSet result) {
         try {
             if (schemaName == null) {
-                schemaName = result.getString("TABLE_SCHEMA");
+                schemaName = getRiderDataSource().getDBType().equals(DBType.POSTGRESQL) ? result.getString("TABLE_SCHEM") : result.getString("TABLE_SCHEMA");
             }
             return schemaName;
         } catch (Exception e) {
