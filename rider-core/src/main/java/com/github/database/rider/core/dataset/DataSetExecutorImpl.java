@@ -7,6 +7,7 @@ import com.github.database.rider.core.configuration.ConnectionConfig;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.connection.RiderDataSource;
+import com.github.database.rider.core.connection.RiderDataSource.DBType;
 import com.github.database.rider.core.exception.DataBaseSeedingException;
 import com.github.database.rider.core.replacers.Replacer;
 import org.dbunit.DatabaseUnitException;
@@ -275,7 +276,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     private void disableConstraints() throws SQLException {
 
         try (Statement statement = getRiderDataSource().getConnection().createStatement()) {
-
             switch (getRiderDataSource().getDBType()) {
                 case HSQLDB:
                     statement.execute("SET DATABASE REFERENTIAL INTEGRITY FALSE;");
@@ -287,19 +287,17 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     statement.execute(" SET FOREIGN_KEY_CHECKS=0;");
                     break;
                 case POSTGRESQL:
-                    /*
-             * preferable way because constraints are automatically re-enabled afer transaction. The only downside is
-             * that constrains need to be marked as deferrable: ALTER TABLE table_name ADD CONSTRAINT constraint_uk
-             * UNIQUE(column_1, column_2) DEFERRABLE INITIALLY IMMEDIATE;
-                     */
-                    statement.execute("SET CONSTRAINTS ALL DEFERRED;");
+                	List<String> tables = getTableNames(getRiderDataSource().getConnection());
+                    for (String tableName : tables) {
+                      statement.execute("ALTER TABLE " + tableName + " DISABLE TRIGGER ALL;");
+                    }
                     break;
                 case ORACLE:
                     // adapted from Unitils:
                     // https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
                     ResultSet resultSet = null;
                     try {
-                        schemaName = resolveSchema();// default schema
+                    	schemaName = resolveSchema();// default schema
                         // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
                         // filtered out.
                         resultSet = statement.executeQuery(
@@ -367,6 +365,12 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         break;
                     case MYSQL:
                         statement.execute(" SET FOREIGN_KEY_CHECKS=1;");
+                        break;
+                    case POSTGRESQL:
+	                    List<String> tables = getTableNames(getRiderDataSource().getConnection());
+	                    for (String tableName : tables) {
+	                    	statement.execute("ALTER TABLE " + tableName + " ENABLE TRIGGER ALL;");
+	                    }
                         break;
                     case ORACLE:
                         // adapted from Unitils:
@@ -669,7 +673,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     private String resolveSchema(ResultSet result) {
         try {
             if (schemaName == null) {
-                schemaName = result.getString("TABLE_SCHEMA");
+                schemaName = getRiderDataSource().getDBType().equals(DBType.POSTGRESQL) ? result.getString("TABLE_SCHEM") : result.getString("TABLE_SCHEMA");
             }
             return schemaName;
         } catch (Exception e) {
