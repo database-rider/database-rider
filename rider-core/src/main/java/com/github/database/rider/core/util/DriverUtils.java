@@ -9,7 +9,7 @@ import java.sql.SQLException;
 public class DriverUtils {
 
     public static boolean isMsSql(String driverName) {
-        return hasKeywordInDriverName(driverName, "sqlserver");
+        return hasKeywordInDriverName(driverName, "sql server");
     }
 
     public static boolean isHsql(String driverName) {
