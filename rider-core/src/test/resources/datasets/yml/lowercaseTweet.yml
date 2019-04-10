@@ -1,0 +1,5 @@
+tweet:
+  - id: abcdef12345
+    content: "dbrider rules!"
+    date: "[DAY,NOW]"
+    user_id: 1
