@@ -332,8 +332,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                                         (hasSchema ? " and s.name = '" + schemaName + "'" : ""));
                         while (resultSet.next()) {
                             String tableName = resultSet.getString("Table");
-                            String qualifiedTableName = (hasSchema ? "'" + schemaName + "'." : "")
-                                    + "'" + tableName + "'";
+                            String qualifiedTableName = (hasSchema ? schemaName + "." : "") + tableName;
                             executeStatements("alter table " + qualifiedTableName + " nocheck constraint all");
                         }
                     } catch (Exception e) {
@@ -412,8 +411,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                                             (hasSchema ? " and s.name = '" + schemaName + "'" : ""));
                             while (resultSet.next()) {
                                 String tableName = resultSet.getString("Table");
-                                String qualifiedTableName = (hasSchema ? "'" + schemaName + "'." : "")
-                                        + "'" + tableName + "'";
+                                String qualifiedTableName = (hasSchema ? schemaName + "." : "") + tableName;
                                 executeStatements("alter table " + qualifiedTableName + " with check check constraint all");
                             }
                         } catch (Exception e) {
