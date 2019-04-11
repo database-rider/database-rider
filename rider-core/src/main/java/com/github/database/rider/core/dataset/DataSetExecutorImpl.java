@@ -51,6 +51,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private static final String SEQUENCE_TABLE_NAME;
 
+    private static final EnumMap<DBType, Set<String>> SYSTEM_SCHEMAS = new EnumMap<>(DBType.class);
+
     private final AtomicBoolean printDBUnitConfig = new AtomicBoolean(true);
 
     private DBUnitConfig dbUnitConfig;
@@ -68,6 +70,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     static {
         SEQUENCE_TABLE_NAME = System.getProperty("SEQUENCE_TABLE_NAME") == null ? "SEQ"
                 : System.getProperty("SEQUENCE_TABLE_NAME");
+        SYSTEM_SCHEMAS.put(DBType.MSSQL, Collections.singleton("SYS"));
     }
 
     public static DataSetExecutorImpl instance(ConnectionHolder connectionHolder) {
@@ -603,30 +606,35 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     private List<String> getTableNames(Connection con) {
-
-        List<String> tables = new ArrayList<String>();
-
         if (tableNames != null && dbUnitConfig.isCacheTableNames()) {
             return tableNames;
         }
 
+        List<String> tables = new ArrayList<String>();
         try (ResultSet result = getTablesFromMetadata(con)) {
             while (result.next()) {
                 String schema = resolveSchema(result);
-                String name = result.getString("TABLE_NAME");
-                tables.add(schema != null ? schema + "." + name : name);
+                if (!isSystemSchema(schema)) {
+                    String name = result.getString("TABLE_NAME");
+                    tables.add(schema != null ? schema + "." + name : name);
+                }
             }
 
             if (tableNames == null) {
-                this.tableNames = new ArrayList<>();
-                this.tableNames.addAll(tables);
+                this.tableNames = new ArrayList<>(tables);
             }
 
             return tables;
         } catch (SQLException ex) {
-            log.warn("An exception occured while trying to" + "analyse the database.", ex);
+            log.warn("An exception occured while trying to analyse the database.", ex);
             return new ArrayList<>();
         }
+    }
+
+    private boolean isSystemSchema(String schema) throws SQLException {
+        DBType dbType = getRiderDataSource().getDBType();
+        Set<String> systemSchemas = SYSTEM_SCHEMAS.get(dbType);
+        return systemSchemas != null && systemSchemas.contains(schema);
     }
 
     private ResultSet getTablesFromMetadata(Connection con) throws SQLException {
@@ -636,16 +644,11 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private String resolveSchema(ResultSet result) {
         try {
-            String schemaColumnName = "TABLE_SCHEMA";
-            DBType dbType = getRiderDataSource().getDBType();
-            if (dbType == DBType.POSTGRESQL || dbType == DBType.MSSQL) {
-                schemaColumnName = "TABLE_SCHEM";
-            }
-            return result.getString(schemaColumnName);
+            return result.getString("TABLE_SCHEM");
         } catch (Exception e) {
             log.warn("Can't resolve schema", e);
+            return null;
         }
-        return null;
     }
 
     private String resolveSchema() {
@@ -655,8 +658,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             }
         } catch (Exception e) {
             log.warn("Can't resolve schema", e);
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -682,14 +685,11 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     String[] readScriptStatements(URL resource) {
-        String[] result = null;
         String absolutePath = resource.getFile();
         if (resource.getProtocol().equals("jar")) {
-            result = readScriptStatementsFromJar(absolutePath);
-        } else {
-            result = readScriptStatementsFromFile(new File(absolutePath));
+            return readScriptStatementsFromJar(absolutePath);
         }
-        return result;
+        return readScriptStatementsFromFile(new File(absolutePath));
     }
 
     private String[] readScriptStatementsFromJar(String absolutePath) {
