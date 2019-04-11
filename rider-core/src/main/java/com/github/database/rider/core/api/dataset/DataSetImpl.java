@@ -31,6 +31,7 @@ public class DataSetImpl implements DataSet {
     private boolean useSequenceFiltering;
     private String[] tableOrdering;
     private boolean disableConstraints;
+    private boolean fillIdentityColumns;
     private String[] executeStatementsBefore;
     private String[] executeScriptsAfter;
     private String[] executeScriptsBefore;
@@ -42,13 +43,14 @@ public class DataSetImpl implements DataSet {
     public DataSetImpl() {
     }
     
-    public DataSetImpl(String[] value, String executorId, SeedStrategy strategy, boolean useSequenceFiltering, String[] tableOrdering, boolean disableConstraints, String[] executeStatementsBefore, String[] executeScriptsAfter, String[] executeScriptsBefore, String[] executeStatementsAfter, boolean cleanBefore, boolean cleanAfter, boolean transactional) {
+    public DataSetImpl(String[] value, String executorId, SeedStrategy strategy, boolean useSequenceFiltering, String[] tableOrdering, boolean disableConstraints, boolean fillIdentityColumns, String[] executeStatementsBefore, String[] executeScriptsAfter, String[] executeScriptsBefore, String[] executeStatementsAfter, boolean cleanBefore, boolean cleanAfter, boolean transactional) {
         this.value = value;
         this.executorId = executorId;
         this.strategy = strategy;
         this.useSequenceFiltering = useSequenceFiltering;
         this.tableOrdering = tableOrdering;
         this.disableConstraints = disableConstraints;
+        this.fillIdentityColumns = fillIdentityColumns;
         this.executeStatementsBefore = executeStatementsBefore;
         this.executeScriptsAfter = executeScriptsAfter;
         this.executeScriptsBefore = executeScriptsBefore;
@@ -122,6 +124,11 @@ public class DataSetImpl implements DataSet {
     @Override
     public boolean disableConstraints() {
         return this.disableConstraints;
+    }
+
+    @Override
+    public boolean fillIdentityColumns() {
+        return this.fillIdentityColumns;
     }
 
     @Override

@@ -1,27 +1,26 @@
 package com.github.database.rider.core.connection;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Map;
-
+import com.github.database.rider.core.api.connection.ConnectionHolder;
+import com.github.database.rider.core.configuration.DBUnitConfig;
+import com.github.database.rider.core.util.DriverUtils;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConfig.ConfigProperty;
 import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.DefaultMetadataHandler;
 import org.dbunit.database.IMetadataHandler;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.dbunit.ext.db2.Db2DataTypeFactory;
 import org.dbunit.ext.db2.Db2MetadataHandler;
 import org.dbunit.ext.h2.H2DataTypeFactory;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
+import org.dbunit.ext.mssql.MsSqlDataTypeFactory;
 import org.dbunit.ext.mysql.MySqlDataTypeFactory;
 import org.dbunit.ext.oracle.Oracle10DataTypeFactory;
 import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 
-import com.github.database.rider.core.api.connection.ConnectionHolder;
-import com.github.database.rider.core.configuration.DBUnitConfig;
-import com.github.database.rider.core.util.DriverUtils;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Map;
 
 /**
  * @author artemy-osipov
@@ -29,7 +28,7 @@ import com.github.database.rider.core.util.DriverUtils;
 public class RiderDataSource {
 
     public enum DBType {
-        HSQLDB, H2, MYSQL, ORACLE, POSTGRESQL, DB2, UNKNOWN
+        HSQLDB, H2, MYSQL, ORACLE, POSTGRESQL, DB2, MSSQL, UNKNOWN
     }
 
     private final ConnectionHolder connectionHolder;
@@ -117,6 +116,8 @@ public class RiderDataSource {
                 return new PostgresqlDataTypeFactory();
             case ORACLE:
                 return new Oracle10DataTypeFactory();
+            case MSSQL:
+                return new MsSqlDataTypeFactory();
             case DB2:
             	return new Db2DataTypeFactory();
             default:
@@ -144,7 +145,9 @@ public class RiderDataSource {
         } else if (DriverUtils.isOracle(driverName)) {
             return DBType.ORACLE;
         } else if (DriverUtils.isDB2(driverName)) {
-        	return DBType.DB2;
+            return DBType.DB2;
+        } else if (DriverUtils.isMsSql(driverName)) {
+            return DBType.MSSQL;
         } else {
             return DBType.UNKNOWN;
         }

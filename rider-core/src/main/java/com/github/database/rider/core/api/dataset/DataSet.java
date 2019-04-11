@@ -45,6 +45,11 @@ public @interface DataSet {
   boolean disableConstraints() default false;
 
   /**
+   * @return true if dataset contains values for identity columns (some databases like MS SQL Server have issues with such cases)
+   */
+  boolean fillIdentityColumns() default false;
+
+  /**
    * @return a list of jdbc statements to execute before test
    *
    */

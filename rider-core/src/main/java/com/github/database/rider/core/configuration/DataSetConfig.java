@@ -14,6 +14,7 @@ public class DataSetConfig {
     private SeedStrategy strategy = SeedStrategy.CLEAN_INSERT;
     private boolean useSequenceFiltering = true;
     private boolean disableConstraints = false;
+    private boolean fillIdentityColumns = false;
     private boolean cleanBefore = false;
     private boolean cleanAfter = false;
     private boolean transactional = false;
@@ -53,6 +54,11 @@ public class DataSetConfig {
 
     public DataSetConfig disableConstraints(boolean disableConstraints) {
         this.disableConstraints = disableConstraints;
+        return this;
+    }
+
+    public DataSetConfig fillIdentityColumns(boolean fillIdentityColumns) {
+        this.fillIdentityColumns = fillIdentityColumns;
         return this;
     }
 
@@ -115,6 +121,7 @@ public class DataSetConfig {
                     useSequenceFiltering(dataSet.useSequenceFiltering()).
                     tableOrdering(dataSet.tableOrdering()).
                     disableConstraints(dataSet.disableConstraints()).
+                    fillIdentityColumns(dataSet.fillIdentityColumns()).
                     executorId(dataSet.executorId()).
                     executeStatementsBefore(dataSet.executeStatementsBefore()).
                     executeScripsBefore(dataSet.executeScriptsBefore()).
@@ -144,6 +151,10 @@ public class DataSetConfig {
 
     public boolean isDisableConstraints() {
         return disableConstraints;
+    }
+
+    public boolean isFillIdentityColumns() {
+        return fillIdentityColumns;
     }
 
     public boolean isTransactional() {
