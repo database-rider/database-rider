@@ -298,7 +298,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     ResultSet resultSet = null;
                     String tableSchemaName = null;
                     try {
-                        resolveSchema();// default schema
+                        String schemaName = resolveSchema();// default schema
                         // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
                         // filtered out.
                         resultSet = statement.executeQuery(
@@ -363,7 +363,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         ResultSet resultSet = null;
                         String tableSchemaName = null;
                         try {
-                            resolveSchema();
+                            String schemaName = resolveSchema();
                             // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
                             // filtered out.
                             resultSet = statement.executeQuery(
@@ -641,12 +641,20 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     private String resolveSchema(ResultSet result) throws SQLException {
-        String schemaColumnName = "TABLE_SCHEMA";
-        DBType dbType = getRiderDataSource().getDBType();
-        if (dbType == DBType.POSTGRESQL || dbType == DBType.MSSQL) {
-            schemaColumnName = "TABLE_SCHEM";
+        try {
+            if (schemaName == null) {
+                String schemaColumnName = "TABLE_SCHEMA";
+                DBType dbType = getRiderDataSource().getDBType();
+                if (dbType == DBType.POSTGRESQL || dbType == DBType.MSSQL) {
+                    schemaColumnName = "TABLE_SCHEM";
+                }
+                schemaName = result.getString(schemaColumnName);
+            }
+            return schemaName;
+        } catch (Exception e) {
+            log.warn("Can't resolve schema", e);
         }
-        return result.getString(schemaColumnName);
+        return null;
     }
 
     private String resolveSchema() {
