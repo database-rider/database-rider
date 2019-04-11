@@ -52,17 +52,11 @@
             <version>${version.junit-platform}</version>
             <scope>test</scope>
         </dependency>
-
-		  <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.12</version>
-        </dependency>
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.12</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -87,7 +81,6 @@
 
     </dependencies>
 
-
     <build>
         <plugins>
             <plugin>
@@ -100,9 +93,6 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-			
-
-
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.19.1</version>
@@ -112,11 +102,11 @@
                         <include>**/*It.java</include>
                         <include>**/*Test.java</include>
                     </includes>
-					<systemPropertyVariables>
-                                <java.util.logging.config.file>
-                                    src/test/resources/logging.properties
-                                </java.util.logging.config.file>
-                            </systemPropertyVariables>
+                    <systemPropertyVariables>
+                        <org.slf4j.simpleLogger.defaultLogLevel>
+                            error
+                        </org.slf4j.simpleLogger.defaultLogLevel>
+                    </systemPropertyVariables>
                 </configuration>
                 <dependencies>
                     <dependency>
