@@ -296,27 +296,26 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     // adapted from Unitils:
                     // https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
                     ResultSet resultSet = null;
-                    String tableSchemaName = null;
+                    String schemaName = null;// default schema
                     try {
-                        String schemaName = resolveSchema();// default schema
+                        schemaName = resolveSchema();
+                        boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
                         // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
                         // filtered out.
                         resultSet = statement.executeQuery(
                                 "select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' "
-                                        + (schemaName != null ? "and OWNER = '" + schemaName + "'" : "")
+                                        + (hasSchema ? "and OWNER = '" + schemaName + "'" : "")
                                         + " and CONSTRAINT_NAME not like 'BIN$%' and STATUS <> 'DISABLED'");
                         while (resultSet.next()) {
-                            tableSchemaName = resolveSchema(resultSet);// result set schema
                             String tableName = resultSet.getString("TABLE_NAME");
-                            boolean hasSchema = tableSchemaName != null && !"".equals(tableSchemaName.trim());
                             String constraintName = resultSet.getString("CONSTRAINT_NAME");
-                            String qualifiedTableName = hasSchema ? "'" + tableSchemaName + "'.'" + tableName + "'"
+                            String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'"
                                     : "'" + tableName + "'";
                             executeStatements(
                                     "alter table " + qualifiedTableName + " disable constraint '" + constraintName + "'");
                         }
                     } catch (Exception e) {
-                        throw new RuntimeException("Error while disabling referential constraints on schema " + tableSchemaName, e);
+                        throw new RuntimeException("Error while disabling referential constraints on schema " + schemaName, e);
                     } finally {
                         if (resultSet != null) {
                             resultSet.close();
@@ -361,27 +360,26 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         // adapted from Unitils:
                         // https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
                         ResultSet resultSet = null;
-                        String tableSchemaName = null;
+                        String schemaName = null;
                         try {
-                            String schemaName = resolveSchema();
+                            schemaName = resolveSchema();
+                            boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
                             // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
                             // filtered out.
                             resultSet = statement.executeQuery(
                                     "select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' "
-                                            + (schemaName != null ? "and OWNER = '" + schemaName + "'" : "")
+                                            + (hasSchema ? "and OWNER = '" + schemaName + "'" : "")
                                             + " and CONSTRAINT_NAME not like 'BIN$%' and STATUS = 'DISABLED'");
                             while (resultSet.next()) {
-                                tableSchemaName = resolveSchema(resultSet);
                                 String tableName = resultSet.getString("TABLE_NAME");
-                                boolean hasSchema = tableSchemaName != null && !"".equals(tableSchemaName.trim());
                                 String constraintName = resultSet.getString("CONSTRAINT_NAME");
-                                String qualifiedTableName = hasSchema ? "'" + tableSchemaName + "'.'" + tableName + "'"
+                                String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'"
                                         : "'" + tableName + "'";
                                 executeStatements(
                                         "alter table " + qualifiedTableName + " enable constraint '" + constraintName + "'");
                             }
                         } catch (Exception e) {
-                            throw new RuntimeException("Error while enabling referential constraints on schema " + tableSchemaName,
+                            throw new RuntimeException("Error while enabling referential constraints on schema " + schemaName,
                                     e);
                         } finally {
                             if (resultSet != null) {
@@ -640,17 +638,14 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         return metaData.getTables(null, null, "%", new String[]{"TABLE"});
     }
 
-    private String resolveSchema(ResultSet result) throws SQLException {
+    private String resolveSchema(ResultSet result) {
         try {
-            if (schemaName == null) {
-                String schemaColumnName = "TABLE_SCHEMA";
-                DBType dbType = getRiderDataSource().getDBType();
-                if (dbType == DBType.POSTGRESQL || dbType == DBType.MSSQL) {
-                    schemaColumnName = "TABLE_SCHEM";
-                }
-                schemaName = result.getString(schemaColumnName);
+            String schemaColumnName = "TABLE_SCHEMA";
+            DBType dbType = getRiderDataSource().getDBType();
+            if (dbType == DBType.POSTGRESQL || dbType == DBType.MSSQL) {
+                schemaColumnName = "TABLE_SCHEM";
             }
-            return schemaName;
+            return result.getString(schemaColumnName);
         } catch (Exception e) {
             log.warn("Can't resolve schema", e);
         }
