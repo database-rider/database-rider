@@ -63,8 +63,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private List<String> tableNames;
 
-    private String schemaName;
-
     private boolean isContraintsDisabled = false;
 
     static {
@@ -296,9 +294,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     // adapted from Unitils:
                     // https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
                     ResultSet resultSet = null;
-                    String schemaName = null;// default schema
+                    final String schemaName = resolveSchema();// default schema
                     try {
-                        schemaName = resolveSchema();
                         boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
                         // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
                         // filtered out.
@@ -360,9 +357,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         // adapted from Unitils:
                         // https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
                         ResultSet resultSet = null;
-                        String schemaName = null;
+                        final String schemaName = resolveSchema();// default schema
                         try {
-                            schemaName = resolveSchema();
                             boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
                             // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
                             // filtered out.
@@ -654,12 +650,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private String resolveSchema() {
         try {
-            if (schemaName == null) {
-                try (ResultSet tables = getTablesFromMetadata(getRiderDataSource().getConnection())) {
-                    schemaName = resolveSchema(tables);
-                }
+            try (ResultSet tables = getTablesFromMetadata(getRiderDataSource().getConnection())) {
+                return resolveSchema(tables);
             }
-            return schemaName;
         } catch (Exception e) {
             log.warn("Can't resolve schema", e);
         }

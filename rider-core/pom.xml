@@ -76,6 +76,8 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- postgresql tests -->
+
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
@@ -90,6 +92,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- msql server tests -->
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>mssqlserver</artifactId>
@@ -104,14 +107,21 @@
             <scope>test</scope>
         </dependency>
 
-<!--
+        <!-- oracle tests -->
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.0.13</version>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>oracle-xe</artifactId>
+            <version>1.11.1</version>
             <scope>test</scope>
         </dependency>
--->
+
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc6</artifactId>
+            <version>12.1.0.1-atlassian-hosted</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -146,7 +156,7 @@
                     <plugin>
                         <groupId>com.github.cukedoctor</groupId>
                         <artifactId>cukedoctor-maven-plugin</artifactId>
-                        <version>1.2.0</version>
+                        <version>1.2.1</version>
                         <configuration>
                             <outputFileName>documentation</outputFileName>
                             <!-- by default it resolves to 'latest' and is overriden by release profile -->
