@@ -287,60 +287,46 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     statement.execute(" SET FOREIGN_KEY_CHECKS=0;");
                     break;
                 case POSTGRESQL:
-                	List<String> tables = getTableNames(getRiderDataSource().getConnection());
+                    List<String> tables = getTableNames(getRiderDataSource().getConnection());
                     for (String tableName : tables) {
-                      statement.execute("ALTER TABLE " + tableName + " DISABLE TRIGGER ALL;");
+                        statement.execute("ALTER TABLE " + tableName + " DISABLE TRIGGER ALL;");
                     }
                     break;
                 case ORACLE:
                     // adapted from Unitils:
                     // https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
                     ResultSet resultSet = null;
+                    String tableSchemaName = null;
                     try {
-                    	schemaName = resolveSchema();// default schema
+                        resolveSchema();// default schema
                         // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
                         // filtered out.
                         resultSet = statement.executeQuery(
                                 "select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' "
-                                + (schemaName != null ? "and OWNER = '" + schemaName + "'" : "")
-                                + " and CONSTRAINT_NAME not like 'BIN$%' and STATUS <> 'DISABLED'");
+                                        + (schemaName != null ? "and OWNER = '" + schemaName + "'" : "")
+                                        + " and CONSTRAINT_NAME not like 'BIN$%' and STATUS <> 'DISABLED'");
                         while (resultSet.next()) {
-                            schemaName = resolveSchema(resultSet);// result set schema
+                            tableSchemaName = resolveSchema(resultSet);// result set schema
                             String tableName = resultSet.getString("TABLE_NAME");
-                            boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
+                            boolean hasSchema = tableSchemaName != null && !"".equals(tableSchemaName.trim());
                             String constraintName = resultSet.getString("CONSTRAINT_NAME");
-                            String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'"
+                            String qualifiedTableName = hasSchema ? "'" + tableSchemaName + "'.'" + tableName + "'"
                                     : "'" + tableName + "'";
                             executeStatements(
                                     "alter table " + qualifiedTableName + " disable constraint '" + constraintName + "'");
                         }
                     } catch (Exception e) {
-                        throw new RuntimeException("Error while disabling referential constraints on schema " + schemaName, e);
+                        throw new RuntimeException("Error while disabling referential constraints on schema " + tableSchemaName, e);
                     } finally {
-                        if(resultSet != null) {
+                        if (resultSet != null) {
                             resultSet.close();
                         }
                     }
                     break;
                 case MSSQL:
-                    resultSet = null;
-                    try {
-                        String schemaName = resolveSchema();
-                        boolean hasSchema = schemaName != null && !schemaName.isEmpty();
-                        resultSet = statement.executeQuery(
-                                "select t.name as [Table] from sys.tables t, sys.schemas s where t.schema_id = s.schema_id" +
-                                        (hasSchema ? " and s.name = '" + schemaName + "'" : ""));
-                        while (resultSet.next()) {
-                            String tableName = resultSet.getString("Table");
-                            String qualifiedTableName = (hasSchema ? schemaName + "." : "") + tableName;
-                            executeStatements("alter table " + qualifiedTableName + " nocheck constraint all");
-                        }
-                    } catch (Exception e) {
-                        throw new RuntimeException("Error while disabling referential constraints on schema " + schemaName, e);
-                    } finally {
-                        if (resultSet != null) {
-                            resultSet.close();
-                        }
+                    tables = getTableNames(getRiderDataSource().getConnection());
+                    for (String tableName : tables) {
+                        statement.execute("alter table " + tableName + " nocheck constraint all");
                     }
                     break;
             }
@@ -366,34 +352,36 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         statement.execute(" SET FOREIGN_KEY_CHECKS=1;");
                         break;
                     case POSTGRESQL:
-	                    List<String> tables = getTableNames(getRiderDataSource().getConnection());
-	                    for (String tableName : tables) {
-	                    	statement.execute("ALTER TABLE " + tableName + " ENABLE TRIGGER ALL;");
-	                    }
+                        List<String> tables = getTableNames(getRiderDataSource().getConnection());
+                        for (String tableName : tables) {
+                            statement.execute("ALTER TABLE " + tableName + " ENABLE TRIGGER ALL;");
+                        }
                         break;
                     case ORACLE:
                         // adapted from Unitils:
                         // https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
                         ResultSet resultSet = null;
+                        String tableSchemaName = null;
                         try {
-                            String schemaName = resolveSchema();
+                            resolveSchema();
                             // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
                             // filtered out.
                             resultSet = statement.executeQuery(
                                     "select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' "
-                                    + (schemaName != null ? "and OWNER = '" + schemaName + "'" : "")
-                                    + " and CONSTRAINT_NAME not like 'BIN$%' and STATUS = 'DISABLED'");
+                                            + (schemaName != null ? "and OWNER = '" + schemaName + "'" : "")
+                                            + " and CONSTRAINT_NAME not like 'BIN$%' and STATUS = 'DISABLED'");
                             while (resultSet.next()) {
+                                tableSchemaName = resolveSchema(resultSet);
                                 String tableName = resultSet.getString("TABLE_NAME");
-                                boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
+                                boolean hasSchema = tableSchemaName != null && !"".equals(tableSchemaName.trim());
                                 String constraintName = resultSet.getString("CONSTRAINT_NAME");
-                                String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'"
+                                String qualifiedTableName = hasSchema ? "'" + tableSchemaName + "'.'" + tableName + "'"
                                         : "'" + tableName + "'";
                                 executeStatements(
                                         "alter table " + qualifiedTableName + " enable constraint '" + constraintName + "'");
                             }
                         } catch (Exception e) {
-                            throw new RuntimeException("Error while enabling referential constraints on schema " + schemaName,
+                            throw new RuntimeException("Error while enabling referential constraints on schema " + tableSchemaName,
                                     e);
                         } finally {
                             if (resultSet != null) {
@@ -402,24 +390,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         }
                         break;
                     case MSSQL:
-                        resultSet = null;
-                        try {
-                            String schemaName = resolveSchema();
-                            boolean hasSchema = schemaName != null && !schemaName.isEmpty();
-                            resultSet = statement.executeQuery(
-                                    "select t.name as [Table] from sys.tables t, sys.schemas s where t.schema_id = s.schema_id" +
-                                            (hasSchema ? " and s.name = '" + schemaName + "'" : ""));
-                            while (resultSet.next()) {
-                                String tableName = resultSet.getString("Table");
-                                String qualifiedTableName = (hasSchema ? schemaName + "." : "") + tableName;
-                                executeStatements("alter table " + qualifiedTableName + " with check check constraint all");
-                            }
-                        } catch (Exception e) {
-                            throw new RuntimeException("Error while enabling referential constraints on schema " + schemaName, e);
-                        } finally {
-                            if (resultSet != null) {
-                                resultSet.close();
-                            }
+                        tables = getTableNames(getRiderDataSource().getConnection());
+                        for (String tableName : tables) {
+                            statement.execute("alter table " + tableName + " with check check constraint all");
                         }
                         break;
                 }
@@ -461,7 +434,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
         }
     }
-    
+
     /**
      * Perform replacements from all {@link Replacer} implementations,
      * registered in {@link #dbUnitConfig}.
@@ -471,7 +444,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         if (!dbUnitConfig.getProperties().containsKey("replacers")) {
             return dataSet;
         }
-        return performReplacements(dataSet,(List<Replacer>) dbUnitConfig.getProperties().get("replacers"));
+        return performReplacements(dataSet, (List<Replacer>) dbUnitConfig.getProperties().get("replacers"));
     }
 
     /**
@@ -480,12 +453,12 @@ public class DataSetExecutorImpl implements DataSetExecutor {
      */
     private IDataSet performReplacements(IDataSet dataSet, List<Replacer> replacersList) {
 
-    	if (replacersList==null || replacersList.isEmpty())
-    		return dataSet;
-    	
+        if (replacersList == null || replacersList.isEmpty())
+            return dataSet;
+
         ReplacementDataSet replacementSet = new ReplacementDataSet(dataSet);
         // convert to set to remove duplicates
-        Set<Replacer> replacers = new HashSet<>((List<Replacer>)replacersList);
+        Set<Replacer> replacers = new HashSet<>((List<Replacer>) replacersList);
         for (Replacer replacer : replacers) {
             replacer.addReplacements(replacementSet);
         }
@@ -643,12 +616,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             return tableNames;
         }
 
-        ResultSet result = null;
-        try {
-            DatabaseMetaData metaData = con.getMetaData();
-
-            result = metaData.getTables(null, null, "%", new String[]{"TABLE"});
-
+        try (ResultSet result = getTablesFromMetadata(con)) {
             while (result.next()) {
                 String schema = resolveSchema(result);
                 String name = result.getString("TABLE_NAME");
@@ -662,35 +630,35 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
             return tables;
         } catch (SQLException ex) {
-            log.warn("An exception occured while trying to"
-                    + "analyse the database.", ex);
-            return new ArrayList<String>();
+            log.warn("An exception occured while trying to" + "analyse the database.", ex);
+            return new ArrayList<>();
         }
     }
 
-    private String resolveSchema(ResultSet result) {
-        try {
-            if (schemaName == null) {
-                schemaName = getRiderDataSource().getDBType().equals(DBType.POSTGRESQL) ? result.getString("TABLE_SCHEM") : result.getString("TABLE_SCHEMA");
-            }
-            return schemaName;
-        } catch (Exception e) {
+    private ResultSet getTablesFromMetadata(Connection con) throws SQLException {
+        DatabaseMetaData metaData = con.getMetaData();
+        return metaData.getTables(null, null, "%", new String[]{"TABLE"});
+    }
 
+    private String resolveSchema(ResultSet result) throws SQLException {
+        String schemaColumnName = "TABLE_SCHEMA";
+        DBType dbType = getRiderDataSource().getDBType();
+        if (dbType == DBType.POSTGRESQL || dbType == DBType.MSSQL) {
+            schemaColumnName = "TABLE_SCHEM";
         }
-        return null;
+        return result.getString(schemaColumnName);
     }
 
     private String resolveSchema() {
         try {
             if (schemaName == null) {
-                DatabaseMetaData metaData = getRiderDataSource().getConnection().getMetaData();
-
-                ResultSet result = metaData.getTables(null, null, "%", new String[]{"TABLE"});
-                schemaName = resolveSchema(result);
+                try (ResultSet tables = getTablesFromMetadata(getRiderDataSource().getConnection())) {
+                    schemaName = resolveSchema(tables);
+                }
             }
             return schemaName;
         } catch (Exception e) {
-
+            log.warn("Can't resolve schema", e);
         }
         return null;
     }
@@ -797,25 +765,25 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     @Override
-	public void compareCurrentDataSetWith(DataSetConfig expectedDataSetConfig, String[] excludeCols,
-			Class<? extends Replacer>[] replacers, String[] orderBy, CompareOperation compareOperation) throws DatabaseUnitException {
+    public void compareCurrentDataSetWith(DataSetConfig expectedDataSetConfig, String[] excludeCols,
+                                          Class<? extends Replacer>[] replacers, String[] orderBy, CompareOperation compareOperation) throws DatabaseUnitException {
         IDataSet current = null;
         IDataSet expected = null;
         List<Replacer> expectedDataSetReplacers = new ArrayList<>();
-        if (replacers!=null && replacers.length>0) {
-        	for (Class<? extends Replacer> replacerClass : replacers) {
-        		try {
-        			expectedDataSetReplacers.add(replacerClass.newInstance());
-        		} catch (InstantiationException | IllegalAccessException e) {
-        			throw new IllegalArgumentException(replacerClass.getName() + " could not be instantiated as Replacer");
-        		}
-        	}
+        if (replacers != null && replacers.length > 0) {
+            for (Class<? extends Replacer> replacerClass : replacers) {
+                try {
+                    expectedDataSetReplacers.add(replacerClass.newInstance());
+                } catch (InstantiationException | IllegalAccessException e) {
+                    throw new IllegalArgumentException(replacerClass.getName() + " could not be instantiated as Replacer");
+                }
+            }
         }
         try {
             current = getRiderDataSource().getDBUnitConnection().createDataSet();
             expected = loadDataSets(expectedDataSetConfig.getDatasets());
             if (!expectedDataSetReplacers.isEmpty()) {
-            	expected = performReplacements(expected, expectedDataSetReplacers);
+                expected = performReplacements(expected, expectedDataSetReplacers);
             }
         } catch (Exception e) {
             throw new RuntimeException("Could not create dataset to compare.", e);
@@ -837,7 +805,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 throw new RuntimeException("DataSet comparison failed due to following exception: ", e);
             }
             if (orderBy != null && orderBy.length > 0) {
-                for (int i=0; i<expectedTable.getRowCount(); i++) {
+                for (int i = 0; i < expectedTable.getRowCount(); i++) {
                     for (String orderColumn : orderBy) {
                         if (expectedTable.getValue(i, orderColumn).toString().startsWith("regex:")) {
                             throw new IllegalArgumentException("The orderBy columns cannot use regex matching");
@@ -872,12 +840,12 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
         return new PrimaryKeyFilteredTableWrapper(actualDataSet, pkSet);
     }
-    
+
     @Override
     public void compareCurrentDataSetWith(DataSetConfig expectedDataSetConfig, String[] excludeCols)
             throws DatabaseUnitException {
-    	compareCurrentDataSetWith(expectedDataSetConfig,excludeCols,null,null);
-	}
+        compareCurrentDataSetWith(expectedDataSetConfig, excludeCols, null, null);
+    }
 
     @Override
     public void compareCurrentDataSetWith(DataSetConfig expectedDataSetConfig, String[] excludeCols, Class<? extends Replacer>[] replacers, String[] orderBy) throws DatabaseUnitException {
