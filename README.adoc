@@ -1288,7 +1288,7 @@ public class ContactSteps {
 
 == Programmatic creating datasets
 
-You can create datasets without JUnit Rule or CDI as we saw above, here is a pure cucumber example (for the same <<Examples,feature above>>):
+You can create datasets without JUnit Rule or CDI as we saw above, here is a pure cucumber example (for the same https://github.com/database-rider/database-rider#51-examples[feature above]):
 
 [source,java,linenums]
 ----
