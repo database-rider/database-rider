@@ -65,7 +65,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private List<String> tableNames;
 
-    private boolean isContraintsDisabled = false;
+    private boolean isConstraintsDisabled = false;
 
     static {
         SEQUENCE_TABLE_NAME = System.getProperty("SEQUENCE_TABLE_NAME") == null ? "SEQ"
@@ -325,6 +325,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 case MSSQL:
                     tables = getTableNames(getRiderDataSource().getConnection());
                     for (String tableName : tables) {
+                        if(tableName.toLowerCase().endsWith("user")) {
+                            tableName = tableName.replace("user","[user]"); //user is reserved word in sqlserver and must be surrounded by brackets
+                        }
                         statement.execute("alter table " + tableName + " nocheck constraint all");
                     }
                     break;
@@ -332,13 +335,13 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
         }
 
-        isContraintsDisabled = true;
+        isConstraintsDisabled = true;
 
     }
 
     @Override
     public void enableConstraints() throws SQLException {
-        if (isContraintsDisabled) {
+        if (isConstraintsDisabled) {
             try (Statement statement = getRiderDataSource().getConnection().createStatement()) {
                 switch (getRiderDataSource().getDBType()) {
                     case HSQLDB:
@@ -389,12 +392,15 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     case MSSQL:
                         tables = getTableNames(getRiderDataSource().getConnection());
                         for (String tableName : tables) {
+                            if(tableName.toLowerCase().endsWith("user")) {
+                                tableName = tableName.replace("user","[user]");
+                            }
                             statement.execute("alter table " + tableName + " with check check constraint all");
                         }
                         break;
                 }
 
-                isContraintsDisabled = false;
+                isConstraintsDisabled = false;
             }
 
         }
@@ -634,7 +640,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     private boolean isSystemSchema(String schema) throws SQLException {
         DBType dbType = getRiderDataSource().getDBType();
         Set<String> systemSchemas = SYSTEM_SCHEMAS.get(dbType);
-        return systemSchemas != null && systemSchemas.contains(schema);
+        return systemSchemas != null && schema != null && systemSchemas.contains(schema.toUpperCase());
     }
 
     private ResultSet getTablesFromMetadata(Connection con) throws SQLException {
