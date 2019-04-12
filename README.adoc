@@ -1158,7 +1158,7 @@ property in test/resources/META-INF/apache-deltaspike.properties:
 
 this module brings a Cucumber runner which is CDI aware.
 
-NOTE: If you don't use CDI you need to <<Programmatically creating datasets, create datasets Programmatically>> because Cucumber `official` runner https://github.com/cucumber/cucumber-jvm/issues/393[doesn't support JUnit rules^].
+NOTE: If you don't use CDI you'll need to https://github.com/database-rider/database-rider#programmatic-creating-datasets[create datasets programmatically] because Cucumber `official` runner https://github.com/cucumber/cucumber-jvm/issues/393[doesn't support JUnit rules^].
 
 
 [source,xml]
