@@ -42,7 +42,7 @@ public class RiderDataSource {
         this.dbUnitConfig = dbUnitConfig;
         try {
             init();
-        }catch (SQLException e) {
+        } catch (SQLException e) {
 		    throw new RuntimeException("Could not initialize database rider datasource.", e);	 
 		}
     }

@@ -73,9 +73,10 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         SEQUENCE_TABLE_NAME = System.getProperty("SEQUENCE_TABLE_NAME") == null ? "SEQ"
                 : System.getProperty("SEQUENCE_TABLE_NAME");
         SYSTEM_SCHEMAS.put(DBType.MSSQL, Collections.singleton("SYS"));
-        RESERVED_TABLE_NAMES = Arrays.asList("user","password", "value");
         if(System.getProperty("RESERVED_TABLE_NAMES") != null) {
-        	RESERVED_TABLE_NAMES.addAll(Arrays.asList(System.getProperty("RESERVED_TABLE_NAMES").split(",")));
+            RESERVED_TABLE_NAMES = Arrays.asList(System.getProperty("RESERVED_TABLE_NAMES").split(","));
+        } else {
+            RESERVED_TABLE_NAMES = Arrays.asList("user","password", "value");
         }
     }
 
