@@ -48,7 +48,6 @@ public class DBUnitRule implements TestRule {
     public static DBUnitRule instance(String executorName, ConnectionHolder connectionHolder) {
         DBUnitRule instance = new DBUnitRule();
         instance.executor = DataSetExecutorImpl.instance(executorName, connectionHolder);
-
         return instance;
     }
 

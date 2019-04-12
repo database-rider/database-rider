@@ -37,10 +37,14 @@ public class RiderDataSource {
     private DatabaseConnection dbUnitConnection;
     private DBType dbType;
 
-    public RiderDataSource(ConnectionHolder connectionHolder, DBUnitConfig dbUnitConfig) throws SQLException {
+    public RiderDataSource(ConnectionHolder connectionHolder, DBUnitConfig dbUnitConfig) {
         this.connectionHolder = connectionHolder;
         this.dbUnitConfig = dbUnitConfig;
-        init();
+        try {
+            init();
+        } catch (SQLException e) {
+		    throw new RuntimeException("Could not initialize database rider datasource.", e);	 
+		}
     }
 
     public Connection getConnection() throws SQLException {

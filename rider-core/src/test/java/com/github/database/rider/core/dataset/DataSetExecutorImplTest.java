@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import org.junit.Test;
 
@@ -19,7 +18,7 @@ public class DataSetExecutorImplTest {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public Connection getConnection() throws SQLException {
+            public Connection getConnection() {
                 return null;
             }
         });

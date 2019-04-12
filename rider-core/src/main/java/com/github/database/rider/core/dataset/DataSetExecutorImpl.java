@@ -52,6 +52,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     private static final String SEQUENCE_TABLE_NAME;
 
     private static final EnumMap<DBType, Set<String>> SYSTEM_SCHEMAS = new EnumMap<>(DBType.class);
+    
+    private static final List<String> RESERVED_TABLE_NAMES;
 
     private final AtomicBoolean printDBUnitConfig = new AtomicBoolean(true);
 
@@ -65,12 +67,17 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private List<String> tableNames;
 
-    private boolean isContraintsDisabled = false;
+    private boolean isConstraintsDisabled = false;
 
     static {
         SEQUENCE_TABLE_NAME = System.getProperty("SEQUENCE_TABLE_NAME") == null ? "SEQ"
                 : System.getProperty("SEQUENCE_TABLE_NAME");
         SYSTEM_SCHEMAS.put(DBType.MSSQL, Collections.singleton("SYS"));
+        if(System.getProperty("RESERVED_TABLE_NAMES") != null) {
+            RESERVED_TABLE_NAMES = Arrays.asList(System.getProperty("RESERVED_TABLE_NAMES").split(","));
+        } else {
+            RESERVED_TABLE_NAMES = Arrays.asList("user","password", "value");
+        }
     }
 
     public static DataSetExecutorImpl instance(ConnectionHolder connectionHolder) {
@@ -332,13 +339,13 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
         }
 
-        isContraintsDisabled = true;
+        isConstraintsDisabled = true;
 
     }
 
     @Override
     public void enableConstraints() throws SQLException {
-        if (isContraintsDisabled) {
+        if (isConstraintsDisabled) {
             try (Statement statement = getRiderDataSource().getConnection().createStatement()) {
                 switch (getRiderDataSource().getDBType()) {
                     case HSQLDB:
@@ -394,7 +401,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         break;
                 }
 
-                isContraintsDisabled = false;
+                isConstraintsDisabled = false;
             }
 
         }
@@ -471,36 +478,31 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     @Override
     public void initConnectionFromConfig(final ConnectionConfig connectionConfig) {
         setConnectionHolder(new ConnectionHolder() {
-
-            Connection connection;
-
             @Override
-            public Connection getConnection() throws SQLException {
-                if (connection == null) {
-                    connection = getConnectionFromConfig(connectionConfig);
-                }
-
-                return connection;
+            public Connection getConnection() {
+                return getConnectionFromConfig(connectionConfig);
             }
         });
     }
 
-    private Connection getConnectionFromConfig(ConnectionConfig connectionConfig) throws SQLException {
+    private Connection getConnectionFromConfig(ConnectionConfig connectionConfig) {
         if ("".equals(connectionConfig.getUrl()) || "".equals(connectionConfig.getUser())) {
             throw new RuntimeException("Could not create JDBC connection, provide a connection at test level or via configuration, see documentation here: https://github.com/database-rider/database-rider#jdbc-connection");
         }
-
         if (!"".equals(connectionConfig.getDriver())) {
             try {
                 Class.forName(connectionConfig.getDriver());
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
-
         }
-
-        return DriverManager.getConnection(connectionConfig.getUrl(), connectionConfig.getUser(),
-                connectionConfig.getPassword());
+        try {
+			return DriverManager.getConnection(connectionConfig.getUrl(), connectionConfig.getUser(),
+			        connectionConfig.getPassword());
+		} catch (SQLException e) {
+			 log.error("Could not create connection from configuration.",e);
+			 throw new RuntimeException("Could not create connection from configuration.");
+		}
     }
 
     public Connection getConnection() {
@@ -509,11 +511,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
     }
 
     @Override
@@ -530,7 +527,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     || otherExecutor.riderDataSource.getDBUnitConnection().getConnection() == null) {
                 return false;
             }
-
             if (!riderDataSource.getDBUnitConnection().getConnection().getMetaData().getURL().equals(
                     otherExecutor.riderDataSource.getDBUnitConnection().getConnection().getMetaData().getURL())) {
                 return false;
@@ -616,6 +612,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 String schema = resolveSchema(result);
                 if (!isSystemSchema(schema)) {
                     String name = result.getString("TABLE_NAME");
+                    if(RESERVED_TABLE_NAMES.contains(name.toLowerCase())) {
+                    	name = escapeTableName(name);
+                    }
                     tables.add(schema != null ? schema + "." + name : name);
                 }
             }
@@ -631,10 +630,27 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         }
     }
 
-    private boolean isSystemSchema(String schema) throws SQLException {
+    private String escapeTableName(String name) {
+		switch (getRiderDataSource().getDBType()) {
+		case MSSQL:
+			return "["+name+"]";  
+		case HSQLDB:	
+		case H2:
+		case DB2:	
+		case POSTGRESQL:
+		case ORACLE:
+			return "\""+name+"\"";  
+		case MYSQL:
+			return "`"+name+"`";
+		default:
+			return name;
+		}
+	}
+
+	private boolean isSystemSchema(String schema) throws SQLException {
         DBType dbType = getRiderDataSource().getDBType();
         Set<String> systemSchemas = SYSTEM_SCHEMAS.get(dbType);
-        return systemSchemas != null && systemSchemas.contains(schema);
+        return systemSchemas != null && schema != null && systemSchemas.contains(schema.toUpperCase());
     }
 
     private ResultSet getTablesFromMetadata(Connection con) throws SQLException {
@@ -862,15 +878,13 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     @Override
-    public RiderDataSource getRiderDataSource() throws SQLException {
+    public RiderDataSource getRiderDataSource() {
         if (riderDataSource == null) {
             if (connectionHolder == null) {
                 initConnectionFromConfig(dbUnitConfig.getConnectionConfig());
             }
-
-            riderDataSource = new RiderDataSource(connectionHolder, dbUnitConfig);
+		    riderDataSource = new RiderDataSource(connectionHolder, dbUnitConfig);
         }
-
         return riderDataSource;
     }
 

@@ -77,9 +77,9 @@ public class PostgreSQLDatabaseIt {
         //Connection connection = emProvider.connection(); //entityManager connections won't leak
     	Connection connection = getConnection();
         try (Statement stmt = connection.createStatement()) {
-            ResultSet resultSet = stmt.executeQuery("select count(*) from user");
+            ResultSet resultSet = stmt.executeQuery("select count(*) from \"user\"");
             assertThat(resultSet.next()).isTrue();
-            assertThat(resultSet.getInt(1)).isEqualTo(1);
+            assertThat(resultSet.getInt(1)).isEqualTo(2);
         }
     }
     
