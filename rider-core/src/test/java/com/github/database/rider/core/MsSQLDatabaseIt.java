@@ -3,8 +3,7 @@ package com.github.database.rider.core;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.leak.LeakHunterException;
-import com.github.database.rider.core.model.lowercase.Tweet;
-import com.github.database.rider.core.model.lowercase.User;
+import com.github.database.rider.core.model.lowercase.*;
 import com.github.database.rider.core.util.EntityManagerProvider;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -22,7 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(JUnit4.class)
 @DBUnit(caseSensitiveTableNames = true, escapePattern = "\"?\"")
 public class MsSQLDatabaseIt {
-    private static final MSSQLServerContainer mssqlserver = new MSSQLServerContainer();
+	
+    private static final MSSQLServerContainer<?> mssqlserver = new MSSQLServerContainer<>();
 
     @Rule
     public EntityManagerProvider emProvider = EntityManagerProvider.instance("mssqlserver-it");
