@@ -561,7 +561,7 @@ Now we don't need to `ignore id column` in the above example:
 
 ==== Expected Dataset with order by column
 
-To ignore how order in expected dataset one can use **orderBy** attribute in expected dataset.
+To ignore row ordering in expected dataset one can use **orderBy** attribute in expected dataset.
 
 This way both actual and expected datasets will be ordered by same column:
 
@@ -594,7 +594,7 @@ USER:
     }
 ----
 
-Note on the example above that the order of insertion is different from declared on the dataset but the test passes because of `orderBy`.
+Note on the example above that the order of insertion is different from declared on the dataset but the test passes because of `orderBy` will make both expected dataset and database table ordered by the same column.
 
 ==== Using `CONTAINS` in expected datatset
 
@@ -636,7 +636,7 @@ And the integration test below:
     }
 ----
 
-NOTE: This test will pass if database state after test contains a row in user table with id=3 and name = @dbrider. Other rows doesn't matter.
+NOTE: This test will pass if database state after test contains a row in `user table` with `id=3` and `name = @dbrider`. Other rows doesn't matter.
 
 === Meta DataSets
 
