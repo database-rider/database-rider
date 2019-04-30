@@ -486,8 +486,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     private Connection getConnectionFromConfig(ConnectionConfig connectionConfig) {
-        if ("".equals(connectionConfig.getUrl()) || "".equals(connectionConfig.getUser())) {
-            throw new RuntimeException("Could not create JDBC connection, provide a connection at test level or via configuration, see documentation here: https://github.com/database-rider/database-rider#jdbc-connection");
+        if ("".equals(connectionConfig.getUrl())) {
+            throw new RuntimeException("JDBC connection url cannot be empty");
         }
         if (!"".equals(connectionConfig.getDriver())) {
             try {
@@ -501,7 +501,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 			        connectionConfig.getPassword());
 		} catch (SQLException e) {
 			 log.error("Could not create connection from configuration.",e);
-			 throw new RuntimeException("Could not create connection from configuration.");
+			 throw new RuntimeException("Could not create connection from configuration. See documentation here: https://github.com/database-rider/database-rider#jdbc-connection");
 		}
     }
 
