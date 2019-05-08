@@ -20,28 +20,28 @@ public class RiderDataRowBuilder extends DataRowBuilder {
     protected Column createColumn(String columnName) {
         Object value = columnNameToValue.get(columnName);
         DataType columnType = DataType.UNKNOWN;
-        if(value instanceof Integer) {
+        if (value instanceof Integer) {
             columnType = DataType.INTEGER;
         }
-        if(value instanceof Long) {
+        if (value instanceof Long) {
             columnType = DataType.BIGINT_AUX_LONG;
         }
-        if(value instanceof Double) {
+        if (value instanceof Double) {
             columnType = DataType.DOUBLE;
         }
-        if(value instanceof Float) {
+        if (value instanceof Float) {
             columnType = DataType.FLOAT;
         }
-        if(value instanceof Date) {
+        if (value instanceof Date) {
             columnType = DataType.DATE;
         }
-        if(value instanceof Boolean) {
+        if (value instanceof Boolean) {
             columnType = DataType.BOOLEAN;
         }
-        if(value instanceof BigDecimal) {
+        if (value instanceof BigDecimal) {
             columnType = DataType.DECIMAL;
         }
-        if(value instanceof Number) {
+        if (value instanceof Number) {
             columnType = DataType.NUMERIC;
         }
         return new Column(columnName, columnType);
