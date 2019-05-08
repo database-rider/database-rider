@@ -969,6 +969,8 @@ public class EntityManagerSystemConfigOverrideTestIt {
 
 This way the https://github.com/database-rider/database-rider/blob/78b0ae11eeed17354f8adc6c35640a160a1447ee/rider-core/src/test/resources/META-INF/persistence.xml#L4-L20[original persistence.xml^] configuration was replaced dynamically before test execution.
 
+TIP: see source code of example above https://github.com/database-rider/database-rider/blob/78b0ae11eeed17354f8adc6c35640a160a1447ee/rider-core/src/test/java/com/github/database/rider/core/EntityManagerDynamicOverrideTestIt.java[here].
+
 === Transactional Tests
 
 In case of `ExpectedDataSet` you'll usually need a transaction to modify database in order to match expected dataset. In such case you can use a *transactional* test:
