@@ -114,7 +114,6 @@ public class DataSetConfig {
         return this;
     }
 
-
     public DataSetConfig from(DataSet dataSet) {
         if(dataSet != null){
             return name(dataSet.value()).strategy(dataSet.strategy()).
@@ -135,8 +134,7 @@ public class DataSetConfig {
         }
 
     }
-
-
+    
     public String[] getDatasets() {
         return datasets;
     }
@@ -233,9 +231,8 @@ public class DataSetConfig {
         if(datasets == null || datasets.length == 0){
             return false;
         }
-
         for (String dataset : datasets) {
-            if(dataset != null && !"".equals(dataset.trim())){
+            if (dataset != null && !"".equals(dataset.trim())) {
                 return true;
             }
         }
