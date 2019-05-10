@@ -22,7 +22,7 @@ public class RiderDataSetBuilder extends DataSetBuilder {
 
     @Override
     public RiderDataRowBuilder newRow(String tableName) {
-        return new RiderDataRowBuilder(this, tableName, uppercase);
+        return new RiderDataRowBuilder(this, uppercase ? tableName.toUpperCase() : tableName, uppercase);
     }
 
 }

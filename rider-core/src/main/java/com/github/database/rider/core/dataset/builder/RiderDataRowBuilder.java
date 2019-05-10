@@ -124,7 +124,7 @@ public class RiderDataRowBuilder extends DataRowBuilder {
     }
 
     protected void put(String columnName, Object value) {
-        columnNameToValue.put(uppercase ? columnName.toLowerCase():columnName, value);
+        columnNameToValue.put(uppercase ? columnName.toUpperCase():columnName, value);
     }
 
     @Override

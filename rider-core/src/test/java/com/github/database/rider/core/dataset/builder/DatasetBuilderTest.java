@@ -202,4 +202,42 @@ public class DatasetBuilderTest {
                         "    CALENDAR: \"" + DateTimeReplacer.DBUNIT_DATE_FORMAT.format(calendar.getTime()) +"\"" + NEW_LINE +
                         "");
     }
+
+    @Test
+    public void shouldGenerateUppercaseYamlDataSet() throws DataSetException, IOException {
+        RiderDataSetBuilder builder = new RiderDataSetBuilder(true);
+        ColumnSpec<Integer> id = ColumnSpec.newColumn("id");
+        builder.newRow("user").with("id", 1)
+                .with("name", "@realpestano")
+                .add().newRow("user")
+                .with(id, 2).with("name", "@dbunit")
+                .add().newRow("tweet")
+                .with("id", "abcdef12345").with("content", "dbunit rules!")
+                .with("date", "[DAY,NOW]")
+                .add().newRow("follower").with(id, 1)
+                .with("user_id", 1).with("follower_id", 2)
+                .add().build();
+
+        IDataSet dataSet = builder.build();
+
+        File datasetFile = Files.createTempFile("rider-dataset", ".yml").toFile();
+        FileOutputStream fos = new FileOutputStream(datasetFile);
+        new YMLWriter(fos).write(dataSet);
+
+        assertThat(contentOf(datasetFile)).
+                contains("FOLLOWER:" + NEW_LINE +
+                        "  - ID: 1" + NEW_LINE +
+                        "    USER_ID: 1" + NEW_LINE +
+                        "    FOLLOWER_ID: 2" + NEW_LINE).
+                contains("USER:" + NEW_LINE +
+                        "  - ID: 1" + NEW_LINE +
+                        "    NAME: \"@realpestano\"" + NEW_LINE +
+                        "  - ID: 2" + NEW_LINE +
+                        "    NAME: \"@dbunit\"").
+                contains("TWEET:" + NEW_LINE +
+                        "  - ID: \"abcdef12345\"" + NEW_LINE +
+                        "    CONTENT: \"dbunit rules!\"" + NEW_LINE +
+                        "    DATE: \"[DAY,NOW]\""+ NEW_LINE );
+    }
+
 }
