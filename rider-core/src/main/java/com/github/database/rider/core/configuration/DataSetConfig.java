@@ -138,7 +138,7 @@ public class DataSetConfig {
 
     }
 
-    private DataSetConfig datasetProvider(Class<? extends DataSetProvider> provider) {
+    public DataSetConfig datasetProvider(Class<? extends DataSetProvider> provider) {
         this.provider = provider;
         return this;
     }

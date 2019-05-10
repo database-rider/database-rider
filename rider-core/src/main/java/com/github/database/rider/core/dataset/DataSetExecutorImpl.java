@@ -810,7 +810,14 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         }
         try {
             current = getRiderDataSource().getDBUnitConnection().createDataSet();
-            expected = loadDataSets(expectedDataSetConfig.getDatasets());
+            if(expectedDataSetConfig.getProvider() != null && !expectedDataSetConfig.getProvider().isInterface()) {
+                expected = loadDataSetFromDataSetProvider(expectedDataSetConfig.getProvider());
+            } else if(expectedDataSetConfig.getDatasets() != null && expectedDataSetConfig.getDatasets().length > 0) {
+                expected = loadDataSets(expectedDataSetConfig.getDatasets());
+            }
+            if(expected == null) {
+                throw new RuntimeException("Expected dataset was not provided.");
+            }
             if (!expectedDataSetReplacers.isEmpty()) {
                 expected = performReplacements(expected, expectedDataSetReplacers);
             }

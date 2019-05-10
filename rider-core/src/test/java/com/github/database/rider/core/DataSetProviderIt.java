@@ -2,10 +2,12 @@ package com.github.database.rider.core;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetProvider;
+import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.dataset.builder.RiderDataSetBuilder;
 import com.github.database.rider.core.model.User_;
 import com.github.database.rider.core.model.User;
 import com.github.database.rider.core.util.EntityManagerProvider;
+import static com.github.database.rider.core.util.EntityManagerProvider.em;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.junit.Rule;
@@ -57,6 +59,16 @@ public class DataSetProviderIt {
         assertThat(user).isNotNull();
         assertThat(user.getId()).isEqualTo(1);
     }
+    
+    @Test
+    @DataSet(provider = UserDataSetProvider.class, cleanBefore = true, transactional = true)
+    @ExpectedDataSet(provider = ExpectedUserProvider.class, ignoreCols = "id")
+    public void shouldMatchExpectedDataSetUsingDataSetProvider() {
+        Long count = (Long) EntityManagerProvider.em().createQuery("select count(u) from User u ").getSingleResult();
+        assertThat(count).isEqualTo(2);
+        em().remove(EntityManagerProvider.em().find(User.class, 1L));
+        //assertThat(count).isEqualTo(1); //assertion in expectedDataSet
+    }
 
 
     public static class UserDataSetProvider implements DataSetProvider {
@@ -103,6 +115,17 @@ public class DataSetProviderIt {
                     .with(User_.name, "@dbunit").add()
                     .newRow("user").with(User_.id, 2)
                     .with(User_.name, "@dbrider").add();
+            return builder.build();
+        }
+    }
+    
+    public static class ExpectedUserProvider implements DataSetProvider {
+
+        @Override
+        public IDataSet provide() throws DataSetException {
+            RiderDataSetBuilder builder = new RiderDataSetBuilder(true);
+            builder.newRow("user").with("id", 2)
+                    .with("name", "@dbrider").add();
             return builder.build();
         }
     }

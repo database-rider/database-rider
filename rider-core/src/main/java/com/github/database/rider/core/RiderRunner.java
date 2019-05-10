@@ -163,7 +163,8 @@ public class RiderRunner {
 
         if (expectedDataSet != null) {
             riderTestContext.getDataSetExecutor()
-                    .compareCurrentDataSetWith(new DataSetConfig(expectedDataSet.value()).disableConstraints(true),
+                    .compareCurrentDataSetWith(new DataSetConfig(expectedDataSet.value())
+                        .disableConstraints(true).datasetProvider(expectedDataSet.provider()),
                             expectedDataSet.ignoreCols(),
                             expectedDataSet.replacers(),
                             expectedDataSet.orderBy(),
