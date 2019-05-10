@@ -174,7 +174,7 @@ This module is the basis for subsequent modules. It contains a JUnit rule (shown
 <dependency>
       <groupId>com.github.database-rider</groupId>
       <artifactId>rider-core</artifactId>
-      <version>1.5.1</version>
+      <version>1.5.3</version>
       <scope>test</scope>
 </dependency>
 ----
@@ -924,6 +924,53 @@ properties:
 
 ====
 
+=== DataSet providers
+
+A dataset provider is a *Java class responsible for defing a dataset* instead of having `yml`, `json`, `xml` files representing your datasets. Following are the steps for creating and using a dataset provider:
+
+. First create a class which implements `DataSetProvider` interface:
++ 
+[source, java]
+----
+public class UserDataSetProvider implements DataSetProvider {
+
+        @Override
+        public IDataSet provide() throws DataSetException {
+            RiderDataSetBuilder builder = new RiderDataSetBuilder(true); <1>
+            builder.newRow("user").with("id", 1)
+                    .with("name", "@dbunit").add()
+                    .newRow("user").with("id", 2)
+                    .with("name", "@dbrider").add();
+            return builder.build();
+        }
+    }
+----
+<1> The `boolean` parameter means table name and columns will be in uppercase on generated dataset.
++
+The above DataSet provider will generate a dataset for `USER` table with 2 rows.
++
+TIP: For more complex dataset examples see https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/dataset/builder/DataSetBuilderTest.java[DataSetBuilder tests here^].
+
+. Now use the DataSet provider in `@DataSet` annotation:
++
+[source, java]
+----
+    @Test
+    @DataSet(provider = UserDataSetProvider.class, cleanBefore = true)
+    public void shouldSeedDatabaseProgrammatically() {
+        List<User> users = EntityManagerProvider.em().createQuery("select u from User u ").getResultList();
+        assertThat(users).
+                isNotNull().
+                isNotEmpty().hasSize(2).
+                extracting("name").
+                contains("@dbunit", "@dbrider");
+    }
+---- 
++
+TIP: For more examples, see dataset provider https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/DataSetProviderIt.java[tests here^].
+
+NOTE: You can also use DataSetProvider in `@ExpectedDataset` annotation.
+
 === Dynamic connection config
 
 In order to have dynamic JDBC connection on your tests one can use system properties, see example below:
@@ -1101,7 +1148,7 @@ If you use CDI in your tests then you should give a try in Database Rider https:
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-cdi</artifactId>
-    <version>1.5.1</version>
+    <version>1.5.3</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -1168,7 +1215,7 @@ NOTE: If you don't use CDI you'll need to https://github.com/database-rider/data
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-cucumber</artifactId>
-    <version>1.5.1</version>
+    <version>1.5.3</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -1292,6 +1339,8 @@ public class ContactSteps {
 
 You can create datasets without JUnit Rule or CDI as we saw above, here is a pure cucumber example (for the same https://github.com/database-rider/database-rider#51-examples[feature above]):
 
+NOTE: If you are looking for a way to *define datasets programmatically* look into https://github.com/database-rider/database-rider#dataset-providers[DataSet providers^].
+
 [source,java,linenums]
 ----
 @RunWith(Cucumber.class)
@@ -1371,7 +1420,7 @@ http://junit.org/junit5/[JUnit 5] is the new version of JUnit and comes with a n
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-junit5</artifactId>
-    <version>1.5.1</version>
+    <version>1.5.3</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -1429,7 +1478,7 @@ Add Database Rider Spring extension to your project
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-spring</artifactId>
-    <version>1.5.1</version>
+    <version>1.5.3</version>
     <scope>test</scope>
 </dependency>
 ----
