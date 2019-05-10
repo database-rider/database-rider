@@ -20,6 +20,8 @@ import java.sql.Connection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
+
 public class EntityManagerProvider implements TestRule {
 
     private static Map<String, EntityManagerProvider> providers = new ConcurrentHashMap<>();//one emf per unit
@@ -53,6 +55,7 @@ public class EntityManagerProvider implements TestRule {
         try {
             instance.init(unitName);
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Could not initialize persistence unit " + unitName, e);
         }
 
@@ -237,12 +240,7 @@ public class EntityManagerProvider implements TestRule {
     }
 
     private boolean isHibernateOnClasspath() {
-        try {
-            Class.forName("org.hibernate.Session");
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
+        return isOnClasspath("org.hibernate.Session");
     }
 
     private static void checkInstance() {

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
 
     <persistence-unit name="rules-it" transaction-type="RESOURCE_LOCAL">
 
-    <class>com.github.database.rider.core.model.User</class>
-    <class>com.github.database.rider.core.model.Tweet</class>
-    <class>com.github.database.rider.core.model.Follower</class>
+        <class>com.github.database.rider.core.model.User</class>
+        <class>com.github.database.rider.core.model.Tweet</class>
+        <class>com.github.database.rider.core.model.Follower</class>
 
         <properties>
             <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1"/>
@@ -13,7 +15,7 @@
             <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
             <property name="javax.persistence.jdbc.user" value="sa"/>
             <property name="javax.persistence.jdbc.password" value=""/>
-           <!-- <property name="eclipselink.logging.level.sql" value="FINE"/>-->
+            <!-- <property name="eclipselink.logging.level.sql" value="FINE"/>-->
             <property name="eclipselink.logging.parameters" value="false"/>
         </properties>
 
@@ -39,9 +41,9 @@
 
     <persistence-unit name="rider-it" transaction-type="RESOURCE_LOCAL">
 
-    <class>com.github.database.rider.core.model.User</class>
-    <class>com.github.database.rider.core.model.Tweet</class>
-    <class>com.github.database.rider.core.model.Follower</class>
+        <class>com.github.database.rider.core.model.User</class>
+        <class>com.github.database.rider.core.model.Tweet</class>
+        <class>com.github.database.rider.core.model.Follower</class>
 
         <properties>
             <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:rider;DB_CLOSE_DELAY=-1"/>
@@ -49,7 +51,7 @@
             <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
             <property name="javax.persistence.jdbc.user" value="sa"/>
             <property name="javax.persistence.jdbc.password" value=""/>
-           <!-- <property name="eclipselink.logging.level.sql" value="FINE"/>-->
+            <!-- <property name="eclipselink.logging.level.sql" value="FINE"/>-->
             <property name="eclipselink.logging.parameters" value="false"/>
         </properties>
 
@@ -67,8 +69,8 @@
             <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
             <property name="javax.persistence.jdbc.user" value="sa"/>
             <property name="javax.persistence.jdbc.password" value=""/>
-          <!--   <property name="eclipselink.logging.level" value="INFO"/>
-            <property name="eclipselink.logging.level.sql" value="FINE"/> -->
+            <!--   <property name="eclipselink.logging.level" value="INFO"/>
+              <property name="eclipselink.logging.level.sql" value="FINE"/> -->
             <property name="eclipselink.logging.parameters" value="false"/>
         </properties>
 
@@ -86,8 +88,8 @@
             <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
             <property name="javax.persistence.jdbc.user" value="sa"/>
             <property name="javax.persistence.jdbc.password" value=""/>
-           <!--  <property name="eclipselink.logging.level" value="INFO"/>
-            <property name="eclipselink.logging.level.sql" value="FINE"/> -->
+            <!--  <property name="eclipselink.logging.level" value="INFO"/>
+             <property name="eclipselink.logging.level.sql" value="FINE"/> -->
             <property name="eclipselink.logging.parameters" value="false"/>
         </properties>
 
@@ -105,8 +107,8 @@
             <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
             <property name="javax.persistence.jdbc.user" value="sa"/>
             <property name="javax.persistence.jdbc.password" value=""/>
-          <!--   <property name="eclipselink.logging.level" value="INFO"/>
-            <property name="eclipselink.logging.level.sql" value="FINE"/> -->
+            <!--   <property name="eclipselink.logging.level" value="INFO"/>
+              <property name="eclipselink.logging.level.sql" value="FINE"/> -->
             <property name="eclipselink.logging.parameters" value="false"/>
         </properties>
 
@@ -124,8 +126,8 @@
             <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
             <property name="javax.persistence.jdbc.user" value="sa"/>
             <property name="javax.persistence.jdbc.password" value=""/>
-           <!--  <property name="eclipselink.logging.level" value="INFO"/>
-            <property name="eclipselink.logging.level.sql" value="FINE"/> -->
+            <!--  <property name="eclipselink.logging.level" value="INFO"/>
+             <property name="eclipselink.logging.level.sql" value="FINE"/> -->
             <property name="eclipselink.logging.parameters" value="false"/>
         </properties>
 
@@ -143,25 +145,25 @@
             <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
             <property name="javax.persistence.jdbc.user" value="sa"/>
             <property name="javax.persistence.jdbc.password" value=""/>
-           <!--  <property name="eclipselink.logging.level" value="INFO"/>
-            <property name="eclipselink.logging.level.sql" value="FINE"/> -->
+            <!--  <property name="eclipselink.logging.level" value="INFO"/>
+             <property name="eclipselink.logging.level.sql" value="FINE"/> -->
             <property name="eclipselink.logging.parameters" value="false"/>
         </properties>
 
     </persistence-unit>
 
 
-     <persistence-unit name="postgre-it" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="postgre-it" transaction-type="RESOURCE_LOCAL">
 
-    <class>com.github.database.rider.core.model.lowercase.User</class>
-    <class>com.github.database.rider.core.model.lowercase.Tweet</class>
-    <class>com.github.database.rider.core.model.lowercase.Follower</class>
+        <class>com.github.database.rider.core.model.lowercase.User</class>
+        <class>com.github.database.rider.core.model.lowercase.Tweet</class>
+        <class>com.github.database.rider.core.model.lowercase.Follower</class>
 
         <properties>
-            <property name="javax.persistence.jdbc.driver" value="org.testcontainers.jdbc.ContainerDatabaseDriver" />
+            <property name="javax.persistence.jdbc.driver" value="org.testcontainers.jdbc.ContainerDatabaseDriver"/>
             <property name="javax.persistence.jdbc.url" value="jdbc:tc:postgresql://localhost/test"/>
             <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL9Dialect" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL9Dialect"/>
             <property name="javax.persistence.jdbc.user" value="test"/>
             <property name="javax.persistence.jdbc.password" value="test"/>
             <property name="eclipselink.logging.level.sql" value="FINE"/>
@@ -172,21 +174,38 @@
 
     <persistence-unit name="mssqlserver-it" transaction-type="RESOURCE_LOCAL">
 
-   <class>com.github.database.rider.core.model.lowercase.User</class>
-   <class>com.github.database.rider.core.model.lowercase.Tweet</class>
-   <class>com.github.database.rider.core.model.lowercase.Follower</class>
+        <class>com.github.database.rider.core.model.lowercase.User</class>
+        <class>com.github.database.rider.core.model.lowercase.Tweet</class>
+        <class>com.github.database.rider.core.model.lowercase.Follower</class>
 
-       <properties>
-           <property name="javax.persistence.jdbc.driver" value="org.testcontainers.jdbc.ContainerDatabaseDriver" />
-           <property name="javax.persistence.jdbc.url" value="jdbc:tc:sqlserver:2017-CU12://localhost:1433;databaseName=tempdb"/>
-           <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
-           <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServer2012Dialect" />
-           <property name="javax.persistence.jdbc.user" value="SA"/>
-           <property name="javax.persistence.jdbc.password" value="A_Str0ng_Required_Password"/>
-           <property name="eclipselink.logging.level.sql" value="FINE"/>
-           <property name="eclipselink.logging.parameters" value="false"/>
-       </properties>
+        <properties>
+            <property name="javax.persistence.jdbc.driver" value="org.testcontainers.jdbc.ContainerDatabaseDriver"/>
+            <property name="javax.persistence.jdbc.url"
+                      value="jdbc:tc:sqlserver:2017-CU12://localhost:1433;databaseName=tempdb"/>
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServer2012Dialect"/>
+            <property name="javax.persistence.jdbc.user" value="SA"/>
+            <property name="javax.persistence.jdbc.password" value="A_Str0ng_Required_Password"/>
+            <property name="eclipselink.logging.level.sql" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="false"/>
+        </properties>
 
-   </persistence-unit>
+    </persistence-unit>
+
+    <persistence-unit name="contactPU" transaction-type="RESOURCE_LOCAL">
+
+        <class>com.github.database.rider.core.metamodel.Contact</class>
+
+        <properties>
+            <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:contact;DB_CLOSE_DELAY=-1"/>
+            <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver"/>
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="javax.persistence.jdbc.user" value="sa"/>
+            <property name="javax.persistence.jdbc.password" value=""/>
+            <!-- <property name="eclipselink.logging.level.sql" value="FINE"/>-->
+            <property name="eclipselink.logging.parameters" value="false"/>
+        </properties>
+
+    </persistence-unit>
 
 </persistence>

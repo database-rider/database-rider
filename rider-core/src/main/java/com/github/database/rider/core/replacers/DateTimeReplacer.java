@@ -13,7 +13,7 @@ import java.util.Date;
 public class DateTimeReplacer implements Replacer {
 
     public static final String PLACEHOLDER_FORMAT = "[%s,%s]"; // [prefix:placeholderName]
-    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static final SimpleDateFormat DBUNIT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 
     @Override
@@ -28,28 +28,28 @@ public class DateTimeReplacer implements Replacer {
     private void replaceDays(Date currentDate, ReplacementDataSet replacementDataSet) {
         for (DayReplacerType type : DayReplacerType.values()) {
             Date calculatedDate = addDays(currentDate, type.getDays());
-            replacementDataSet.addReplacementSubstring(getPlaceholderPattern(type), format.format(calculatedDate));
+            replacementDataSet.addReplacementSubstring(getPlaceholderPattern(type), DBUNIT_DATE_FORMAT.format(calculatedDate));
         }
     }
 
     private void replaceHours(Date currentDate, ReplacementDataSet replacementDataSet) {
         for (HourReplacerType type : HourReplacerType.values()) {
             Date calculatedDate = addHours(currentDate, type.getHours());
-            replacementDataSet.addReplacementSubstring(getPlaceholderPattern(type), format.format(calculatedDate));
+            replacementDataSet.addReplacementSubstring(getPlaceholderPattern(type), DBUNIT_DATE_FORMAT.format(calculatedDate));
         }
     }
 
     private void replaceMinutes(Date currentDate, ReplacementDataSet replacementDataSet) {
         for (MinuteReplacerType type : MinuteReplacerType.values()) {
             Date calculatedDate = addMinutes(currentDate, type.getMinutes());
-            replacementDataSet.addReplacementSubstring(getPlaceholderPattern(type), format.format(calculatedDate));
+            replacementDataSet.addReplacementSubstring(getPlaceholderPattern(type), DBUNIT_DATE_FORMAT.format(calculatedDate));
         }
     }
 
     private void replaceSeconds(Date currentDate, ReplacementDataSet replacementDataSet) {
         for (SecondReplacerType type : SecondReplacerType.values()) {
             Date calculatedDate = addSeconds(currentDate, type.getSeconds());
-            replacementDataSet.addReplacementSubstring(getPlaceholderPattern(type), format.format(calculatedDate));
+            replacementDataSet.addReplacementSubstring(getPlaceholderPattern(type), DBUNIT_DATE_FORMAT.format(calculatedDate));
         }
     }
 
