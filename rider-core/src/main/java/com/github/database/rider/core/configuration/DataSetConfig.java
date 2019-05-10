@@ -1,6 +1,7 @@
 package com.github.database.rider.core.configuration;
 
 import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.DataSetProvider;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 
@@ -23,6 +24,7 @@ public class DataSetConfig {
     private String[] executeStatementsAfter = {};
     private String[] executeScriptsBefore = {};
     private String[] executeScriptsAfter = {};
+    private Class<? extends DataSetProvider> provider;
 
 
     public DataSetConfig() {
@@ -128,13 +130,19 @@ public class DataSetConfig {
                     cleanAfter(dataSet.cleanAfter()).
                     transactional(dataSet.transactional()).
                     executeStatementsAfter(dataSet.executeStatementsAfter()).
-                    executeScriptsAfter(dataSet.executeScriptsAfter());
+                    executeScriptsAfter(dataSet.executeScriptsAfter()).
+                    datasetProvider(dataSet.provider());
         } else{
             throw new RuntimeException("Cannot create DataSetConfig from Null DataSet");
         }
 
     }
-    
+
+    private DataSetConfig datasetProvider(Class<? extends DataSetProvider> provider) {
+        this.provider = provider;
+        return this;
+    }
+
     public String[] getDatasets() {
         return datasets;
     }
@@ -183,6 +191,10 @@ public class DataSetConfig {
         return executorId;
     }
 
+    public Class<? extends DataSetProvider> getProvider() {
+        return provider;
+    }
+
     public boolean isCleanBefore() {
         return cleanBefore;
     }
@@ -219,7 +231,10 @@ public class DataSetConfig {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (String dataset : datasets) {
-            sb.append(dataset).append(",");
+            sb.append(dataset).append(", ");
+        }
+        if(provider != null && !provider.isInterface()) {
+            sb.append("dataset provider: "+provider.getName()).append(", ");
         }
         if(sb.toString().contains(",")){
             sb.deleteCharAt(sb.lastIndexOf(","));
@@ -227,8 +242,11 @@ public class DataSetConfig {
         return sb.toString().trim();
     }
 
-    public boolean hasDatasets() {
-        if(datasets == null || datasets.length == 0){
+    public boolean hasDataSets() {
+        if(!provider.isInterface()) {
+            return true;
+        }
+        if((datasets == null || datasets.length == 0)){
             return false;
         }
         for (String dataset : datasets) {

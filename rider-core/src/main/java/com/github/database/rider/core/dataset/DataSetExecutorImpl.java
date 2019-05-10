@@ -133,22 +133,27 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                                 .warn("Could not clean database before test.", e);
                     }
                 }
-
                 if (dataSetConfig.getExecuteStatementsBefore() != null
                         && dataSetConfig.getExecuteStatementsBefore().length > 0) {
                     executeStatements(dataSetConfig.getExecuteStatementsBefore());
                 }
-
                 if (dataSetConfig.getExecuteScriptsBefore() != null
                         && dataSetConfig.getExecuteScriptsBefore().length > 0) {
                     for (int i = 0; i < dataSetConfig.getExecuteScriptsBefore().length; i++) {
                         executeScript(dataSetConfig.getExecuteScriptsBefore()[i]);
                     }
                 }
-
-                if (dataSetConfig.hasDatasets()) {
-                    IDataSet resultingDataSet = loadDataSets(dataSetConfig.getDatasets());
-
+                if (dataSetConfig.hasDataSets()) {
+                    IDataSet resultingDataSet = null;
+                    if (dataSetConfig.getProvider() == null ||
+                            dataSetConfig.getProvider().isInterface()) { //when provider is an interface it means no one implemented it (default annotation value is dataset provider interface)
+                        resultingDataSet = loadDataSets(dataSetConfig.getDatasets());
+                    } else {
+                        resultingDataSet = loadDataSetFromDataSetProvider(dataSetConfig.getProvider());
+                        if(resultingDataSet == null) {
+                            throw new RuntimeException("Provided dataset cannot be null. DataSet provider: "+dataSetConfig.getProvider().getName());
+                        }
+                    }
                     resultingDataSet = performSequenceFiltering(dataSetConfig, resultingDataSet);
 
                     resultingDataSet = performTableOrdering(dataSetConfig, resultingDataSet);
@@ -158,6 +163,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     DatabaseOperation operation = getOperation(dataSetConfig);
 
                     operation.execute(getRiderDataSource().getDBUnitConnection(), resultingDataSet);
+                } else {
+                    log.warn("Database will not be populated because no dataset has been provided.");
                 }
 
             } catch (Exception e) {
@@ -165,6 +172,16 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             }
 
         }
+    }
+
+    private IDataSet loadDataSetFromDataSetProvider(Class<? extends DataSetProvider> provider) {
+        try {
+            DataSetProvider dataSetProvider = provider.newInstance();
+            return dataSetProvider.provide();
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load dataset from provider: "+provider.getName());
+        }
+
     }
 
     private DatabaseOperation getOperation(DataSetConfig dataSetConfig) throws SQLException {

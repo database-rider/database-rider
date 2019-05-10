@@ -89,4 +89,10 @@ public @interface DataSet {
    *
    */
   boolean transactional() default false;
+
+
+  /**
+   * @return a dataset provider implementation responsible for generating the dataset programatically instead of providing an external file defining the dataset.
+   */
+  Class<? extends DataSetProvider> provider() default DataSetProvider.class;
 }
