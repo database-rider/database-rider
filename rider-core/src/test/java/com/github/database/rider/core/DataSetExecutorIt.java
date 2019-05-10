@@ -1,8 +1,6 @@
 package com.github.database.rider.core;
 
-import static com.github.database.rider.core.util.EntityManagerProvider.em;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
 
 import java.sql.Connection;
 import java.sql.SQLException;

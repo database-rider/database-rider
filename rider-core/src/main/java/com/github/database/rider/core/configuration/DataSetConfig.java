@@ -243,7 +243,7 @@ public class DataSetConfig {
     }
 
     public boolean hasDataSets() {
-        if(!provider.isInterface()) {
+        if(provider != null && !provider.isInterface()) {
             return true;
         }
         if((datasets == null || datasets.length == 0)){
