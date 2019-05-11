@@ -28,7 +28,6 @@ public class DataSetConfig {
 
 
     public DataSetConfig() {
-        //loadDefaultConfiguration();
     }
 
     public DataSetConfig(String dataset) {

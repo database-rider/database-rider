@@ -2,14 +2,20 @@ package com.github.database.rider.core;
 
 import com.github.database.rider.core.DataSetProviderIt.TweetDataSetProvider;
 import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.DataSetExecutor;
 import com.github.database.rider.core.api.dataset.DataSetProvider;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
+import com.github.database.rider.core.configuration.DataSetConfig;
+import com.github.database.rider.core.connection.ConnectionHolderImpl;
+import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.dataset.builder.RiderDataSetBuilder;
 import com.github.database.rider.core.model.Tweet;
 import com.github.database.rider.core.model.User_;
 import com.github.database.rider.core.model.User;
 import com.github.database.rider.core.util.EntityManagerProvider;
 import static com.github.database.rider.core.util.EntityManagerProvider.em;
+import java.sql.Connection;
+import java.sql.SQLException;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.junit.Rule;
@@ -33,16 +39,15 @@ public class DataSetProviderIt {
     @Rule
     public DBUnitRule dbUnitRule = DBUnitRule.instance(emProvider.connection());
 
-
     @Test
     @DataSet(provider = UserDataSetProvider.class, cleanBefore = true)
     public void shouldSeedDatabaseProgrammatically() {
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u ").getResultList();
         assertThat(users).
-                isNotNull().
-                isNotEmpty().hasSize(2).
-                extracting("name").
-                contains("@dbunit", "@dbrider");
+            isNotNull().
+            isNotEmpty().hasSize(2).
+            extracting("name").
+            contains("@dbunit", "@dbrider");
     }
 
     @Test
@@ -50,12 +55,12 @@ public class DataSetProviderIt {
     public void shouldSeedDatabaseProgrammaticallyUsingMetaModel() {
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u ").getResultList();
         assertThat(users).
-                isNotNull().
-                isNotEmpty().hasSize(2).
-                extracting("name").
-                contains("@dbunit", "@dbrider");
+            isNotNull().
+            isNotEmpty().hasSize(2).
+            extracting("name").
+            contains("@dbunit", "@dbrider");
     }
-    
+
     @Test
     @DataSet(provider = UsersWithBrokenReferentialConstraintProvider.class, disableConstraints = true)
     public void shouldSeedDataSetDisablingContraints() {
@@ -63,7 +68,7 @@ public class DataSetProviderIt {
         assertThat(user).isNotNull();
         assertThat(user.getId()).isEqualTo(1);
     }
-    
+
     @Test
     @DataSet(provider = UserDataSetProvider.class, cleanBefore = true, transactional = true)
     @ExpectedDataSet(provider = ExpectedUserProvider.class, ignoreCols = "id")
@@ -73,30 +78,48 @@ public class DataSetProviderIt {
         em().remove(EntityManagerProvider.em().find(User.class, 1L));
         //assertThat(count).isEqualTo(1); //assertion in expectedDataSet
     }
-    
+
     @Test
     public void shouldSeedDataSetUsingClassLevelDataSetProvider() {
         Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = 'abcdef12345'").getSingleResult();
         assertThat(tweet).isNotNull()
-        .extracting("content")
-        .contains("dbrider rules!");
+            .extracting("content")
+            .contains("dbrider rules!");
     }
-    
+
     @Test
     @DataSet(provider = CompositeDataSetProvider.class)
     public void shouldSeedDataSetUsingCompositeDataSetProvider() {
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u ").getResultList();
         assertThat(users).
+            isNotNull().
+            isNotEmpty().hasSize(2).
+            extracting("name").
+            contains("@dbunit", "@dbrider");
+        Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = 'abcdef12345'").getSingleResult();
+        assertThat(tweet).isNotNull()
+            .extracting("content")
+            .contains("dbrider rules!");
+    }
+
+    @Test
+    public void shouldSeedDatabaseUsingDataSetProviderWithoutAnnotatation() throws SQLException {
+        try (Connection conn = EntityManagerProvider.instance("executor-it").connection()) {
+            DataSetExecutor executor = DataSetExecutorImpl.instance("executor-name", new ConnectionHolderImpl(conn));
+            DataSetConfig DataSetConfig = new DataSetConfig()
+                .datasetProvider(UserDataSetProvider.class)
+                .disableConstraints(true);
+            executor.clearDatabase(DataSetConfig);
+            executor.createDataSet(DataSetConfig);
+            List<User> users = EntityManagerProvider.em("executor-it").createQuery("select u from User u ").getResultList();
+            assertThat(users).
                 isNotNull().
                 isNotEmpty().hasSize(2).
                 extracting("name").
                 contains("@dbunit", "@dbrider");
-        Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = 'abcdef12345'").getSingleResult();
-        assertThat(tweet).isNotNull()
-        .extracting("content")
-        .contains("dbrider rules!");
-    }
+        }
 
+    }
 
     public static class UserDataSetProvider implements DataSetProvider {
 
@@ -104,20 +127,20 @@ public class DataSetProviderIt {
         public IDataSet provide() throws DataSetException {
             RiderDataSetBuilder builder = new RiderDataSetBuilder(true);
             builder.newRow("user").with("id", 1)
-                    .with("name", "@dbunit").add()
-                    .newRow("user").with("id", 2)
-                    .with("name", "@dbrider").add();
+                .with("name", "@dbunit").add()
+                .newRow("user").with("id", 2)
+                .with("name", "@dbrider").add();
             return builder.build();
         }
     }
-    
+
     public static class UsersWithBrokenReferentialConstraintProvider implements DataSetProvider {
 
         @Override
         public IDataSet provide() throws DataSetException {
             RiderDataSetBuilder builder = new RiderDataSetBuilder();
             ColumnSpec<Integer> id = ColumnSpec.newColumn("ID");
-             ColumnSpec<String> name = ColumnSpec.newColumn("NAME");
+            ColumnSpec<String> name = ColumnSpec.newColumn("NAME");
             builder.newRow("USER").with("ID", 1)
                 .with(name, "@realpestano")
                 .add().newRow("USER")
@@ -128,7 +151,7 @@ public class DataSetProviderIt {
                 .add().newRow("FOLLOWER").with(id, 1)
                 .with("USER_ID", 9999).with("FOLLOWER_ID", 9999)
                 .add().build();
-            
+
             return builder.build();
         }
     }
@@ -139,24 +162,24 @@ public class DataSetProviderIt {
         public IDataSet provide() throws DataSetException {
             RiderDataSetBuilder builder = new RiderDataSetBuilder(true);
             builder.newRow("user").with(User_.id, 1)
-                    .with(User_.name, "@dbunit").add()
-                    .newRow("user").with(User_.id, 2)
-                    .with(User_.name, "@dbrider").add();
+                .with(User_.name, "@dbunit").add()
+                .newRow("user").with(User_.id, 2)
+                .with(User_.name, "@dbrider").add();
             return builder.build();
         }
     }
-    
+
     public static class ExpectedUserProvider implements DataSetProvider {
 
         @Override
         public IDataSet provide() throws DataSetException {
             RiderDataSetBuilder builder = new RiderDataSetBuilder(true);
             builder.newRow("user").with("id", 2)
-                    .with("name", "@dbrider").add();
+                .with("name", "@dbrider").add();
             return builder.build();
         }
     }
-    
+
     public static class TweetDataSetProvider implements DataSetProvider {
 
         @Override
@@ -168,8 +191,7 @@ public class DataSetProviderIt {
             return builder.build();
         }
     }
-    
-    
+
     public static class CompositeDataSetProvider implements DataSetProvider {
 
         @Override
