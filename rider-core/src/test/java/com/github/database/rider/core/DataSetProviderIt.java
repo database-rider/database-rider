@@ -1,9 +1,11 @@
 package com.github.database.rider.core;
 
+import com.github.database.rider.core.DataSetProviderIt.TweetDataSetProvider;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetProvider;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.dataset.builder.RiderDataSetBuilder;
+import com.github.database.rider.core.model.Tweet;
 import com.github.database.rider.core.model.User_;
 import com.github.database.rider.core.model.User;
 import com.github.database.rider.core.util.EntityManagerProvider;
@@ -21,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.dbunit.dataset.builder.ColumnSpec;
 
 @RunWith(JUnit4.class)
+@DataSet(provider = TweetDataSetProvider.class, cleanBefore = true)
 public class DataSetProviderIt {
 
     @Rule
@@ -68,6 +71,14 @@ public class DataSetProviderIt {
         assertThat(count).isEqualTo(2);
         em().remove(EntityManagerProvider.em().find(User.class, 1L));
         //assertThat(count).isEqualTo(1); //assertion in expectedDataSet
+    }
+    
+    @Test
+    public void shouldSeedDataSetUsingClassLevelDataSetProvider() {
+        Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = 'abcdef12345'").getSingleResult();
+        assertThat(tweet).isNotNull()
+        .extracting("content")
+        .contains("dbrider rules!");
     }
 
 
@@ -126,6 +137,18 @@ public class DataSetProviderIt {
             RiderDataSetBuilder builder = new RiderDataSetBuilder(true);
             builder.newRow("user").with("id", 2)
                     .with("name", "@dbrider").add();
+            return builder.build();
+        }
+    }
+    
+    public static class TweetDataSetProvider implements DataSetProvider {
+
+        @Override
+        public IDataSet provide() throws DataSetException {
+            RiderDataSetBuilder builder = new RiderDataSetBuilder(true);
+            builder.newRow("TWEET")
+                .with("ID", "abcdef12345").with("CONTENT", "dbrider rules!")
+                .with("DATE", "[DAY,NOW]").add();
             return builder.build();
         }
     }
