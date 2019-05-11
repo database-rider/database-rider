@@ -20,6 +20,7 @@ import org.junit.runners.JUnit4;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import org.dbunit.dataset.CompositeDataSet;
 import org.dbunit.dataset.builder.ColumnSpec;
 
 @RunWith(JUnit4.class)
@@ -75,6 +76,21 @@ public class DataSetProviderIt {
     
     @Test
     public void shouldSeedDataSetUsingClassLevelDataSetProvider() {
+        Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = 'abcdef12345'").getSingleResult();
+        assertThat(tweet).isNotNull()
+        .extracting("content")
+        .contains("dbrider rules!");
+    }
+    
+    @Test
+    @DataSet(provider = CompositeDataSetProvider.class)
+    public void shouldSeedDataSetUsingCompositeDataSetProvider() {
+        List<User> users = EntityManagerProvider.em().createQuery("select u from User u ").getResultList();
+        assertThat(users).
+                isNotNull().
+                isNotEmpty().hasSize(2).
+                extracting("name").
+                contains("@dbunit", "@dbrider");
         Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = 'abcdef12345'").getSingleResult();
         assertThat(tweet).isNotNull()
         .extracting("content")
@@ -151,6 +167,18 @@ public class DataSetProviderIt {
                 .with("DATE", "[DAY,NOW]").add();
             return builder.build();
         }
+    }
+    
+    
+    public static class CompositeDataSetProvider implements DataSetProvider {
+
+        @Override
+        public IDataSet provide() throws DataSetException {
+            IDataSet userDataSet = new UserDataSetProvider().provide();
+            IDataSet tweetDataSet = new TweetDataSetProvider().provide();
+            return new CompositeDataSet(userDataSet, tweetDataSet);
+        }
+
     }
 
 }

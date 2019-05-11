@@ -179,9 +179,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             DataSetProvider dataSetProvider = provider.newInstance();
             return dataSetProvider.provide();
         } catch (Exception e) {
-            throw new RuntimeException("Could not load dataset from provider: "+provider.getName());
+            throw new RuntimeException("Could not load dataset from provider: "+provider.getName(), e);
         }
-
     }
 
     private DatabaseOperation getOperation(DataSetConfig dataSetConfig) throws SQLException {
