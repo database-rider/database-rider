@@ -81,7 +81,6 @@ public class DataSetProcessor {
         dataSetExecutor.createDataSet(dataSetConfig);
     }
 
-
     private boolean isHibernatePresentOnClasspath() {
         try {
             Class.forName("org.hibernate.Session");

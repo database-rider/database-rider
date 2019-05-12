@@ -10,7 +10,11 @@ import javax.persistence.EntityManager;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.cdi.api.DBUnitInterceptor;
 import com.github.database.rider.cdi.model.User;
+import com.github.database.rider.core.api.dataset.DataSetProvider;
+import com.github.database.rider.core.dataset.builder.DataSetBuilder;
 import org.apache.deltaspike.testcontrol.api.junit.CdiTestRunner;
+import org.dbunit.dataset.DataSetException;
+import org.dbunit.dataset.IDataSet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -28,6 +32,13 @@ public class CrudCDIIt {
     @Test
 	@DataSet("yml/users.yml")
 	public void shouldListUsers() {
+		List<User> users = em.createQuery("select u from User u").getResultList();
+		assertThat(users).isNotNull().isNotEmpty().hasSize(2);
+	}
+
+	@Test
+	@DataSet(provider = UserDataSetProvider.class)
+	public void shouldListUsersUsingDataSetProvider() {
 		List<User> users = em.createQuery("select u from User u").getResultList();
 		assertThat(users).isNotNull().isNotEmpty().hasSize(2);
 	}
@@ -93,5 +104,18 @@ public class CrudCDIIt {
 	public User getUser(Integer id){
 		return (User) em.createQuery("select u from User u where u.id = :id").
 				setParameter("id", id).getSingleResult();
+	}
+
+	public static class UserDataSetProvider implements DataSetProvider {
+
+		@Override
+		public IDataSet provide() throws DataSetException {
+			DataSetBuilder builder = new DataSetBuilder();
+			builder.row("user").column("id", 1)
+					.column("name", "@dbunit").add()
+					.row("user").column("id", 2)
+					.column("name", "@dbrider").add();
+			return builder.build();
+		}
 	}
 }
