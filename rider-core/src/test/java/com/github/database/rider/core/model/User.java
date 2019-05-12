@@ -14,7 +14,6 @@ public class User {
     @GeneratedValue
     private long id;
 
-    @Column
     private String name;
 
     @OneToMany(mappedBy = "user")

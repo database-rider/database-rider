@@ -1,5 +1,6 @@
 package com.github.database.rider.core.dataset.builder;
 
+import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.replacers.DateTimeReplacer;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DataSetException;
@@ -15,17 +16,19 @@ import javax.persistence.metamodel.Attribute;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
 import static com.github.database.rider.core.util.EntityManagerProvider.em;
 import static com.github.database.rider.core.util.EntityManagerProvider.isEntityManagerActive;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author rmpestano
  */
 public class RiderDataRowBuilder extends DataRowBuilder {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataSetExecutorImpl.class);
 
     private boolean uppercase;
 
@@ -105,7 +108,7 @@ public class RiderDataRowBuilder extends DataRowBuilder {
                 columnName = entityMetadata.getPropertyColumnNames(column.getName())[0];
             }
         }catch (Exception e) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, String.format("Could not extract database column name from column %s and type %s",column.getName(), column.getDeclaringType().getJavaType().getName()));
+            LOGGER.error("Could not extract database column name from column {} and type {}",column.getName(), column.getDeclaringType().getJavaType().getName(), e);
         }
         if(columnName == null) {
             columnName = uppercase ? column.getName().toUpperCase() : column.getName();

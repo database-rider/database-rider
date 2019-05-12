@@ -232,7 +232,7 @@ public class DataSetConfig {
         for (String dataset : datasets) {
             sb.append(dataset).append(", ");
         }
-        if(provider != null && !provider.isInterface()) {
+        if(hasDataSetProvider()) {
             sb.append("dataset provider: "+provider.getName()).append(", ");
         }
         if(sb.toString().contains(",")){
@@ -240,11 +240,16 @@ public class DataSetConfig {
         }
         return sb.toString().trim();
     }
+    
+    /**
+     * 
+     * @return true if dataset provider is not null and is not an interface (which means user has provided an implementation)
+     */
+    public boolean hasDataSetProvider() {
+        return provider != null && !provider.isInterface();
+    }
 
     public boolean hasDataSets() {
-        if(provider != null && !provider.isInterface()) {
-            return true;
-        }
         if((datasets == null || datasets.length == 0)){
             return false;
         }

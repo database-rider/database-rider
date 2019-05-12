@@ -143,10 +143,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         executeScript(dataSetConfig.getExecuteScriptsBefore()[i]);
                     }
                 }
-                if (dataSetConfig.hasDataSets()) {
+                if (dataSetConfig.hasDataSets() || dataSetConfig.hasDataSetProvider()) {
                     IDataSet resultingDataSet = null;
-                    if (dataSetConfig.getProvider() == null ||
-                            dataSetConfig.getProvider().isInterface()) { //when provider is an interface it means no one implemented it (default annotation value is dataset provider interface)
+                    if (dataSetConfig.hasDataSetProvider()) { 
                         resultingDataSet = loadDataSets(dataSetConfig.getDatasets());
                     } else {
                         resultingDataSet = loadDataSetFromDataSetProvider(dataSetConfig.getProvider());
@@ -809,9 +808,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         }
         try {
             current = getRiderDataSource().getDBUnitConnection().createDataSet();
-            if(expectedDataSetConfig.getProvider() != null && !expectedDataSetConfig.getProvider().isInterface()) {
+            if(expectedDataSetConfig.hasDataSetProvider()) {
                 expected = loadDataSetFromDataSetProvider(expectedDataSetConfig.getProvider());
-            } else if(expectedDataSetConfig.getDatasets() != null && expectedDataSetConfig.getDatasets().length > 0) {
+            } else if(expectedDataSetConfig.hasDataSets()) {
                 expected = loadDataSets(expectedDataSetConfig.getDatasets());
             }
             if(expected == null) {
