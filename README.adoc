@@ -936,16 +936,15 @@ public class UserDataSetProvider implements DataSetProvider {
 
         @Override
         public IDataSet provide() throws DataSetException {
-            RiderDataSetBuilder builder = new RiderDataSetBuilder(true); <1>
-            builder.newRow("user").with("id", 1)
+            DataSetBuilder builder = new DataSetBuilder();
+            builder.row("user").column("id", 1)
                     .with("name", "@dbunit").add()
-                    .newRow("user").with("id", 2)
-                    .with("name", "@dbrider").add();
+                    .row("user").column("id", 2)
+                    .column("name", "@dbrider").add();
             return builder.build();
         }
     }
 ----
-<1> The `boolean` parameter means table name and columns will be in uppercase on generated dataset.
 +
 The above DataSet provider will generate a dataset for `USER` table with 2 rows.
 +
