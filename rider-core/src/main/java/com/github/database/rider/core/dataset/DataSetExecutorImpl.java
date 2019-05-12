@@ -529,28 +529,20 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     @Override
+    public int hashCode() {
+        return 17 * (executorId == null ? 0 : executorId.hashCode());
+    }
+
+    @Override
     public boolean equals(Object other) {
-        if (other instanceof DataSetExecutorImpl == false) {
+        if (!(other instanceof DataSetExecutorImpl)) {
             return false;
         }
         DataSetExecutorImpl otherExecutor = (DataSetExecutorImpl) other;
-        if (riderDataSource == null || otherExecutor.riderDataSource == null) {
+        if(executorId == null || otherExecutor.getExecutorId() == null) {
             return false;
         }
-        try {
-            if (riderDataSource.getDBUnitConnection().getConnection() == null
-                    || otherExecutor.riderDataSource.getDBUnitConnection().getConnection() == null) {
-                return false;
-            }
-            if (!riderDataSource.getDBUnitConnection().getConnection().getMetaData().getURL().equals(
-                    otherExecutor.riderDataSource.getDBUnitConnection().getConnection().getMetaData().getURL())) {
-                return false;
-            }
-        } catch (Exception e) {
-            return false;
-        }
-
-        return true;
+        return executorId.equals(otherExecutor.getExecutorId());
     }
 
     @Override
