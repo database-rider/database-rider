@@ -145,7 +145,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 }
                 if (dataSetConfig.hasDataSets() || dataSetConfig.hasDataSetProvider()) {
                     IDataSet resultingDataSet = null;
-                    if (dataSetConfig.hasDataSetProvider()) { 
+                    if (dataSetConfig.hasDataSets()) { 
                         resultingDataSet = loadDataSets(dataSetConfig.getDatasets());
                     } else {
                         resultingDataSet = loadDataSetFromDataSetProvider(dataSetConfig.getProvider());
