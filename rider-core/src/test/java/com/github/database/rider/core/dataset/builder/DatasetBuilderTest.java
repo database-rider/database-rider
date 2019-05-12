@@ -7,7 +7,6 @@ import com.github.database.rider.core.replacers.DateTimeReplacer;
 import com.github.database.rider.core.util.EntityManagerProvider;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.builder.ColumnSpec;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,17 +30,17 @@ public class DatasetBuilderTest {
 
     @Test
     public void shouldGenerateYamlDataSet() throws DataSetException, IOException {
-        RiderDataSetBuilder builder = new RiderDataSetBuilder();
-        ColumnSpec<Integer> id = ColumnSpec.newColumn("ID");
-        builder.newRow("USER").with("ID", 1)
-                .with("NAME", "@realpestano")
-                .add().newRow("USER")
-                .with(id, 2).with("NAME", "@dbunit")
-                .add().newRow("TWEET")
-                .with("ID", "abcdef12345").with("CONTENT", "dbunit rules!")
-                .with("DATE", "[DAY,NOW]")
-                .add().newRow("FOLLOWER").with(id, 1)
-                .with("USER_ID", 1).with("FOLLOWER_ID", 2)
+        DataSetBuilder builder = new DataSetBuilder();
+        ColumnSpec id = ColumnSpec.of("ID");
+        builder.row("USER").column("ID", 1)
+                .column("NAME", "@realpestano")
+                .add().row("USER")
+                .column(id, 2).column("NAME", "@dbunit")
+                .add().row("TWEET")
+                .column("ID", "abcdef12345").column("CONTENT", "dbunit rules!")
+                .column("DATE", "[DAY,NOW]")
+                .add().row("FOLLOWER").column(id, 1)
+                .column("USER_ID", 1).column("FOLLOWER_ID", 2)
                 .add().build();
 
         IDataSet dataSet = builder.build();
@@ -68,17 +67,17 @@ public class DatasetBuilderTest {
 
     @Test
     public void shouldGenerateJsonDataSet() throws DataSetException, IOException {
-        RiderDataSetBuilder builder = new RiderDataSetBuilder();
-        ColumnSpec<Integer> id = ColumnSpec.newColumn("ID");
-        builder.newRow("USER").with("ID", 1)
-                .with("NAME", "@realpestano")
-                .add().newRow("USER")
-                .with(id, 2).with("NAME", "@dbunit")
-                .add().newRow("TWEET")
-                .with("ID", "abcdef12345").with("CONTENT", "dbunit rules!")
-                .with("DATE", "[DAY,NOW]")
-                .add().newRow("FOLLOWER").with(id, 1)
-                .with("USER_ID", 1).with("FOLLOWER_ID", 2)
+        DataSetBuilder builder = new DataSetBuilder();
+        ColumnSpec id = ColumnSpec.of("ID");
+        builder.row("USER").column("ID", 1)
+                .column("NAME", "@realpestano")
+                .add().row("USER")
+                .column(id, 2).column("NAME", "@dbunit")
+                .add().row("TWEET")
+                .column("ID", "abcdef12345").column("CONTENT", "dbunit rules!")
+                .column("DATE", "[DAY,NOW]")
+                .add().row("FOLLOWER").column(id, 1)
+                .column("USER_ID", 1).column("FOLLOWER_ID", 2)
                 .add().build();
 
         IDataSet dataSet = builder.build();
@@ -118,17 +117,17 @@ public class DatasetBuilderTest {
 
     @Test
     public void shouldGenerateFlatXmlDataSet() throws DataSetException, IOException {
-        RiderDataSetBuilder builder = new RiderDataSetBuilder();
-        ColumnSpec<Integer> id = ColumnSpec.newColumn("ID");
-        builder.newRow("USER").with("ID", 1)
-                .with("NAME", "@realpestano")
-                .add().newRow("USER")
-                .with(id, 2).with("NAME", "@dbunit")
-                .add().newRow("TWEET")
-                .with("ID", "abcdef12345").with("CONTENT", "dbunit rules!")
-                .with("DATE", "[DAY,NOW]")
-                .add().newRow("FOLLOWER").with(id, 1)
-                .with("USER_ID", 1).with("FOLLOWER_ID", 2)
+        DataSetBuilder builder = new DataSetBuilder();
+        ColumnSpec id = ColumnSpec.of("ID");
+        builder.row("USER").column("ID", 1)
+                .column("NAME", "@realpestano")
+                .add().row("USER")
+                .column(id, 2).column("NAME", "@dbunit")
+                .add().row("TWEET")
+                .column("ID", "abcdef12345").column("CONTENT", "dbunit rules!")
+                .column("DATE", "[DAY,NOW]")
+                .add().row("FOLLOWER").column(id, 1)
+                .column("USER_ID", 1).column("FOLLOWER_ID", 2)
                 .add().build();
 
         IDataSet dataSet = builder.build();
@@ -148,15 +147,15 @@ public class DatasetBuilderTest {
     }
 
     @Test
-    public void shouldGenerateDataSetWithDateColumn() throws DataSetException, IOException {
-        RiderDataSetBuilder builder = new RiderDataSetBuilder();
+    public void shouldGenerateDataSetcolumnDateColumn() throws DataSetException, IOException {
+        DataSetBuilder builder = new DataSetBuilder();
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.YEAR, 1);
         Date date = new Date();
 
-        IDataSet dataSet = builder.newRow("USER").with("ID", 1)
-                .with("DATE", date)
-                .with("CALENDAR", calendar)
+        IDataSet dataSet = builder.row("USER").column("ID", 1)
+                .column("DATE", date)
+                .column("CALENDAR", calendar)
                 .add().build();
 
 
@@ -177,15 +176,16 @@ public class DatasetBuilderTest {
     public void shouldGenerateDataSetUsingMetaModel() throws DataSetException, IOException {
 
         EntityManagerProvider.instance("contactPU");
-        RiderDataSetBuilder builder = new RiderDataSetBuilder();
+        DataSetBuilder builder = new DataSetBuilder();
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.YEAR, 1);
         Date date = new Date();
 
-        IDataSet dataSet = builder.newRow("CONTACT").with(Contact_.id, 1)
-                .with(Contact_.name, "dbrider")
-                .with(Contact_.date,date )
-                .with(Contact_.calendar, calendar)
+        IDataSet dataSet = builder.row("CONTACT")
+                .column(Contact_.id, 1)
+                .column(Contact_.name, "dbrider")
+                .column(Contact_.date,date )
+                .column(Contact_.calendar, calendar)
                 .add().build();
 
 
@@ -205,17 +205,17 @@ public class DatasetBuilderTest {
 
     @Test
     public void shouldGenerateUppercaseYamlDataSet() throws DataSetException, IOException {
-        RiderDataSetBuilder builder = new RiderDataSetBuilder(true);
-        ColumnSpec<Integer> id = ColumnSpec.newColumn("id");
-        builder.newRow("user").with("id", 1)
-                .with("name", "@realpestano")
-                .add().newRow("user")
-                .with(id, 2).with("name", "@dbunit")
-                .add().newRow("tweet")
-                .with("id", "abcdef12345").with("content", "dbunit rules!")
-                .with("date", "[DAY,NOW]")
-                .add().newRow("follower").with(id, 1)
-                .with("user_id", 1).with("follower_id", 2)
+        DataSetBuilder builder = new DataSetBuilder();
+        ColumnSpec id = ColumnSpec.of("id");
+        builder.row("user").column(id, 1)
+                .column("name", "@realpestano")
+                .add().row("user")
+                .column(id, 2).column("name", "@dbunit")
+                .add().row("tweet")
+                .column("id", "abcdef12345").column("content", "dbunit rules!")
+                .column("date", "[DAY,NOW]")
+                .add().row("follower").column(id, 1)
+                .column("user_id", 1).column("follower_id", 2)
                 .add().build();
 
         IDataSet dataSet = builder.build();

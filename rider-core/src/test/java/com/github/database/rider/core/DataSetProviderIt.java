@@ -8,14 +8,13 @@ import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.connection.ConnectionHolderImpl;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
-import com.github.database.rider.core.dataset.builder.RiderDataSetBuilder;
+import com.github.database.rider.core.dataset.builder.ColumnSpec;
+import com.github.database.rider.core.dataset.builder.DataSetBuilder;
 import com.github.database.rider.core.model.Tweet;
-import com.github.database.rider.core.model.User_;
 import com.github.database.rider.core.model.User;
+import com.github.database.rider.core.model.User_;
 import com.github.database.rider.core.util.EntityManagerProvider;
-import static com.github.database.rider.core.util.EntityManagerProvider.em;
-import java.sql.Connection;
-import java.sql.SQLException;
+import org.dbunit.dataset.CompositeDataSet;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.junit.Rule;
@@ -23,11 +22,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
+import static com.github.database.rider.core.util.EntityManagerProvider.em;
 import static org.assertj.core.api.Assertions.assertThat;
-import org.dbunit.dataset.CompositeDataSet;
-import org.dbunit.dataset.builder.ColumnSpec;
 
 @RunWith(JUnit4.class)
 @DataSet(provider = TweetDataSetProvider.class, cleanBefore = true)
@@ -125,11 +125,11 @@ public class DataSetProviderIt {
 
         @Override
         public IDataSet provide() throws DataSetException {
-            RiderDataSetBuilder builder = new RiderDataSetBuilder(true);
-            builder.newRow("user").with("id", 1)
-                .with("name", "@dbunit").add()
-                .newRow("user").with("id", 2)
-                .with("name", "@dbrider").add();
+            DataSetBuilder builder = new DataSetBuilder();
+            builder.row("user").column("id", 1)
+                .column("name", "@dbunit").add()
+                .row("user").column("id", 2)
+                .column("name", "@dbrider").add();
             return builder.build();
         }
     }
@@ -138,18 +138,18 @@ public class DataSetProviderIt {
 
         @Override
         public IDataSet provide() throws DataSetException {
-            RiderDataSetBuilder builder = new RiderDataSetBuilder();
-            ColumnSpec<Integer> id = ColumnSpec.newColumn("ID");
-            ColumnSpec<String> name = ColumnSpec.newColumn("NAME");
-            builder.newRow("USER").with("ID", 1)
-                .with(name, "@realpestano")
-                .add().newRow("USER")
-                .with(id, 2).with("NAME", "@dbunit")
-                .add().newRow("TWEET")
-                .with("ID", "abcdef12345").with("CONTENT", "dbunit rules!")
-                .with("DATE", "[DAY,NOW]")
-                .add().newRow("FOLLOWER").with(id, 1)
-                .with("USER_ID", 9999).with("FOLLOWER_ID", 9999)
+            DataSetBuilder builder = new DataSetBuilder();
+            ColumnSpec id = ColumnSpec.of("ID");
+            ColumnSpec name = ColumnSpec.of("NAME");
+            builder.row("USER").column("ID", 1)
+                .column(name, "@realpestano")
+                .add().row("USER")
+                .column(id, 2).column("NAME", "@dbunit")
+                .add().row("TWEET")
+                .column("ID", "abcdef12345").column("CONTENT", "dbunit rules!")
+                .column("DATE", "[DAY,NOW]")
+                .add().row("FOLLOWER").column(id, 1)
+                .column("USER_ID", 9999).column("FOLLOWER_ID", 9999)
                 .add().build();
 
             return builder.build();
@@ -160,11 +160,11 @@ public class DataSetProviderIt {
 
         @Override
         public IDataSet provide() throws DataSetException {
-            RiderDataSetBuilder builder = new RiderDataSetBuilder(true);
-            builder.newRow("user").with(User_.id, 1)
-                .with(User_.name, "@dbunit").add()
-                .newRow("user").with(User_.id, 2)
-                .with(User_.name, "@dbrider").add();
+            DataSetBuilder builder = new DataSetBuilder();
+            builder.row("user").column(User_.id, 1)
+                .column(User_.name, "@dbunit").add()
+                .row("user").column(User_.id, 2)
+                .column(User_.name, "@dbrider").add();
             return builder.build();
         }
     }
@@ -173,9 +173,9 @@ public class DataSetProviderIt {
 
         @Override
         public IDataSet provide() throws DataSetException {
-            RiderDataSetBuilder builder = new RiderDataSetBuilder(true);
-            builder.newRow("user").with("id", 2)
-                .with("name", "@dbrider").add();
+            DataSetBuilder builder = new DataSetBuilder();
+            builder.row("user").column("id", 2)
+                .column("name", "@dbrider").add();
             return builder.build();
         }
     }
@@ -184,10 +184,10 @@ public class DataSetProviderIt {
 
         @Override
         public IDataSet provide() throws DataSetException {
-            RiderDataSetBuilder builder = new RiderDataSetBuilder(true);
-            builder.newRow("TWEET")
-                .with("ID", "abcdef12345").with("CONTENT", "dbrider rules!")
-                .with("DATE", "[DAY,NOW]").add();
+            DataSetBuilder builder = new DataSetBuilder();
+            builder.row("TWEET")
+                .column("ID", "abcdef12345").column("CONTENT", "dbrider rules!")
+                .column("DATE", "[DAY,NOW]").add();
             return builder.build();
         }
     }

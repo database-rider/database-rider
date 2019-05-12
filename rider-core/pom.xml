@@ -105,18 +105,6 @@
             <version>6.1.0.jre8</version>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>de.ppi.dbunit.datasetbuilder</groupId>
-            <artifactId>dbunit-datasetbuilder</artifactId>
-            <version>1.4</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.dbunit</groupId>
-                    <artifactId>dbunit</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
     </dependencies>
 
     <build>
