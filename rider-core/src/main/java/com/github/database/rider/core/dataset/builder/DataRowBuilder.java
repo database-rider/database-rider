@@ -1,6 +1,7 @@
 package com.github.database.rider.core.dataset.builder;
 
 import com.github.database.rider.core.replacers.DateTimeReplacer;
+import com.github.database.rider.core.util.DateUtils;
 import org.dbunit.dataset.DataSetException;
 import org.eclipse.persistence.internal.jpa.metamodel.AttributeImpl;
 import org.hibernate.SessionFactory;
@@ -28,12 +29,12 @@ public class DataRowBuilder extends BasicDataRowBuilder {
     }
 
     public DataRowBuilder column(String columnName, Date value) {
-        put(columnName, DateTimeReplacer.DBUNIT_DATE_FORMAT.format(value));
+        put(columnName, DateUtils.format(value));
         return this;
     }
 
     public DataRowBuilder column(String columnName, Calendar value) {
-        put(columnName, DateTimeReplacer.DBUNIT_DATE_FORMAT.format(value.getTime()));
+        put(columnName, DateUtils.format(value.getTime()));
         return this;
     }
 

@@ -4,7 +4,7 @@ public class ColumnSpec {
 
 	private final String name;
 
-	public static <T> ColumnSpec of(String name) {
+	public static ColumnSpec of(String name) {
 		return new ColumnSpec(name);
 	}
 

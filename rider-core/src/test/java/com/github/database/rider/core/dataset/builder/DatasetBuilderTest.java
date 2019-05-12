@@ -4,6 +4,7 @@ import com.github.database.rider.core.dataset.writer.JSONWriter;
 import com.github.database.rider.core.dataset.writer.YMLWriter;
 import com.github.database.rider.core.metamodel.Contact_;
 import com.github.database.rider.core.replacers.DateTimeReplacer;
+import com.github.database.rider.core.util.DateUtils;
 import com.github.database.rider.core.util.EntityManagerProvider;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
@@ -167,8 +168,8 @@ public class DatasetBuilderTest {
         assertThat(contentOf(datasetFile)).
                 contains("USER:" + NEW_LINE +
                         "  - ID: 1" + NEW_LINE +
-                        "    DATE: \"" + DateTimeReplacer.DBUNIT_DATE_FORMAT.format(date) +"\"" + NEW_LINE +
-                        "    CALENDAR: \"" + DateTimeReplacer.DBUNIT_DATE_FORMAT.format(calendar.getTime()) +"\"" + NEW_LINE +
+                        "    DATE: \"" + DateUtils.format(date) +"\"" + NEW_LINE +
+                        "    CALENDAR: \"" + DateUtils.format(calendar.getTime()) +"\"" + NEW_LINE +
                         "");
     }
 
@@ -198,8 +199,8 @@ public class DatasetBuilderTest {
                 contains("CONTACT:" + NEW_LINE +
                         "  - ID: 1" + NEW_LINE +
                         "    NAME: \"dbrider\"" + NEW_LINE +
-                        "    DATE: \"" + DateTimeReplacer.DBUNIT_DATE_FORMAT.format(date) +"\"" + NEW_LINE +
-                        "    CALENDAR: \"" + DateTimeReplacer.DBUNIT_DATE_FORMAT.format(calendar.getTime()) +"\"" + NEW_LINE +
+                        "    DATE: \"" + DateUtils.format(date) +"\"" + NEW_LINE +
+                        "    CALENDAR: \"" + DateUtils.format(calendar.getTime()) +"\"" + NEW_LINE +
                         "");
     }
 
