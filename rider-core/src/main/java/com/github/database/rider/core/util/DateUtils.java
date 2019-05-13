@@ -6,14 +6,14 @@ import java.util.Date;
 
 public class DateUtils {
 
-    private static final SimpleDateFormat DBUNIT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final String DBUNIT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
 
-    public static synchronized String format(Date date) {
-        return DBUNIT_DATE_FORMAT.format(date);
+    public static String format(Date date) {
+        return new SimpleDateFormat(DBUNIT_DATE_FORMAT).format(date);
     }
 
-    public static synchronized String format(Calendar date) {
+    public static String format(Calendar date) {
         return format(date.getTime());
     }
 }
