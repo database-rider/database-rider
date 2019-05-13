@@ -49,7 +49,7 @@ public class DataSetBuilder {
             config = DBUnitConfig.fromGlobalConfig();
         } catch (DataSetException e) {
             LOGGER.error("Could not create DataSetBuilder.", e);
-            throw new RuntimeException("Could not create DataSetBuilder.");
+            throw new RuntimeException("Could not create DataSetBuilder.", e);
         }
     }
 
@@ -57,24 +57,31 @@ public class DataSetBuilder {
         return new DataRowBuilder(this, tableName);
     }
 
-    public IDataSet build() throws DataSetException {
-        endTableIfNecessary();
-        consumer.endDataSet();
-        return dataSet;
+    public IDataSet build()  {
+        try {
+            endTableIfNecessary();
+            consumer.endDataSet();
+            return dataSet;
+        }catch (DataSetException e) {
+            LOGGER.error("Could not create dataset.", e);
+            throw new RuntimeException("Could not create DataSet.", e);
+        }
     }
 
-    public void addDataSet(final IDataSet newDataSet) throws DataSetException {
+    public DataSetBuilder addDataSet(final IDataSet newDataSet) throws DataSetException {
         IDataSet[] dataSets = { build(), newDataSet };
         CompositeDataSet composite = new CompositeDataSet(dataSets);
         this.dataSet = new CachedDataSet(composite);
         consumer = new BufferedConsumer(this.dataSet);
+        return this;
     }
 
 
-    public void add(BasicDataRowBuilder row) throws DataSetException {
+    public DataSetBuilder add(BasicDataRowBuilder row) throws DataSetException {
         ITableMetaData metaData = updateTableMetaData(row);
         Object[] values = extractValues(row, metaData);
         notifyConsumer(values);
+        return this;
     }
 
     private Object[] extractValues(BasicDataRowBuilder row, ITableMetaData metaData) throws DataSetException {

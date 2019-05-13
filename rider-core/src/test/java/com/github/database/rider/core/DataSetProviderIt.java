@@ -9,6 +9,7 @@ import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.connection.ConnectionHolderImpl;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.dataset.builder.ColumnSpec;
+import com.github.database.rider.core.dataset.builder.DataRowBuilder;
 import com.github.database.rider.core.dataset.builder.DataSetBuilder;
 import com.github.database.rider.core.model.Tweet;
 import com.github.database.rider.core.model.User;
@@ -121,6 +122,21 @@ public class DataSetProviderIt {
 
     }
 
+    @Test
+    @DataSet(provider = ReuseRowsAndDataSetsProvider.class)
+    public void shouldReuseRowsAndDataSets() {
+        List<User> users = EntityManagerProvider.em().createQuery("select u from User u ").getResultList();
+        assertThat(users).
+                isNotNull().
+                isNotEmpty().hasSize(2).
+                extracting("name").
+                contains("user1", "user2");
+        Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = 'abcdef12345'").getSingleResult();
+        assertThat(tweet).isNotNull()
+                .extracting("content")
+                .contains("dbrider rules!");
+    }
+
     public static class UserDataSetProvider implements DataSetProvider {
 
         @Override
@@ -199,6 +215,26 @@ public class DataSetProviderIt {
             IDataSet userDataSet = new UserDataSetProvider().provide();
             IDataSet tweetDataSet = new TweetDataSetProvider().provide();
             return new CompositeDataSet(userDataSet, tweetDataSet);
+        }
+
+    }
+
+    public static class ReuseRowsAndDataSetsProvider implements DataSetProvider {
+
+        @Override
+        public IDataSet provide() throws DataSetException {
+            DataSetBuilder builder = new DataSetBuilder();
+            DataRowBuilder user1Row = new DataSetBuilder().row("USER")
+                    .column("id", "1")
+                    .column("name", "user1");
+            DataRowBuilder user2Row = new DataSetBuilder().row("USER")
+                    .column("id", "2")
+                    .column("name", "user2");
+
+            IDataSet iDataSet = builder.add(user1Row).add(user2Row)
+                    .addDataSet(new TweetDataSetProvider().provide())
+                    .build();
+            return iDataSet;
         }
 
     }
