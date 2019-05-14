@@ -174,7 +174,7 @@ public class DataSetProviderIt {
             ColumnSpec name = ColumnSpec.of("NAME");
             IDataSet dataSet = builder.table("USER").column("ID", 1)
                 .column(name, "@realpestano")
-                .table("USER")
+                .row()
                 .column(id, 2).column("NAME", "@dbunit")
                 .table("TWEET")
                 .column("ID", "abcdef12345").column("CONTENT", "dbunit rules!")
@@ -194,7 +194,7 @@ public class DataSetProviderIt {
             DataSetBuilder builder = new DataSetBuilder();
             builder.table("user").column(User_.id, 1)
                 .column(User_.name, "@dbunit")
-                .table("user").column(User_.id, 2)
+                .row().column(User_.id, 2)
                 .column(User_.name, "@dbrider");
             return builder.build();
         }
@@ -263,7 +263,7 @@ public class DataSetProviderIt {
             ColumnSpec id = ColumnSpec.of("ID");
             return builder.table("USER").column(id, 1)
                     .column("NAME", "@realpestano")
-                    .table("USER")
+                    .row()
                     .column(id, 2)
                     .build();
         }
