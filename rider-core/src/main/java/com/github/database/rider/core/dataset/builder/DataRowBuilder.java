@@ -91,9 +91,11 @@ public class DataRowBuilder extends BasicDataRowBuilder {
     }
 
     public DataRowBuilder row() {
-        saveCurrentRow();
-        dataSet.getCurrentRowBuilder().setAdded(false);
-        columnNameToValue.clear();
+        if(!columnNameToValue.isEmpty()) {
+            saveCurrentRow();
+            dataSet.getCurrentRowBuilder().setAdded(false);
+            columnNameToValue.clear();
+        }
         return dataSet.getCurrentRowBuilder();
     }
 
