@@ -33,10 +33,10 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static com.github.database.rider.core.dataset.builder.BuilderUtil.convertCase;
 import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
 
 public class BasicDataRowBuilder {
-
 
     private final String tableName;
     protected final DBUnitConfig config;
@@ -45,9 +45,8 @@ public class BasicDataRowBuilder {
 
     public BasicDataRowBuilder(String tableName) {
         this.config = DBUnitConfig.fromGlobalConfig();
-        this.tableName = BuilderUtil.convertCase(tableName,config);
+        this.tableName = convertCase(tableName,config);
     }
-
 
     /**
      * Added the column to the Data.
@@ -57,7 +56,7 @@ public class BasicDataRowBuilder {
      * @return the current object.
      */
     public BasicDataRowBuilder column(String columnName, Object value) {
-        columnNameToValue.put(BuilderUtil.convertCase(columnName, config), value);
+        columnNameToValue.put(convertCase(columnName, config), value);
         return this;
     }
 
@@ -123,7 +122,7 @@ public class BasicDataRowBuilder {
     }
 
     protected void put(String columnName, Object value) {
-        columnNameToValue.put(BuilderUtil.convertCase(columnName, config), value);
+        columnNameToValue.put(convertCase(columnName, config), value);
     }
 
     protected Object getValue(Column column) {
@@ -133,7 +132,6 @@ public class BasicDataRowBuilder {
     protected Object getValue(String columnName) {
         return columnNameToValue.get(columnName);
     }
-
 
     protected boolean existsValue(String columnName) {
         return columnNameToValue.containsKey(columnName);

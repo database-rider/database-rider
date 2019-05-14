@@ -1,8 +1,7 @@
 package com.github.database.rider.core.dataset.builder;
 
-import com.github.database.rider.core.replacers.DateTimeReplacer;
 import com.github.database.rider.core.util.DateUtils;
-import org.dbunit.dataset.DataSetException;
+import org.dbunit.dataset.IDataSet;
 import org.eclipse.persistence.internal.jpa.metamodel.AttributeImpl;
 import org.hibernate.SessionFactory;
 import org.hibernate.persister.entity.AbstractEntityPersister;
@@ -17,6 +16,7 @@ import static com.github.database.rider.core.util.EntityManagerProvider.isEntity
 public class DataRowBuilder extends BasicDataRowBuilder {
 
     private final DataSetBuilder dataSet;
+    private boolean added;
 
     protected DataRowBuilder(DataSetBuilder dataSet, String tableName) {
         super(tableName);
@@ -77,9 +77,39 @@ public class DataRowBuilder extends BasicDataRowBuilder {
         return column(columnName, value);
     }
 
-    public DataSetBuilder add() throws DataSetException {
-        dataSet.add(this);
-        return dataSet;
+    /**
+     * @param tableName
+     * @return
+     */
+    public DataRowBuilder row(String tableName) {
+        saveCurrentRow(); //save current row  every time a new row is started
+        DataRowBuilder dataRowBuilder = new DataRowBuilder(dataSet, tableName);
+        dataSet.setCurrentRowBuilder(dataRowBuilder);
+        return dataRowBuilder;
     }
 
+
+    private void saveCurrentRow() {
+        added = true;
+        dataSet.add(this);
+    }
+
+    /**
+     * Just a shortcut to build method
+     *
+     */
+    public IDataSet build() {
+        return dataSet.build();
+    }
+
+    /**
+     * indicates wheater current row was added to the dataset being build
+     */
+    protected boolean isAdded() {
+        return added;
+    }
+
+    public void setAdded(boolean added) {
+        this.added = added;
+    }
 }

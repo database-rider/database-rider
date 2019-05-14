@@ -105,6 +105,12 @@
             <version>6.1.0.jre8</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.21</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -121,11 +127,6 @@
                         <include>**/*Test.java</include>
                         <include>**/*Bdd.java</include>
                     </includes>
-                    <systemPropertyVariables>
-                        <java.util.logging.config.file>
-                            src/test/resources/logging.properties
-                        </java.util.logging.config.file>
-                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>

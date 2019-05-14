@@ -30,16 +30,17 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.github.database.rider.core.dataset.builder.BuilderUtil.*;
+import static com.github.database.rider.core.dataset.builder.BuilderUtil.convertCase;
 
 public class DataSetBuilder {
 
     private CachedDataSet dataSet = new CachedDataSet();
     private IDataSetConsumer consumer = new BufferedConsumer(dataSet);
     private final Map<String, TableMetaDataBuilder> tableNameToMetaData = new HashMap<>();
-    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass().getName());
     private final DBUnitConfig config;
-
+    private DataRowBuilder currentRowBuilder;
+    private final Map<String, Object> defaultValues = new HashMap<>();
     private String currentTableName;
 
 
@@ -54,33 +55,57 @@ public class DataSetBuilder {
     }
 
     public DataRowBuilder row(String tableName) {
-        return new DataRowBuilder(this, tableName);
+        currentRowBuilder = new DataRowBuilder(this, tableName);
+        return currentRowBuilder;
     }
 
-    public IDataSet build()  {
+    public IDataSet build() {
         try {
+            if (currentRowBuilder != null && !currentRowBuilder.isAdded()) {
+               add(currentRowBuilder);
+               currentRowBuilder.setAdded(true);
+            }
             endTableIfNecessary();
             consumer.endDataSet();
             return dataSet;
-        }catch (DataSetException e) {
+        } catch (DataSetException e) {
             LOGGER.error("Could not create dataset.", e);
             throw new RuntimeException("Could not create DataSet.", e);
         }
     }
 
-    public DataSetBuilder addDataSet(final IDataSet newDataSet) throws DataSetException {
-        IDataSet[] dataSets = { build(), newDataSet };
-        CompositeDataSet composite = new CompositeDataSet(dataSets);
-        this.dataSet = new CachedDataSet(composite);
-        consumer = new BufferedConsumer(this.dataSet);
-        return this;
+    public DataSetBuilder addDataSet(final IDataSet newDataSet) {
+        try {
+            IDataSet[] dataSets = {build(), newDataSet};
+            CompositeDataSet composite = new CompositeDataSet(dataSets);
+            this.dataSet = new CachedDataSet(composite);
+            consumer = new BufferedConsumer(this.dataSet);
+            return this;
+        } catch (DataSetException e) {
+            LOGGER.error("Could not add dataset.", e);
+            throw new RuntimeException("Could not add dataset.", e);
+        }
     }
 
+    /**
+     * Add a row to current dataset
+     * @return
+     */
+    public DataSetBuilder add(BasicDataRowBuilder row) {
+        try {
+            fillUndefinedColumns(row);
+            ITableMetaData metaData = updateTableMetaData(row);
+            Object[] values = extractValues(row, metaData);
+            notifyConsumer(values);
+            return this;
+        } catch (DataSetException e) {
+            LOGGER.error("Could not add dataset row.", e);
+            throw new RuntimeException("Could not add dataset row.", e);
+        }
+    }
 
-    public DataSetBuilder add(BasicDataRowBuilder row) throws DataSetException {
-        ITableMetaData metaData = updateTableMetaData(row);
-        Object[] values = extractValues(row, metaData);
-        notifyConsumer(values);
+    public DataSetBuilder defaultValue(String columnName, Object value) {
+        defaultValues.put(convertCase(columnName, config), value);
         return this;
     }
 
@@ -135,7 +160,7 @@ public class DataSetBuilder {
     }
 
     private boolean isNewTable(String tableName) {
-        return currentTableName == null	|| !convertCase(currentTableName, config).equals(convertCase(tableName, config));
+        return currentTableName == null || !convertCase(currentTableName, config).equals(convertCase(tableName, config));
     }
 
     private TableMetaDataBuilder metaDataBuilderFor(String tableName) {
@@ -158,5 +183,19 @@ public class DataSetBuilder {
 
     private boolean containsKey(String key) {
         return tableNameToMetaData.containsKey(key);
+    }
+
+    public void setCurrentRowBuilder(DataRowBuilder dataRowBuilder) {
+        this.currentRowBuilder = dataRowBuilder;
+    }
+
+    public void fillUndefinedColumns(BasicDataRowBuilder row) {
+        if(!defaultValues.isEmpty()) {
+            for (String column : defaultValues.keySet()) {
+                if (!row.columnNameToValue.containsKey(column)) {
+                    row.columnNameToValue.put(column, defaultValues.get(column));
+                }
+            }
+        }
     }
 }

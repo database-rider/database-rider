@@ -112,9 +112,9 @@ public class CrudCDIIt {
 		public IDataSet provide() throws DataSetException {
 			DataSetBuilder builder = new DataSetBuilder();
 			builder.row("user").column("id", 1)
-					.column("name", "@dbunit").add()
+					.column("name", "@dbunit")
 					.row("user").column("id", 2)
-					.column("name", "@dbrider").add();
+					.column("name", "@dbrider");
 			return builder.build();
 		}
 	}

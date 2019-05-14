@@ -11,6 +11,8 @@ import org.dbunit.dataset.csv.CsvDataSetWriter;
 import org.dbunit.dataset.excel.XlsDataSetWriter;
 import org.dbunit.dataset.xml.FlatDtdDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,8 +24,6 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,7 +45,7 @@ public class DataSetExporter {
     private static final Pattern TABLE_MATCH_PATTERN = Pattern.compile(".*\\s+from\\s+(\\w+(\\.\\w+)?).*",
             Pattern.CASE_INSENSITIVE);
 
-    private static Logger log = Logger.getLogger(DataSetExporter.class.getName());
+    private static Logger log = LoggerFactory.getLogger(DataSetExporter.class.getName());
 
 
     private static DataSetExporter instance;
@@ -165,7 +165,7 @@ public class DataSetExporter {
            log.info("DataSet exported successfully at "+ Paths.get(outputFile).toAbsolutePath().toString());
             
         } catch (Exception e) {
-            log.log(Level.SEVERE, "Could not export dataset.", e);
+            log.error("Could not export dataset.", e);
             throw new RuntimeException("Could not export dataset.", e);
         }
         finally {
@@ -173,14 +173,14 @@ public class DataSetExporter {
                 try {
                     fos.close();
                 } catch (IOException e) {
-                    log.log(Level.SEVERE, "Could not close file output stream.", e);
+                    log.error("Could not close file output stream.", e);
                 }
             }
             if(fosDtd != null){
               try {
                   fosDtd.close();
               } catch (IOException e) {
-                  log.log(Level.SEVERE, "Could not close file output stream for dtd file.", e);
+                  log.error("Could not close file output stream for dtd file.", e);
               }
             }
             //set back default ResultSetTableFactory
@@ -200,12 +200,12 @@ public class DataSetExporter {
                 //gets the first select to extract table
                 Matcher m = TABLE_MATCH_PATTERN.matcher(query.split("(?i)select")[1]);
                 if (!m.matches()) {
-                    log.warning("Unable to parse query. Ignoring '" + query + "'.");
+                    log.warn("Unable to parse query. Ignoring '" + query + "'.");
                 } else {
                     String table = m.group(1);
                     if (targetTables.contains(table)) {
                         //already in includes
-                        log.warning(String.format("Ignoring query %s because its table is already in includedTables.", query));
+                        log.warn(String.format("Ignoring query %s because its table is already in includedTables.", query));
                         continue;
                     } else {
                         dataSet.addTable(table, query);
@@ -213,7 +213,7 @@ public class DataSetExporter {
                 }
             }
         } catch (Exception e) {
-            log.log(Level.SEVERE, String.format("Could not add query due to following error:" + e.getMessage(), e));
+            log.error("Could not add query due to following error.", e);
         }
 
     }

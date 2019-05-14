@@ -108,9 +108,9 @@ public class DataSetProviderIt {
         public IDataSet provide() throws DataSetException {
             DataSetBuilder builder = new DataSetBuilder();
             builder.row("user").column("id", 1)
-                .column("name", "@dbunit").add()
+                .column("name", "@dbunit")
                 .row("user").column("id", 2)
-                .column("name", "@dbrider").add();
+                .column("name", "@dbrider");
             return builder.build();
         }
     }
@@ -124,14 +124,14 @@ public class DataSetProviderIt {
             ColumnSpec name = ColumnSpec.of("NAME");
             builder.row("USER").column("ID", 1)
                 .column(name, "@realpestano")
-                .add().row("USER")
+                .row("USER")
                 .column(id, 2).column("NAME", "@dbunit")
-                .add().row("TWEET")
+                .row("TWEET")
                 .column("ID", "abcdef12345").column("CONTENT", "dbunit rules!")
                 .column("DATE", "[DAY,NOW]")
-                .add().row("FOLLOWER").column(id, 1)
+                .row("FOLLOWER").column(id, 1)
                 .column("USER_ID", 9999).column("FOLLOWER_ID", 9999)
-                .add().build();
+                .build();
 
             return builder.build();
         }
@@ -143,9 +143,9 @@ public class DataSetProviderIt {
         public IDataSet provide() throws DataSetException {
             DataSetBuilder builder = new DataSetBuilder();
             builder.row("user").column(User_.id, 1)
-                .column(User_.name, "@dbunit").add()
+                .column(User_.name, "@dbunit")
                 .row("user").column(User_.id, 2)
-                .column(User_.name, "@dbrider").add();
+                .column(User_.name, "@dbrider");
             return builder.build();
         }
     }
@@ -156,7 +156,7 @@ public class DataSetProviderIt {
         public IDataSet provide() throws DataSetException {
             DataSetBuilder builder = new DataSetBuilder();
             builder.row("user").column("id", 2)
-                .column("name", "@dbrider").add();
+                .column("name", "@dbrider");
             return builder.build();
         }
     }
@@ -168,7 +168,7 @@ public class DataSetProviderIt {
             DataSetBuilder builder = new DataSetBuilder();
             builder.row("TWEET")
                 .column("ID", "abcdef12345").column("CONTENT", "dbrider rules!")
-                .column("DATE", "[DAY,NOW]").add();
+                .column("DATE", "[DAY,NOW]");
             return builder.build();
         }
     }
