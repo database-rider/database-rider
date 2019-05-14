@@ -10,6 +10,7 @@ import javax.persistence.metamodel.Attribute;
 import java.util.Calendar;
 import java.util.Date;
 
+import static com.github.database.rider.core.dataset.builder.BuilderUtil.convertCase;
 import static com.github.database.rider.core.util.EntityManagerProvider.em;
 import static com.github.database.rider.core.util.EntityManagerProvider.isEntityManagerActive;
 
@@ -62,7 +63,7 @@ public class DataRowBuilder extends BasicDataRowBuilder {
             LOGGER.error("Could not extract database column name from column {} and type {}", column.getName(), column.getDeclaringType().getJavaType().getName(), e);
         }
         if (columnName == null) {
-            columnName = BuilderUtil.convertCase(column.getName(), config);
+            columnName = convertCase(column.getName(), config);
         }
         return columnName;
     }
@@ -91,6 +92,7 @@ public class DataRowBuilder extends BasicDataRowBuilder {
 
     public DataRowBuilder row() {
         saveCurrentRow();
+        dataSet.getCurrentRowBuilder().setAdded(false);
         columnNameToValue.clear();
         return dataSet.getCurrentRowBuilder();
     }

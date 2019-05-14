@@ -111,9 +111,9 @@ public class CrudCDIIt {
 		@Override
 		public IDataSet provide() throws DataSetException {
 			DataSetBuilder builder = new DataSetBuilder();
-			builder.row("user").column("id", 1)
+			builder.table("user").column("id", 1)
 					.column("name", "@dbunit")
-					.row("user").column("id", 2)
+					.row().column("id", 2)
 					.column("name", "@dbrider");
 			return builder.build();
 		}

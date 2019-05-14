@@ -54,6 +54,7 @@ public class DataSetProviderIt {
     }
 
     @Test
+    @ExportDataSet(outputName = "out2.yml")
     @DataSet(provider = UserDataSetWithMetaModelProvider.class, cleanBefore = true)
     public void shouldSeedDatabaseProgrammaticallyUsingMetaModel() {
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u ").getResultList();
@@ -192,11 +193,12 @@ public class DataSetProviderIt {
         @Override
         public IDataSet provide()  {
             DataSetBuilder builder = new DataSetBuilder();
-            builder.table("user").column(User_.id, 1)
-                .column(User_.name, "@dbunit")
-                .row().column(User_.id, 2)
-                .column(User_.name, "@dbrider");
-            return builder.build();
+            return builder.table("user")
+                    .column(User_.id, 1)
+                    .column(User_.name, "@dbunit")
+                .row()
+                    .column(User_.id, 2)
+                    .column(User_.name, "@dbrider").build();
         }
     }
 

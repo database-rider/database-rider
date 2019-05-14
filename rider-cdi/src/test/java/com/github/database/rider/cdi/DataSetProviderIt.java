@@ -5,12 +5,8 @@ import com.github.database.rider.cdi.model.Tweet;
 import com.github.database.rider.cdi.model.User;
 import com.github.database.rider.cdi.model.User_;
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.core.api.dataset.DataSetExecutor;
 import com.github.database.rider.core.api.dataset.DataSetProvider;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
-import com.github.database.rider.core.configuration.DataSetConfig;
-import com.github.database.rider.core.connection.ConnectionHolderImpl;
-import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.dataset.builder.ColumnSpec;
 import com.github.database.rider.core.dataset.builder.DataSetBuilder;
 import com.github.database.rider.core.util.EntityManagerProvider;
@@ -23,8 +19,6 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import static com.github.database.rider.core.util.EntityManagerProvider.em;
@@ -105,11 +99,11 @@ public class DataSetProviderIt {
     public static class UserDataSetProvider implements DataSetProvider {
 
         @Override
-        public IDataSet provide() throws DataSetException {
+        public IDataSet provide()  {
             DataSetBuilder builder = new DataSetBuilder();
-            builder.row("user").column("id", 1)
+            builder.table("user").column("id", 1)
                 .column("name", "@dbunit")
-                .row("user").column("id", 2)
+                .row().column("id", 2)
                 .column("name", "@dbrider");
             return builder.build();
         }
@@ -118,18 +112,18 @@ public class DataSetProviderIt {
     public static class UsersWithBrokenReferentialConstraintProvider implements DataSetProvider {
 
         @Override
-        public IDataSet provide() throws DataSetException {
+        public IDataSet provide()  {
             DataSetBuilder builder = new DataSetBuilder();
             ColumnSpec id = ColumnSpec.of("ID");
             ColumnSpec name = ColumnSpec.of("NAME");
-            builder.row("USER").column("ID", 1)
+            builder.table("USER").column("ID", 1)
                 .column(name, "@realpestano")
-                .row("USER")
+                .table("USER")
                 .column(id, 2).column("NAME", "@dbunit")
-                .row("TWEET")
+                .table("TWEET")
                 .column("ID", "abcdef12345").column("CONTENT", "dbunit rules!")
                 .column("DATE", "[DAY,NOW]")
-                .row("FOLLOWER").column(id, 1)
+                .table("FOLLOWER").column(id, 1)
                 .column("USER_ID", 9999).column("FOLLOWER_ID", 9999)
                 .build();
 
@@ -140,11 +134,11 @@ public class DataSetProviderIt {
     public static class UserDataSetWithMetaModelProvider implements DataSetProvider {
 
         @Override
-        public IDataSet provide() throws DataSetException {
+        public IDataSet provide()  {
             DataSetBuilder builder = new DataSetBuilder();
-            builder.row("user").column(User_.id, 1)
+            builder.table("user").column(User_.id, 1)
                 .column(User_.name, "@dbunit")
-                .row("user").column(User_.id, 2)
+                .table("user").column(User_.id, 2)
                 .column(User_.name, "@dbrider");
             return builder.build();
         }
@@ -153,9 +147,9 @@ public class DataSetProviderIt {
     public static class ExpectedUserProvider implements DataSetProvider {
 
         @Override
-        public IDataSet provide() throws DataSetException {
+        public IDataSet provide() {
             DataSetBuilder builder = new DataSetBuilder();
-            builder.row("user").column("id", 2)
+            builder.table("user").column("id", 2)
                 .column("name", "@dbrider");
             return builder.build();
         }
@@ -164,9 +158,9 @@ public class DataSetProviderIt {
     public static class TweetDataSetProvider implements DataSetProvider {
 
         @Override
-        public IDataSet provide() throws DataSetException {
+        public IDataSet provide()  {
             DataSetBuilder builder = new DataSetBuilder();
-            builder.row("TWEET")
+            builder.table("TWEET")
                 .column("ID", "abcdef12345").column("CONTENT", "dbrider rules!")
                 .column("DATE", "[DAY,NOW]");
             return builder.build();

@@ -193,7 +193,7 @@ public class DataSetBuilder {
         this.currentRowBuilder = dataRowBuilder;
     }
 
-    public DataRowBuilder getCurrentRowBuilder() {
+    protected DataRowBuilder getCurrentRowBuilder() {
         return currentRowBuilder;
     }
 
