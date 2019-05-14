@@ -937,16 +937,20 @@ public class UserDataSetProvider implements DataSetProvider {
         @Override
         public IDataSet provide() throws DataSetException {
             DataSetBuilder builder = new DataSetBuilder();
-            builder.row("user").column("id", 1)
-                    .with("name", "@dbunit").add()
-                    .row("user").column("id", 2)
-                    .column("name", "@dbrider").add();
+            builder.table("user").column("id", 1)
+                    .column("name", "@dbunit")
+                    .row() //starts a new row for user table
+                    .column("id", 2)
+                    .column("name", "@dbrider")
+                    .table("tweet")// starts adding rows to tweet table
+                    .column("id", "abcfds")
+                    .column("content", "database rider rules!")
             return builder.build();
         }
     }
 ----
 +
-The above DataSet provider will generate a dataset for `USER` table with 2 rows.
+The above DataSet provider will generate a dataset for `USER` table with 2 rows and with tweet table with one row.
 +
 TIP: For more complex dataset examples see https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/dataset/builder/DataSetBuilderTest.java[DataSetBuilder tests here^].
 

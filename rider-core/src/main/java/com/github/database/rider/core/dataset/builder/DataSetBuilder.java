@@ -54,7 +54,11 @@ public class DataSetBuilder {
         }
     }
 
-    public DataRowBuilder row(String tableName) {
+    /**
+     * Starts a new row for the given tableName
+     * @param tableName
+     */
+    public DataRowBuilder table(String tableName) {
         currentRowBuilder = new DataRowBuilder(this, tableName);
         return currentRowBuilder;
     }
@@ -187,6 +191,10 @@ public class DataSetBuilder {
 
     public void setCurrentRowBuilder(DataRowBuilder dataRowBuilder) {
         this.currentRowBuilder = dataRowBuilder;
+    }
+
+    public DataRowBuilder getCurrentRowBuilder() {
+        return currentRowBuilder;
     }
 
     public void fillUndefinedColumns(BasicDataRowBuilder row) {

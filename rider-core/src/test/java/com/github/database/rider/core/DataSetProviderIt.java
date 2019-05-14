@@ -157,9 +157,9 @@ public class DataSetProviderIt {
         @Override
         public IDataSet provide()  {
             DataSetBuilder builder = new DataSetBuilder();
-            builder.row("user").column("id", 1)
+            builder.table("user").column("id", 1)
                 .column("name", "@dbunit")
-                .row("user").column("id", 2)
+                .table("user").column("id", 2)
                 .column("name", "@dbrider").build();
             return builder.build();
         }
@@ -172,14 +172,14 @@ public class DataSetProviderIt {
             DataSetBuilder builder = new DataSetBuilder();
             ColumnSpec id = ColumnSpec.of("ID");
             ColumnSpec name = ColumnSpec.of("NAME");
-            IDataSet dataSet = builder.row("USER").column("ID", 1)
+            IDataSet dataSet = builder.table("USER").column("ID", 1)
                 .column(name, "@realpestano")
-                .row("USER")
+                .table("USER")
                 .column(id, 2).column("NAME", "@dbunit")
-                .row("TWEET")
+                .table("TWEET")
                 .column("ID", "abcdef12345").column("CONTENT", "dbunit rules!")
                 .column("DATE", "[DAY,NOW]")
-                .row("FOLLOWER").column(id, 1)
+                .table("FOLLOWER").column(id, 1)
                 .column("USER_ID", 9999).column("FOLLOWER_ID", 9999)
                 .build();
             return dataSet;
@@ -192,9 +192,9 @@ public class DataSetProviderIt {
         @Override
         public IDataSet provide()  {
             DataSetBuilder builder = new DataSetBuilder();
-            builder.row("user").column(User_.id, 1)
+            builder.table("user").column(User_.id, 1)
                 .column(User_.name, "@dbunit")
-                .row("user").column(User_.id, 2)
+                .table("user").column(User_.id, 2)
                 .column(User_.name, "@dbrider");
             return builder.build();
         }
@@ -205,7 +205,7 @@ public class DataSetProviderIt {
         @Override
         public IDataSet provide()  {
             DataSetBuilder builder = new DataSetBuilder();
-            builder.row("user").column("id", 2)
+            builder.table("user").column("id", 2)
                 .column("name", "@dbrider");
             return builder.build();
         }
@@ -216,7 +216,7 @@ public class DataSetProviderIt {
         @Override
         public IDataSet provide()  {
             DataSetBuilder builder = new DataSetBuilder();
-            builder.row("TWEET")
+            builder.table("TWEET")
                 .column("ID", "abcdef12345").column("CONTENT", "dbrider rules!")
                 .column("DATE", "[DAY,NOW]");
             return builder.build();
@@ -239,10 +239,10 @@ public class DataSetProviderIt {
         @Override
         public IDataSet provide()  {
             DataSetBuilder builder = new DataSetBuilder();
-            DataRowBuilder user1Row = new DataSetBuilder().row("USER")
+            DataRowBuilder user1Row = new DataSetBuilder().table("USER")
                     .column("id", "1")
                     .column("name", "user1");
-            DataRowBuilder user2Row = new DataSetBuilder().row("USER")
+            DataRowBuilder user2Row = new DataSetBuilder().table("USER")
                     .column("id", "2")
                     .column("name", "user2");
 
@@ -261,9 +261,9 @@ public class DataSetProviderIt {
             DataSetBuilder builder = new DataSetBuilder()
                     .defaultValue("NAME", "DEFAULT");
             ColumnSpec id = ColumnSpec.of("ID");
-            return builder.row("USER").column(id, 1)
+            return builder.table("USER").column(id, 1)
                     .column("NAME", "@realpestano")
-                    .row("USER")
+                    .table("USER")
                     .column(id, 2)
                     .build();
         }

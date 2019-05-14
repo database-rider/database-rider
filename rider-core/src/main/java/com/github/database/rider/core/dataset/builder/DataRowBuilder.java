@@ -78,14 +78,21 @@ public class DataRowBuilder extends BasicDataRowBuilder {
     }
 
     /**
+     * Starts creating rows for new table
      * @param tableName
      * @return
      */
-    public DataRowBuilder row(String tableName) {
+    public DataRowBuilder table(String tableName) {
         saveCurrentRow(); //save current row  every time a new row is started
         DataRowBuilder dataRowBuilder = new DataRowBuilder(dataSet, tableName);
         dataSet.setCurrentRowBuilder(dataRowBuilder);
         return dataRowBuilder;
+    }
+
+    public DataRowBuilder row() {
+        saveCurrentRow();
+        columnNameToValue.clear();
+        return dataSet.getCurrentRowBuilder();
     }
 
 
@@ -109,7 +116,7 @@ public class DataRowBuilder extends BasicDataRowBuilder {
         return added;
     }
 
-    public void setAdded(boolean added) {
+    protected void setAdded(boolean added) {
         this.added = added;
     }
 }

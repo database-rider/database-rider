@@ -33,14 +33,14 @@ public class DatasetBuilderTest {
     public void shouldGenerateYamlDataSet() throws DataSetException, IOException {
         DataSetBuilder builder = new DataSetBuilder();
         ColumnSpec id = ColumnSpec.of("ID");
-        IDataSet dataSet = builder.row("USER").column("ID", 1)
+        IDataSet dataSet = builder.table("USER").column("ID", 1)
                 .column("NAME", "@realpestano")
-                .row("USER")
+                .table("USER")
                 .column(id, 2).column("NAME", "@dbunit")
-                .row("TWEET")
+                .table("TWEET")
                 .column("ID", "abcdef12345").column("CONTENT", "dbunit rules!")
                 .column("DATE", "[DAY,NOW]")
-                .row("FOLLOWER").column(id, 1)
+                .table("FOLLOWER").column(id, 1)
                 .column("USER_ID", 1).column("FOLLOWER_ID", 2)
                 .build();
 
@@ -68,14 +68,14 @@ public class DatasetBuilderTest {
     public void shouldGenerateJsonDataSet() throws DataSetException, IOException {
         DataSetBuilder builder = new DataSetBuilder();
         ColumnSpec id = ColumnSpec.of("ID");
-        builder.row("USER").column("ID", 1)
+        builder.table("USER").column("ID", 1)
                 .column("NAME", "@realpestano")
-                .row("USER")
+                .table("USER")
                 .column(id, 2).column("NAME", "@dbunit")
-                .row("TWEET")
+                .table("TWEET")
                 .column("ID", "abcdef12345").column("CONTENT", "dbunit rules!")
                 .column("DATE", "[DAY,NOW]")
-                .row("FOLLOWER").column(id, 1)
+                .table("FOLLOWER").column(id, 1)
                 .column("USER_ID", 1).column("FOLLOWER_ID", 2)
                 .build();
 
@@ -118,14 +118,14 @@ public class DatasetBuilderTest {
     public void shouldGenerateFlatXmlDataSet() throws DataSetException, IOException {
         DataSetBuilder builder = new DataSetBuilder();
         ColumnSpec id = ColumnSpec.of("ID");
-        builder.row("USER").column("ID", 1)
+        builder.table("USER").column("ID", 1)
                 .column("NAME", "@realpestano")
-                .row("USER")
+                .table("USER")
                 .column(id, 2).column("NAME", "@dbunit")
-                .row("TWEET")
+                .table("TWEET")
                 .column("ID", "abcdef12345").column("CONTENT", "dbunit rules!")
                 .column("DATE", "[DAY,NOW]")
-                .row("FOLLOWER").column(id, 1)
+                .table("FOLLOWER").column(id, 1)
                 .column("USER_ID", 1).column("FOLLOWER_ID", 2)
                 .build();
 
@@ -152,7 +152,7 @@ public class DatasetBuilderTest {
         calendar.add(Calendar.YEAR, 1);
         Date date = new Date();
 
-        IDataSet dataSet = builder.row("USER").column("ID", 1)
+        IDataSet dataSet = builder.table("USER").column("ID", 1)
                 .column("DATE", date)
                 .column("CALENDAR", calendar)
                 .build();
@@ -177,13 +177,13 @@ public class DatasetBuilderTest {
                 .defaultValue("NAME", "DEFAULT")
                 .defaultValue("date", "[DAY,NOW]");
         ColumnSpec id = ColumnSpec.of("ID");
-        IDataSet dataSet = builder.row("USER").column(id, 1)
+        IDataSet dataSet = builder.table("USER").column(id, 1)
                 .column("NAME", "@realpestano")
-                .row("USER")
+                .table("USER")
                 .column(id, 2)
-                .row("TWEET")
+                .table("TWEET")
                 .column("ID", "abcdef12345").column("CONTENT", "dbunit rules!")
-                .row("FOLLOWER").column(id, 1)
+                .table("FOLLOWER").column(id, 1)
                 .column("USER_ID", 1).column("FOLLOWER_ID", 2)
                 .build();
 
@@ -223,7 +223,7 @@ public class DatasetBuilderTest {
         calendar.add(Calendar.YEAR, 1);
         Date date = new Date();
 
-        IDataSet dataSet = builder.row("CONTACT")
+        IDataSet dataSet = builder.table("CONTACT")
                 .column(Contact_.id, 1)
                 .column(Contact_.name, "dbrider")
                 .column(Contact_.date,date )
@@ -249,14 +249,14 @@ public class DatasetBuilderTest {
     public void shouldGenerateUppercaseYamlDataSet() throws IOException, DataSetException {
         DataSetBuilder builder = new DataSetBuilder();
         ColumnSpec id = ColumnSpec.of("id");
-        builder.row("user").column(id, 1)
+        builder.table("user").column(id, 1)
                 .column("name", "@realpestano")
-                .row("user")
+                .table("user")
                 .column(id, 2).column("name", "@dbunit")
-                .row("tweet")
+                .table("tweet")
                 .column("id", "abcdef12345").column("content", "dbunit rules!")
                 .column("date", "[DAY,NOW]")
-                .row("follower").column(id, 1)
+                .table("follower").column(id, 1)
                 .column("user_id", 1).column("follower_id", 2)
                 .build();
 
@@ -281,5 +281,48 @@ public class DatasetBuilderTest {
                         "    CONTENT: \"dbunit rules!\"" + NEW_LINE +
                         "    DATE: \"[DAY,NOW]\""+ NEW_LINE );
     }
+
+
+    @Test
+    public void shouldGenerateDataSetUsingTableAndRowSyntax() throws IOException, DataSetException {
+        DataSetBuilder builder = new DataSetBuilder();
+        builder.defaultValue("id", -1).
+                table("user")
+                .column("id", 1)
+                .column("name", "@realpestano")
+                .row() //creates a new row for user table
+                .column("id", 2).column("name", "@dbunit")
+                .row().column("name", "@dbunit3")//third row for user table using default value
+                .table("tweet")
+                .column("id", "abcdef12345").column("content", "dbunit rules!")
+                .column("date", "[DAY,NOW]")
+                .table("follower").column("id", 1)
+                .column("user_id", 1).column("follower_id", 2)
+                .build();
+
+        IDataSet dataSet = builder.build();
+
+        File datasetFile = Files.createTempFile("rider-dataset", ".yml").toFile();
+        FileOutputStream fos = new FileOutputStream(datasetFile);
+        new YMLWriter(fos).write(dataSet);
+
+        assertThat(contentOf(datasetFile)).
+                contains("FOLLOWER:" + NEW_LINE +
+                        "  - ID: 1" + NEW_LINE +
+                        "    USER_ID: 1" + NEW_LINE +
+                        "    FOLLOWER_ID: 2" + NEW_LINE).
+                contains("USER:" + NEW_LINE +
+                        "  - ID: 1" + NEW_LINE +
+                        "    NAME: \"@realpestano\"" + NEW_LINE +
+                        "  - ID: 2" + NEW_LINE +
+                        "    NAME: \"@dbunit\"" + NEW_LINE +
+                        "  - ID: -1" + NEW_LINE + 
+                        "    NAME: \"@dbunit3\"").
+                contains("TWEET:" + NEW_LINE +
+                        "  - ID: \"abcdef12345\"" + NEW_LINE +
+                        "    CONTENT: \"dbunit rules!\"" + NEW_LINE +
+                        "    DATE: \"[DAY,NOW]\""+ NEW_LINE );
+    }
+
 
 }
