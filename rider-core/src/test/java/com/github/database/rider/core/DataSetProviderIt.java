@@ -57,7 +57,7 @@ public class DataSetProviderIt {
     @ExportDataSet(outputName = "out2.yml")
     @DataSet(provider = UserDataSetWithMetaModelProvider.class, cleanBefore = true)
     public void shouldSeedDatabaseProgrammaticallyUsingMetaModel() {
-        List<User> users = EntityManagerProvider.em().createQuery("select u from User u ").getResultList();
+        List<User> users = em().createQuery("select u from User u ").getResultList();
         assertThat(users).
             isNotNull().
             isNotEmpty().hasSize(2).
@@ -66,13 +66,16 @@ public class DataSetProviderIt {
     }
 
     @Test
-    @DataSet(provider = UsersWithBrokenReferentialConstraintProvider.class, disableConstraints = true, cleanBefore = true)
+    @DataSet(provider = BrokenReferentialConstraintProvider.class, disableConstraints = true, cleanBefore = true)
     public void shouldSeedDataSetDisablingContraints() {
-        User user = (User) EntityManagerProvider.em().createQuery("select u from User u where u.id = 1").getSingleResult();
-        assertThat(user).isNotNull();
-        assertThat(user.getId()).isEqualTo(1);
+        List<User> users = em().createQuery("select u from User u ").getResultList();
+        assertThat(users).
+            isNotNull().
+            isNotEmpty().hasSize(3).
+            extracting("name").
+            contains("@dbunit", "@dbrider", "@new row");
     }
-
+    
     @Test
     @DataSet(provider = UserDataSetProvider.class, cleanBefore = true, transactional = true)
     @ExpectedDataSet(provider = ExpectedUserProvider.class, ignoreCols = "id")
@@ -80,7 +83,7 @@ public class DataSetProviderIt {
         Long count = (Long) EntityManagerProvider.em().createQuery("select count(u) from User u ").getSingleResult();
         assertThat(count).isEqualTo(2);
         em().remove(EntityManagerProvider.em().find(User.class, 1L));
-        //assertThat(count).isEqualTo(1); //assertion in expectedDataSet
+        //assertThat(count).isEqualTo(1); //assertion is in expectedDataSet
     }
 
     @Test
@@ -166,26 +169,6 @@ public class DataSetProviderIt {
         }
     }
 
-    public static class UsersWithBrokenReferentialConstraintProvider implements DataSetProvider {
-
-        @Override
-        public IDataSet provide() {
-            DataSetBuilder builder = new DataSetBuilder();
-            ColumnSpec id = ColumnSpec.of("ID");
-            ColumnSpec name = ColumnSpec.of("NAME");
-            IDataSet dataSet = builder.table("USER").column("ID", 1)
-                .column(name, "@realpestano")
-                .row()
-                .column(id, 2).column("NAME", "@dbunit")
-                .table("TWEET")
-                .column("ID", "abcdef12345").column("CONTENT", "dbunit rules!")
-                .column("DATE", "[DAY,NOW]")
-                .table("FOLLOWER").column(id, 1)
-                .column("USER_ID", 9999).column("FOLLOWER_ID", 9999)
-                .build();
-            return dataSet;
-        }
-    }
 
 
     public static class UserDataSetWithMetaModelProvider implements DataSetProvider {
@@ -224,6 +207,36 @@ public class DataSetProviderIt {
             return builder.build();
         }
     }
+    
+    public static class BrokenReferentialConstraintProvider implements DataSetProvider {
+
+        @Override
+        public IDataSet provide() {
+            DataSetBuilder builder = new DataSetBuilder();
+            ColumnSpec id = ColumnSpec.of("ID");
+            ColumnSpec name = ColumnSpec.of("NAME");
+            IDataSet dataSet = builder
+                    .table("USER") //start adding rows to 'USER' table
+                        .column("ID", 1)
+                        .column(name, "@dbunit")
+                    .row() //keeps adding rows to the current table
+                        .column(id, 2)
+                        .column("NAME", "@dbrider")
+                    .table("TWEET") //starts adding rows to 'TWEET' table
+                        .column("ID", "abcdef12345")
+                        .column("CONTENT", "dbunit rules!")
+                        .column("DATE", "[DAY,NOW]")
+                    .table("FOLLOWER").column(id, 1)
+                        .column("USER_ID", 9999)
+                        .column("FOLLOWER_ID", 9999)
+                    .table("USER")// we still can add rows to table already added to the dataset
+                       .column("ID", 3)
+                       .column(name, "@new row")
+                .build();
+            return dataSet;
+        }
+    }
+    
 
     public static class CompositeDataSetProvider implements DataSetProvider {
 

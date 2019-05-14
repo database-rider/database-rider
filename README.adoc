@@ -937,20 +937,50 @@ public class UserDataSetProvider implements DataSetProvider {
         @Override
         public IDataSet provide() throws DataSetException {
             DataSetBuilder builder = new DataSetBuilder();
-            builder.table("user").column("id", 1)
-                    .column("name", "@dbunit")
-                    .row() //starts a new row for user table
-                    .column("id", 2)
-                    .column("name", "@dbrider")
-                    .table("tweet")// starts adding rows to tweet table
-                    .column("id", "abcfds")
-                    .column("content", "database rider rules!")
-            return builder.build();
+            IDataSet dataSet = builder
+                    .table("USER") //start adding rows to 'USER' table
+                        .column("ID",1)
+                        .column(name,"@realpestano")
+                    .row() //keeps adding rows to the current table
+                        .column(id,2)
+                        .column("NAME","@dbunit")
+                    .table("TWEET") //starts adding rows to 'TWEET' table
+                        .column("ID","abcdef12345")
+                        .column("CONTENT","dbunit rules!")
+                        .column("DATE","[DAY,NOW]")
+                    .table("FOLLOWER").column(id,1)
+                        .column("USER_ID",1)
+                        .column("FOLLOWER_ID",2)
+                    .table("USER")// we still can add rows to table already added to the dataset
+                        .column("ID",3)
+                        .column(name,"@new row")
+                    .build();
+            return dataSet;
         }
     }
 ----
 +
-The above DataSet provider will generate a dataset for `USER` table with 2 rows and with tweet table with one row.
+The above DataSet provider will generate a dataset like below:
++
+----
+FOLLOWER:
+  - ID: 1
+    USER_ID: 1
+    FOLLOWER_ID: 2
+
+TWEET:
+  - ID: "abcdef12345"
+    CONTENT: "dbunit rules!"
+    DATE: "2019-05-14 19:26:56.0"
+
+USER:
+  - ID: 1
+    NAME: "@dbunit"
+  - ID: 2
+    NAME: "@dbrider"
+  - ID: 3
+    NAME: "@new row"
+----
 +
 TIP: For more complex dataset examples see https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/dataset/builder/DataSetBuilderTest.java[DataSetBuilder tests here^].
 
@@ -964,9 +994,9 @@ TIP: For more complex dataset examples see https://github.com/database-rider/dat
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u ").getResultList();
         assertThat(users).
                 isNotNull().
-                isNotEmpty().hasSize(2).
+                isNotEmpty().hasSize(3).
                 extracting("name").
-                contains("@dbunit", "@dbrider");
+                contains("@dbunit", "@dbrider", "@new row");
     }
 ---- 
 +
