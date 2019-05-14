@@ -8,6 +8,7 @@ import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.connection.RiderDataSource;
 import com.github.database.rider.core.connection.RiderDataSource.DBType;
+import com.github.database.rider.core.dataset.writer.YMLWriter;
 import com.github.database.rider.core.exception.DataBaseSeedingException;
 import com.github.database.rider.core.replacers.Replacer;
 import org.dbunit.DatabaseUnitException;
@@ -32,6 +33,7 @@ import java.io.*;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.sql.*;
 import java.util.*;
 import java.util.Map.Entry;
@@ -121,6 +123,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         }
 
         if (dataSetConfig != null) {
+            IDataSet resultingDataSet = null;
             try {
                 if (dataSetConfig.isDisableConstraints()) {
                     disableConstraints();
@@ -144,8 +147,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     }
                 }
                 if (dataSetConfig.hasDataSets() || dataSetConfig.hasDataSetProvider()) {
-                    IDataSet resultingDataSet = null;
-                    if (dataSetConfig.hasDataSets()) { 
+                    if (dataSetConfig.hasDataSets()) {
                         resultingDataSet = loadDataSets(dataSetConfig.getDatasets());
                     } else {
                         resultingDataSet = loadDataSetFromDataSetProvider(dataSetConfig.getProvider());
@@ -167,9 +169,24 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 }
 
             } catch (Exception e) {
+                if(log.isDebugEnabled() && resultingDataSet != null) {
+                    logDataSet(resultingDataSet, e);
+                }
                 throw new DataBaseSeedingException("Could not initialize dataset: " + dataSetConfig, e);
             }
 
+        }
+    }
+
+    private void logDataSet(IDataSet resultingDataSet, Exception e) {
+        File datasetFile = null;
+        try {
+            datasetFile = Files.createTempFile("dataset-log", ".yml").toFile();
+            log.info("Saving current dataset to "+datasetFile.getAbsolutePath());
+            FileOutputStream fos = new FileOutputStream(datasetFile);
+            new YMLWriter(fos).write(resultingDataSet);
+        } catch (Exception e1) {
+            log.error("Could not log created dataset.", e);
         }
     }
 
