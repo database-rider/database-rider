@@ -55,7 +55,7 @@ public class DataSetBuilder {
     }
 
     /**
-     * Starts a new row for the given tableName
+     * Starts a table creation
      * @param tableName
      */
     public TableBuilder table(String tableName) {
@@ -63,6 +63,9 @@ public class DataSetBuilder {
         return tableBuilder;
     }
 
+    /**
+     * Creates a dbunit dataset based on current builder
+     */
     public IDataSet build() {
         try {
             if (tableBuilder != null && !tableBuilder.getCurrentRowBuilder().isAdded()) {
@@ -108,6 +111,13 @@ public class DataSetBuilder {
         }
     }
 
+    /**
+     * Adds a default value for the given column for all tables
+     * The default value will be used only if the column was not specified
+     *
+     * @param columnName
+     * @param value
+     */
     public DataSetBuilder defaultValue(String columnName, Object value) {
         defaultValues.put(convertCase(columnName, config), value);
         return this;
@@ -186,7 +196,7 @@ public class DataSetBuilder {
     }
 
 
-    public void fillUndefinedColumns(BasicRowBuilder row) {
+    protected void fillUndefinedColumns(BasicRowBuilder row) {
         if(!defaultValues.isEmpty()) {
             for (String column : defaultValues.keySet()) {
                 if (!row.columnNameToValue.containsKey(column)) {

@@ -1,12 +1,5 @@
 package com.github.database.rider.core.dataset.builder;
 
-import org.dbunit.dataset.IDataSet;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.github.database.rider.core.dataset.builder.BuilderUtil.convertCase;
-
 public class TableBuilder {
 
     private final DataSetBuilder dataSetBuilder;
@@ -19,6 +12,10 @@ public class TableBuilder {
         this.tableName = tableName;
     }
 
+    /**
+     * starts a row creation for given table
+     * @return
+     */
     public RowBuilder row() {
         if(currentRowBuilder.hasColumns()) {
             saveCurrentRow();
@@ -41,6 +38,13 @@ public class TableBuilder {
         dataSetBuilder.add(currentRowBuilder);
     }
 
+    /**
+     * Adds a default value for the given column in current table
+     * The default value will be used only if the column was not specified
+     *
+     * @param columnName
+     * @param value
+     */
     public TableBuilder defaultValue(String columnName, Object value) {
         dataSetBuilder.addTableDefaultValue(tableName, columnName, value);
         return this;
