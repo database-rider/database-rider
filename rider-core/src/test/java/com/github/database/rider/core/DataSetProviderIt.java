@@ -39,11 +39,11 @@ public class DataSetProviderIt {
     public EntityManagerProvider emProvider = EntityManagerProvider.instance("rules-it");
 
     @Rule
-    public DBUnitRule dbUnitRule = DBUnitRule.instance(emProvider.connection());
+    public DBUnitRule dbUnitRule = D        BUnitRule.instance(emProvider.connection());
 
     @Test
     @DataSet(provider = UserDataSetProvider.class, cleanBefore = true)
-    @ExportDataSet(outputName = "out.yml")
+    @ExportDataSet(outputName = "target/out.yml")
     public void shouldSeedDatabaseProgrammatically() {
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u ").getResultList();
         assertThat(users).
@@ -54,7 +54,7 @@ public class DataSetProviderIt {
     }
 
     @Test
-    @ExportDataSet(outputName = "out2.yml")
+    @ExportDataSet(outputName = "target/out2.yml")
     @DataSet(provider = UserDataSetWithMetaModelProvider.class, cleanBefore = true)
     public void shouldSeedDatabaseProgrammaticallyUsingMetaModel() {
         List<User> users = em().createQuery("select u from User u ").getResultList();
@@ -66,7 +66,19 @@ public class DataSetProviderIt {
     }
 
     @Test
-    @DataSet(provider = BrokenReferentialConstraintProvider.class, disableConstraints = true, cleanBefore = true)
+    @DataSet(provider = UserDataSetProviderWithColumnsSyntax.class)
+    @ExportDataSet(outputName = "target/out3.yml")
+    public void shouldSeedDatabaseUsingDataSetProviderWithColumnsSyntax() {
+        List<User> users = EntityManagerProvider.em().createQuery("select u from User u ").getResultList();
+        assertThat(users).
+            isNotNull().
+            isNotEmpty().hasSize(2).
+            extracting("name").
+            contains("@dbunit", "@dbrider");
+    }
+
+    @Test
+    @DataSet(provider = BrokenReferentialConstraintProvider.class, disableConstraints = true)
     public void shouldSeedDataSetDisablingContraints() {
         List<User> users = em().createQuery("select u from User u ").getResultList();
         assertThat(users).
@@ -163,17 +175,27 @@ public class DataSetProviderIt {
             DataSetBuilder builder = new DataSetBuilder();
             builder.table("user")
                     .row()
-                    .column("id", 1)
-                    .column("name", "@dbunit")
-                    .table("user")
+                        .column("id", 1)
+                        .column("name", "@dbunit")
                     .row()
-                    .column("id", 2)
-                    .column("name", "@dbrider").build();
+                        .column("id", 2)
+                        .column("name", "@dbrider").build();
             return builder.build();
         }
     }
 
+    public static class UserDataSetProviderWithColumnsSyntax implements DataSetProvider {
 
+        @Override
+        public IDataSet provide() {
+            DataSetBuilder builder = new DataSetBuilder();
+            IDataSet iDataSet = builder.table("user")
+                    .columns("id", "name")
+                    .values(1,"@dbunit")
+                    .values(2,"@dbrider").build();
+            return iDataSet;
+        }
+    }
 
     public static class UserDataSetWithMetaModelProvider implements DataSetProvider {
 

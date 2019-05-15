@@ -5,8 +5,7 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.util.EntityManagerProvider;
 import com.github.database.rider.junit5.api.DBRider;
-import com.github.database.rider.junit5.model.User;
-import org.junit.jupiter.api.Disabled;
+import com.github.database.rider.junit5.model.schema.User;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
@@ -19,7 +18,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @RunWith(JUnitPlatform.class)
 @DataSet(cleanBefore = true)
-@Disabled
 public class DBUnitJUnit5ChemaIt {
 
     private ConnectionHolder connectionHolder = () ->

@@ -938,6 +938,7 @@ public class UserDataSetProvider implements DataSetProvider {
         public IDataSet provide() throws DataSetException {
             DataSetBuilder builder = new DataSetBuilder();
             IDataSet dataSet = builder
+                    .defaultValue("id", -1) //default value for all tables that don't provide a value to 'id' column
                     .table("USER") //start adding rows to 'USER' table
                         .column("ID",1)
                         .column(name,"@realpestano")
@@ -945,14 +946,14 @@ public class UserDataSetProvider implements DataSetProvider {
                         .column(id,2)
                         .column("NAME","@dbunit")
                     .table("TWEET") //starts adding rows to 'TWEET' table
+                        .defaultValue("LIKES", 99) //default value only for table tweet, the value will be used if column is not specified
                         .column("ID","abcdef12345")
                         .column("CONTENT","dbunit rules!")
                         .column("DATE","[DAY,NOW]")
                     .table("FOLLOWER").column(id,1)
                         .column("USER_ID",1)
                         .column("FOLLOWER_ID",2)
-                    .table("USER")// we still can add rows to table already added to the dataset
-                        .column("ID",3)
+                    .table("USER")// we still can add rows to table already added
                         .column(name,"@new row")
                     .build();
             return dataSet;
@@ -972,17 +973,45 @@ TWEET:
   - ID: "abcdef12345"
     CONTENT: "dbunit rules!"
     DATE: "2019-05-14 19:26:56.0"
+    LIKES: 99
 
 USER:
   - ID: 1
     NAME: "@dbunit"
   - ID: 2
     NAME: "@dbrider"
-  - ID: 3
+  - ID: -1
     NAME: "@new row"
 ----
 +
 TIP: For more complex dataset examples see https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/dataset/builder/DataSetBuilderTest.java[DataSetBuilder tests here^].
++
+
+[NOTE]
+====
+The above dataset can be declared using `columns`...`values` syntax:
+
+----
+builder.defaultValue("id", -1)
+       .table("user")
+            .columns("id", "name")
+            .values(1,  "@dbrider")
+            .values(2,  "@dbunit")
+            .values(null,  "@dbunit3")//will use default value
+       .table("tweet")
+            .defaultValue("likes", 99)
+            .columns("id", "content", "date")
+            .values("abcdef12345", "dbunit rules!", "[DAY,NOW]")
+       .table("follower")
+            .columns("id", "user_id", "follower_id")
+            .values(1,  1, 2)
+       .build();
+----
+
+TIP: For datasets with lots of rows and few columns this approach can fit better.
+
+====
+
 
 . Now use the DataSet provider in `@DataSet` annotation:
 +

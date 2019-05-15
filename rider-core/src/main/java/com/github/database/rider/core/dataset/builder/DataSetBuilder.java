@@ -55,7 +55,8 @@ public class DataSetBuilder {
     }
 
     /**
-     * Starts a table creation
+     * Starts creating a dataset for the given table
+     *
      * @param tableName
      */
     public TableBuilder table(String tableName) {
@@ -95,8 +96,7 @@ public class DataSetBuilder {
     }
 
     /**
-     * Add a row to current dataset
-     * @return
+     * Add a previously created row to current dataset
      */
     public DataSetBuilder add(BasicRowBuilder row) {
         try {
@@ -110,6 +110,7 @@ public class DataSetBuilder {
             throw new RuntimeException("Could not add dataset row.", e);
         }
     }
+
 
     /**
      * Adds a default value for the given column for all tables
@@ -199,16 +200,16 @@ public class DataSetBuilder {
     protected void fillUndefinedColumns(BasicRowBuilder row) {
         if(!defaultValues.isEmpty()) {
             for (String column : defaultValues.keySet()) {
-                if (!row.columnNameToValue.containsKey(column)) {
-                    row.columnNameToValue.put(column, defaultValues.get(column));
+                if (!row.getColumnsValues().containsKey(column)) {
+                    row.getColumnsValues().put(column, defaultValues.get(column));
                 }
             }
         }
 
         if(hasDefaulValuesForTable(row.getTableName())) {
             for (Map.Entry<String, Object> column : getDefaultValuesForTable(row.getTableName()).entrySet()) {
-                if (!row.columnNameToValue.containsKey(column.getKey())) {
-                    row.columnNameToValue.put(column.getKey(), column.getValue());
+                if (!row.getColumnsValues().containsKey(column.getKey())) {
+                    row.getColumnsValues().put(column.getKey(), column.getValue());
                 }
             }
         }

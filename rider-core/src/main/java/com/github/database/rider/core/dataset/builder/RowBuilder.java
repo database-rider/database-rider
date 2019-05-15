@@ -17,7 +17,6 @@ import static com.github.database.rider.core.util.EntityManagerProvider.isEntity
 public class RowBuilder extends BasicRowBuilder {
 
     private final TableBuilder tableBuilder;
-    private boolean added;
 
     protected RowBuilder(TableBuilder tableBuilder, String tableName) {
         super(tableName);
@@ -141,14 +140,4 @@ public class RowBuilder extends BasicRowBuilder {
         return tableBuilder.getDataSetBuilder().build();
     }
 
-    /**
-     * indicates wheater current row was added to the dataset being build
-     */
-    protected boolean isAdded() {
-        return added;
-    }
-
-    protected void setAdded(boolean added) {
-        this.added = added;
-    }
 }

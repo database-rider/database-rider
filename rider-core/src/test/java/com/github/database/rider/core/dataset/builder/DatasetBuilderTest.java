@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -20,6 +21,7 @@ import java.nio.file.Files;
 import java.util.Calendar;
 import java.util.Date;
 
+import static com.github.database.rider.core.util.EntityManagerProvider.em;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.contentOf;
 
@@ -340,7 +342,8 @@ public class DatasetBuilderTest {
                 .table("tweet")
                     .defaultValue("likes", 99) //defaultValue only for table tweet
                 .row()
-                  .  column("id", "abcdef12345").column("content", "dbunit rules!")
+                    .column("id", "abcdef12345")
+                    .column("content", "dbunit rules!")
                     .column("date", "[DAY,NOW]")
                 .table("follower")
                 .row()
@@ -372,6 +375,93 @@ public class DatasetBuilderTest {
                         "    DATE: \"[DAY,NOW]\""+ NEW_LINE  +
                         "    LIKES: 99"+ NEW_LINE );
 
+    }
+
+
+    @Test
+    public void shouldGenerateDataSetUsingColumnsSyntax() throws IOException, DataSetException {
+        DataSetBuilder builder = new DataSetBuilder();
+        builder.defaultValue("id", -1)
+                .table("user")
+                    .columns("id", "name")
+                    .values(1,  "@dbrider")
+                    .values(2,  "@dbunit")
+                    .values(null,  "@dbunit3")
+                .table("tweet")
+                    .defaultValue("likes", 99)
+                    .columns("id", "content", "date")
+                    .values("abcdef12345",  "dbunit rules!", "[DAY,NOW]")
+                .table("follower")
+                    .columns("id", "user_id", "follower_id")
+                    .values(1,  1, 2)
+                .build();
+        IDataSet dataSet = builder.build();
+
+        File datasetFile = Files.createTempFile("rider-dataset", ".yml").toFile();
+        FileOutputStream fos = new FileOutputStream(datasetFile);
+        new YMLWriter(fos).write(dataSet);
+
+        assertThat(contentOf(datasetFile)).
+                contains("FOLLOWER:" + NEW_LINE +
+                        "  - ID: 1" + NEW_LINE +
+                        "    USER_ID: 1" + NEW_LINE +
+                        "    FOLLOWER_ID: 2" + NEW_LINE).
+                contains("USER:" + NEW_LINE +
+                        "  - ID: 1" + NEW_LINE +
+                        "    NAME: \"@dbrider\"" + NEW_LINE +
+                        "  - ID: 2" + NEW_LINE +
+                        "    NAME: \"@dbunit\"" + NEW_LINE +
+                        "  - ID: -1" + NEW_LINE +
+                        "    NAME: \"@dbunit3\"").
+                contains("TWEET:" + NEW_LINE +
+                        "  - ID: \"abcdef12345\"" + NEW_LINE +
+                        "    CONTENT: \"dbunit rules!\"" + NEW_LINE +
+                        "    DATE: \"[DAY,NOW]\""+ NEW_LINE  +
+                        "    LIKES: 99"+ NEW_LINE );
+    }
+
+    @Test
+    public void shouldGenerateDataSetUsingMixedSyntax() throws IOException, DataSetException {
+        DataSetBuilder builder = new DataSetBuilder();
+        builder.defaultValue("id", -1)
+                .table("user")
+                    .columns("id", "name")
+                    .values(1,  "@dbrider")
+                    .values(2,  "@dbunit")
+                    .values(null,  "@dbunit3")//will use default value
+                .table("tweet")
+                    .defaultValue("likes", 99)
+                .row()
+                        .column("id", "abcdef12345")
+                        .column("content", "dbunit rules!")
+                        .column("date", "[DAY,NOW]")
+                .table("follower")
+                    .columns("id", "user_id", "follower_id")
+                    .values(1,  1, 2)
+                .build();
+        IDataSet dataSet = builder.build();
+
+        File datasetFile = Files.createTempFile("rider-dataset", ".yml").toFile();
+        FileOutputStream fos = new FileOutputStream(datasetFile);
+        new YMLWriter(fos).write(dataSet);
+
+        assertThat(contentOf(datasetFile)).
+                contains("FOLLOWER:" + NEW_LINE +
+                        "  - ID: 1" + NEW_LINE +
+                        "    USER_ID: 1" + NEW_LINE +
+                        "    FOLLOWER_ID: 2" + NEW_LINE).
+                contains("USER:" + NEW_LINE +
+                        "  - ID: 1" + NEW_LINE +
+                        "    NAME: \"@dbrider\"" + NEW_LINE +
+                        "  - ID: 2" + NEW_LINE +
+                        "    NAME: \"@dbunit\"" + NEW_LINE +
+                        "  - ID: -1" + NEW_LINE +
+                        "    NAME: \"@dbunit3\"").
+                contains("TWEET:" + NEW_LINE +
+                        "  - ID: \"abcdef12345\"" + NEW_LINE +
+                        "    CONTENT: \"dbunit rules!\"" + NEW_LINE +
+                        "    DATE: \"[DAY,NOW]\""+ NEW_LINE  +
+                        "    LIKES: 99"+ NEW_LINE );
     }
 
 

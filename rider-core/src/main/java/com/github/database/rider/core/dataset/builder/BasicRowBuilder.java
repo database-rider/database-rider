@@ -42,6 +42,7 @@ public class BasicRowBuilder {
     protected final DBUnitConfig config;
     protected final Map<String, Object> columnNameToValue = new LinkedHashMap<>();
     protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    private boolean added;
 
     public BasicRowBuilder(String tableName) {
         this.config = DBUnitConfig.fromGlobalConfig();
@@ -69,7 +70,7 @@ public class BasicRowBuilder {
         return values;
     }
 
-    public ITableMetaData toMetaData() {
+    protected ITableMetaData toMetaData() {
         Column[] columns = new Column[numberOfColumns()];
         int index = 0;
         for (String columnName : columnNameToValue.keySet()) {
@@ -80,6 +81,10 @@ public class BasicRowBuilder {
 
     protected int numberOfColumns() {
         return columnNameToValue.size();
+    }
+
+    protected Map<String, Object> getColumnsValues() {
+        return columnNameToValue;
     }
 
 
@@ -121,7 +126,7 @@ public class BasicRowBuilder {
         return tableName;
     }
 
-    protected void put(String columnName, Object value) {
+    void put(String columnName, Object value) {
         columnNameToValue.put(convertCase(columnName, config), value);
     }
 
@@ -133,20 +138,26 @@ public class BasicRowBuilder {
         return columnNameToValue.get(columnName);
     }
 
-    protected boolean existsValue(String columnName) {
-        return columnNameToValue.containsKey(columnName);
-    }
-
-
-    protected boolean isHibernateOnClasspath() {
+    boolean isHibernateOnClasspath() {
         return isOnClasspath("org.hibernate.Session");
     }
 
-    protected boolean isEclipseLinkOnClasspath() {
+    boolean isEclipseLinkOnClasspath() {
         return isOnClasspath("org.eclipse.persistence.mappings.DirectToFieldMapping");
     }
 
-    public boolean hasColumns() {
+    boolean hasColumns() {
         return !columnNameToValue.isEmpty();
+    }
+
+    /**
+     * indicates wheater current row was added to the dataset being build
+     */
+    protected boolean isAdded() {
+        return added;
+    }
+
+    protected void setAdded(boolean added) {
+        this.added = added;
     }
 }
