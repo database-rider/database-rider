@@ -39,7 +39,7 @@ public class DataSetProviderIt {
     public EntityManagerProvider emProvider = EntityManagerProvider.instance("rules-it");
 
     @Rule
-    public DBUnitRule dbUnitRule = D        BUnitRule.instance(emProvider.connection());
+    public DBUnitRule dbUnitRule = DBUnitRule.instance(emProvider.connection());
 
     @Test
     @DataSet(provider = UserDataSetProvider.class, cleanBefore = true)
