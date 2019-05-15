@@ -99,10 +99,14 @@ public class DataSetProviderIt {
         @Override
         public IDataSet provide() throws DataSetException {
             DataSetBuilder builder = new DataSetBuilder();
-            builder.table("user").column("id", 1)
-                .column("name", "@dbunit")
-                .table("user").column("id", 2)
-                .column("name", "@dbrider");
+            builder.table("user").
+                    row()
+                        .column("id", 1)
+                        .column("name", "@dbunit")
+                    .table("user").
+                    row()
+                        .column("id", 2)
+                        .column("name", "@dbrider");
             return builder.build();
         }
     }
@@ -114,14 +118,19 @@ public class DataSetProviderIt {
             DataSetBuilder builder = new DataSetBuilder();
             ColumnSpec id = ColumnSpec.of("ID");
             ColumnSpec name = ColumnSpec.of("NAME");
-            builder.table("USER").column("ID", 1)
-                .column(name, "@realpestano")
-                .table("USER")
-                .column(id, 2).column("NAME", "@dbunit")
-                .table("TWEET")
-                .column("ID", "abcdef12345").column("CONTENT", "dbunit rules!")
-                .column("DATE", "[DAY,NOW]")
-                .column("USER_ID", 9999)
+            builder.table("USER")
+                    .row()
+                        .column("ID", 1)
+                        .column(name, "@realpestano")
+                    .table("USER")
+                    .row()
+                        .column(id, 2).column("NAME", "@dbunit")
+                   .table("TWEET")
+                   .row()
+                        .column("ID", "abcdef12345")
+                        .column("CONTENT", "dbunit rules!")
+                        .column("DATE", "[DAY,NOW]")
+                        .column("USER_ID", 9999)
                 .build();
 
             return builder.build();
@@ -133,10 +142,14 @@ public class DataSetProviderIt {
         @Override
         public IDataSet provide() throws DataSetException {
             DataSetBuilder builder = new DataSetBuilder();
-            builder.table("user").column(User_.id, 1)
-                .column(User_.name, "@dbunit")
-                .table("user").column(User_.id, 2)
-                .column(User_.name, "@dbrider");
+            builder.table("user")
+                    .row()
+                        .column(User_.id, 1)
+                        .column(User_.name, "@dbunit")
+                    .table("user")
+                    .row()
+                        .column(User_.id, 2)
+                        .column(User_.name, "@dbrider");
             return builder.build();
         }
     }
@@ -146,8 +159,10 @@ public class DataSetProviderIt {
         @Override
         public IDataSet provide() throws DataSetException {
             DataSetBuilder builder = new DataSetBuilder();
-            builder.table("user").column("id", 2)
-                .column("name", "@dbrider");
+            builder.table("user")
+                    .row()
+                        .column("id", 2)
+                        .column("name", "@dbrider");
             return builder.build();
         }
     }
@@ -158,8 +173,10 @@ public class DataSetProviderIt {
         public IDataSet provide() throws DataSetException {
             DataSetBuilder builder = new DataSetBuilder();
             builder.table("TWEET")
-                .column("ID", "abcdef12345").column("CONTENT", "dbrider rules!")
-                .column("DATE", "[DAY,NOW]");
+                    .row()
+                        .column("ID", "abcdef12345")
+                        .column("CONTENT", "dbrider rules!")
+                        .column("DATE", "[DAY,NOW]");
             return builder.build();
         }
     }

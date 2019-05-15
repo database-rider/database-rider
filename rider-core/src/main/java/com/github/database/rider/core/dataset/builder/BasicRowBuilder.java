@@ -36,14 +36,14 @@ import java.util.Map;
 import static com.github.database.rider.core.dataset.builder.BuilderUtil.convertCase;
 import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
 
-public class BasicDataRowBuilder {
+public class BasicRowBuilder {
 
     private final String tableName;
     protected final DBUnitConfig config;
     protected final Map<String, Object> columnNameToValue = new LinkedHashMap<>();
     protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    public BasicDataRowBuilder(String tableName) {
+    public BasicRowBuilder(String tableName) {
         this.config = DBUnitConfig.fromGlobalConfig();
         this.tableName = convertCase(tableName,config);
     }
@@ -55,7 +55,7 @@ public class BasicDataRowBuilder {
      * @param value      the value the column should have.
      * @return the current object.
      */
-    public BasicDataRowBuilder column(String columnName, Object value) {
+    public BasicRowBuilder column(String columnName, Object value) {
         columnNameToValue.put(convertCase(columnName, config), value);
         return this;
     }
@@ -144,5 +144,9 @@ public class BasicDataRowBuilder {
 
     protected boolean isEclipseLinkOnClasspath() {
         return isOnClasspath("org.eclipse.persistence.mappings.DirectToFieldMapping");
+    }
+
+    public boolean hasColumns() {
+        return !columnNameToValue.isEmpty();
     }
 }

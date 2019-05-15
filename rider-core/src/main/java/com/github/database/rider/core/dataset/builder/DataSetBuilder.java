@@ -39,10 +39,10 @@ public class DataSetBuilder {
     private final Map<String, TableMetaDataBuilder> tableNameToMetaData = new HashMap<>();
     private final Logger LOGGER = LoggerFactory.getLogger(getClass().getName());
     private final DBUnitConfig config;
-    private DataRowBuilder currentRowBuilder;
+    private TableBuilder tableBuilder;
     private final Map<String, Object> defaultValues = new HashMap<>();
     private String currentTableName;
-
+    private final Map<String, Map<String, Object>> tableDefaultValues = new HashMap<>();
 
     public DataSetBuilder() {
         try {
@@ -58,16 +58,16 @@ public class DataSetBuilder {
      * Starts a new row for the given tableName
      * @param tableName
      */
-    public DataRowBuilder table(String tableName) {
-        currentRowBuilder = new DataRowBuilder(this, tableName);
-        return currentRowBuilder;
+    public TableBuilder table(String tableName) {
+        tableBuilder = new TableBuilder(this, tableName);
+        return tableBuilder;
     }
 
     public IDataSet build() {
         try {
-            if (currentRowBuilder != null && !currentRowBuilder.isAdded()) {
-               add(currentRowBuilder);
-               currentRowBuilder.setAdded(true);
+            if (tableBuilder != null && !tableBuilder.getCurrentRowBuilder().isAdded()) {
+                add(tableBuilder.getCurrentRowBuilder());
+                tableBuilder.getCurrentRowBuilder().setAdded(true);
             }
             endTableIfNecessary();
             consumer.endDataSet();
@@ -95,7 +95,7 @@ public class DataSetBuilder {
      * Add a row to current dataset
      * @return
      */
-    public DataSetBuilder add(BasicDataRowBuilder row) {
+    public DataSetBuilder add(BasicRowBuilder row) {
         try {
             fillUndefinedColumns(row);
             ITableMetaData metaData = updateTableMetaData(row);
@@ -113,7 +113,7 @@ public class DataSetBuilder {
         return this;
     }
 
-    private Object[] extractValues(BasicDataRowBuilder row, ITableMetaData metaData) throws DataSetException {
+    private Object[] extractValues(BasicRowBuilder row, ITableMetaData metaData) throws DataSetException {
         return row.values(metaData.getColumns());
     }
 
@@ -121,7 +121,7 @@ public class DataSetBuilder {
         consumer.row(values);
     }
 
-    private ITableMetaData updateTableMetaData(BasicDataRowBuilder row) throws DataSetException {
+    private ITableMetaData updateTableMetaData(BasicRowBuilder row) throws DataSetException {
         TableMetaDataBuilder builder = metaDataBuilderFor(row.getTableName());
         int previousNumberOfColumns = builder.numberOfColumns();
 
@@ -181,23 +181,12 @@ public class DataSetBuilder {
         return new TableMetaDataBuilder(tableName);
     }
 
-    public boolean containsTable(String tableName) {
-        return containsKey(convertCase(tableName, config));
-    }
-
     private boolean containsKey(String key) {
         return tableNameToMetaData.containsKey(key);
     }
 
-    public void setCurrentRowBuilder(DataRowBuilder dataRowBuilder) {
-        this.currentRowBuilder = dataRowBuilder;
-    }
 
-    protected DataRowBuilder getCurrentRowBuilder() {
-        return currentRowBuilder;
-    }
-
-    public void fillUndefinedColumns(BasicDataRowBuilder row) {
+    public void fillUndefinedColumns(BasicRowBuilder row) {
         if(!defaultValues.isEmpty()) {
             for (String column : defaultValues.keySet()) {
                 if (!row.columnNameToValue.containsKey(column)) {
@@ -205,5 +194,35 @@ public class DataSetBuilder {
                 }
             }
         }
+
+        if(hasDefaulValuesForTable(row.getTableName())) {
+            for (Map.Entry<String, Object> column : getDefaultValuesForTable(row.getTableName()).entrySet()) {
+                if (!row.columnNameToValue.containsKey(column.getKey())) {
+                    row.columnNameToValue.put(column.getKey(), column.getValue());
+                }
+            }
+        }
+    }
+
+
+    protected boolean hasDefaulValuesForTable(String tableName) {
+        String key = tableName.toLowerCase();
+        return tableDefaultValues.containsKey(key);
+    }
+
+    protected Map<String, Object> getDefaultValuesForTable(String tableName) {
+        String key = tableName.toLowerCase();
+        if(!hasDefaulValuesForTable(key)) {
+            return new HashMap<>();
+        }
+        return tableDefaultValues.get(key);
+    }
+
+    protected void addTableDefaultValue(String tableName, String columnName, Object value) {
+        String key = tableName.toLowerCase();
+        if(!hasDefaulValuesForTable(key)) {
+            tableDefaultValues.put(key, new HashMap<String, Object>());
+        }
+        tableDefaultValues.get(key).put(convertCase(columnName, config), value);
     }
 }

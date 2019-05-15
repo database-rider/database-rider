@@ -14,40 +14,44 @@ import static com.github.database.rider.core.dataset.builder.BuilderUtil.convert
 import static com.github.database.rider.core.util.EntityManagerProvider.em;
 import static com.github.database.rider.core.util.EntityManagerProvider.isEntityManagerActive;
 
-public class DataRowBuilder extends BasicDataRowBuilder {
+public class RowBuilder extends BasicRowBuilder {
 
-    private final DataSetBuilder dataSet;
+    private final TableBuilder tableBuilder;
     private boolean added;
 
-    protected DataRowBuilder(DataSetBuilder dataSet, String tableName) {
+    protected RowBuilder(TableBuilder tableBuilder, String tableName) {
         super(tableName);
-        this.dataSet = dataSet;
+        this.tableBuilder = tableBuilder;
     }
 
-    public <T> DataRowBuilder column(ColumnSpec column, T value) {
+    public <T> RowBuilder column(ColumnSpec column, T value) {
         super.column(column.name(), value);
         return this;
     }
 
-    public DataRowBuilder column(String columnName, Date value) {
+    public RowBuilder column(String columnName, Date value) {
         put(columnName, DateUtils.format(value));
         return this;
     }
 
-    public DataRowBuilder column(String columnName, Calendar value) {
+    public RowBuilder column(String columnName, Calendar value) {
         put(columnName, DateUtils.format(value.getTime()));
         return this;
     }
 
-    public DataRowBuilder column(Attribute column, Object value) {
+    public RowBuilder column(Attribute column, Object value) {
         String columnName = getColumnNameFromMetaModel(column);
         super.column(columnName, value);
         return this;
     }
 
-    public DataRowBuilder column(String columnName, Object value) {
+    public RowBuilder column(String columnName, Object value) {
         super.column(columnName, value);
         return this;
+    }
+
+    public RowBuilder row() {
+        return tableBuilder.row();
     }
 
     private String getColumnNameFromMetaModel(Attribute column) {
@@ -68,41 +72,24 @@ public class DataRowBuilder extends BasicDataRowBuilder {
         return columnName;
     }
 
-    public DataRowBuilder column(Attribute column, Calendar value) {
+    public RowBuilder column(Attribute column, Calendar value) {
         String columnName = getColumnNameFromMetaModel(column);
         return column(columnName, value);
     }
 
-    public DataRowBuilder column(Attribute column, Date value) {
+    public RowBuilder column(Attribute column, Date value) {
         String columnName = getColumnNameFromMetaModel(column);
         return column(columnName, value);
     }
 
     /**
-     * Starts creating rows for new table
+     * Starts creating rows for a new table
      * @param tableName
      * @return
      */
-    public DataRowBuilder table(String tableName) {
-        saveCurrentRow(); //save current row  every time a new row is started
-        DataRowBuilder dataRowBuilder = new DataRowBuilder(dataSet, tableName);
-        dataSet.setCurrentRowBuilder(dataRowBuilder);
-        return dataRowBuilder;
-    }
-
-    public DataRowBuilder row() {
-        if(!columnNameToValue.isEmpty()) {
-            saveCurrentRow();
-            dataSet.getCurrentRowBuilder().setAdded(false);
-            columnNameToValue.clear();
-        }
-        return dataSet.getCurrentRowBuilder();
-    }
-
-
-    private void saveCurrentRow() {
-        added = true;
-        dataSet.add(this);
+    public TableBuilder table(String tableName) {
+        tableBuilder.saveCurrentRow(); //save current row  every time a new row is started
+        return tableBuilder.getDataSetBuilder().table(tableName);
     }
 
     /**
@@ -110,7 +97,7 @@ public class DataRowBuilder extends BasicDataRowBuilder {
      *
      */
     public IDataSet build() {
-        return dataSet.build();
+        return tableBuilder.getDataSetBuilder().build();
     }
 
     /**

@@ -10,7 +10,7 @@ import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.connection.ConnectionHolderImpl;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.dataset.builder.ColumnSpec;
-import com.github.database.rider.core.dataset.builder.DataRowBuilder;
+import com.github.database.rider.core.dataset.builder.RowBuilder;
 import com.github.database.rider.core.dataset.builder.DataSetBuilder;
 import com.github.database.rider.core.model.Tweet;
 import com.github.database.rider.core.model.User;
@@ -159,12 +159,16 @@ public class DataSetProviderIt {
     public static class UserDataSetProvider implements DataSetProvider {
 
         @Override
-        public IDataSet provide()  {
+        public IDataSet provide() {
             DataSetBuilder builder = new DataSetBuilder();
-            builder.table("user").column("id", 1)
-                .column("name", "@dbunit")
-                .table("user").column("id", 2)
-                .column("name", "@dbrider").build();
+            builder.table("user")
+                    .row()
+                    .column("id", 1)
+                    .column("name", "@dbunit")
+                    .table("user")
+                    .row()
+                    .column("id", 2)
+                    .column("name", "@dbrider").build();
             return builder.build();
         }
     }
@@ -174,14 +178,15 @@ public class DataSetProviderIt {
     public static class UserDataSetWithMetaModelProvider implements DataSetProvider {
 
         @Override
-        public IDataSet provide()  {
+        public IDataSet provide() {
             DataSetBuilder builder = new DataSetBuilder();
             return builder.table("user")
-                    .column(User_.id, 1)
-                    .column(User_.name, "@dbunit")
-                .row()
-                    .column(User_.id, 2)
-                    .column(User_.name, "@dbrider").build();
+                    .row()
+                        .column(User_.id, 1)
+                        .column(User_.name, "@dbunit")
+                    .row()
+                        .column(User_.id, 2)
+                        .column(User_.name, "@dbrider").build();
         }
     }
 
@@ -190,8 +195,10 @@ public class DataSetProviderIt {
         @Override
         public IDataSet provide()  {
             DataSetBuilder builder = new DataSetBuilder();
-            builder.table("user").column("id", 2)
-                .column("name", "@dbrider");
+            builder.table("user")
+                    .row()
+                        .column("id", 2)
+                        .column("name", "@dbrider");
             return builder.build();
         }
     }
@@ -202,8 +209,9 @@ public class DataSetProviderIt {
         public IDataSet provide()  {
             DataSetBuilder builder = new DataSetBuilder();
             builder.table("TWEET")
-                .column("ID", "abcdef12345").column("CONTENT", "dbrider rules!")
-                .column("DATE", "[DAY,NOW]");
+                   .row()
+                        .column("ID", "abcdef12345").column("CONTENT", "dbrider rules!")
+                        .column("DATE", "[DAY,NOW]");
             return builder.build();
         }
     }
@@ -217,19 +225,24 @@ public class DataSetProviderIt {
             ColumnSpec name = ColumnSpec.of("NAME");
             IDataSet dataSet = builder
                     .table("USER") //start adding rows to 'USER' table
+                    .row()
                         .column("ID", 1)
                         .column(name, "@dbunit")
                     .row() //keeps adding rows to the current table
                         .column(id, 2)
                         .column("NAME", "@dbrider")
                     .table("TWEET") //starts adding rows to 'TWEET' table
+                    .row()
                         .column("ID", "abcdef12345")
                         .column("CONTENT", "dbunit rules!")
                         .column("DATE", "[DAY,NOW]")
-                    .table("FOLLOWER").column(id, 1)
+                    .table("FOLLOWER")
+                    .row()
+                        .column(id, 1)
                         .column("USER_ID", 9999)
                         .column("FOLLOWER_ID", 9999)
                     .table("USER")// we still can add rows to table already added to the dataset
+                    .row()
                        .column("ID", 3)
                        .column(name, "@new row")
                 .build();
@@ -254,12 +267,14 @@ public class DataSetProviderIt {
         @Override
         public IDataSet provide()  {
             DataSetBuilder builder = new DataSetBuilder();
-            DataRowBuilder user1Row = new DataSetBuilder().table("USER")
-                    .column("id", "1")
-                    .column("name", "user1");
-            DataRowBuilder user2Row = new DataSetBuilder().table("USER")
-                    .column("id", "2")
-                    .column("name", "user2");
+            RowBuilder user1Row = new DataSetBuilder().table("USER")
+                    .row()
+                        .column("id", "1")
+                        .column("name", "user1");
+            RowBuilder user2Row = new DataSetBuilder().table("USER")
+                    .row()
+                        .column("id", "2")
+                        .column("name", "user2");
 
             IDataSet iDataSet = builder.add(user1Row).add(user2Row)
                     .addDataSet(new TweetDataSetProvider().provide())
@@ -276,10 +291,12 @@ public class DataSetProviderIt {
             DataSetBuilder builder = new DataSetBuilder()
                     .defaultValue("NAME", "DEFAULT");
             ColumnSpec id = ColumnSpec.of("ID");
-            return builder.table("USER").column(id, 1)
-                    .column("NAME", "@realpestano")
+            return builder.table("USER")
                     .row()
-                    .column(id, 2)
+                        .column(id, 1)
+                        .column("NAME", "@realpestano")
+                    .row()
+                        .column(id, 2)
                     .build();
         }
 
