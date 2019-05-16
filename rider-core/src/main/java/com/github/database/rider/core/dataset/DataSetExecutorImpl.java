@@ -8,7 +8,6 @@ import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.connection.RiderDataSource;
 import com.github.database.rider.core.connection.RiderDataSource.DBType;
-import com.github.database.rider.core.dataset.writer.YMLWriter;
 import com.github.database.rider.core.exception.DataBaseSeedingException;
 import com.github.database.rider.core.replacers.Replacer;
 import org.dbunit.DatabaseUnitException;
@@ -22,6 +21,7 @@ import org.dbunit.dataset.excel.XlsDataSet;
 import org.dbunit.dataset.filter.DefaultColumnFilter;
 import org.dbunit.dataset.filter.ITableFilter;
 import org.dbunit.dataset.filter.SequenceTableFilter;
+import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.ext.mssql.InsertIdentityOperation;
 import org.dbunit.operation.CompositeOperation;
@@ -182,8 +182,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         try {
             File datasetFile = Files.createTempFile("dataset-log", ".yml").toFile();
             log.info("Saving current dataset to "+datasetFile.getAbsolutePath());
-            FileOutputStream fos = new FileOutputStream(datasetFile);
-            new YMLWriter(fos).write(resultingDataSet);
+            try(FileOutputStream fos = new FileOutputStream(datasetFile)) {
+                FlatXmlDataSet.write(resultingDataSet, fos);
+            }
         } catch (Exception e1) {
             log.error("Could not log created dataset.", e);
         }

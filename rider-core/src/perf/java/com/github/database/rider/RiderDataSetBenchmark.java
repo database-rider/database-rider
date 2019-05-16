@@ -3,9 +3,9 @@ package com.github.database.rider;
 import com.github.database.rider.core.api.dataset.ScriptableDataSet;
 import com.github.database.rider.core.api.dataset.YamlDataSet;
 import com.github.database.rider.core.dataset.builder.DataSetBuilder;
-import com.github.database.rider.core.dataset.writer.YMLWriter;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -22,7 +22,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Created by pestano on 22/02/16.
+ * Created by rmpestano on 15/05/19.
+ *
+ * A simple benchmark measuring dataset creation via file and with DataSetBuilder (in-memory)
+ *
+ * Running: mvn exec:exec -Pperf
  */
 @State(Scope.Benchmark)
 @BenchmarkMode(Mode.Throughput)
@@ -53,7 +57,7 @@ public class RiderDataSetBenchmark {
         }
     }
 
-    //@Benchmark
+    @Benchmark
     public void createDataSetsFromFiles(BenchmarkContext ctx) {
         try {
             IDataSet iDataSet = new ScriptableDataSet(new YamlDataSet(getDataSetStream("users.yml")));
@@ -100,9 +104,10 @@ public class RiderDataSetBenchmark {
                         .values(5);
             }
             IDataSet iDataSet = dataSetBuilder.build();
-            /*File datasetFile = Files.createTempFile("dataset-log", ".yml").toFile();
-            FileOutputStream fos = new FileOutputStream(datasetFile);
-            new YMLWriter(fos).write(iDataSet)*/;
+        /*    File datasetFile = Files.createTempFile("dataset-log", ".yml").toFile();
+            try(FileOutputStream fos = new FileOutputStream(datasetFile)) {
+                FlatXmlDataSet.write(iDataSet, fos);
+            }*/
             assertCreatedDataSet(iDataSet);
             programmaticDatasetsCreated.incrementAndGet();
         }catch (Exception e) {
@@ -113,13 +118,13 @@ public class RiderDataSetBenchmark {
 
     public static void main(String[] args) throws RunnerException, InterruptedException {
             new Runner(new OptionsBuilder().
-                    forks(1).
+                    forks(3).
                     threads(8).
-                    warmupIterations(1).
+                    warmupIterations(3).
                     warmupForks(1).
                     measurementIterations(10).
                     include(RiderDataSetBenchmark.class.getSimpleName()).
-                    measurementTime(TimeValue.milliseconds(350)).
+                    measurementTime(TimeValue.milliseconds(300)).
                     build()
             ).run();
     }
