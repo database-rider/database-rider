@@ -235,15 +235,15 @@ public class DatasetBuilderTest {
                         "TWEET:" + NEW_LINE +
                         "  - ID: \"abcdef12345\"" + NEW_LINE +
                         "    CONTENT: \"dbunit rules!\"" + NEW_LINE +
-                        "    DATE: \"[DAY,NOW]\"" + NEW_LINE +
                         "    NAME: \"DEFAULT\"" + NEW_LINE +
+                        "    DATE: \"[DAY,NOW]\"" + NEW_LINE +
                         "" + NEW_LINE +
                         "FOLLOWER:" + NEW_LINE +
                         "  - ID: 1" + NEW_LINE +
                         "    USER_ID: 1" + NEW_LINE +
                         "    FOLLOWER_ID: 2" + NEW_LINE +
-                        "    DATE: \"[DAY,NOW]\"" + NEW_LINE +
-                        "    NAME: \"DEFAULT\"" + NEW_LINE+ NEW_LINE );
+                        "    NAME: \"DEFAULT\"" + NEW_LINE +
+                        "    DATE: \"[DAY,NOW]\"" + NEW_LINE+ NEW_LINE );
     }
 
     @Test
