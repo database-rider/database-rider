@@ -55,8 +55,14 @@ public class DataSetBuilder {
     }
 
     /**
-     * Starts creating a dataset for the given table
-     *
+     * Starts creating a dataset for the given table, ex:
+     * <pre>
+     * {@code
+     *  builder.table("user")
+     *         .row()
+     *            .column("id", 1)
+     *            .column("name", "@dbunit")
+     * }
      * @param tableName
      */
     public TableBuilder table(String tableName) {
@@ -65,7 +71,7 @@ public class DataSetBuilder {
     }
 
     /**
-     * Creates a dbunit dataset based on current builder
+     * Creates a dbunit dataset for current builder
      */
     public IDataSet build() {
         try {
@@ -82,9 +88,13 @@ public class DataSetBuilder {
         }
     }
 
-    public DataSetBuilder addDataSet(final IDataSet newDataSet) {
+    /**
+     * Adds a previously created dataset to current builder
+     * @param iDataSet dbunit dataset
+     */
+    public DataSetBuilder addDataSet(final IDataSet iDataSet) {
         try {
-            IDataSet[] dataSets = {build(), newDataSet};
+            IDataSet[] dataSets = {build(), iDataSet};
             CompositeDataSet composite = new CompositeDataSet(dataSets);
             this.dataSet = new CachedDataSet(composite);
             consumer = new BufferedConsumer(this.dataSet);
@@ -96,7 +106,21 @@ public class DataSetBuilder {
     }
 
     /**
-     * Add a previously created row to current dataset
+     * Add a previously created row to current dataset, ex:
+     * <pre>
+     * {@code
+     * RowBuilder user1Row = new DataSetBuilder().table("USER")
+     *     .row()
+     *         .column("id", "1")
+     *         .column("name", "user1");
+     * RowBuilder user2Row = new DataSetBuilder().table("USER")
+     *     .row()
+     *         .column("id", "2")
+     *         .column("name", "user2");
+     *
+     * IDataSet iDataSet = builder.add(user1Row).add(user2Row)
+     * }
+     * </pre>
      */
     public DataSetBuilder add(BasicRowBuilder row) {
         try {

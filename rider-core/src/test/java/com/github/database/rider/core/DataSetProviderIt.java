@@ -54,6 +54,18 @@ public class DataSetProviderIt {
     }
 
     @Test
+    @DataSet(provider = UserDataSetProviderWithColumnsSyntax.class)
+    @ExportDataSet(outputName = "target/out3.yml")
+    public void shouldSeedDatabaseUsingDataSetProviderWithColumnsSyntax() {
+        List<User> users = EntityManagerProvider.em().createQuery("select u from User u ").getResultList();
+        assertThat(users).
+                isNotNull().
+                isNotEmpty().hasSize(2).
+                extracting("name").
+                contains("@dbunit", "@dbrider");
+    }
+
+    @Test
     @ExportDataSet(outputName = "target/out2.yml")
     @DataSet(provider = UserDataSetWithMetaModelProvider.class, cleanBefore = true)
     public void shouldSeedDatabaseProgrammaticallyUsingMetaModel() {
@@ -66,15 +78,14 @@ public class DataSetProviderIt {
     }
 
     @Test
-    @DataSet(provider = UserDataSetProviderWithColumnsSyntax.class)
-    @ExportDataSet(outputName = "target/out3.yml")
-    public void shouldSeedDatabaseUsingDataSetProviderWithColumnsSyntax() {
-        List<User> users = EntityManagerProvider.em().createQuery("select u from User u ").getResultList();
+    @DataSet(provider = UserDataSetWithMetaModelUsingColumnsSyntax.class, cleanBefore = true)
+    public void shouldSeedDatabaseUsingMetaModelWithColumnsSysntax() {
+        List<User> users = em().createQuery("select u from User u ").getResultList();
         assertThat(users).
-            isNotNull().
-            isNotEmpty().hasSize(2).
-            extracting("name").
-            contains("@dbunit", "@dbrider");
+                isNotNull().
+                isNotEmpty().hasSize(2).
+                extracting("name").
+                contains("@dbunit", "@dbrider");
     }
 
     @Test
@@ -209,6 +220,19 @@ public class DataSetProviderIt {
                     .row()
                         .column(User_.id, 2)
                         .column(User_.name, "@dbrider").build();
+        }
+    }
+
+    public static class UserDataSetWithMetaModelUsingColumnsSyntax implements DataSetProvider {
+
+        @Override
+        public IDataSet provide() {
+            DataSetBuilder builder = new DataSetBuilder();
+            return builder.table("user")
+                    .columns(User_.id,User_.name)
+                    .values(1, "@dbunit")
+                    .values(2, "@dbrider")
+                   .build();
         }
     }
 

@@ -2,17 +2,12 @@ package com.github.database.rider.core.dataset.builder;
 
 import com.github.database.rider.core.util.DateUtils;
 import org.dbunit.dataset.IDataSet;
-import org.eclipse.persistence.internal.jpa.metamodel.AttributeImpl;
-import org.hibernate.SessionFactory;
-import org.hibernate.persister.entity.AbstractEntityPersister;
 
 import javax.persistence.metamodel.Attribute;
 import java.util.Calendar;
 import java.util.Date;
 
-import static com.github.database.rider.core.dataset.builder.BuilderUtil.convertCase;
-import static com.github.database.rider.core.util.EntityManagerProvider.em;
-import static com.github.database.rider.core.util.EntityManagerProvider.isEntityManagerActive;
+import static com.github.database.rider.core.dataset.builder.BuilderUtil.getColumnNameFromMetaModel;
 
 public class RowBuilder extends BasicRowBuilder {
 
@@ -103,24 +98,6 @@ public class RowBuilder extends BasicRowBuilder {
      */
     public RowBuilder row() {
         return tableBuilder.row();
-    }
-
-    private String getColumnNameFromMetaModel(Attribute column) {
-        String columnName = null;
-        try {
-            if (isEclipseLinkOnClasspath()) {
-                columnName = ((AttributeImpl) column).getMapping().getField().getName();
-            } else if (isHibernateOnClasspath() && isEntityManagerActive()) {
-                AbstractEntityPersister entityMetadata = (AbstractEntityPersister) em().getEntityManagerFactory().unwrap(SessionFactory.class).getClassMetadata(column.getJavaMember().getDeclaringClass());
-                columnName = entityMetadata.getPropertyColumnNames(column.getName())[0];
-            }
-        } catch (Exception e) {
-            LOGGER.error("Could not extract database column name from column {} and type {}", column.getName(), column.getDeclaringType().getJavaType().getName(), e);
-        }
-        if (columnName == null) {
-            columnName = convertCase(column.getName(), config);
-        }
-        return columnName;
     }
 
 

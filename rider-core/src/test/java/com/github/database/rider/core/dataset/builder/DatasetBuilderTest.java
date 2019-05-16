@@ -3,17 +3,16 @@ package com.github.database.rider.core.dataset.builder;
 import com.github.database.rider.core.dataset.writer.JSONWriter;
 import com.github.database.rider.core.dataset.writer.YMLWriter;
 import com.github.database.rider.core.metamodel.Contact_;
-import com.github.database.rider.core.replacers.DateTimeReplacer;
 import com.github.database.rider.core.util.DateUtils;
 import com.github.database.rider.core.util.EntityManagerProvider;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,7 +20,6 @@ import java.nio.file.Files;
 import java.util.Calendar;
 import java.util.Date;
 
-import static com.github.database.rider.core.util.EntityManagerProvider.em;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.contentOf;
 
@@ -263,6 +261,49 @@ public class DatasetBuilderTest {
                     .column(Contact_.name, "dbrider")
                     .column(Contact_.date,date )
                     .column(Contact_.calendar, calendar)
+                .build();
+
+
+        File datasetFile = Files.createTempFile("rider-dataset", ".yml").toFile();
+        FileOutputStream fos = new FileOutputStream(datasetFile);
+        new YMLWriter(fos).write(dataSet);
+
+
+        assertThat(contentOf(datasetFile)).
+                contains("CONTACT:" + NEW_LINE +
+                        "  - ID: 1" + NEW_LINE +
+                        "    NAME: \"dbrider\"" + NEW_LINE +
+                        "    DATE: \"" + DateUtils.format(date) +"\"" + NEW_LINE +
+                        "    CALENDAR: \"" + DateUtils.format(calendar.getTime()) +"\"" + NEW_LINE +
+                        "");
+    }
+
+    @Test
+    public void shouldNotGenerateDataSetWhenColumnsSizeIsDifferentThanValuesSize() {
+
+        try {
+            new DataSetBuilder().table("user")
+                    .columns("id", "name")
+                    .values(1, "@dbunit", "anotherValue")
+                    .values(2, "@dbrider").build();
+            Assert.fail("Build method must throw an exception");
+        }catch (RuntimeException e) {
+            assertThat(e.getMessage()).isEqualTo("Number of columns (2) for table USER is different than the number of provided values (3)");
+        }
+    }
+
+    @Test
+    public void shouldGenerateDataSetUsingMetaModelWithColumnValuesSyntax() throws DataSetException, IOException {
+
+        EntityManagerProvider.instance("contactPU");
+        DataSetBuilder builder = new DataSetBuilder();
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR, 1);
+        Date date = new Date();
+
+        IDataSet dataSet = builder.table("CONTACT")
+                .columns(Contact_.id,Contact_.name, Contact_.date, Contact_.calendar)
+                .values(1, "dbrider" ,date , calendar)
                 .build();
 
 

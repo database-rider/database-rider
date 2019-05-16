@@ -1,13 +1,17 @@
 package com.github.database.rider.core.dataset.builder;
 
+import com.github.database.rider.core.util.DateUtils;
 import org.dbunit.dataset.IDataSet;
+
+import java.util.Calendar;
+import java.util.Date;
 
 import static com.github.database.rider.core.dataset.builder.BuilderUtil.convertCase;
 
 public class ColumnBuilder extends BasicRowBuilder {
 
-    final String[] columns;
-    private TableBuilder tableBuilder;
+    private final String[] columns;
+    private final TableBuilder tableBuilder;
 
     public ColumnBuilder(TableBuilder tableBuilder, String tableName, String... columns) {
         super(tableName);
@@ -17,11 +21,17 @@ public class ColumnBuilder extends BasicRowBuilder {
 
     public ColumnBuilder values(Object... values) {
         if (values.length != columns.length) {
-            throw new RuntimeException(String.format("Number of columns %s for table %s is different than the number of provided values %s", columns.length, getTableName(), values.length));
+            throw new RuntimeException(String.format("Number of columns (%s) for table %s is different than the number of provided values (%s)", columns.length, getTableName(), values.length));
         }
         for (int i = 0; i < columns.length; i++) {
             if(values[i] != null) {//default values
-                columnNameToValue.put(convertCase(columns[i], config), values[i]);
+                Object columnValue = values[i];
+                if(columnValue instanceof Date) {
+                    columnValue = DateUtils.format((Date) columnValue);
+                } else if(columnValue instanceof Calendar) {
+                    columnValue = DateUtils.format(((Calendar) columnValue).getTime());
+                }
+                columnNameToValue.put(convertCase(columns[i], config), columnValue);
             }
         }
         saveCurrentRow();

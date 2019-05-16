@@ -1,5 +1,9 @@
 package com.github.database.rider.core.dataset.builder;
 
+import javax.persistence.metamodel.Attribute;
+
+import static com.github.database.rider.core.dataset.builder.BuilderUtil.getColumnNameFromMetaModel;
+
 public class TableBuilder {
 
     private final DataSetBuilder dataSetBuilder;
@@ -26,7 +30,6 @@ public class TableBuilder {
      *             .column("name", "@dbrider").build();
      * }
      * </pre>
-     * @return
      */
     public RowBuilder row() {
         if(currentRowBuilder.hasColumns()) {
@@ -50,7 +53,7 @@ public class TableBuilder {
      * </pre>
      *
      * @param columns
-     * @return a culumn builder responsible for creating rows using simplified syntax
+     * @return a column builder responsible for creating rows using simplified syntax
      */
     public ColumnBuilder columns(String... columns) {
         if(currentColumnBuilder != null && currentColumnBuilder.hasColumns()) {
@@ -60,6 +63,31 @@ public class TableBuilder {
         currentColumnBuilder = new ColumnBuilder(this, tableName, columns);
 
         return currentColumnBuilder;
+    }
+
+
+    /**
+     * Simplified syntax for row creation, using JPA metalmodel, specifying columns only once
+     * and then declare values of each row:
+     * <pre>
+     * {@code
+     *  builder.table("user")
+     *         .columns(User_id, User_name)
+     *         .values(1,"@dbunit")
+     *         .values(2,"@dbrider").build();
+     * }
+     * </pre>
+     *
+     * @param columns
+     * @return a column builder responsible for creating rows using simplified syntax
+     */
+    public ColumnBuilder columns(Attribute... columns) {
+        String[] columnList = new String[columns.length];
+
+        for (int i = 0; i < columns.length; i++) {
+            columnList[i] = getColumnNameFromMetaModel(columns[i]);
+        }
+        return columns(columnList);
     }
 
     protected RowBuilder getCurrentRowBuilder() {

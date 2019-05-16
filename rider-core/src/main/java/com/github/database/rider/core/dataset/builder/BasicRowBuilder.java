@@ -25,8 +25,6 @@ import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DefaultTableMetaData;
 import org.dbunit.dataset.ITableMetaData;
 import org.dbunit.dataset.datatype.DataType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -34,14 +32,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static com.github.database.rider.core.dataset.builder.BuilderUtil.convertCase;
-import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
 
 public class BasicRowBuilder {
 
     private final String tableName;
     protected final DBUnitConfig config;
     protected final Map<String, Object> columnNameToValue = new LinkedHashMap<>();
-    protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private boolean added;
 
     public BasicRowBuilder(String tableName) {
@@ -87,7 +83,6 @@ public class BasicRowBuilder {
         return columnNameToValue;
     }
 
-
     protected ITableMetaData createMetaData(Column[] columns) {
         return new DefaultTableMetaData(tableName, columns);
     }
@@ -126,7 +121,7 @@ public class BasicRowBuilder {
         return tableName;
     }
 
-    void put(String columnName, Object value) {
+    protected void put(String columnName, Object value) {
         columnNameToValue.put(convertCase(columnName, config), value);
     }
 
@@ -138,20 +133,12 @@ public class BasicRowBuilder {
         return columnNameToValue.get(columnName);
     }
 
-    boolean isHibernateOnClasspath() {
-        return isOnClasspath("org.hibernate.Session");
-    }
-
-    boolean isEclipseLinkOnClasspath() {
-        return isOnClasspath("org.eclipse.persistence.mappings.DirectToFieldMapping");
-    }
-
-    boolean hasColumns() {
+    protected boolean hasColumns() {
         return !columnNameToValue.isEmpty();
     }
 
     /**
-     * indicates wheater current row was added to the dataset being build
+     * indicates whether current row was added to the dataset being build
      */
     protected boolean isAdded() {
         return added;
