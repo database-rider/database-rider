@@ -1,11 +1,12 @@
 package com.github.database.rider;
 
+import com.github.database.rider.core.api.dataset.JSONDataSet;
 import com.github.database.rider.core.api.dataset.ScriptableDataSet;
 import com.github.database.rider.core.api.dataset.YamlDataSet;
 import com.github.database.rider.core.dataset.builder.DataSetBuilder;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.xml.FlatXmlDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -14,10 +15,7 @@ import org.openjdk.jmh.runner.options.TimeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -33,7 +31,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @OutputTimeUnit(TimeUnit.SECONDS)
 public class RiderDataSetBenchmark {
 
-    static AtomicInteger datasetsCreated;
+    static AtomicInteger yamlDatasetsCreated;
+    static AtomicInteger xmlDatasetsCreated;
+    static AtomicInteger jsonDatasetsCreated;
     static AtomicInteger programmaticDatasetsCreated;
     static final Logger LOG = LoggerFactory.getLogger(RiderDataSetBenchmark.class.getName());
 
@@ -42,46 +42,64 @@ public class RiderDataSetBenchmark {
 
         @Setup
         public void init() {
-            datasetsCreated = new AtomicInteger(0);
+            yamlDatasetsCreated = new AtomicInteger(0);
+            jsonDatasetsCreated = new AtomicInteger(0);
+            xmlDatasetsCreated = new AtomicInteger(0);
             programmaticDatasetsCreated = new AtomicInteger(0);
         }
 
         @TearDown
         public void tearDown() {
-            if(datasetsCreated.get() != 0) {
-                LOG.info("Number of datasets created: " + datasetsCreated.get());
+            if (yamlDatasetsCreated.get() != 0) {
+                LOG.info("Number of YML datasets created: " + yamlDatasetsCreated.get());
             }
-            if(programmaticDatasetsCreated.get() != 0) {
+            if (xmlDatasetsCreated.get() != 0) {
+                LOG.info("Number of XML datasets created: " + xmlDatasetsCreated.get());
+            }
+            if (jsonDatasetsCreated.get() != 0) {
+                LOG.info("Number of JSON datasets created: " + jsonDatasetsCreated.get());
+            }
+            if (programmaticDatasetsCreated.get() != 0) {
                 LOG.info("Number of programmatic datasets created: " + programmaticDatasetsCreated.get());
             }
         }
     }
 
     @Benchmark
-    public void createDataSetsFromFiles(BenchmarkContext ctx) {
+    public void createDataSetsFromYMLFiles(BenchmarkContext ctx) {
         try {
             IDataSet iDataSet = new ScriptableDataSet(new YamlDataSet(getDataSetStream("users.yml")));
             assertCreatedDataSet(iDataSet);
-            datasetsCreated.incrementAndGet();
-        }catch (Exception e) {
-            LOG.error("Problem in benchmark "+ctx.toString(), e);
-        }
-    }
-
-    private void assertCreatedDataSet(IDataSet iDataSet) throws DataSetException {
-        if (iDataSet.getTableNames().length != 5) {
-            throw new RuntimeException("Must create five tables but created " + iDataSet.getTableNames().length);
-        }
-        if (iDataSet.getTable("TABLE5").getRowCount() != 5) {
-            throw new RuntimeException("TABLE5 must have 5 rows but has " + iDataSet.getTable("TABLE5").getRowCount());
-        }
-        if (iDataSet.getTable("TABLE5").getTableMetaData().getColumns().length != 11) {
-            throw new RuntimeException("TABLE5 must have 11 columns per row but has " + iDataSet.getTable("TABLE5").getTableMetaData().getColumns().length);
+            yamlDatasetsCreated.incrementAndGet();
+        } catch (Exception e) {
+            LOG.error("Problem in benchmark " + ctx.toString(), e);
         }
     }
 
     @Benchmark
-    public void createDataSetsWithDataSetBuilder(BenchmarkContext ctx)  {
+    public void createDataSetsFromXMLFiles(BenchmarkContext ctx) {
+        try {
+            IDataSet iDataSet = new ScriptableDataSet(new FlatXmlDataSetBuilder().build(getDataSetStream("users.xml")));
+            assertCreatedDataSet(iDataSet);
+            xmlDatasetsCreated.incrementAndGet();
+        } catch (Exception e) {
+            LOG.error("Problem in benchmark " + ctx.toString(), e);
+        }
+    }
+
+    @Benchmark
+    public void createDataSetsFromJSONFiles(BenchmarkContext ctx) {
+        try {
+            IDataSet iDataSet = new ScriptableDataSet(new JSONDataSet(getDataSetStream("users.json")));
+            assertCreatedDataSet(iDataSet);
+            jsonDatasetsCreated.incrementAndGet();
+        } catch (Exception e) {
+            LOG.error("Problem in benchmark " + ctx.toString(), e);
+        }
+    }
+
+    @Benchmark
+    public void createDataSetsWithDataSetBuilder(BenchmarkContext ctx) {
         try {
             DataSetBuilder dataSetBuilder = new DataSetBuilder()
                     .defaultValue("COL1", "col1")
@@ -110,23 +128,35 @@ public class RiderDataSetBenchmark {
             }*/
             assertCreatedDataSet(iDataSet);
             programmaticDatasetsCreated.incrementAndGet();
-        }catch (Exception e) {
-            LOG.error("Problem in benchmark "+ctx.toString(), e);
+        } catch (Exception e) {
+            LOG.error("Problem in benchmark " + ctx.toString(), e);
+        }
+    }
+
+     private void assertCreatedDataSet(IDataSet iDataSet) throws DataSetException {
+        if (iDataSet.getTableNames().length != 5) {
+            throw new RuntimeException("Must create five tables but created " + iDataSet.getTableNames().length);
+        }
+        if (iDataSet.getTable("TABLE5").getRowCount() != 5) {
+            throw new RuntimeException("TABLE5 must have 5 rows but has " + iDataSet.getTable("TABLE5").getRowCount());
+        }
+        if (iDataSet.getTable("TABLE5").getTableMetaData().getColumns().length != 11) {
+            throw new RuntimeException("TABLE5 must have 11 columns per row but has " + iDataSet.getTable("TABLE5").getTableMetaData().getColumns().length);
         }
     }
 
 
     public static void main(String[] args) throws RunnerException, InterruptedException {
-            new Runner(new OptionsBuilder().
-                    forks(3).
-                    threads(8).
-                    warmupIterations(3).
-                    warmupForks(1).
-                    measurementIterations(10).
-                    include(RiderDataSetBenchmark.class.getSimpleName()).
-                    measurementTime(TimeValue.milliseconds(300)).
-                    build()
-            ).run();
+        new Runner(new OptionsBuilder().
+                forks(3).
+                threads(4).
+                warmupIterations(1).
+                warmupForks(1).
+                measurementIterations(5).
+                include(RiderDataSetBenchmark.class.getSimpleName()).
+                measurementTime(TimeValue.milliseconds(300)).
+                build()
+        ).run();
     }
 
     private InputStream getDataSetStream(String dataSet) {
