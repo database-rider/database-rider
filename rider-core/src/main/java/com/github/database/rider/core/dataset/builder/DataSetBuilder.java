@@ -75,7 +75,7 @@ public class DataSetBuilder {
      */
     public IDataSet build() {
         try {
-            if (tableBuilder != null && !tableBuilder.getCurrentRowBuilder().isAdded()) {
+            if (tableBuilder != null && !tableBuilder.getCurrentRowBuilder().isAdded() && tableBuilder.getCurrentRowBuilder().hasColumns()) {
                 add(tableBuilder.getCurrentRowBuilder());
                 tableBuilder.getCurrentRowBuilder().setAdded(true);
             }
