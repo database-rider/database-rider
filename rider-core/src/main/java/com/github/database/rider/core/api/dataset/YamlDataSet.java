@@ -176,12 +176,13 @@ public class YamlDataSet implements IDataSet {
     @Override
     public boolean isCaseSensitiveTableNames() {
         // is a Boolean object for sure, add null-safety
-        Boolean result = (Boolean) dbUnitConfig.getProperties().get("caseSensitiveTableNames");
+        Boolean result = dbUnitConfig != null ? (Boolean)dbUnitConfig.getProperties().get("caseSensitiveTableNames") : Boolean.FALSE;
         return Boolean.TRUE.equals(result);
     }
 
     public boolean isCaseInsensitiveStrategyLowerCase() {
-        return Orthography.LOWERCASE.equals(dbUnitConfig.getCaseInsensitiveStrategy());
+
+        return dbUnitConfig != null && Orthography.LOWERCASE.equals(dbUnitConfig.getCaseInsensitiveStrategy());
     }
 
     /**

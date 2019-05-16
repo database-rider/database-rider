@@ -179,9 +179,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     private void logDataSet(IDataSet resultingDataSet, Exception e) {
-        File datasetFile = null;
         try {
-            datasetFile = Files.createTempFile("dataset-log", ".yml").toFile();
+            File datasetFile = Files.createTempFile("dataset-log", ".yml").toFile();
             log.info("Saving current dataset to "+datasetFile.getAbsolutePath());
             FileOutputStream fos = new FileOutputStream(datasetFile);
             new YMLWriter(fos).write(resultingDataSet);

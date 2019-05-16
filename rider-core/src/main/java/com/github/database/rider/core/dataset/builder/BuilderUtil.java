@@ -25,7 +25,7 @@ public class BuilderUtil {
     }
 
     public static String convertCase(String value, DBUnitConfig config) {
-        if (value != null && !config.isCaseSensitiveTableNames()) {
+        if (value != null && config != null && !config.isCaseSensitiveTableNames()) {
             if (Orthography.UPPERCASE == config.getCaseInsensitiveStrategy()) {
                 value = value.toUpperCase();
             } else {
