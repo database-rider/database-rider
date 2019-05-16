@@ -111,19 +111,13 @@
             <version>1.11.3</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.openjdk.jmh</groupId>
-            <artifactId>jmh-generator-annprocess</artifactId>
-            <version>1.11.3</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
+                <version>3.0.0-M3</version>
                 <configuration>
                     <parallel>classes</parallel>
                     <useUnlimitedThreads>true</useUnlimitedThreads>
@@ -201,6 +195,12 @@
                     <version>1.11.3</version>
                 </dependency>
                 <dependency>
+                    <groupId>org.openjdk.jmh</groupId>
+                    <artifactId>jmh-generator-annprocess</artifactId>
+                    <version>1.11.3</version>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-simple</artifactId>
                     <version>1.7.21</version>
@@ -261,7 +261,6 @@
                             </execution>
                         </executions>
                     </plugin>
-
                 </plugins>
             </build>
         </profile>
@@ -270,29 +269,6 @@
             <properties>
                 <docs.outputdir>docs/${project.version}</docs.outputdir>
             </properties>
-        </profile>
-        <profile>
-            <!--runs rider core tests on jdk11-->
-            <id>jdk11</id>
-             <build>
-                 <plugins>
-                     <plugin>
-                         <groupId>org.apache.maven.plugins</groupId>
-                         <artifactId>maven-surefire-plugin</artifactId>
-                         <version>3.0.0-M3</version>
-                         <configuration>
-                             <parallel>classes</parallel>
-                             <useUnlimitedThreads>true</useUnlimitedThreads>
-                             <reuseForks>false</reuseForks>
-                             <includes>
-                                 <include>**/*It.java</include>
-                                 <include>**/*Test.java</include>
-                                 <include>**/*Bdd.java</include>
-                             </includes>
-                         </configuration>
-                     </plugin>
-                 </plugins>
-             </build>
         </profile>
     </profiles>
 
