@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static com.github.database.rider.core.dataset.builder.BuilderUtil.convertCase;
@@ -40,7 +41,7 @@ public class DataSetBuilder {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass().getName());
     private final DBUnitConfig config;
     private TableBuilder tableBuilder;
-    private final Map<String, Object> defaultValues = new HashMap<>();
+    private final Map<String, Object> defaultValues = new LinkedHashMap<>();
     private String currentTableName;
     private final Map<String, Map<String, Object>> tableDefaultValues = new HashMap<>();
 
@@ -256,7 +257,7 @@ public class DataSetBuilder {
     protected void addTableDefaultValue(String tableName, String columnName, Object value) {
         String key = tableName.toLowerCase();
         if(!hasDefaulValuesForTable(key)) {
-            tableDefaultValues.put(key, new HashMap<String, Object>());
+            tableDefaultValues.put(key, new LinkedHashMap<String, Object>());
         }
         tableDefaultValues.get(key).put(convertCase(columnName, config), value);
     }
