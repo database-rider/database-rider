@@ -55,6 +55,7 @@ public class DBUnitInterceptorImpl implements Serializable {
 					.executeStatementsAfter(usingDataSet.executeStatementsAfter())
 					.executeStatementsBefore(usingDataSet.executeStatementsBefore()).strategy(usingDataSet.strategy())
 					.transactional(usingDataSet.transactional()).tableOrdering(usingDataSet.tableOrdering())
+					.datasetProvider(usingDataSet.provider())
 					.useSequenceFiltering(usingDataSet.useSequenceFiltering());
 			dataSetProcessor.process(dataSetConfig, dbUnitConfig);
 			boolean isTransactionalTest = dataSetConfig.isTransactional();
@@ -76,7 +77,9 @@ public class DBUnitInterceptorImpl implements Serializable {
 				ExpectedDataSet expectedDataSet = invocationContext.getMethod().getAnnotation(ExpectedDataSet.class);
 				if (expectedDataSet != null) {
 					dataSetProcessor.compareCurrentDataSetWith(
-							new DataSetConfig(expectedDataSet.value()).disableConstraints(true),
+							new DataSetConfig(expectedDataSet.value())
+									 .datasetProvider(expectedDataSet.provider())
+									.disableConstraints(true),
 							expectedDataSet.ignoreCols());
 				}
 			} finally {

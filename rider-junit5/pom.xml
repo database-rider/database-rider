@@ -18,7 +18,6 @@
             <artifactId>rider-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-
         <!-- this is all you need to write tests with JUnit Jupiter -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -58,7 +57,6 @@
             <version>1.7.12</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
@@ -71,14 +69,12 @@
             <version>4.3.11.Final</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
             <version>3.2.1</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -97,22 +93,20 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.19.1</version>
                 <configuration>
+                    <parallel>classes</parallel>
+                    <useUnlimitedThreads>true</useUnlimitedThreads>
+                    <reuseForks>false</reuseForks>
                     <includes>
                         <include>**/Test*.java</include>
                         <include>**/*It.java</include>
                         <include>**/*Test.java</include>
                     </includes>
-                    <systemPropertyVariables>
-                        <org.slf4j.simpleLogger.defaultLogLevel>
-                            error
-                        </org.slf4j.simpleLogger.defaultLogLevel>
-                    </systemPropertyVariables>
                 </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>org.junit.platform</groupId>
                         <artifactId>junit-platform-surefire-provider</artifactId>
-                        <version>1.0.0-RC2</version>
+                        <version>1.0.0</version>
                     </dependency>
                 </dependencies>
             </plugin>

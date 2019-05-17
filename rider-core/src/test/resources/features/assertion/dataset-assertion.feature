@@ -130,4 +130,4 @@ include::../../../src/test/resources/datasets/yml/expectedUsersRegex.yml[]
 include::../../../src/test/java/com/github/database/rider/core/TransactionIt.java[tags=transaction]
 ----
 """
-    Then Test must pass because inserted users are commited to database and database state matches expected dataset.
+    Then Test must pass because inserted users are committed to database and database state matches expected dataset.

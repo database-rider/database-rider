@@ -21,6 +21,7 @@ import org.dbunit.dataset.excel.XlsDataSet;
 import org.dbunit.dataset.filter.DefaultColumnFilter;
 import org.dbunit.dataset.filter.ITableFilter;
 import org.dbunit.dataset.filter.SequenceTableFilter;
+import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.ext.mssql.InsertIdentityOperation;
 import org.dbunit.operation.CompositeOperation;
@@ -32,6 +33,7 @@ import java.io.*;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.sql.*;
 import java.util.*;
 import java.util.Map.Entry;
@@ -121,6 +123,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         }
 
         if (dataSetConfig != null) {
+            IDataSet resultingDataSet = null;
             try {
                 if (dataSetConfig.isDisableConstraints()) {
                     disableConstraints();
@@ -133,22 +136,25 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                                 .warn("Could not clean database before test.", e);
                     }
                 }
-
                 if (dataSetConfig.getExecuteStatementsBefore() != null
                         && dataSetConfig.getExecuteStatementsBefore().length > 0) {
                     executeStatements(dataSetConfig.getExecuteStatementsBefore());
                 }
-
                 if (dataSetConfig.getExecuteScriptsBefore() != null
                         && dataSetConfig.getExecuteScriptsBefore().length > 0) {
                     for (int i = 0; i < dataSetConfig.getExecuteScriptsBefore().length; i++) {
                         executeScript(dataSetConfig.getExecuteScriptsBefore()[i]);
                     }
                 }
-
-                if (dataSetConfig.hasDatasets()) {
-                    IDataSet resultingDataSet = loadDataSets(dataSetConfig.getDatasets());
-
+                if (dataSetConfig.hasDataSets() || dataSetConfig.hasDataSetProvider()) {
+                    if (dataSetConfig.hasDataSets()) {
+                        resultingDataSet = loadDataSets(dataSetConfig.getDatasets());
+                    } else {
+                        resultingDataSet = loadDataSetFromDataSetProvider(dataSetConfig.getProvider());
+                        if(resultingDataSet == null) {
+                            throw new RuntimeException("Provided dataset cannot be null. DataSet provider: "+dataSetConfig.getProvider().getName());
+                        }
+                    }
                     resultingDataSet = performSequenceFiltering(dataSetConfig, resultingDataSet);
 
                     resultingDataSet = performTableOrdering(dataSetConfig, resultingDataSet);
@@ -158,12 +164,38 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     DatabaseOperation operation = getOperation(dataSetConfig);
 
                     operation.execute(getRiderDataSource().getDBUnitConnection(), resultingDataSet);
+                } else {
+                    log.warn("Database will not be populated because no dataset has been provided.");
                 }
 
             } catch (Exception e) {
+                if(log.isDebugEnabled() && resultingDataSet != null) {
+                    logDataSet(resultingDataSet, e);
+                }
                 throw new DataBaseSeedingException("Could not initialize dataset: " + dataSetConfig, e);
             }
 
+        }
+    }
+
+    private void logDataSet(IDataSet resultingDataSet, Exception e) {
+        try {
+            File datasetFile = Files.createTempFile("dataset-log", ".yml").toFile();
+            log.info("Saving current dataset to "+datasetFile.getAbsolutePath());
+            try(FileOutputStream fos = new FileOutputStream(datasetFile)) {
+                FlatXmlDataSet.write(resultingDataSet, fos);
+            }
+        } catch (Exception e1) {
+            log.error("Could not log created dataset.", e);
+        }
+    }
+
+    private IDataSet loadDataSetFromDataSetProvider(Class<? extends DataSetProvider> provider) {
+        try {
+            DataSetProvider dataSetProvider = provider.newInstance();
+            return dataSetProvider.provide();
+        } catch (Exception e) {
+            throw new RuntimeException("Could not load dataset from provider: "+provider.getName(), e);
         }
     }
 
@@ -514,28 +546,20 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     @Override
+    public int hashCode() {
+        return 17 * (executorId == null ? 0 : executorId.hashCode());
+    }
+
+    @Override
     public boolean equals(Object other) {
-        if (other instanceof DataSetExecutorImpl == false) {
+        if (!(other instanceof DataSetExecutorImpl)) {
             return false;
         }
         DataSetExecutorImpl otherExecutor = (DataSetExecutorImpl) other;
-        if (riderDataSource == null || otherExecutor.riderDataSource == null) {
+        if(executorId == null || otherExecutor.getExecutorId() == null) {
             return false;
         }
-        try {
-            if (riderDataSource.getDBUnitConnection().getConnection() == null
-                    || otherExecutor.riderDataSource.getDBUnitConnection().getConnection() == null) {
-                return false;
-            }
-            if (!riderDataSource.getDBUnitConnection().getConnection().getMetaData().getURL().equals(
-                    otherExecutor.riderDataSource.getDBUnitConnection().getConnection().getMetaData().getURL())) {
-                return false;
-            }
-        } catch (Exception e) {
-            return false;
-        }
-
-        return true;
+        return executorId.equals(otherExecutor.getExecutorId());
     }
 
     @Override
@@ -793,7 +817,14 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         }
         try {
             current = getRiderDataSource().getDBUnitConnection().createDataSet();
-            expected = loadDataSets(expectedDataSetConfig.getDatasets());
+            if(expectedDataSetConfig.hasDataSetProvider()) {
+                expected = loadDataSetFromDataSetProvider(expectedDataSetConfig.getProvider());
+            } else if(expectedDataSetConfig.hasDataSets()) {
+                expected = loadDataSets(expectedDataSetConfig.getDatasets());
+            }
+            if(expected == null) {
+                throw new RuntimeException("Expected dataset was not provided.");
+            }
             if (!expectedDataSetReplacers.isEmpty()) {
                 expected = performReplacements(expected, expectedDataSetReplacers);
             }

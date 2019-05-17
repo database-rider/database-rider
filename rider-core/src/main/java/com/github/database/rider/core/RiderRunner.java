@@ -77,15 +77,14 @@ public class RiderRunner {
             }
         }
 
-        exportDataSet(riderTestContext);
         performDataSetComparison(riderTestContext);
     }
 
     public void teardown(RiderTestContext riderTestContext) throws SQLException {
+        exportDataSet(riderTestContext);
         String currentMethod = riderTestContext.getMethodName();
         DataSetExecutor executor = riderTestContext.getDataSetExecutor();
         DataSet dataSet = riderTestContext.getAnnotation(DataSet.class);
-
         if (dataSet != null) {
             DataSetConfig dataSetConfig = new DataSetConfig().from(dataSet);
 
@@ -163,7 +162,8 @@ public class RiderRunner {
 
         if (expectedDataSet != null) {
             riderTestContext.getDataSetExecutor()
-                    .compareCurrentDataSetWith(new DataSetConfig(expectedDataSet.value()).disableConstraints(true),
+                    .compareCurrentDataSetWith(new DataSetConfig(expectedDataSet.value())
+                        .disableConstraints(true).datasetProvider(expectedDataSet.provider()),
                             expectedDataSet.ignoreCols(),
                             expectedDataSet.replacers(),
                             expectedDataSet.orderBy(),

@@ -3,7 +3,6 @@ package com.github.database.rider.core.api.configuration;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.replacers.Replacer;
 
-import org.dbunit.database.DefaultMetadataHandler;
 import org.dbunit.database.IMetadataHandler;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 

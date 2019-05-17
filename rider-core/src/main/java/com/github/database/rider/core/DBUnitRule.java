@@ -86,7 +86,6 @@ public class DBUnitRule implements TestRule {
                     if (dbUnitConfig.isLeakHunter() && leakHunter != null) {
                         leakHunter.checkConnectionsAfterExecution();
                     }
-
                     riderRunner.runAfterTest(riderTestContext);
                 } finally {
                     riderRunner.teardown(riderTestContext);

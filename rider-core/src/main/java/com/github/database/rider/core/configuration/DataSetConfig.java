@@ -1,6 +1,7 @@
 package com.github.database.rider.core.configuration;
 
 import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.DataSetProvider;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 
@@ -23,10 +24,10 @@ public class DataSetConfig {
     private String[] executeStatementsAfter = {};
     private String[] executeScriptsBefore = {};
     private String[] executeScriptsAfter = {};
+    private Class<? extends DataSetProvider> provider;
 
 
     public DataSetConfig() {
-        //loadDefaultConfiguration();
     }
 
     public DataSetConfig(String dataset) {
@@ -114,7 +115,6 @@ public class DataSetConfig {
         return this;
     }
 
-
     public DataSetConfig from(DataSet dataSet) {
         if(dataSet != null){
             return name(dataSet.value()).strategy(dataSet.strategy()).
@@ -129,13 +129,18 @@ public class DataSetConfig {
                     cleanAfter(dataSet.cleanAfter()).
                     transactional(dataSet.transactional()).
                     executeStatementsAfter(dataSet.executeStatementsAfter()).
-                    executeScriptsAfter(dataSet.executeScriptsAfter());
+                    executeScriptsAfter(dataSet.executeScriptsAfter()).
+                    datasetProvider(dataSet.provider());
         } else{
             throw new RuntimeException("Cannot create DataSetConfig from Null DataSet");
         }
 
     }
 
+    public DataSetConfig datasetProvider(Class<? extends DataSetProvider> provider) {
+        this.provider = provider;
+        return this;
+    }
 
     public String[] getDatasets() {
         return datasets;
@@ -185,6 +190,10 @@ public class DataSetConfig {
         return executorId;
     }
 
+    public Class<? extends DataSetProvider> getProvider() {
+        return provider;
+    }
+
     public boolean isCleanBefore() {
         return cleanBefore;
     }
@@ -221,21 +230,31 @@ public class DataSetConfig {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (String dataset : datasets) {
-            sb.append(dataset).append(",");
+            sb.append(dataset).append(", ");
+        }
+        if(hasDataSetProvider()) {
+            sb.append("dataset provider: "+provider.getName()).append(", ");
         }
         if(sb.toString().contains(",")){
             sb.deleteCharAt(sb.lastIndexOf(","));
         }
         return sb.toString().trim();
     }
+    
+    /**
+     * 
+     * @return true if dataset provider is not null and is not an interface (which means user has provided an implementation)
+     */
+    public boolean hasDataSetProvider() {
+        return provider != null && !provider.isInterface();
+    }
 
-    public boolean hasDatasets() {
-        if(datasets == null || datasets.length == 0){
+    public boolean hasDataSets() {
+        if((datasets == null || datasets.length == 0)){
             return false;
         }
-
         for (String dataset : datasets) {
-            if(dataset != null && !"".equals(dataset.trim())){
+            if (dataset != null && !"".equals(dataset.trim())) {
                 return true;
             }
         }

@@ -314,5 +314,10 @@ public class DBUnitConfig {
     public void setMergeDataSets(Boolean mergeDataSets) {
         this.mergeDataSets = mergeDataSets;
     }
-    
+
+    public boolean isCaseSensitiveTableNames() {
+        return properties.containsKey("caseSensitiveTableNames") && Boolean.parseBoolean(properties.get("caseSensitiveTableNames").toString());
+    }
+
+
 }

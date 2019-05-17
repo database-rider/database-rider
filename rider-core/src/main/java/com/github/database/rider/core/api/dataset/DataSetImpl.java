@@ -167,6 +167,11 @@ public class DataSetImpl implements DataSet {
     }
 
     @Override
+    public Class<DataSetProvider> provider() {
+        return DataSetProvider.class;
+    }
+
+    @Override
     public Class<? extends Annotation> annotationType() {
         return DataSet.class;
     }
