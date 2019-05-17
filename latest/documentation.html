@@ -582,9 +582,14 @@ table.CodeRay td.code>pre{padding:0}
        <li><a href="#_class_level_metadataset">9.1. Class level metadataset</a></li> 
        <li><a href="#_method_level_metadaset">9.2. Method level metadaset</a></li> 
       </ul> </li> 
-     <li><a href="#DataSet-merging">10. <strong>DataSet merging</strong></a> 
+     <li><a href="#DataSet-builder">10. <strong>DataSet builder</strong></a> 
       <ul class="sectlevel2"> 
-       <li><a href="#_merging_datasets">10.1. Merging datasets</a></li> 
+       <li><a href="#_create_dataset_using_dataset_builder">10.1. Create dataset using dataset builder</a></li> 
+       <li><a href="#_create_dataset_using_dataset_builder_with_code_column_values_code_syntax">10.2. Create dataset using dataset builder with <code>column…​values</code> syntax</a></li> 
+      </ul> </li> 
+     <li><a href="#DataSet-merging">11. <strong>DataSet merging</strong></a> 
+      <ul class="sectlevel2"> 
+       <li><a href="#_merging_datasets">11.1. Merging datasets</a></li> 
       </ul> </li> 
     </ul> 
    </div> 
@@ -2712,7 +2717,7 @@ properties:
             Then 
           </dt> 
           <dd> 
-           <p>Test must pass because inserted users are commited to database and database state matches expected dataset. <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+           <p>Test must pass because inserted users are committed to database and database state matches expected dataset. <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
           </dd> 
          </dl> 
         </div> 
@@ -3463,7 +3468,328 @@ public @interface AnotherMetaDataSet {
     </div> 
    </div> 
    <div class="sect1"> 
-    <h2 id="DataSet-merging"><a class="anchor" href="#DataSet-merging"></a>10. <strong>DataSet merging</strong></h2> 
+    <h2 id="DataSet-builder"><a class="anchor" href="#DataSet-builder"></a>10. <strong>DataSet builder</strong></h2> 
+    <div class="sectionbody"> 
+     <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('DataSet-builder');document.getElementById('hidden-DataSet-builder').style.display = 'inline';this.style.display = 'none'"> </span> 
+     <span id="hidden-DataSet-builder" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('DataSet-builder');this.style.display = 'none'"> </span> 
+     <div class="sidebarblock"> 
+      <div class="content"> 
+       <div class="exampleblock"> 
+        <div class="content"> 
+         <div class="quoteblock"> 
+          <blockquote> 
+           <div class="paragraph"> 
+            <p>In order to create datasets programmatically<br> As a developer<br> I want to use <code>DatasetBuilder</code> API.</p> 
+           </div> 
+          </blockquote> 
+         </div> 
+        </div> 
+       </div> 
+       <div class="admonitionblock tip"> 
+        <table> 
+         <tbody> 
+          <tr> 
+           <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
+           <td class="content"> Complete source code of examples below can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/DataSetProviderIt.java#L36" target="_blank" rel="noopener">found here</a>. </td> 
+          </tr> 
+         </tbody> 
+        </table> 
+       </div> 
+      </div> 
+     </div> 
+     <div class="sect2"> 
+      <h3 id="_create_dataset_using_dataset_builder"><a class="anchor" href="#_create_dataset_using_dataset_builder"></a>10.1. Create dataset using dataset builder</h3> 
+      <div class="exampleblock"> 
+       <div class="content"> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Given 
+          </dt> 
+          <dd> 
+           <p>The following method declaration <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
+         </dl> 
+        </div> 
+        <div class="sidebarblock"> 
+         <div class="content"> 
+          <div class="listingblock"> 
+           <div class="content"> 
+            <pre class="CodeRay highlight"><code data-lang="java">    <span class="annotation">@Test</span>
+    <span class="annotation">@DataSet</span>(provider = UserDataSetProvider.class, <i class="conum" data-value="1"></i><b>(1)</b>
+              cleanBefore = <span class="predefined-constant">true</span>)
+    <span class="directive">public</span> <span class="type">void</span> shouldSeedDatabaseProgrammatically() {
+        <span class="predefined-type">List</span>&lt;User&gt; users = EntityManagerProvider.em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u </span><span class="delimiter">"</span></span>).getResultList();
+        assertThat(users).
+            isNotNull().
+            isNotEmpty().hasSize(<span class="integer">2</span>).
+            extracting(<span class="string"><span class="delimiter">"</span><span class="content">name</span><span class="delimiter">"</span></span>).
+            contains(<span class="string"><span class="delimiter">"</span><span class="content">@dbunit</span><span class="delimiter">"</span></span>, <span class="string"><span class="delimiter">"</span><span class="content">@dbrider</span><span class="delimiter">"</span></span>);
+    }</code></pre> 
+           </div> 
+          </div> 
+          <div class="colist arabic"> 
+           <table> 
+            <tbody> 
+             <tr> 
+              <td><i class="conum" data-value="1"></i><b>1</b></td> 
+              <td><code>provider</code> attribute expects a class which implements DataSetProvider interface.</td> 
+             </tr> 
+            </tbody> 
+           </table> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            And 
+          </dt> 
+          <dd> 
+           <p>The following dataset provider implementation <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
+         </dl> 
+        </div> 
+        <div class="sidebarblock"> 
+         <div class="content"> 
+          <div class="listingblock"> 
+           <div class="content"> 
+            <pre class="CodeRay highlight"><code data-lang="java">    <span class="directive">public</span> <span class="directive">static</span> <span class="type">class</span> <span class="class">UserDataSetProvider</span> <span class="directive">implements</span> DataSetProvider {
+
+        <span class="annotation">@Override</span>
+        <span class="directive">public</span> IDataSet provide() {
+            DataSetBuilder builder = <span class="keyword">new</span> DataSetBuilder();
+            builder.table(<span class="string"><span class="delimiter">"</span><span class="content">user</span><span class="delimiter">"</span></span>)<i class="conum" data-value="1"></i><b>(1)</b>
+                    .row() <i class="conum" data-value="2"></i><b>(2)</b>
+                        .column(<span class="string"><span class="delimiter">"</span><span class="content">id</span><span class="delimiter">"</span></span>, <span class="integer">1</span>) <i class="conum" data-value="3"></i><b>(3)</b>
+                        .column(<span class="string"><span class="delimiter">"</span><span class="content">name</span><span class="delimiter">"</span></span>, <span class="string"><span class="delimiter">"</span><span class="content">@dbunit</span><span class="delimiter">"</span></span>)
+                    .row() <i class="conum" data-value="4"></i><b>(4)</b>
+                        .column(<span class="string"><span class="delimiter">"</span><span class="content">id</span><span class="delimiter">"</span></span>, <span class="integer">2</span>)
+                        .column(<span class="string"><span class="delimiter">"</span><span class="content">name</span><span class="delimiter">"</span></span>, <span class="string"><span class="delimiter">"</span><span class="content">@dbrider</span><span class="delimiter">"</span></span>);
+            <span class="keyword">return</span> builder.build(); <i class="conum" data-value="5"></i><b>(5)</b>
+        }
+    }</code></pre> 
+           </div> 
+          </div> 
+          <div class="colist arabic"> 
+           <table> 
+            <tbody> 
+             <tr> 
+              <td><i class="conum" data-value="1"></i><b>1</b></td> 
+              <td>Starts a table on current dataset</td> 
+             </tr> 
+             <tr> 
+              <td><i class="conum" data-value="2"></i><b>2</b></td> 
+              <td>Starts creating a row for current table</td> 
+             </tr> 
+             <tr> 
+              <td><i class="conum" data-value="3"></i><b>3</b></td> 
+              <td>Adds a column witn name <code>id</code> and value <code>1</code> to current row</td> 
+             </tr> 
+             <tr> 
+              <td><i class="conum" data-value="4"></i><b>4</b></td> 
+              <td>Starts creating another row for table <code>user</code></td> 
+             </tr> 
+             <tr> 
+              <td><i class="conum" data-value="5"></i><b>5</b></td> 
+              <td>creates the dataset.</td> 
+             </tr> 
+            </tbody> 
+           </table> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="admonitionblock tip"> 
+         <table> 
+          <tbody> 
+           <tr> 
+            <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
+            <td class="content"> For more complex examples of programmatic dataset creation, <a href="https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/dataset/builder/DatasetBuilderTest.java#L27" target="_blank" rel="noopener">see here</a>. </td> 
+           </tr> 
+          </tbody> 
+         </table> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            When 
+          </dt> 
+          <dd> 
+           <p>The test is executed <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
+          <dt class="hdlist1">
+            Then 
+          </dt> 
+          <dd> 
+           <p>The following dataset will be used for seeding the database <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
+         </dl> 
+        </div> 
+        <div class="sidebarblock"> 
+         <div class="content"> 
+          <div class="listingblock"> 
+           <div class="content"> 
+            <pre>USER:
+ - ID: 1
+   NAME: "@dbunit"
+ - ID: 2
+   NAME: "@dbrider"</pre> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="admonitionblock note"> 
+         <table> 
+          <tbody> 
+           <tr> 
+            <td class="icon"> <i class="fa icon-note" title="Note"></i> </td> 
+            <td class="content"> yaml format is used only for illustration here, when using DatasetBuilder the dataset is only created in memory, it is not materialized in any file (unless it is <a href="#DataSet-export">exported</a>). </td> 
+           </tr> 
+          </tbody> 
+         </table> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+     <div class="sect2"> 
+      <h3 id="_create_dataset_using_dataset_builder_with_code_column_values_code_syntax"><a class="anchor" href="#_create_dataset_using_dataset_builder_with_code_column_values_code_syntax"></a>10.2. Create dataset using dataset builder with <code>column…​values</code> syntax</h3> 
+      <div class="paragraph"> 
+       <p><code>DataSetBuilder</code> has an alternative syntax, similar to SQL <code>insert into values</code>, which may be more appropriated to datasets with <strong>few columns</strong> and <strong>lot of rows</strong>.</p> 
+      </div> 
+      <div class="exampleblock"> 
+       <div class="content"> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Given 
+          </dt> 
+          <dd> 
+           <p>The following method declaration <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
+         </dl> 
+        </div> 
+        <div class="sidebarblock"> 
+         <div class="content"> 
+          <div class="listingblock"> 
+           <div class="content"> 
+            <pre class="CodeRay highlight"><code data-lang="java">    <span class="annotation">@Test</span>
+    <span class="annotation">@DataSet</span>(provider = UserDataSetProviderWithColumnsSyntax.class)
+    <span class="directive">public</span> <span class="type">void</span> shouldSeedDatabaseUsingDataSetProviderWithColumnsSyntax() {
+        <span class="predefined-type">List</span>&lt;User&gt; users = EntityManagerProvider.em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select u from User u </span><span class="delimiter">"</span></span>).getResultList();
+        assertThat(users).
+                isNotNull().
+                isNotEmpty().hasSize(<span class="integer">2</span>).
+                extracting(<span class="string"><span class="delimiter">"</span><span class="content">name</span><span class="delimiter">"</span></span>).
+                contains(<span class="string"><span class="delimiter">"</span><span class="content">@dbunit</span><span class="delimiter">"</span></span>, <span class="string"><span class="delimiter">"</span><span class="content">@dbrider</span><span class="delimiter">"</span></span>);
+    }</code></pre> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            And 
+          </dt> 
+          <dd> 
+           <p>The following dataset provider implementation <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
+         </dl> 
+        </div> 
+        <div class="sidebarblock"> 
+         <div class="content"> 
+          <div class="listingblock"> 
+           <div class="content"> 
+            <pre class="CodeRay highlight"><code data-lang="java">    <span class="directive">public</span> <span class="directive">static</span> <span class="type">class</span> <span class="class">UserDataSetProviderWithColumnsSyntax</span> <span class="directive">implements</span> DataSetProvider {
+
+        <span class="annotation">@Override</span>
+        <span class="directive">public</span> IDataSet provide() {
+            DataSetBuilder builder = <span class="keyword">new</span> DataSetBuilder();
+            IDataSet iDataSet = builder.table(<span class="string"><span class="delimiter">"</span><span class="content">user</span><span class="delimiter">"</span></span>) <i class="conum" data-value="1"></i><b>(1)</b>
+                    .columns(<span class="string"><span class="delimiter">"</span><span class="content">id</span><span class="delimiter">"</span></span>, <span class="string"><span class="delimiter">"</span><span class="content">name</span><span class="delimiter">"</span></span>) <i class="conum" data-value="2"></i><b>(2)</b>
+                    .values(<span class="integer">1</span>,<span class="string"><span class="delimiter">"</span><span class="content">@dbunit</span><span class="delimiter">"</span></span>) <i class="conum" data-value="3"></i><b>(3)</b>
+                    .values(<span class="integer">2</span>,<span class="string"><span class="delimiter">"</span><span class="content">@dbrider</span><span class="delimiter">"</span></span>).build();
+            <span class="keyword">return</span> iDataSet;
+        }
+    }</code></pre> 
+           </div> 
+          </div> 
+          <div class="colist arabic"> 
+           <table> 
+            <tbody> 
+             <tr> 
+              <td><i class="conum" data-value="1"></i><b>1</b></td> 
+              <td>Starts a table on current dataset</td> 
+             </tr> 
+             <tr> 
+              <td><i class="conum" data-value="2"></i><b>2</b></td> 
+              <td>Declares columns involved in current dataset</td> 
+             </tr> 
+             <tr> 
+              <td><i class="conum" data-value="3"></i><b>3</b></td> 
+              <td>specify values for each column</td> 
+             </tr> 
+            </tbody> 
+           </table> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="admonitionblock note"> 
+         <table> 
+          <tbody> 
+           <tr> 
+            <td class="icon"> <i class="fa icon-note" title="Note"></i> </td> 
+            <td class="content"> The columns are specified only one time and the values are 'index' based (first value refers to first column. </td> 
+           </tr> 
+          </tbody> 
+         </table> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            When 
+          </dt> 
+          <dd> 
+           <p>The test is executed <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
+          <dt class="hdlist1">
+            Then 
+          </dt> 
+          <dd> 
+           <p>The following dataset will be used for seeding the database <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
+         </dl> 
+        </div> 
+        <div class="sidebarblock"> 
+         <div class="content"> 
+          <div class="listingblock"> 
+           <div class="content"> 
+            <pre>USER:
+ - ID: 1
+   NAME: "@dbunit"
+ - ID: 2
+   NAME: "@dbrider"</pre> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="admonitionblock note"> 
+         <table> 
+          <tbody> 
+           <tr> 
+            <td class="icon"> <i class="fa icon-note" title="Note"></i> </td> 
+            <td class="content"> yaml format is used only for illustration here, when using DatasetBuilder the dataset is only created in memory, it is not materialized in any file (unless it is <a href="#DataSet-export">exported</a>). </td> 
+           </tr> 
+          </tbody> 
+         </table> 
+        </div> 
+       </div> 
+      </div> 
+     </div> 
+    </div> 
+   </div> 
+   <div class="sect1"> 
+    <h2 id="DataSet-merging"><a class="anchor" href="#DataSet-merging"></a>11. <strong>DataSet merging</strong></h2> 
     <div class="sectionbody"> 
      <span class="fa fa-minus-square fa-fw" style="cursor:pointer;float:right;margin-top:-30px" title="Minimize" onclick="hideFeatureScenarios('DataSet-merging');document.getElementById('hidden-DataSet-merging').style.display = 'inline';this.style.display = 'none'"> </span> 
      <span id="hidden-DataSet-merging" class="fa fa-plus-square fa-fw" style="cursor:pointer;float:right;display:none;margin-top:-30px" title="Maximize feature" onclick="showFeatureScenarios('DataSet-merging');this.style.display = 'none'"> </span> 
@@ -3503,7 +3829,7 @@ public @interface AnotherMetaDataSet {
       </div> 
      </div> 
      <div class="sect2"> 
-      <h3 id="_merging_datasets"><a class="anchor" href="#_merging_datasets"></a>10.1. Merging datasets</h3> 
+      <h3 id="_merging_datasets"><a class="anchor" href="#_merging_datasets"></a>11.1. Merging datasets</h3> 
       <div class="exampleblock"> 
        <div class="content"> 
         <div class="dlist"> 
@@ -3647,8 +3973,8 @@ public @interface AnotherMetaDataSet {
   </div> 
   <div id="footer" style="color:gray;font-size:11px">
     Generated by 
-   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.2.1</a> - May 6, 2019 5:19:03 PM 
-   <span style="float:right;font-size:11px"> Execution time: 9.125 seconds</span> 
+   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.2.1</a> - May 17, 2019 8:16:18 PM 
+   <span style="float:right;font-size:11px"> Execution time: 9.389 seconds</span> 
   </div> 
   <style>  
 

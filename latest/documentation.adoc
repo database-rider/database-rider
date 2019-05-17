@@ -917,7 +917,7 @@ include::../../../src/test/java/com/github/database/rider/core/TransactionIt.jav
 NOTE: `Transactional` attribute will make Database Rider start a transaction before test and commit the transaction *after* test execution but *before* expected dataset comparison.
 
 Then ::
-Test must pass because inserted users are commited to database and database state matches expected dataset. icon:thumbs-up[role="green",title="Passed"]
+Test must pass because inserted users are committed to database and database state matches expected dataset. icon:thumbs-up[role="green",title="Passed"]
 ==========
 
 [[Dynamic-data-using-scritable-datasets, Dynamic data using scritable datasets]]
@@ -1224,6 +1224,148 @@ include::../../../src/test/java/com/github/database/rider/core/MetaDataSetIt.jav
 
 Then ::
 Test must use dataset declared in `AnotherMetaDataSet` annotation. icon:thumbs-up[role="green",title="Passed"]
+==========
+
+[[DataSet-builder, DataSet builder]]
+== *DataSet builder*
+
+****
+====
+[quote]
+____
+In order to create datasets programmatically
+As a developer
+I want to use `DatasetBuilder` API.
+____
+====
+
+TIP: Complete source code of examples below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/DataSetProviderIt.java#L36[found here^].
+****
+
+=== Create dataset using dataset builder
+
+==========
+Given ::
+The following method declaration icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java]
+----
+include::../../../src/test/java/com/github/database/rider/core/DataSetProviderIt.java[tags=signature]
+----
+[discrete]
+<1> `provider` attribute expects a class which implements DataSetProvider interface.
+
+
+******
+
+And ::
+The following dataset provider implementation icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java]
+----
+include::../../../src/test/java/com/github/database/rider/core/DataSetProviderIt.java[tags=provider]
+----
+[discrete]
+<1> Starts a table on current dataset
+[discrete]
+<2> Starts creating a row for current table
+[discrete]
+<3> Adds a column witn name `id` and value `1` to current row
+[discrete]
+<4> Starts creating another row for table `user`
+[discrete]
+<5> creates the dataset.
+
+
+******
+
+TIP: For more complex examples of programmatic dataset creation, https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/dataset/builder/DatasetBuilderTest.java#L27[see here^].
+
+When ::
+The test is executed icon:thumbs-up[role="green",title="Passed"]
+
+Then ::
+The following dataset will be used for seeding the database icon:thumbs-up[role="green",title="Passed"]
+******
+
+----
+USER:
+ - ID: 1
+   NAME: "@dbunit"
+ - ID: 2
+   NAME: "@dbrider"
+----
+
+
+******
+
+NOTE: yaml format is used only for illustration here, when using DatasetBuilder the dataset is only created in memory, it is not materialized in any file (unless it is <<DataSet-export, exported>>). 
+
+==========
+
+=== Create dataset using dataset builder with `column...values` syntax
+
+`DataSetBuilder` has an alternative syntax, similar to SQL `insert into values`, which may be more appropriated to datasets with *few columns* and *lot of rows*.
+
+==========
+Given ::
+The following method declaration icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java]
+----
+include::../../../src/test/java/com/github/database/rider/core/DataSetProviderIt.java[tags=signature2]
+----
+
+
+******
+
+And ::
+The following dataset provider implementation icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java]
+----
+include::../../../src/test/java/com/github/database/rider/core/DataSetProviderIt.java[tags=provider2]
+----
+[discrete]
+<1> Starts a table on current dataset
+[discrete]
+<2> Declares columns involved in current dataset
+[discrete]
+<3> specify values for each column
+
+
+******
+
+NOTE: The columns are specified only one time and the values are 'index' based (first value refers to first column. 
+
+When ::
+The test is executed icon:thumbs-up[role="green",title="Passed"]
+
+Then ::
+The following dataset will be used for seeding the database icon:thumbs-up[role="green",title="Passed"]
+******
+
+----
+USER:
+ - ID: 1
+   NAME: "@dbunit"
+ - ID: 2
+   NAME: "@dbrider"
+----
+
+
+******
+
+NOTE: yaml format is used only for illustration here, when using DatasetBuilder the dataset is only created in memory, it is not materialized in any file (unless it is <<DataSet-export, exported>>). 
+
 ==========
 
 [[DataSet-merging, DataSet merging]]
