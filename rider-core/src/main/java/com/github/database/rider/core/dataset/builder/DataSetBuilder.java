@@ -64,7 +64,9 @@ public class DataSetBuilder {
      *            .column("id", 1)
      *            .column("name", "@dbunit")
      * }
-     * @param tableName
+     * @param tableName name of the table to screate the dataset
+     *
+     * @return current table builder
      */
     public TableBuilder table(String tableName) {
         tableBuilder = new TableBuilder(this, tableName);
@@ -72,7 +74,7 @@ public class DataSetBuilder {
     }
 
     /**
-     * Creates a dbunit dataset for current builder
+     * @return a dbunit dataset based on current builder
      */
     public IDataSet build() {
         try {
@@ -122,6 +124,10 @@ public class DataSetBuilder {
      * IDataSet iDataSet = builder.add(user1Row).add(user2Row)
      * }
      * </pre>
+     *
+     * @param row an already built row
+     *
+     * @return current builder object
      */
     public DataSetBuilder add(BasicRowBuilder row) {
         try {
@@ -141,8 +147,9 @@ public class DataSetBuilder {
      * Adds a default value for the given column for all tables.
      * The default value will be used only if the column is not specified
      *
-     * @param columnName
-     * @param value
+     * @param columnName name of the column
+     * @param value default value associated with the column
+     * @return current builder
      */
     public DataSetBuilder defaultValue(String columnName, Object value) {
         defaultValues.put(convertCase(columnName, config), value);

@@ -138,7 +138,7 @@ public class BasicRowBuilder {
     }
 
     /**
-     * indicates whether current row was added to the dataset being build
+     * @return a boolean indicating the current row was already added to the dataset being build
      */
     protected boolean isAdded() {
         return added;

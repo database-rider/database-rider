@@ -20,8 +20,10 @@ public class RowBuilder extends BasicRowBuilder {
 
     /**
      * Adds a column to current row
-     * @param column
-     * @param value
+     *
+     * @param column column definition
+     * @param value the column value
+     * @return current row builder
      */
     public <T> RowBuilder column(ColumnSpec column, T value) {
         super.column(column.name(), value);
@@ -30,9 +32,10 @@ public class RowBuilder extends BasicRowBuilder {
 
     /**
      * Adds a date column to current row
-     * The date will be converted to dbunit default format
-     * @param columnName
-     * @param value
+     * The date will be converted to dbunit default format (yyyy-MM-dd HH:mm:ss)
+     * @param columnName the column name
+     * @param value the column value
+     * @return current row builder
      */
     public RowBuilder column(String columnName, Date value) {
         put(columnName, DateUtils.format(value));
@@ -41,9 +44,10 @@ public class RowBuilder extends BasicRowBuilder {
 
     /**
      * Adds a calendar column to current row
-     * The calendar will be converted to dbunit default format
-     * @param columnName
-     * @param value
+     * The calendar will be converted to dbunit default format (yyyy-MM-dd HH:mm:ss)
+     * @param columnName the column name
+     * @param value the column value
+     * @return current row builder
      */
     public RowBuilder column(String columnName, Calendar value) {
         put(columnName, DateUtils.format(value.getTime()));
@@ -53,7 +57,8 @@ public class RowBuilder extends BasicRowBuilder {
     /**
      * Adds a column to current row based on JPA metamodel
      * @param column JPA metamodel column
-     * @param value
+     * @param value the column value
+     * @return current row builder
      */
     public RowBuilder column(Attribute column, Object value) {
         String columnName = getColumnNameFromMetaModel(column);
@@ -63,8 +68,9 @@ public class RowBuilder extends BasicRowBuilder {
 
     /**
      * Adds a column to current row
-     * @param columnName
-     * @param value
+     * @param columnName the column name
+     * @param value the column value
+     * @return current row builder
      */
     public RowBuilder column(String columnName, Object value) {
         super.column(columnName, value);
@@ -73,9 +79,10 @@ public class RowBuilder extends BasicRowBuilder {
 
     /**
      * Adds a calendar column to current row based on JPA metamodel
-     * The calendar will be converted to dbunit default format
+     * The calendar will be converted to dbunit default format (yyyy-MM-dd HH:mm:ss)
      * @param column JPA metamodel column
-     * @param value
+     * @param value the column value
+     * @return current row builder
      */
     public RowBuilder column(Attribute column, Calendar value) {
         String columnName = getColumnNameFromMetaModel(column);
@@ -84,9 +91,10 @@ public class RowBuilder extends BasicRowBuilder {
 
     /**
      * Adds a date column to current row based on JPA metamodel
-     * The date will be converted to dbunit default format
+     * The date will be converted to dbunit default format (yyyy-MM-dd HH:mm:ss)
      * @param column JPA metamodel column
-     * @param value
+     * @param value the column value
+     * @return current row builder
      */
     public RowBuilder column(Attribute column, Date value) {
         String columnName = getColumnNameFromMetaModel(column);
@@ -95,6 +103,7 @@ public class RowBuilder extends BasicRowBuilder {
 
     /**
      * starts a new row for current table
+     * @return current row builder
      */
     public RowBuilder row() {
         return tableBuilder.row();
@@ -103,7 +112,8 @@ public class RowBuilder extends BasicRowBuilder {
 
     /**
      * Starts creating rows for a new table
-     * @param tableName
+     * @param tableName table which new rows will be added
+     * @return a table builder
      */
     public TableBuilder table(String tableName) {
         tableBuilder.saveCurrentRow(); //save current row  every time a new row is started
@@ -111,7 +121,7 @@ public class RowBuilder extends BasicRowBuilder {
     }
 
     /**
-     * Creates a dbunit dataset based on current builder
+     * @return a dbunit dataset based on current builder
      */
     public IDataSet build() {
         return tableBuilder.getDataSetBuilder().build();

@@ -51,7 +51,7 @@ public class ColumnBuilder extends BasicRowBuilder {
     }
 
     /**
-     * Creates a dbunit dataset based on current builder
+     * @return a dbunit dataset based on current builder
      */
     public IDataSet build() {
         tableBuilder.getCurrentRowBuilder().setAdded(true);//in columns-values syntax the row is added on each 'values' call

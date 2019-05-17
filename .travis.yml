@@ -18,7 +18,7 @@ before_script:
 - git config --global user.name rmpestano
 - git config --global user.email rmpestano@gmail.com
 script:
-- mvn clean install -Dmaven.javadoc.skip=true jacoco:report coveralls:report -Pcoverage surefire-report:report-only && python html2text.py target/site/surefire-report.html
+- mvn clean install jacoco:report coveralls:report -Pcoverage surefire-report:report-only && python html2text.py target/site/surefire-report.html
 - if [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_BRANCH == "master" ]]; then mvn sonar:sonar -Psonar -Dsonar.organization=database-rider -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${SONAR_KEY} ; fi ;
 - if [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_BRANCH == "master" ]]; then cd rider-core && mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs ; fi ;
 - if [[ $TRAVIS_COMMIT_MESSAGE == *"prepare release"* ]]; then mvn -q cukedoctor:execute
