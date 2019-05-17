@@ -30,6 +30,7 @@ public class TableBuilder {
      *             .column("name", "@dbrider").build();
      * }
      * </pre>
+     * @return a row builder for adding rows on current table
      */
     public RowBuilder row() {
         if(currentRowBuilder.hasColumns()) {
@@ -52,8 +53,8 @@ public class TableBuilder {
      * }
      * </pre>
      *
-     * @param columns
-     * @return a column builder responsible for creating rows using simplified syntax
+     * @param columns name of the column(s) to add in current table
+     * @return a column builder responsible for creating rows for specified <code>columns</code>
      */
     public ColumnBuilder columns(String... columns) {
         if(currentColumnBuilder != null && currentColumnBuilder.hasColumns()) {
@@ -67,7 +68,7 @@ public class TableBuilder {
 
 
     /**
-     * Simplified syntax for row creation, using JPA metalmodel, specifying columns only once
+     * Simplified syntax for row creation, using JPA metalmodel (type safe), specifying columns only once
      * and then declare values of each row:
      * <pre>
      * {@code
@@ -78,8 +79,10 @@ public class TableBuilder {
      * }
      * </pre>
      *
-     * @param columns
-     * @return a column builder responsible for creating rows using simplified syntax
+     * The actual name of the column will be extracted from the metamodel
+     *
+     * @param columns list of JPA metamodel columns to add in current table.
+     * @return a column builder responsible for creating rows for specified <code>columns</code>
      */
     public ColumnBuilder columns(Attribute... columns) {
         String[] columnList = new String[columns.length];
@@ -112,8 +115,9 @@ public class TableBuilder {
      * Adds a default value for the given column in current table.
      * The default value will be used only if the column is not specified
      *
-     * @param columnName
-     * @param value
+     * @param columnName name of the column
+     * @param value the value
+     * @return table builder for starting adding rows on current table
      */
     public TableBuilder defaultValue(String columnName, Object value) {
         dataSetBuilder.addTableDefaultValue(tableName, columnName, value);

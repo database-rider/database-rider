@@ -64,6 +64,7 @@ public class DataSetBuilder {
      *            .column("id", 1)
      *            .column("name", "@dbunit")
      * }
+     * </pre>
      * @param tableName name of the table to screate the dataset
      *
      * @return current table builder
@@ -94,6 +95,7 @@ public class DataSetBuilder {
     /**
      * Adds a previously created dataset to current builder
      * @param iDataSet dbunit dataset
+     * @return current builder
      */
     public DataSetBuilder addDataSet(final IDataSet iDataSet) {
         try {
@@ -127,7 +129,7 @@ public class DataSetBuilder {
      *
      * @param row an already built row
      *
-     * @return current builder object
+     * @return current builder
      */
     public DataSetBuilder add(BasicRowBuilder row) {
         try {

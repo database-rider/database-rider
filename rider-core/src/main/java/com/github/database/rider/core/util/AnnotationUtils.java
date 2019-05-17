@@ -29,8 +29,8 @@ public final class AnnotationUtils {
     private static final Map<AnnotationCacheKey, Annotation> annotationCache = new ConcurrentHashMap<>(256);
 
     /**
-     * @param element
-     * @param annotationType
+     * @param element annotated method or class
+     * @param annotationType annotationType
      *
      * Determine if an annotation of {@code annotationType} is either
      * <em>present</em> or <em>meta-present</em> on the supplied
@@ -42,23 +42,12 @@ public final class AnnotationUtils {
         return findAnnotation(element, annotationType) != null;
     }
 
-    /**
-     *
-     * @param element
-     * @param annotationType
-     * @return
-     */
+
     public static <A extends Annotation> A findAnnotation(AnnotatedElement element, Class<A> annotationType) {
         return findAnnotation(element, annotationType, new HashSet<Annotation>());
     }
 
-    /**
-     *
-     * @param element
-     * @param annotationType
-     * @param visited
-     * @return
-     */
+
     @SuppressWarnings("unchecked")
     private static <A extends Annotation> A findAnnotation(AnnotatedElement element, Class<A> annotationType,
             Set<Annotation> visited) {
@@ -116,14 +105,7 @@ public final class AnnotationUtils {
         return findMetaAnnotation(annotationType, element.getAnnotations(), key, visited);
     }
 
-    /**
-     *
-     * @param annotationType
-     * @param candidates
-     * @param key
-     * @param visited
-     * @return
-     */
+
     private static <A extends Annotation> A findMetaAnnotation(Class<A> annotationType,
             Annotation[] candidates, AnnotationCacheKey key, Set<Annotation> visited) {
 

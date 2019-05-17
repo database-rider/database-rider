@@ -25,7 +25,7 @@ public class RowBuilder extends BasicRowBuilder {
      * @param value the column value
      * @return current row builder
      */
-    public <T> RowBuilder column(ColumnSpec column, T value) {
+    public RowBuilder column(ColumnSpec column, Object value) {
         super.column(column.name(), value);
         return this;
     }
@@ -55,7 +55,10 @@ public class RowBuilder extends BasicRowBuilder {
     }
 
     /**
-     * Adds a column to current row based on JPA metamodel
+     * Type safe approach to add a column to current row based on JPA metamodel.
+     *
+     * The actual name of the column will be extracted from the metamodel.
+     *
      * @param column JPA metamodel column
      * @param value the column value
      * @return current row builder
