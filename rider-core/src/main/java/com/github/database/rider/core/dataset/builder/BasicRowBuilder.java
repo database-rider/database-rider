@@ -57,7 +57,7 @@ public class BasicRowBuilder {
         return this;
     }
 
-    public Object[] values(Column[] columns) {
+    protected Object[] values(Column[] columns) {
         Object[] values = new Object[columns.length];
         int index = 0;
         for (Column column : columns) {
