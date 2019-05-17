@@ -21,7 +21,7 @@ TIP: Complete source code of examples below can be https://github.com/database-r
 ----
 include::../../../src/test/java/com/github/database/rider/core/DataSetProviderIt.java[tags=signature]
 ----
-<1> `provider` attribute of dataset annotation expects a class which implements DataSetProvider interface.
+<1> `provider` attribute expects a class which implements DataSetProvider interface.
 
     """
 
