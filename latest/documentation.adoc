@@ -1226,6 +1226,75 @@ Then ::
 Test must use dataset declared in `AnotherMetaDataSet` annotation. icon:thumbs-up[role="green",title="Passed"]
 ==========
 
+[[DataSet-merging, DataSet merging]]
+== *DataSet merging*
+
+****
+====
+[quote]
+____
+In order to reuse dataset configuration between test methods
+As a developer
+I want merge `class level` with `test level` dataset configuration
+____
+====
+
+TIP: Complete source code of examples below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/MergeDataSetsIt.java#L25[found here^].
+
+TIP: See https://github.com/database-rider/database-rider/blob/master/rider-junit5/src/test/java/com/github/database/rider/junit5/MergeDataSetsJUnit5It.java#L20[Rider JUnit5^] and https://github.com/database-rider/database-rider/blob/master/rider-cdi/src/test/java/com/github/database/rider/cdi/MergeDataSetsCDIIt.java#L26[CDI^] examples.
+****
+
+=== Merging datasets
+
+==========
+Given ::
+The following class level dataset configuration icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[source,java,indent=0]
+----
+include::../../../src/test/java/com/github/database/rider/core/MergeDataSetsIt.java[tags=declaration]
+}
+----
+[discrete]
+<1> Enables dataset merging so @DataSet declared on test class will be merged with test/method one. 
+
+
+******
+
+When ::
+The following test is executed: icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+[discrete]
+[source,java,indent=0]
+----
+include::../../../src/test/java/com/github/database/rider/core/MergeDataSetsIt.java[tags=method;after]
+----
+
+
+******
+
+Then ::
+Test and method dataset configuration will be merged in one dataset icon:thumbs-up[role="green",title="Passed"]
+******
+
+[discrete]
+IMPORTANT: Only array properties such as `value` and `executeScriptsBefore` of @DataSet will be merged.
+[discrete]
+[discrete]
+WARNING: Class level dataset configuration will come before method level if a property is defined in both datasets, like `executeStatementsBefore` in example above.
+[discrete]
+[discrete]
+TIP: You can enable dataset merging for all tests with 'mergeDataSets=true` on `dbunit.yml` configuraton file.
+
+
+******
+
+==========
+
 [[DataSet-builder, DataSet builder]]
 == *DataSet builder*
 
@@ -1365,75 +1434,6 @@ USER:
 ******
 
 NOTE: yaml format is used only for illustration here, when using DatasetBuilder the dataset is only created in memory, it is not materialized in any file (unless it is <<DataSet-export, exported>>). 
-
-==========
-
-[[DataSet-merging, DataSet merging]]
-== *DataSet merging*
-
-****
-====
-[quote]
-____
-In order to reuse dataset configuration between test methods
-As a developer
-I want merge `class level` with `test level` dataset configuration
-____
-====
-
-TIP: Complete source code of examples below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/MergeDataSetsIt.java#L25[found here^].
-
-TIP: See https://github.com/database-rider/database-rider/blob/master/rider-junit5/src/test/java/com/github/database/rider/junit5/MergeDataSetsJUnit5It.java#L20[Rider JUnit5^] and https://github.com/database-rider/database-rider/blob/master/rider-cdi/src/test/java/com/github/database/rider/cdi/MergeDataSetsCDIIt.java#L26[CDI^] examples.
-****
-
-=== Merging datasets
-
-==========
-Given ::
-The following class level dataset configuration icon:thumbs-up[role="green",title="Passed"]
-******
-
-[discrete]
-[source,java,indent=0]
-----
-include::../../../src/test/java/com/github/database/rider/core/MergeDataSetsIt.java[tags=declaration]
-}
-----
-[discrete]
-<1> Enables dataset merging so @DataSet declared on test class will be merged with test/method one. 
-
-
-******
-
-When ::
-The following test is executed: icon:thumbs-up[role="green",title="Passed"]
-******
-
-[discrete]
-[discrete]
-[source,java,indent=0]
-----
-include::../../../src/test/java/com/github/database/rider/core/MergeDataSetsIt.java[tags=method;after]
-----
-
-
-******
-
-Then ::
-Test and method dataset configuration will be merged in one dataset icon:thumbs-up[role="green",title="Passed"]
-******
-
-[discrete]
-IMPORTANT: Only array properties such as `value` and `executeScriptsBefore` of @DataSet will be merged.
-[discrete]
-[discrete]
-WARNING: Class level dataset configuration will come before method level if a property is defined in both datasets, like `executeStatementsBefore` in example above.
-[discrete]
-[discrete]
-TIP: You can enable dataset merging for all tests with 'mergeDataSets=true` on `dbunit.yml` configuraton file.
-
-
-******
 
 ==========
 
