@@ -138,8 +138,8 @@ public class DataSetBuilder {
 
 
     /**
-     * Adds a default value for the given column for all tables
-     * The default value will be used only if the column was not specified
+     * Adds a default value for the given column for all tables.
+     * The default value will be used only if the column is not specified
      *
      * @param columnName
      * @param value

@@ -41,9 +41,11 @@ public class DataSetProviderIt {
     @Rule
     public DBUnitRule dbUnitRule = DBUnitRule.instance(emProvider.connection());
 
+
+    // tag::signature[]
     @Test
-    @DataSet(provider = UserDataSetProvider.class, cleanBefore = true)
-    @ExportDataSet(outputName = "target/out.yml")
+    @DataSet(provider = UserDataSetProvider.class, //<1>
+              cleanBefore = true)
     public void shouldSeedDatabaseProgrammatically() {
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u ").getResultList();
         assertThat(users).
@@ -52,10 +54,11 @@ public class DataSetProviderIt {
             extracting("name").
             contains("@dbunit", "@dbrider");
     }
+    // end::signature[]
 
+    // tag::signature2[]
     @Test
     @DataSet(provider = UserDataSetProviderWithColumnsSyntax.class)
-    @ExportDataSet(outputName = "target/out3.yml")
     public void shouldSeedDatabaseUsingDataSetProviderWithColumnsSyntax() {
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u ").getResultList();
         assertThat(users).
@@ -64,6 +67,7 @@ public class DataSetProviderIt {
                 extracting("name").
                 contains("@dbunit", "@dbrider");
     }
+    // end::signature2[]
 
     @Test
     @ExportDataSet(outputName = "target/out2.yml")
@@ -179,34 +183,38 @@ public class DataSetProviderIt {
 
     }
 
+    // tag::provider[]
     public static class UserDataSetProvider implements DataSetProvider {
 
         @Override
         public IDataSet provide() {
             DataSetBuilder builder = new DataSetBuilder();
-            builder.table("user")
-                    .row()
-                        .column("id", 1)
+            builder.table("user")//<1>
+                    .row() //<2>
+                        .column("id", 1) //<3>
                         .column("name", "@dbunit")
-                    .row()
+                    .row() //<4>
                         .column("id", 2)
                         .column("name", "@dbrider").build();
-            return builder.build();
+            return builder.build(); //<5>
         }
     }
+    // end::provider[]
 
+    // tag::provider2[]
     public static class UserDataSetProviderWithColumnsSyntax implements DataSetProvider {
 
         @Override
         public IDataSet provide() {
             DataSetBuilder builder = new DataSetBuilder();
-            IDataSet iDataSet = builder.table("user")
-                    .columns("id", "name")
-                    .values(1,"@dbunit")
+            IDataSet iDataSet = builder.table("user") //<1>
+                    .columns("id", "name") //<2>
+                    .values(1,"@dbunit") //<3>
                     .values(2,"@dbrider").build();
             return iDataSet;
         }
     }
+    // end::provider2[]
 
     public static class UserDataSetWithMetaModelProvider implements DataSetProvider {
 

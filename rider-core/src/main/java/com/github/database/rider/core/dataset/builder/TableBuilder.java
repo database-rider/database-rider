@@ -109,8 +109,8 @@ public class TableBuilder {
     }
 
     /**
-     * Adds a default value for the given column in current table
-     * The default value will be used only if the column was not specified
+     * Adds a default value for the given column in current table.
+     * The default value will be used only if the column is not specified
      *
      * @param columnName
      * @param value
