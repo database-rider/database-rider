@@ -195,7 +195,7 @@ public class DataSetProviderIt {
                         .column("name", "@dbunit")
                     .row() //<4>
                         .column("id", 2)
-                        .column("name", "@dbrider").build();
+                        .column("name", "@dbrider");
             return builder.build(); //<5>
         }
     }
