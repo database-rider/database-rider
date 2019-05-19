@@ -1,0 +1,27 @@
+{
+  "USER": [
+    {
+      "id": 1,
+      "name": "@realpestano"
+    },
+    {
+      "id": 2,
+      "name": "@dbunit"
+    }
+  ],
+  "TWEET": [
+    {
+      "id": "abcdef12345",
+      "content": "dbunit rules json example",
+      "date": "2013-01-20",
+      "user_id": 1
+    }
+  ],
+  "FOLLOWER": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "follower_id": 2
+    }
+  ]
+}

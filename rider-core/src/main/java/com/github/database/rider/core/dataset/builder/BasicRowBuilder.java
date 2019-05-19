@@ -32,6 +32,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static com.github.database.rider.core.dataset.builder.BuilderUtil.convertCase;
+import static com.github.database.rider.core.dataset.builder.BuilderUtil.resolveColumnDataType;
 
 public class BasicRowBuilder {
 
@@ -89,33 +90,11 @@ public class BasicRowBuilder {
 
     protected Column createColumn(String columnName) {
         Object value = columnNameToValue.get(columnName);
-        DataType columnType = DataType.UNKNOWN;
-        if (value instanceof Integer) {
-            columnType = DataType.INTEGER;
-        }
-        if (value instanceof Long) {
-            columnType = DataType.BIGINT_AUX_LONG;
-        }
-        if (value instanceof Double) {
-            columnType = DataType.DOUBLE;
-        }
-        if (value instanceof Float) {
-            columnType = DataType.FLOAT;
-        }
-        if (value instanceof Date) {
-            columnType = DataType.DATE;
-        }
-        if (value instanceof Boolean) {
-            columnType = DataType.BOOLEAN;
-        }
-        if (value instanceof BigDecimal) {
-            columnType = DataType.DECIMAL;
-        }
-        if (value instanceof Number) {
-            columnType = DataType.NUMERIC;
-        }
+        DataType columnType = resolveColumnDataType(value);
         return new Column(columnName, columnType);
     }
+
+
 
     protected String getTableName() {
         return tableName;

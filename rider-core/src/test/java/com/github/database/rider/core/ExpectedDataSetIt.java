@@ -1,12 +1,11 @@
 package com.github.database.rider.core;
 
-import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.CompareOperation;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.model.Tweet;
-import com.github.database.rider.core.util.EntityManagerProvider;
 import com.github.database.rider.core.model.User;
+import com.github.database.rider.core.util.EntityManagerProvider;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,7 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 // tag::expectedDeclaration[]
 @RunWith(JUnit4.class)
-@DBUnit(cacheConnection = true)
 public class ExpectedDataSetIt {
 
     @Rule
@@ -177,7 +175,7 @@ public class ExpectedDataSetIt {
 
     @Test
     @DataSet(value = "yml/user.yml", transactional = true)
-    @ExpectedDataSet(value = "yml/expectedUsersContains.yml", compareOperation = CompareOperation.CONTAINS)
+    @ExpectedDataSet(value = "yml/expectedUsersContains.yml", compareOperation = CompareOperation.CONTAINS, ignoreCols = "ID")
     public void shouldMatchExpectedDataSetContains() {
         User u = new User();
         u.setId(3);

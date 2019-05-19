@@ -4,29 +4,15 @@ package com.github.database.rider.core.api.dataset;
  * Created by rafael-pestano on 22/07/2015.
  */
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import org.dbunit.dataset.Column;
-import org.dbunit.dataset.DataSetException;
-import org.dbunit.dataset.DefaultTableIterator;
-import org.dbunit.dataset.DefaultTableMetaData;
-import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.ITable;
-import org.dbunit.dataset.ITableIterator;
-import org.dbunit.dataset.ITableMetaData;
-import org.dbunit.dataset.RowOutOfBoundsException;
-import org.dbunit.dataset.datatype.DataType;
-import org.yaml.snakeyaml.Yaml;
-
 import com.github.database.rider.core.api.configuration.Orthography;
 import com.github.database.rider.core.configuration.DBUnitConfig;
+import org.dbunit.dataset.*;
+import org.yaml.snakeyaml.Yaml;
+
+import java.io.InputStream;
+import java.util.*;
+
+import static com.github.database.rider.core.dataset.builder.BuilderUtil.resolveColumnDataType;
 
 public class YamlDataSet implements IDataSet {
 
@@ -61,18 +47,21 @@ public class YamlDataSet implements IDataSet {
 
         ITableMetaData meta;
 
-        MyTable(String name, List<String> columnNames) {
+        MyTable(String name, List<Map<String, Object>> rows) {
             this.name = name;
-            this.data = new ArrayList<Map<String, Object>>();
-            meta = createMeta(name, columnNames);
+            this.data = new ArrayList<>();
+            meta = createMeta(name, rows);
         }
 
-        ITableMetaData createMeta(String name, List<String> columnNames) {
+        ITableMetaData createMeta(String name, List<Map<String, Object>> rows) {
+            List<String> columnNames = getColumns(rows);
+            Map<String, Object> firstRow = rows == null || rows.isEmpty() ? new HashMap<String, Object>() : rows.get(0);
+            applyCase(columnNames);
             Column[] columns = null;
             if (columnNames != null) {
                 columns = new Column[columnNames.size()];
                 for (int i = 0; i < columnNames.size(); i++)
-                    columns[i] = new Column(columnNames.get(i), DataType.UNKNOWN);
+                    columns[i] = new Column(columnNames.get(i), resolveColumnDataType(firstRow.get(columnNames.get(i))));
             } else {
                 columns = new Column[0];
             }
@@ -91,8 +80,9 @@ public class YamlDataSet implements IDataSet {
 
         @Override
         public Object getValue(int row, String column) throws DataSetException {
-            if (data.size() <= row)
+            if (data.size() <= row) {
                 throw new RowOutOfBoundsException("" + row);
+            }
             return data.get(row).get(applyCaseInsensitivity(column)); // issue #37
         }
 
@@ -101,17 +91,16 @@ public class YamlDataSet implements IDataSet {
         }
 
         Map<String, Object> convertMap(Map<String, Object> values) {
-            Map<String, Object> row = new HashMap<String, Object>();
+            Map<String, Object> row = new HashMap<>();
             for (Map.Entry<String, Object> ent : values.entrySet()) {
                 row.put(applyCaseInsensitivity(ent.getKey()), ent.getValue()); // issue #37
             }
             return row;
         }
-
     }
 
     MyTable createTable(String name, List<Map<String, Object>> rows) {
-        MyTable table = new MyTable(applyCaseInsensitivity(name), applyCase(getColumns(rows))); // issue #37
+        MyTable table = new MyTable(applyCaseInsensitivity(name), rows); // issue #37
         if (rows != null) {
             for (Map<String, Object> values : rows)
                 table.addRow(values);
@@ -122,12 +111,12 @@ public class YamlDataSet implements IDataSet {
 
     public List<String> getColumns(List<Map<String, Object>> rows) {
         if (rows != null) {
-            Set<String> columns = new HashSet<String>();
+            Set<String> columns = new HashSet<>();
             for (Map<String, Object> row : rows) {
                 columns.addAll(applyCase(new ArrayList<>(row.keySet()))); // issue #37
             }
 
-            return new ArrayList<String>(columns);
+            return new ArrayList<>(columns);
         }
         return null;
     }

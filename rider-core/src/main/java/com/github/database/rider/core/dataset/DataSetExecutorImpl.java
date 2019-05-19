@@ -874,13 +874,10 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         //PrimaryKeyFilteredTableWrapper uses Set.contains to check PK values, so types should be the same in both datasets
         DataType dataType = actualDataSet.getTableMetaData().getPrimaryKeys()[0].getDataType();
         String pkName = actualDataSet.getTableMetaData().getPrimaryKeys()[0].getColumnName();
-
         Set<Object> pkSet = new HashSet<>();
-
         for (int i = 0; i < expectedDataSet.getRowCount(); i++) {
             pkSet.add(dataType.typeCast(expectedDataSet.getValue(i, pkName)));
         }
-
         return new PrimaryKeyFilteredTableWrapper(actualDataSet, pkSet);
     }
 

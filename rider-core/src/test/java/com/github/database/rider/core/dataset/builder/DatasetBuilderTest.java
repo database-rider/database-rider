@@ -134,7 +134,8 @@ public class DatasetBuilderTest {
         DataSetBuilder builder = new DataSetBuilder();
         ColumnSpec id = ColumnSpec.of("ID");
         builder.table("USER")
-                .row().column("ID", 1)
+                .row()
+                    .column("ID", 1)
                     .column("NAME", "@realpestano")
                 .table("USER")
                 .row().column(id, 2)

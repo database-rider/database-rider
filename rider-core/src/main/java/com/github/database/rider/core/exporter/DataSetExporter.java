@@ -50,17 +50,18 @@ public class DataSetExporter {
 
     private static DataSetExporter instance;
 
-    private DataSetExporter(){}
+    private DataSetExporter() {
+    }
 
-    public static DataSetExporter getInstance(){
-        if(instance == null){
+    public static DataSetExporter getInstance() {
+        if (instance == null) {
             instance = new DataSetExporter();
         }
         return instance;
     }
 
     public OutputStream export(Connection connection, DataSetExportConfig dataSetExportConfig) throws SQLException, DatabaseUnitException {
-        return export(new DatabaseConnection(connection),dataSetExportConfig);
+        return export(new DatabaseConnection(connection), dataSetExportConfig);
     }
 
     public OutputStream export(DatabaseConnection databaseConnection, DataSetExportConfig dataSetExportConfig) throws SQLException, DatabaseUnitException {
@@ -72,19 +73,19 @@ public class DataSetExporter {
         if (dataSetExportConfig == null) {
             dataSetExportConfig = new DataSetExportConfig();
         }
-        
+
         String outputFile = dataSetExportConfig.getOutputFileName();
 
-        if(outputFile == null || "".equals(outputFile)){
+        if (outputFile == null || "".equals(outputFile)) {
             throw new RuntimeException("Provide output file name to export dataset.");
         }
-        
-        if(!outputFile.contains(".")){
-            outputFile = outputFile +"."+dataSetExportConfig.getDataSetFormat().name().toLowerCase();
+
+        if (!outputFile.contains(".")) {
+            outputFile = outputFile + "." + dataSetExportConfig.getDataSetFormat().name().toLowerCase();
         }
-        
-        if(outputFile.contains("/") && System.getProperty("os.name").toLowerCase().contains("win")){
-        	outputFile = outputFile.replace("/", "\\");
+
+        if (outputFile.contains("/") && System.getProperty("os.name").toLowerCase().contains("win")) {
+            outputFile = outputFile.replace("/", "\\");
         }
 
         boolean hasIncludes = dataSetExportConfig.getIncludeTables() != null && dataSetExportConfig.getIncludeTables().length > 0;
@@ -108,8 +109,8 @@ public class DataSetExporter {
 
         IDataSet dataSet = new QueryDataSet(databaseConnection);
         if ((targetTables != null && !targetTables.isEmpty()) || (dataSetExportConfig.getQueryList() != null && dataSetExportConfig.getQueryList().length > 0)) {
-            addQueries((QueryDataSet)dataSet, dataSetExportConfig.getQueryList(), targetTables);
-        } else{
+            addQueries((QueryDataSet) dataSet, dataSetExportConfig.getQueryList(), targetTables);
+        } else {
             dataSet = databaseConnection.createDataSet();
         }
 
@@ -117,21 +118,21 @@ public class DataSetExporter {
         FileOutputStream fos = null;
         FileOutputStream fosDtd = null;
         try {
-            if(outputFile.contains(System.getProperty("file.separator"))){
-                String pathWithoutFileName = outputFile.substring(0,outputFile.lastIndexOf(System.getProperty("file.separator"))+1);
+            if (outputFile.contains(System.getProperty("file.separator"))) {
+                String pathWithoutFileName = outputFile.substring(0, outputFile.lastIndexOf(System.getProperty("file.separator")) + 1);
                 new File(pathWithoutFileName).mkdirs();
             }
             fos = new FileOutputStream(outputFile);
             switch (dataSetExportConfig.getDataSetFormat()) {
-            		case XML_DTD: {
-            			FlatXmlDataSet.write(dataSet, fos);
+                case XML_DTD: {
+                    FlatXmlDataSet.write(dataSet, fos);
 
-            			//dtd file has the same name but other file extension
-            			fosDtd = new FileOutputStream(outputFile.substring(0, outputFile.lastIndexOf('.')) + ".dtd");
-                  FlatDtdDataSet.write(dataSet, fosDtd);
-                  
-                  break;
-            		}
+                    //dtd file has the same name but other file extension
+                    fosDtd = new FileOutputStream(outputFile.substring(0, outputFile.lastIndexOf('.')) + ".dtd");
+                    FlatDtdDataSet.write(dataSet, fosDtd);
+
+                    break;
+                }
                 case XML: {
                     FlatXmlDataSet.write(dataSet, fos);
                     break;
@@ -141,47 +142,46 @@ public class DataSetExporter {
                     break;
                 }
                 case XLS: {
-                	config.setProperty(DatabaseConfig.PROPERTY_RESULTSET_TABLE_FACTORY, new CachedResultSetTableFactory());
-                	new XlsDataSetWriter().write(dataSet, fos);
-                	break;
+                    config.setProperty(DatabaseConfig.PROPERTY_RESULTSET_TABLE_FACTORY, new CachedResultSetTableFactory());
+                    new XlsDataSetWriter().write(dataSet, fos);
+                    break;
                 }
                 case CSV: {
-                	//csv needs a directory instead of file
-                	outputFile = outputFile.substring(0,outputFile.lastIndexOf("."));
-                	CsvDataSetWriter.write(dataSet, new File(outputFile));
-                	break;
+                    //csv needs a directory instead of file
+                    outputFile = outputFile.substring(0, outputFile.lastIndexOf("."));
+                    CsvDataSetWriter.write(dataSet, new File(outputFile));
+                    break;
                 }
                 case JSON: {
-                	config.setProperty(DatabaseConfig.PROPERTY_RESULTSET_TABLE_FACTORY, new CachedResultSetTableFactory());
-                	new JSONWriter(fos,dataSet).write();
-                	break;
+                    config.setProperty(DatabaseConfig.PROPERTY_RESULTSET_TABLE_FACTORY, new CachedResultSetTableFactory());
+                    new JSONWriter(fos, dataSet).write();
+                    break;
                 }
                 default: {
                     throw new RuntimeException("Format not supported.");
                 }
-                
+
             }
-            
-           log.info("DataSet exported successfully at "+ Paths.get(outputFile).toAbsolutePath().toString());
-            
+
+            log.info("DataSet exported successfully at " + Paths.get(outputFile).toAbsolutePath().toString());
+
         } catch (Exception e) {
             log.error("Could not export dataset.", e);
             throw new RuntimeException("Could not export dataset.", e);
-        }
-        finally {
-            if(fos != null){
+        } finally {
+            if (fos != null) {
                 try {
                     fos.close();
                 } catch (IOException e) {
                     log.error("Could not close file output stream.", e);
                 }
             }
-            if(fosDtd != null){
-              try {
-                  fosDtd.close();
-              } catch (IOException e) {
-                  log.error("Could not close file output stream for dtd file.", e);
-              }
+            if (fosDtd != null) {
+                try {
+                    fosDtd.close();
+                } catch (IOException e) {
+                    log.error("Could not close file output stream for dtd file.", e);
+                }
             }
             //set back default ResultSetTableFactory
             config.setProperty(DatabaseConfig.PROPERTY_RESULTSET_TABLE_FACTORY, new CachedResultSetTableFactory());
@@ -206,7 +206,6 @@ public class DataSetExporter {
                     if (targetTables.contains(table)) {
                         //already in includes
                         log.warn(String.format("Ignoring query %s because its table is already in includedTables.", query));
-                        continue;
                     } else {
                         dataSet.addTable(table, query);
                     }

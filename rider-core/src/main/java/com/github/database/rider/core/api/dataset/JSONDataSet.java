@@ -2,13 +2,14 @@ package com.github.database.rider.core.api.dataset;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.dbunit.dataset.*;
-import org.dbunit.dataset.datatype.DataType;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+
+import static com.github.database.rider.core.dataset.builder.BuilderUtil.resolveColumnDataType;
 
 /**
  * DBUnit DataSet format for JSON based datasets. It is similar to the flat XML
@@ -129,10 +130,11 @@ public class JSONDataSet extends AbstractDataSet {
 					columns.add(column.getKey());
 				}
 			}
+			Map<String, Object> firstRow = rows.get(0);
 			List<Column> list = new ArrayList<Column>(columns.size());
 			// create a list of DBUnit columns based on the column name set
 			for (String s : columns) {
-				list.add(new Column(s, DataType.UNKNOWN));
+				list.add(new Column(s, resolveColumnDataType(firstRow.get(s))));
 			}
 			return new DefaultTableMetaData(tableName,
 					list.toArray(new Column[list.size()]));
