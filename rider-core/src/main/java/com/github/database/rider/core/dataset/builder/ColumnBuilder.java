@@ -1,6 +1,5 @@
 package com.github.database.rider.core.dataset.builder;
 
-import com.github.database.rider.core.util.DateUtils;
 import org.dbunit.dataset.IDataSet;
 
 import java.util.Calendar;
@@ -19,6 +18,11 @@ public class ColumnBuilder extends BasicRowBuilder {
         this.tableBuilder = tableBuilder;
     }
 
+    /**
+     *
+     * @param values values to be set on declared columns on {@link TableBuilder#columns(String...)}
+     * @return current ColumnBuilder object
+     */
     public ColumnBuilder values(Object... values) {
         if (values.length != columns.length) {
             throw new RuntimeException(String.format("Number of columns (%s) for table %s is different than the number of provided values (%s)", columns.length, getTableName(), values.length));
@@ -26,10 +30,8 @@ public class ColumnBuilder extends BasicRowBuilder {
         for (int i = 0; i < columns.length; i++) {
             if(values[i] != null) {//default values
                 Object columnValue = values[i];
-                if(columnValue instanceof Date) {
-                    columnValue = DateUtils.format((Date) columnValue);
-                } else if(columnValue instanceof Calendar) {
-                    columnValue = DateUtils.format(((Calendar) columnValue).getTime());
+                if(columnValue instanceof Date || columnValue instanceof Calendar) {
+                    columnValue = formatDateValue(columnValue);
                 }
                 columnNameToValue.put(convertCase(columns[i], config), columnValue);
             }

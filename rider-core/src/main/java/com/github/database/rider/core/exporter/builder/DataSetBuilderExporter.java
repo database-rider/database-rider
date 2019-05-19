@@ -17,17 +17,18 @@ public class DataSetBuilderExporter {
     /**
      * Generates a dataset builder java snippet based on a dbunit dataset
      *
-     * @param dataSet dbunit dataset
+     * @param dataset dbunit dataset
      * @param config  exporter configuration
      */
-    public void export(IDataSet dataSet, BuilderExportConfig config) {
+    public void export(IDataSet dataset, BuilderExportConfig config) {
 
         try {
+            IDataSet builderDataSet = new CachedDataSet(dataset);
             StringBuilder source = new StringBuilder("DataSetBuilder builder = new DataSetBuilder();").append(NEW_LINE)
                     .append("IDataSet dataSet = builder");
 
             boolean defaultSyntax = DEFAULT == config.getType();
-            ITableIterator datasetIterator = dataSet.iterator();
+            ITableIterator datasetIterator = builderDataSet.iterator();
             while (datasetIterator.next()) {
                 ITable table = datasetIterator.getTable();
                 source.append(NEW_LINE+ FOUR_SPACES +".table(\"").append(table.getTableMetaData().getTableName()).append("\")").append(NEW_LINE);
@@ -40,6 +41,8 @@ public class DataSetBuilderExporter {
             source.append(".build();");
             try(FileOutputStream fout = new FileOutputStream(config.getOutputDir())) {
                 fout.write(source.toString().getBytes(StandardCharsets.UTF_8));
+                LOGGER.info("DataSetBuilder exported successfully at " + config.getOutputDir().getAbsolutePath());
+
             }
         } catch (Exception e) {
            LOGGER.error("Could not generate DataSetBuilder for given dataset.", e);

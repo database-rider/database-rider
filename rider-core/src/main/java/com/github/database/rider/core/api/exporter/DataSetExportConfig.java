@@ -12,6 +12,7 @@ public class DataSetExportConfig {
     private String[] queryList;
     private boolean dependentTables = true;
     private String outputFileName;
+    private BuilderType builderType = BuilderType.NONE;
 
     public DataSetExportConfig dataSetFormat(DataSetFormat dataSetFormat) {
         this.dataSetFormat = dataSetFormat;
@@ -38,6 +39,11 @@ public class DataSetExportConfig {
         return this;
     }
 
+    public DataSetExportConfig builderType(BuilderType builderType) {
+        this.builderType = builderType;
+        return this;
+    }
+
     public DataSetFormat getDataSetFormat() {
         return dataSetFormat;
     }
@@ -58,10 +64,15 @@ public class DataSetExportConfig {
         return outputFileName;
     }
 
+    public BuilderType getBuilderType() {
+        return builderType;
+    }
+
     public static DataSetExportConfig from(ExportDataSet dataSetExport){
         return new DataSetExportConfig().
                 dataSetFormat(dataSetExport.format()).dependentTables(dataSetExport.dependentTables()).
                 outputFileName(dataSetExport.outputName()).
+                builderType(dataSetExport.builderType()).
                 includeTables(dataSetExport.includeTables()).queryList(dataSetExport.queryList());
     }
 

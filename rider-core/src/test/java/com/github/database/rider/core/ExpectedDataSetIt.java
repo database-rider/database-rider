@@ -175,7 +175,7 @@ public class ExpectedDataSetIt {
 
     @Test
     @DataSet(value = "yml/user.yml", transactional = true)
-    @ExpectedDataSet(value = "yml/expectedUsersContains.yml", compareOperation = CompareOperation.CONTAINS, ignoreCols = "ID")
+    @ExpectedDataSet(value = "yml/expectedUsersContains.yml", compareOperation = CompareOperation.CONTAINS)
     public void shouldMatchExpectedDataSetContains() {
         User u = new User();
         u.setId(3);

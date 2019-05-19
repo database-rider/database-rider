@@ -21,12 +21,13 @@
 package com.github.database.rider.core.dataset.builder;
 
 import com.github.database.rider.core.configuration.DBUnitConfig;
+import com.github.database.rider.core.util.DateUtils;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DefaultTableMetaData;
 import org.dbunit.dataset.ITableMetaData;
 import org.dbunit.dataset.datatype.DataType;
 
-import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -126,4 +127,14 @@ public class BasicRowBuilder {
     protected void setAdded(boolean added) {
         this.added = added;
     }
+
+    protected Object formatDateValue(Object value) {
+        if(value instanceof Date) {
+            return DateUtils.format((Date) value);
+        } else if(value instanceof Calendar) {
+            return DateUtils.format((Calendar) value);
+        }
+        return value;
+    }
+
 }

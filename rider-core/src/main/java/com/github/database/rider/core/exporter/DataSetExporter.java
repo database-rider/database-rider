@@ -1,8 +1,11 @@
 package com.github.database.rider.core.exporter;
 
+import com.github.database.rider.core.api.exporter.BuilderType;
 import com.github.database.rider.core.api.exporter.DataSetExportConfig;
 import com.github.database.rider.core.dataset.writer.JSONWriter;
 import com.github.database.rider.core.dataset.writer.YMLWriter;
+import com.github.database.rider.core.exporter.builder.BuilderExportConfig;
+import com.github.database.rider.core.exporter.builder.DataSetBuilderExporter;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.*;
 import org.dbunit.database.search.TablesDependencyHelper;
@@ -106,14 +109,12 @@ public class DataSetExporter {
             }
         }
 
-
         IDataSet dataSet = new QueryDataSet(databaseConnection);
-        if ((targetTables != null && !targetTables.isEmpty()) || (dataSetExportConfig.getQueryList() != null && dataSetExportConfig.getQueryList().length > 0)) {
+        if ((!targetTables.isEmpty()) || (dataSetExportConfig.getQueryList() != null && dataSetExportConfig.getQueryList().length > 0)) {
             addQueries((QueryDataSet) dataSet, dataSetExportConfig.getQueryList(), targetTables);
         } else {
             dataSet = databaseConnection.createDataSet();
         }
-
 
         FileOutputStream fos = null;
         FileOutputStream fosDtd = null;
@@ -126,11 +127,9 @@ public class DataSetExporter {
             switch (dataSetExportConfig.getDataSetFormat()) {
                 case XML_DTD: {
                     FlatXmlDataSet.write(dataSet, fos);
-
                     //dtd file has the same name but other file extension
                     fosDtd = new FileOutputStream(outputFile.substring(0, outputFile.lastIndexOf('.')) + ".dtd");
                     FlatDtdDataSet.write(dataSet, fosDtd);
-
                     break;
                 }
                 case XML: {
@@ -160,11 +159,14 @@ public class DataSetExporter {
                 default: {
                     throw new RuntimeException("Format not supported.");
                 }
-
             }
-
             log.info("DataSet exported successfully at " + Paths.get(outputFile).toAbsolutePath().toString());
 
+            boolean generateBuilder = BuilderType.NONE != dataSetExportConfig.getBuilderType();
+            if(generateBuilder) {
+                String builderName = outputFile.substring(0, outputFile.lastIndexOf("."))+".java";
+                new DataSetBuilderExporter().export(dataSet, new BuilderExportConfig(dataSetExportConfig.getBuilderType(), new File(builderName)));
+            }
         } catch (Exception e) {
             log.error("Could not export dataset.", e);
             throw new RuntimeException("Could not export dataset.", e);

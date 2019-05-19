@@ -40,5 +40,18 @@ public @interface ExportDataSet {
      */
     boolean dependentTables() default false;
 
+    /**
+     *
+     * @return file path, relative to the project, to generate the dataset. Ex: taget/generated/my-dataset.yml
+     */
     String outputName() default "";
+
+    /**
+     *
+     * @return type of dataset builder, 'default' or 'column...values' syntax.
+     * By default the type in 'NONE' meaning that dataset builder will not be generated.
+     *
+     * Note that the builder (java) file will be generated on the same path as <code>outputName</code> but the file suffix will be changed to <b>.java</b>.
+     */
+    BuilderType builderType() default BuilderType.NONE;
 }
