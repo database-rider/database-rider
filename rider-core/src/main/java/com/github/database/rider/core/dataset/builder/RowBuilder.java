@@ -33,7 +33,7 @@ public class RowBuilder extends BasicRowBuilder {
     /**
      * Adds a date column to current row
      * The date will be converted to dbunit default format (yyyy-MM-dd HH:mm:ss)
-     * Note that if the date has hour/minutes/seconds unset (0) then 'yyyy-MM-dd'will be used as format
+     * Note that if the date has hour/minutes/seconds unset (0) then 'yyyy-MM-dd' will be used as format
      * @param columnName the column name
      * @param value the column value
      * @return current row builder
@@ -46,7 +46,7 @@ public class RowBuilder extends BasicRowBuilder {
     /**
      * Adds a calendar column to current row
      * The calendar will be converted to dbunit default format (yyyy-MM-dd HH:mm:ss)
-     * Note that if the date has hour/minutes/seconds unset (0) then 'yyyy-MM-dd'will be used as format
+     * Note that if the date has hour/minutes/seconds unset (0) then 'yyyy-MM-dd' will be used as format
      * @param columnName the column name
      * @param value the column value
      * @return current row builder
@@ -85,7 +85,7 @@ public class RowBuilder extends BasicRowBuilder {
     /**
      * Adds a calendar column to current row based on JPA metamodel
      * The calendar will be converted to dbunit default format (yyyy-MM-dd HH:mm:ss)
-     * Note that if the date has hour/minutes/seconds unset (0) then 'yyyy-MM-dd'will be used as format
+     * Note that if the date has hour/minutes/seconds unset (0) then 'yyyy-MM-dd' will be used as format
      * @param column JPA metamodel column
      * @param value the column value
      * @return current row builder
@@ -98,7 +98,7 @@ public class RowBuilder extends BasicRowBuilder {
     /**
      * Adds a date column to current row based on JPA metamodel
      * The date will be converted to dbunit default format (yyyy-MM-dd HH:mm:ss)
-     * Note that if the date has hour/minutes/seconds unset (0) then 'yyyy-MM-dd'will be used as format
+     * Note that if the date has hour/minutes/seconds unset (0) then 'yyyy-MM-dd' will be used as format
      * @param column JPA metamodel column
      * @param value the column value
      * @return current row builder

@@ -14,7 +14,7 @@ public class DateUtils {
     public static String format(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        if(calendar.get(Calendar.HOUR) == 0 && calendar.get(Calendar.MINUTE) == 0) {
+        if(calendar.get(Calendar.HOUR) == 0 && calendar.get(Calendar.MINUTE) == 0 && calendar.get(Calendar.SECOND) == 0) {
             return formatDate(calendar);
         } else {
             return formatDateTime(calendar);
@@ -22,7 +22,7 @@ public class DateUtils {
     }
 
     public static String format(Calendar calendar) {
-        if (calendar.get(Calendar.HOUR) == 0 && calendar.get(Calendar.MINUTE) == 0) {
+        if (calendar.get(Calendar.HOUR) == 0 && calendar.get(Calendar.MINUTE) == 0 && calendar.get(Calendar.SECOND) == 0) {
             return formatDate(calendar);
         } else {
             return formatDateTime(calendar);
