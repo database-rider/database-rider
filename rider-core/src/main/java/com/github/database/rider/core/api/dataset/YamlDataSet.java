@@ -7,12 +7,11 @@ package com.github.database.rider.core.api.dataset;
 import com.github.database.rider.core.api.configuration.Orthography;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import org.dbunit.dataset.*;
+import org.dbunit.dataset.datatype.DataType;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
 import java.util.*;
-
-import static com.github.database.rider.core.dataset.builder.BuilderUtil.resolveColumnDataType;
 
 public class YamlDataSet implements IDataSet {
 
@@ -49,7 +48,7 @@ public class YamlDataSet implements IDataSet {
 
         MyTable(String name, List<String> columnNames) {
             this.name = name;
-            this.data = new ArrayList<Map<String, Object>>();
+            this.data = new ArrayList<>();
             meta = createMeta(name, columnNames);
         }
 
