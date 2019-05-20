@@ -31,11 +31,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 @OutputTimeUnit(TimeUnit.SECONDS)
 public class RiderDataSetBenchmark {
 
-    static AtomicInteger yamlDatasetsCreated;
-    static AtomicInteger xmlDatasetsCreated;
-    static AtomicInteger jsonDatasetsCreated;
-    static AtomicInteger programmaticDatasetsCreated;
-    static final Logger LOG = LoggerFactory.getLogger(RiderDataSetBenchmark.class.getName());
+    private static AtomicInteger yamlDatasetsCreated;
+    private static AtomicInteger xmlDatasetsCreated;
+    private static AtomicInteger jsonDatasetsCreated;
+    private static AtomicInteger programmaticDatasetsCreated;
+    private static final Logger LOG = LoggerFactory.getLogger(RiderDataSetBenchmark.class.getName());
 
     @State(Scope.Benchmark)
     public static class BenchmarkContext {
@@ -146,7 +146,7 @@ public class RiderDataSetBenchmark {
     }
 
 
-    public static void main(String[] args) throws RunnerException, InterruptedException {
+    public static void main(String[] args) throws RunnerException {
         new Runner(new OptionsBuilder().
                 forks(3).
                 threads(4).
