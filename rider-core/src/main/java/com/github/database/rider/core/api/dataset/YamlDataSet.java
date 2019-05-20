@@ -47,21 +47,18 @@ public class YamlDataSet implements IDataSet {
 
         ITableMetaData meta;
 
-        MyTable(String name, List<Map<String, Object>> rows) {
+        MyTable(String name, List<String> columnNames) {
             this.name = name;
-            this.data = new ArrayList<>();
-            meta = createMeta(name, rows);
+            this.data = new ArrayList<Map<String, Object>>();
+            meta = createMeta(name, columnNames);
         }
 
-        ITableMetaData createMeta(String name, List<Map<String, Object>> rows) {
-            List<String> columnNames = getColumns(rows);
-            Map<String, Object> firstRow = rows == null || rows.isEmpty() ? new HashMap<String, Object>() : rows.get(0);
-            applyCase(columnNames);
+        ITableMetaData createMeta(String name, List<String> columnNames) {
             Column[] columns = null;
             if (columnNames != null) {
                 columns = new Column[columnNames.size()];
                 for (int i = 0; i < columnNames.size(); i++)
-                    columns[i] = new Column(columnNames.get(i), resolveColumnDataType(firstRow.get(columnNames.get(i))));
+                    columns[i] = new Column(columnNames.get(i), DataType.UNKNOWN);
             } else {
                 columns = new Column[0];
             }
@@ -100,7 +97,7 @@ public class YamlDataSet implements IDataSet {
     }
 
     MyTable createTable(String name, List<Map<String, Object>> rows) {
-        MyTable table = new MyTable(applyCaseInsensitivity(name), rows); // issue #37
+        MyTable table = new MyTable(applyCaseInsensitivity(name), applyCase(getColumns(rows))); // issue #37
         if (rows != null) {
             for (Map<String, Object> values : rows)
                 table.addRow(values);
