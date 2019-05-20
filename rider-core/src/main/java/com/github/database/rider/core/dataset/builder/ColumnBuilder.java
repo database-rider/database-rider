@@ -42,13 +42,10 @@ public class ColumnBuilder extends BasicRowBuilder {
 
     private void saveCurrentRow() {
         tableBuilder.saveCurrentRow(this);
-        setAdded(false);
         columnNameToValue.clear();
     }
 
     public TableBuilder table(String tableName) {
-        tableBuilder.saveCurrentRow(this);
-        setAdded(false);
         return tableBuilder.getDataSetBuilder().table(tableName);
     }
 

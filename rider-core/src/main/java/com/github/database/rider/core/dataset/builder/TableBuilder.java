@@ -1,5 +1,7 @@
 package com.github.database.rider.core.dataset.builder;
 
+import org.dbunit.dataset.IDataSet;
+
 import javax.persistence.metamodel.Attribute;
 
 import static com.github.database.rider.core.dataset.builder.BuilderUtil.getColumnNameFromMetaModel;
@@ -102,8 +104,10 @@ public class TableBuilder {
     }
 
     protected void saveCurrentRow() {
-        currentRowBuilder.setAdded(true);
-        dataSetBuilder.add(currentRowBuilder);
+        if(!currentRowBuilder.isAdded()) {
+            currentRowBuilder.setAdded(true);
+            dataSetBuilder.add(currentRowBuilder);
+        }
     }
 
     protected void saveCurrentRow(BasicRowBuilder rowBuilder) {
@@ -123,5 +127,17 @@ public class TableBuilder {
         dataSetBuilder.addTableDefaultValue(tableName, columnName, value);
         return this;
     }
+
+    public TableBuilder table(String table) {
+          saveCurrentRow();
+          return dataSetBuilder.table(table);
+    }
+
+    public IDataSet build() {
+        saveCurrentRow();
+        return dataSetBuilder.build();
+    }
+
+
 
 }

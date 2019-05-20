@@ -63,7 +63,9 @@ public class BasicRowBuilder {
         Object[] values = new Object[columns.length];
         int index = 0;
         for (Column column : columns) {
-            values[index++] = getValue(column);
+            if(column != null && !"".equals(column.getColumnName())) {
+                values[index++] = getValue(column);
+            }
         }
         return values;
     }
@@ -94,8 +96,6 @@ public class BasicRowBuilder {
         DataType columnType = resolveColumnDataType(value);
         return new Column(columnName, columnType);
     }
-
-
 
     protected String getTableName() {
         return tableName;

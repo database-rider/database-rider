@@ -1,5 +1,7 @@
-package com.github.database.rider.core.dataset.builder;
+package com.github.database.rider.core.dataset.builder2;
 
+import com.github.database.rider.core.dataset.builder.ColumnSpec;
+import com.github.database.rider.core.dataset.builder.DataSetBuilder;
 import com.github.database.rider.core.dataset.writer.JSONWriter;
 import com.github.database.rider.core.dataset.writer.YMLWriter;
 import com.github.database.rider.core.metamodel.Contact_;
@@ -505,6 +507,85 @@ public class DatasetBuilderTest {
                         "    DATE: \"[DAY,NOW]\""+ NEW_LINE  +
                         "    LIKES: 99"+ NEW_LINE );
     }
+
+
+    @Test
+    public void shouldAddEmptyTable() throws IOException, DataSetException {
+        DataSetBuilder builder = new DataSetBuilder();
+        IDataSet dataSet = builder.
+                table("USER")
+                .build();
+
+        File datasetFile = Files.createTempFile("rider-empty-dataset", ".xml").toFile();
+        FileOutputStream fos = new FileOutputStream(datasetFile);
+        FlatXmlDataSet.write(dataSet, fos);
+        assertThat(contentOf(datasetFile)).
+                contains("<?xml version='1.0' encoding='UTF-8'?>"+NEW_LINE +
+                        "<dataset>"+NEW_LINE +
+                        "  <USER/>"+NEW_LINE +
+                        "</dataset>");
+
+    }
+
+
+    @Test
+    public void shouldGeneratFlatXmlDataSetWithEmptyUserTable() throws DataSetException, IOException {
+        DataSetBuilder builder = new DataSetBuilder();
+        ColumnSpec id = ColumnSpec.of("ID");
+        builder.table("USER")
+                .table("TWEET")
+                .row()
+                    .column("ID", "abcdef12345")
+                    .column("CONTENT", "dbunit rules!")
+                    .column("DATE", "[DAY,NOW]")
+                .table("FOLLOWER")
+                .row()
+                    .column(id, 1)
+                    .column("USER_ID", 1)
+                    .column("FOLLOWER_ID", 2)
+                .build();
+
+        IDataSet dataSet = builder.build();
+
+        File datasetFile = Files.createTempFile("rider-dataset", ".xml").toFile();
+        FileOutputStream fos = new FileOutputStream(datasetFile);
+        FlatXmlDataSet.write(dataSet, fos);
+        assertThat(contentOf(datasetFile)).
+                contains("<?xml version='1.0' encoding='UTF-8'?>"+NEW_LINE +
+                        "<dataset>"+NEW_LINE +
+                        "  <USER/>"+NEW_LINE +
+                        "  <TWEET ID=\"abcdef12345\" CONTENT=\"dbunit rules!\" DATE=\"[DAY,NOW]\"/>"+NEW_LINE +
+                        "  <FOLLOWER ID=\"1\" USER_ID=\"1\" FOLLOWER_ID=\"2\"/>"+NEW_LINE +
+                        "</dataset>");
+    }
+
+    @Test
+    public void shouldGeneratFlatXmlDataSetWithEmptyUserTableWithColumnValuesSyntax() throws DataSetException, IOException {
+        DataSetBuilder builder = new DataSetBuilder();
+        builder
+                .table("USER")
+                .table("TWEET")
+                    .columns("ID","CONTENT","DATE")
+                    .values("abcdef12345", "dbunit rules!", "[DAY,NOW]")
+                .table("FOLLOWER")
+                    .columns("ID", "USER_ID","FOLLOWER_ID")
+                    .values(1 , 1 , 2)
+                .build();
+
+        IDataSet dataSet = builder.build();
+
+        File datasetFile = Files.createTempFile("rider-dataset", ".xml").toFile();
+        FileOutputStream fos = new FileOutputStream(datasetFile);
+        FlatXmlDataSet.write(dataSet, fos);
+        assertThat(contentOf(datasetFile)).
+                contains("<?xml version='1.0' encoding='UTF-8'?>"+NEW_LINE +
+                        "<dataset>"+NEW_LINE +
+                        "  <USER/>"+NEW_LINE +
+                        "  <TWEET ID=\"abcdef12345\" CONTENT=\"dbunit rules!\" DATE=\"[DAY,NOW]\"/>"+NEW_LINE +
+                        "  <FOLLOWER ID=\"1\" USER_ID=\"1\" FOLLOWER_ID=\"2\"/>"+NEW_LINE +
+                        "</dataset>");
+    }
+
 
 
 }

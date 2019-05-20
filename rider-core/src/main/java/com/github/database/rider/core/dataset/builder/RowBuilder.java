@@ -123,7 +123,7 @@ public class RowBuilder extends BasicRowBuilder {
      * @return a table builder
      */
     public TableBuilder table(String tableName) {
-        tableBuilder.saveCurrentRow(); //save current row  every time a new row is started
+        tableBuilder.saveCurrentRow(); //save current row  every time a new table is started
         return tableBuilder.getDataSetBuilder().table(tableName);
     }
 
