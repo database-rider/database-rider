@@ -926,7 +926,7 @@ properties:
 
 === DataSet providers
 
-A dataset provider is a *Java class responsible for defing a dataset* instead of having `yml`, `json`, `xml` files representing your datasets. Following are the steps for creating and using a dataset provider:
+A dataset provider is a *Java class responsible for defining a dataset* instead of having `yml`, `json`, `xml` files representing your datasets. Following are the steps for creating and using a dataset provider:
 
 . First create a class which implements `DataSetProvider` interface:
 + 
@@ -938,7 +938,7 @@ public class UserDataSetProvider implements DataSetProvider {
         public IDataSet provide() throws DataSetException {
             DataSetBuilder builder = new DataSetBuilder();
             IDataSet dataSet = builder
-                    .defaultValue("id", -1) //default value for all tables that don't provide a value to 'id' column
+                    .defaultValue("id", -1) //default value for all tables that don't provide a value for 'id' column
                     .table("USER") //start adding rows to 'USER' table
                         .column("ID",1)
                         .column(name,"@realpestano")
@@ -1623,7 +1623,7 @@ TIP: Complete source code of example above can be https://github.com/database-ri
 
 == Export DataSets
 
-Manual creation of datasets is a very error prone task. In order to export database state *after test* execution into datasets files one can use *@ExportDataSet* Annotation or use DataSetExporter component.
+Manual creation of datasets is a very error prone task. In order to export database state *after test* execution into datasets files or <<DataSet providers, DataSetBuilder>> (since v1.6.0) one can use *@ExportDataSet* Annotation or use DataSetExporter component.
 
 === Example
 
@@ -1641,6 +1641,25 @@ After above test execution all tables will be exported to a xml dataset.
 
 
 NOTE: *XML*, *YML*, *JSON*, *XLS* and *CSV* formats are supported.
+
+For generating `DataSetBuilder` code you just need to specify *builderType* attribute in `@ExportDataSet`:
+
+[source, java]
+----
+    @Test
+    @DataSet("datasets/yml/users.yml") //<1>
+    @ExportDataSet(format = DataSetFormat.XML, outputName = "target/exported/xml/AllTables.xml", builderType = BuilderType.DEFAULT)
+    public void shouldExportDataSetAsBuilderInDefaultSyntax() {
+        //AllTables.java file containing DataSetBuilder code will be generated along with AllTables.xml file.
+    }
+
+    @Test
+    @DataSet("datasets/yml/users.yml") //<1>
+    @ExportDataSet(format = DataSetFormat.XML, outputName = "target/exported/xml/AllTables2.xml", builderType = BuilderType.COLUMNS_VALUES)
+    public void shouldExportDataSetAsBuilderInColumnValuesSyntax() {
+        //AllTables.java file containing DataSetBuilder code will be generated along with AllTables2.xml file.
+    }
+----
 
 TIP: Full example above (and other related tests) can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/exporter/ExportDataSetIt.java#L32[found here^].
 

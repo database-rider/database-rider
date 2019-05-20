@@ -237,12 +237,14 @@ public class ExportDataSetIt {
     @DataSet("datasets/yml/users.yml") //<1>
     @ExportDataSet(format = DataSetFormat.XML, outputName = "target/exported/xml/AllTables.xml", builderType = BuilderType.DEFAULT)
     public void shouldExportDataSetAsBuilderInDefaultSyntax() {
+        //AllTables.java file containing DataSetBuilder code will be generated along with AllTables.xml file.
     }
 
     @Test
     @DataSet("datasets/yml/users.yml") //<1>
     @ExportDataSet(format = DataSetFormat.XML, outputName = "target/exported/xml/AllTables2.xml", builderType = BuilderType.COLUMNS_VALUES)
     public void shouldExportDataSetAsBuilderInColumnValuesSyntax() {
+        //AllTables.java file containing DataSetBuilder code will be generated along with AllTables2.xml file.
     }
 
     @AfterClass
