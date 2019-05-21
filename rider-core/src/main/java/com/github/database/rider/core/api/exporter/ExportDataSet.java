@@ -42,7 +42,8 @@ public @interface ExportDataSet {
 
     /**
      *
-     * @return file path, relative to the directory where project is executed, to generate the dataset. Ex: target/generated/my-dataset.yml
+     * @return file path, relative to the directory where project is executed, to generate the dataset. Ex: target/generated/my-dataset.yml.
+     * Default is current directory where the project runs.
      */
     String outputName() default "";
 

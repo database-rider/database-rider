@@ -31,7 +31,7 @@ public class DataSetBuilderExporter {
             ITableIterator datasetIterator = builderDataSet.iterator();
             while (datasetIterator.next()) {
                 ITable table = datasetIterator.getTable();
-                source.append(NEW_LINE+ FOUR_SPACES +".table(\"").append(table.getTableMetaData().getTableName()).append("\")").append(NEW_LINE);
+                source.append(NEW_LINE+ FOUR_SPACES +".table(\"").append(table.getTableMetaData().getTableName()).append("\")");
                 if(!defaultSyntax) {
                     generateBuilderUsingColumnsValuesSyntax(table, source);
                 } else {
@@ -51,6 +51,9 @@ public class DataSetBuilderExporter {
 
     protected void generateBuilderUsingDefaultSyntax(ITable table, StringBuilder source) throws DataSetException {
         ITableMetaData tableMetaData = table.getTableMetaData();
+        if(table.getRowCount() > 0) {
+            source.append(NEW_LINE);
+        }
         for (int i = 0; i < table.getRowCount(); i++) {
             final boolean isLastRow = (i == table.getRowCount() - 1);
             source.append(FOUR_SPACES).append(".row()").append(NEW_LINE);
@@ -80,6 +83,11 @@ public class DataSetBuilderExporter {
     }
 
     protected void generateBuilderUsingColumnsValuesSyntax(ITable table, StringBuilder source) throws DataSetException {
+        if(table.getRowCount() == 0) {
+            return;
+        } else {
+            source.append(NEW_LINE);
+        }
         ITableMetaData tableMetaData = table.getTableMetaData();
         source.append(FOUR_SPACES + FOUR_SPACES).append(".columns(");
 

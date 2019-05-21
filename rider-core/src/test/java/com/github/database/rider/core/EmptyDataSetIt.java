@@ -3,6 +3,8 @@ package com.github.database.rider.core;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
+import com.github.database.rider.core.api.exporter.BuilderType;
+import com.github.database.rider.core.api.exporter.ExportDataSet;
 import com.github.database.rider.core.model.User;
 import com.github.database.rider.core.util.EntityManagerProvider;
 import org.junit.BeforeClass;
@@ -58,6 +60,7 @@ public class EmptyDataSetIt {
     @Test
     @DataSet("yml/empty.yml")
     @ExpectedDataSet("yml/empty.yml")
+    @ExportDataSet(builderType = BuilderType.COLUMNS_VALUES)
     public void shouldSeedAndExpectEmptyDataSet() {
     }
 

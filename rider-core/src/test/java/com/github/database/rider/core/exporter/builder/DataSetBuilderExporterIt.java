@@ -201,6 +201,41 @@ public class DataSetBuilderExporterIt {
                 "        .values(2, \"@dbunit\").build();");
     }
 
+    @Test
+    public void shouldExportEmptyTablesUsingDefaultSyntax() {
+        executor.createDataSet(new DataSetConfig("yml/empty.yml"));
+        IDataSet iDataSet = createDataSetFromDatabase();
+        File outputDir = Paths.get("target/FromEmptyYamlDefaultSyntax.java").toAbsolutePath().toFile();
+        new DataSetBuilderExporter().export(iDataSet, new BuilderExportConfig(BuilderType.DEFAULT, outputDir));
+        assertThat(contentOf(outputDir)).
+                contains("DataSetBuilder builder = new DataSetBuilder();" + NEW_LINE +
+                        "IDataSet dataSet = builder" + NEW_LINE +
+                        "    .table(\"FOLLOWER\")" + NEW_LINE +
+                        "    .table(\"SEQUENCE\")" + NEW_LINE +
+                        "    .row()" + NEW_LINE +
+                        "        .column(\"SEQ_NAME\", \"SEQ_GEN\")" + NEW_LINE +
+                        "        .column(\"SEQ_COUNT\", 0)" + NEW_LINE +
+                        "    .table(\"TWEET\")" + NEW_LINE +
+                        "    .table(\"USER\").build();");
+    }
+
+    @Test
+    public void shouldExportEmptyTablesUsingColumnValuesSyntax() {
+        executor.createDataSet(new DataSetConfig("yml/empty.yml"));
+        IDataSet iDataSet = createDataSetFromDatabase();
+        File outputDir = Paths.get("target/FromEmptyYamlColumnValuesSyntax.java").toAbsolutePath().toFile();
+        new DataSetBuilderExporter().export(iDataSet, new BuilderExportConfig(BuilderType.COLUMNS_VALUES, outputDir));
+        assertThat(contentOf(outputDir)).
+                contains("DataSetBuilder builder = new DataSetBuilder();" + NEW_LINE +
+                        "IDataSet dataSet = builder" + NEW_LINE +
+                        "    .table(\"FOLLOWER\")" + NEW_LINE +
+                        "    .table(\"SEQUENCE\")" + NEW_LINE +
+                        "        .columns(\"SEQ_NAME\", \"SEQ_COUNT\")" + NEW_LINE +
+                        "        .values(\"SEQ_GEN\", 0)" + NEW_LINE +
+                        "    .table(\"TWEET\")" + NEW_LINE +
+                        "    .table(\"USER\").build();");
+    }
+
     private IDataSet createDataSetFromDatabase() {
         DatabaseConnection databaseConnection = null;
         try {
