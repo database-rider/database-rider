@@ -58,6 +58,24 @@ USER:
     NAME: "@dbrider"
  ----
 
+[TIP]
+=====
+ You can use <<DataSet-export>> to generate `DatasetBuilder` code, for that just set `builderType` property in `@ExportDataSet`, ex:
+
+[source,java]
+----
+    @Test
+    @DataSet("datasets/yml/users.yml")
+    @ExportDataSet(format = DataSetFormat.XML, outputName = "target/exported/xml/AllTables.xml", builderType = BuilderType.DEFAULT)
+    public void shouldExportDataSetAsBuilderInDefaultSyntax() {
+        //AllTables.java file containing DataSetBuilder code will be generated along with AllTables.xml file.
+    }
+----
+
+=====
+
+
+
  """
 
 
