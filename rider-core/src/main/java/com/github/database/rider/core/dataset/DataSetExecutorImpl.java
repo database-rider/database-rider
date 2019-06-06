@@ -726,7 +726,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     String[] readScriptStatements(URL resource) {
         String absolutePath = resource.getFile();
-        if (resource.getProtocol().equals("jar")) {
+        if ("jar".equals(resource.getProtocol())) {
             return readScriptStatementsFromJar(absolutePath);
         }
         return readScriptStatementsFromFile(new File(absolutePath));
