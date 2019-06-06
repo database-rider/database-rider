@@ -31,6 +31,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @OutputTimeUnit(TimeUnit.SECONDS)
 public class RiderDataSetBenchmark {
 
+    private static final String PROBLEM_IN_BENCHMARK = "Problem in benchmark ";
+
     private static AtomicInteger yamlDatasetsCreated;
     private static AtomicInteger xmlDatasetsCreated;
     private static AtomicInteger jsonDatasetsCreated;
@@ -72,7 +74,7 @@ public class RiderDataSetBenchmark {
             assertCreatedDataSet(iDataSet);
             yamlDatasetsCreated.incrementAndGet();
         } catch (Exception e) {
-            LOG.error("Problem in benchmark " + ctx.toString(), e);
+            LOG.error(PROBLEM_IN_BENCHMARK + ctx.toString(), e);
         }
     }
 
@@ -83,7 +85,7 @@ public class RiderDataSetBenchmark {
             assertCreatedDataSet(iDataSet);
             xmlDatasetsCreated.incrementAndGet();
         } catch (Exception e) {
-            LOG.error("Problem in benchmark " + ctx.toString(), e);
+            LOG.error(PROBLEM_IN_BENCHMARK + ctx.toString(), e);
         }
     }
 
@@ -94,7 +96,7 @@ public class RiderDataSetBenchmark {
             assertCreatedDataSet(iDataSet);
             jsonDatasetsCreated.incrementAndGet();
         } catch (Exception e) {
-            LOG.error("Problem in benchmark " + ctx.toString(), e);
+            LOG.error(PROBLEM_IN_BENCHMARK + ctx.toString(), e);
         }
     }
 
@@ -129,7 +131,7 @@ public class RiderDataSetBenchmark {
             assertCreatedDataSet(iDataSet);
             programmaticDatasetsCreated.incrementAndGet();
         } catch (Exception e) {
-            LOG.error("Problem in benchmark " + ctx.toString(), e);
+            LOG.error(PROBLEM_IN_BENCHMARK + ctx.toString(), e);
         }
     }
 
