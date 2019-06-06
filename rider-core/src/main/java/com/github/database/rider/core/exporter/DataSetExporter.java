@@ -147,7 +147,7 @@ public class DataSetExporter {
                 }
                 case CSV: {
                     //csv needs a directory instead of file
-                    outputFile = outputFile.substring(0, outputFile.lastIndexOf("."));
+                    outputFile = outputFile.substring(0, outputFile.lastIndexOf('.'));
                     CsvDataSetWriter.write(dataSet, new File(outputFile));
                     break;
                 }
@@ -164,7 +164,7 @@ public class DataSetExporter {
 
             boolean generateBuilder = BuilderType.NONE != dataSetExportConfig.getBuilderType();
             if(generateBuilder) {
-                String builderName = outputFile.substring(0, outputFile.lastIndexOf("."))+".java";
+                String builderName = outputFile.substring(0, outputFile.lastIndexOf('.'))+".java";
                 new DataSetBuilderExporter().export(dataSet, new BuilderExportConfig(dataSetExportConfig.getBuilderType(), new File(builderName)));
             }
         } catch (Exception e) {
