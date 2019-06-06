@@ -26,12 +26,11 @@ import org.dbunit.dataset.stream.BufferedConsumer;
 import org.dbunit.dataset.stream.IDataSetConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 import static com.github.database.rider.core.dataset.builder.BuilderUtil.convertCase;
+import java.util.Map.Entry;
 
 public class DataSetBuilder {
 
@@ -233,9 +232,9 @@ public class DataSetBuilder {
 
     protected void fillUndefinedColumns(BasicRowBuilder row) {
         if(!defaultValues.isEmpty()) {
-            for (String column : defaultValues.keySet()) {
-                if (!row.getColumnsValues().containsKey(column)) {
-                    row.getColumnsValues().put(column, defaultValues.get(column));
+            for (Entry<String, Object> entry : defaultValues.entrySet()) {
+                if (!row.getColumnsValues().containsKey(entry.getKey())) {
+                    row.getColumnsValues().put(entry.getKey(), entry.getValue());
                 }
             }
         }
