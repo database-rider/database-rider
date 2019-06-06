@@ -9,6 +9,7 @@ import com.github.database.rider.core.api.leak.LeakHunter;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.leak.LeakHunterFactory;
+import com.github.database.rider.core.util.ClassUtils;
 import com.github.database.rider.core.util.EntityManagerProvider;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
@@ -90,7 +91,12 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
 
     private ConnectionHolder findTestConnection(ExtensionContext extensionContext) {
         Class<?> testClass = extensionContext.getRequiredTestClass();
-        try {
+        ConnectionHolder conn = findConnection(extensionContext, testClass);
+        return conn;
+    }
+
+	private ConnectionHolder findConnection(ExtensionContext extensionContext, Class<?> testClass) {
+		try {
             Optional<Field> fieldFound = Arrays.stream(testClass.getDeclaredFields()).
                     filter(f -> f.getType() == ConnectionHolder.class).
                     findFirst();
@@ -128,9 +134,13 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         } catch (Exception e) {
             throw new RuntimeException("Could not get database connection for test " + testClass, e);
         }
-
-        return null;
-    }
+		
+		if (testClass.getSuperclass() != null) {
+			return findConnection(extensionContext, testClass.getSuperclass());
+		}
+		
+		return null;
+	}
 
     /**
      * one test context (datasetExecutor, dbunitConfig etc..) per test
