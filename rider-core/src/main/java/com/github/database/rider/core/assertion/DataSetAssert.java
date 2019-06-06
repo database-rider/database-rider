@@ -98,7 +98,7 @@ public class DataSetAssert extends DbUnitAssert {
     }
 
     private boolean regexMatches(String expectedValue, String actualValue) {
-        Pattern pattern = Pattern.compile(expectedValue.substring(expectedValue.indexOf(":")+1).trim());
+        Pattern pattern = Pattern.compile(expectedValue.substring(expectedValue.indexOf(':')+1).trim());
         return pattern.matcher(actualValue).matches();
     }
 }

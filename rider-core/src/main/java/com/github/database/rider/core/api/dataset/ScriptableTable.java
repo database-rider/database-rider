@@ -72,7 +72,7 @@ public class ScriptableTable implements ITable {
      * @return scriptEngine
      */
     private ScriptEngine getScriptEngine(String value) {
-        String engineName = value.substring(0, value.indexOf(":"));
+        String engineName = value.substring(0, value.indexOf(':'));
         if (engines.containsKey(engineName)) {
             return engines.get(engineName);
         } else {
@@ -92,7 +92,7 @@ public class ScriptableTable implements ITable {
      * @return script expression result
      */
     private Object getScriptResult(String script, ScriptEngine engine) throws ScriptException {
-        String scriptToExecute = script.substring(script.indexOf(":") + 1);
+        String scriptToExecute = script.substring(script.indexOf(':') + 1);
         return engine.eval(scriptToExecute);
     }
 
