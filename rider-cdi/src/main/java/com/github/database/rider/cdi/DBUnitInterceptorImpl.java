@@ -96,7 +96,7 @@ public class DBUnitInterceptorImpl implements Serializable {
 				if (isTransactionalTest) {
 					if(dataSetProcessor.isJta()) {
 						CDI.current().select(UserTransaction.class).get().rollback();
-					} else {
+					} else if(em.getTransaction().isActive()) {
 						em.getTransaction().rollback();
 					}
 				}
