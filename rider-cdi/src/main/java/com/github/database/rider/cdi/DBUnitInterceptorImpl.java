@@ -3,11 +3,13 @@ package com.github.database.rider.cdi;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
+import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import javax.persistence.EntityManager;
+import javax.transaction.UserTransaction;
 
 import org.junit.After;
 import org.junit.Before;
@@ -60,7 +62,11 @@ public class DBUnitInterceptorImpl implements Serializable {
 			dataSetProcessor.process(dataSetConfig, dbUnitConfig);
 			boolean isTransactionalTest = dataSetConfig.isTransactional();
 			if (isTransactionalTest) {
-				em.getTransaction().begin();
+				if(dataSetProcessor.isJta()) {
+					CDI.current().select(UserTransaction.class).get().begin();
+				} else {
+					em.getTransaction().begin();
+				}
 			}
 			LeakHunter leakHunter = null;
 			try {
@@ -72,7 +78,11 @@ public class DBUnitInterceptorImpl implements Serializable {
 				proceed = invocationContext.proceed();
 
 				if (isTransactionalTest) {
-					em.getTransaction().commit();
+					if(dataSetProcessor.isJta()) {
+						CDI.current().select(UserTransaction.class).get().commit();
+					} else {
+						em.getTransaction().commit();
+					}
 				}
 				ExpectedDataSet expectedDataSet = invocationContext.getMethod().getAnnotation(ExpectedDataSet.class);
 				if (expectedDataSet != null) {
@@ -83,8 +93,12 @@ public class DBUnitInterceptorImpl implements Serializable {
 							expectedDataSet.ignoreCols());
 				}
 			} finally {
-				if (isTransactionalTest && em.getTransaction().isActive()) {
-					em.getTransaction().rollback();
+				if (isTransactionalTest) {
+					if(dataSetProcessor.isJta()) {
+						CDI.current().select(UserTransaction.class).get().rollback();
+					} else {
+						em.getTransaction().rollback();
+					}
 				}
 
 				if (leakHunter != null) {

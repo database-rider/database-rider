@@ -16,13 +16,14 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.sql.DataSource;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.logging.Level;
 
 /**
  * Created by rafael-pestano on 08/10/2015.
@@ -41,6 +42,9 @@ public class DataSetProcessor {
 
     private DataSetExecutor dataSetExecutor;
 
+    private Boolean isJta;
+
+
     @PostConstruct
     public void init() {
         if (em == null) {
@@ -58,22 +62,39 @@ public class DataSetProcessor {
      */
     private Connection createConnection() {
         try {
-            EntityTransaction tx = this.em.getTransaction();
-            if (isHibernatePresentOnClasspath() && em.getDelegate() instanceof Session) {
-                connection = ((SessionImpl) em.unwrap(Session.class)).connection();
+            if (isJta()) {
+                return CDI.current().select(DataSource.class).get().getConnection();//do not cache connection, get from the pool
             } else {
-                /**
-                 * see here:http://wiki.eclipse.org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager
-                 */
-                tx.begin();
-                connection = em.unwrap(Connection.class);
-                tx.commit();
+                if (isHibernatePresentOnClasspath() && em.getDelegate() instanceof Session) {
+                    connection = ((SessionImpl) em.unwrap(Session.class)).connection();
+                } else {
+                    /**
+                     * see here:http://wiki.eclipse.org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager
+                     */
+                    EntityTransaction tx = this.em.getTransaction();
+                    tx.begin();
+                    connection = em.unwrap(Connection.class);
+                    tx.commit();
+                }
+
             }
         } catch (Exception e) {
             throw new RuntimeException("Could not create database connection", e);
         }
 
         return connection;
+    }
+
+    boolean isJta() {
+        if (isJta == null) {
+            try {
+                em.getTransaction();
+                isJta = false;
+            } catch (IllegalStateException iex) {
+                isJta = true;
+            }
+        }
+        return isJta;
     }
 
     public void process(DataSetConfig dataSetConfig, DBUnitConfig config) {
