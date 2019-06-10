@@ -101,9 +101,6 @@ public class DBUnitInterceptorImpl implements Serializable {
 					}
 				}
 
-				if (leakHunter != null) {
-					leakHunter.checkConnectionsAfterExecution();
-				}
 
 				dataSetProcessor.exportDataSet(invocationContext.getMethod());
 
@@ -123,6 +120,9 @@ public class DBUnitInterceptorImpl implements Serializable {
 
 				dataSetProcessor.enableConstraints();
 				em.clear();
+				if (leakHunter != null) {
+					leakHunter.checkConnectionsAfterExecution();
+				}
 			} // end finally
 
 		} else {// no dataset provided, just proceed and check expectedDataSet

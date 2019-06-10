@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -44,6 +45,9 @@ public class DataSetProcessor {
 
     private Boolean isJta;
 
+    @Inject
+    Instance<JTAConnectionHolder> jtaConnectionHolder;
+
 
     @PostConstruct
     public void init() {
@@ -63,7 +67,7 @@ public class DataSetProcessor {
     private Connection createConnection() {
         try {
             if (isJta()) {
-                return CDI.current().select(DataSource.class).get().getConnection();//do not cache connection, get from the pool
+                return jtaConnectionHolder.get().getConnection();
             } else {
                 if (isHibernatePresentOnClasspath() && em.getDelegate() instanceof Session) {
                     connection = ((SessionImpl) em.unwrap(Session.class)).connection();
