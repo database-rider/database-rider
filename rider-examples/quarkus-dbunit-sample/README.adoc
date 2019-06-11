@@ -1,0 +1,27 @@
+== Quarkus DBUnit sample
+:tip-caption: :bulb:
+
+[quote]
+____
+Subatomic DBUnit!
+____
+
+image:https://travis-ci.org/rmpestano/quarkus-dbunit-sample.svg[Build Status (Travis CI), link=https://travis-ci.org/rmpestano/quarkus-dbunit-sample]
+
+
+A sample project, based on https://antoniogoncalves.org/2019/06/07/configuring-a-quarkus-application/[this blog^], showing how to use DBUnit (through https://github.com/database-rider/database-rider[dbrider^]) in Quarkus tests.
+
+
+=== Running
+
+Just run `mvn clean test`
+
+TIP: Use `coverage` profile to generate test coverage in `target/site/jacoco` folder.
+
+=== Usage
+
+Just annotate your Quarkus test class with `@DBUnitInterceptor`, provide a dataset, and declare it on your test with `@DataSet`, more https://github.com/database-rider/database-rider#cdi-module[details see rider cdi module^].
+
+=== Example
+
+See https://github.com/rmpestano/quarkus-dbunit-sample/blob/master/src/test/java/com/github/quarkus/sample/QuarkusDBUnitTest.java#L48[QuarkusDBUnitTest example^].
