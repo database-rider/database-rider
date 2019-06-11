@@ -20,6 +20,7 @@ package cucumber.runtime;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.deltaspike.core.api.provider.BeanProvider;
@@ -31,6 +32,8 @@ import cucumber.api.java.ObjectFactory;
  */
 public class CucumberObjectFactory implements ObjectFactory
 {
+
+    private static final Logger log = Logger.getLogger(CucumberObjectFactory.class.getName());
 
     private Map<Class, Object> definitions = new HashMap<Class, Object>();
 
@@ -62,10 +65,8 @@ public class CucumberObjectFactory implements ObjectFactory
                 Logger.getLogger(CucumberObjectFactory.class.getName()).warning(String.format("Could not get reference of %s using BeanManager, message: %s. Falling back to newInstance()",clazz.getName(),e.getMessage()));
                 try {
                     definitions.put(clazz,clazz.newInstance());
-                } catch (InstantiationException e1) {
-                    e1.printStackTrace();
-                } catch (IllegalAccessException e1) {
-                    e1.printStackTrace();
+                } catch (InstantiationException | IllegalAccessException e1) {
+                    log.log(Level.SEVERE, String.format("Could not instantiate class %s", clazz.getName()));
                 }
             }
         }
