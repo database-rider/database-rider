@@ -55,9 +55,6 @@ public class EntityManagerProvider implements TestRule {
         try {
             instance.init(unitName);
         } catch (Exception e) {
-            if(!log.isErrorEnabled()) {
-                e.printStackTrace();
-            }
             log.error("Could not initialize persistence unit " + unitName, e);
         }
 
