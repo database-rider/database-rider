@@ -6,13 +6,14 @@ import com.github.database.rider.springboot.models.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class UserController {
 
 
-  @RequestMapping("/create")
+  @RequestMapping(value = "/create", method = RequestMethod.POST)
   @ResponseBody
   public String create(String email, String name) {
     User user = null;
@@ -26,7 +27,7 @@ public class UserController {
     return "User succesfully created! (id = " + user.getId() + ")";
   }
   
-  @RequestMapping("/delete")
+  @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
   @ResponseBody
   public String delete(long id) {
     try {
@@ -39,7 +40,7 @@ public class UserController {
     return "User succesfully deleted!";
   }
   
-  @RequestMapping("/get-by-email")
+  @RequestMapping(value = "/get-by-email", method = RequestMethod.GET)
   @ResponseBody
   public String getByEmail(String email) {
     String userId;
@@ -53,7 +54,7 @@ public class UserController {
     return "The user id is: " + userId;
   }
   
-  @RequestMapping("/update")
+  @RequestMapping(value = "/update", method = RequestMethod.POST)
   @ResponseBody
   public String updateUser(long id, String email, String name) {
     try {
