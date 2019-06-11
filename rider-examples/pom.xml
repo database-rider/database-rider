@@ -16,6 +16,7 @@
         <module>jOOQ-DBUnit-flyway-example</module>
         <module>dbunit-tomee-appcomposer-sample</module>
 	    <module>spring-boot-dbunit-sample</module>
+        <module>quarkus-dbunit-sample</module>
     </modules>
 
     <name>Database Rider examples</name>

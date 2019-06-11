@@ -174,7 +174,7 @@ This module is the basis for subsequent modules. It contains a JUnit rule (shown
 <dependency>
       <groupId>com.github.database-rider</groupId>
       <artifactId>rider-core</artifactId>
-      <version>1.6.0</version>
+      <version>1.7.1</version>
       <scope>test</scope>
 </dependency>
 ----
@@ -1210,7 +1210,7 @@ If you use CDI in your tests then you should give a try in Database Rider https:
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-cdi</artifactId>
-    <version>1.6.0</version>
+    <version>1.7.1</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -1277,7 +1277,7 @@ NOTE: If you don't use CDI you'll need to https://github.com/database-rider/data
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-cucumber</artifactId>
-    <version>1.6.0</version>
+    <version>1.7.1</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -1482,7 +1482,7 @@ http://junit.org/junit5/[JUnit 5] is the new version of JUnit and comes with a n
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-junit5</artifactId>
-    <version>1.6.0</version>
+    <version>1.7.1</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -1540,7 +1540,7 @@ Add Database Rider Spring extension to your project
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-spring</artifactId>
-    <version>1.6.0</version>
+    <version>1.7.1</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -1572,6 +1572,44 @@ Database Rider will access to database via dataSource registered in application 
 
 TIP: Complete source code of example above can be found in the https://github.com/database-rider/database-rider/blob/master/rider-examples/spring-boot-dbunit-sample/src/test/java/com/github/database/rider/springboot/SpringBootDBUnitTest.java[sample^].
 
+== Quarkus
+
+As Quarkus tests are CDI beans you can just use `@DBUnitInterceptor` from <<CDI module, CDI module>>:
+
+```
+@QuarkusTest
+@DBUnitInterceptor
+public class QuarkusDBUnitTest {
+
+    @Inject
+    BookRepository repository;
+
+    @Test
+    @DataSet(value = "books.yml")
+    public void shouldFindAllBooks() {
+        List<Book> books = repository.findAll();
+        assertThat(books)
+                .isNotNull()
+                .hasSize(4)
+                .extracting("title")
+                .contains("H2G2","Dune", "Nineteen Eighty-Four", "The Silmarillion");
+    }
+
+    @Test
+    @DataSet(value = "books.yml")
+    public void shouldFindAllBooksViaRestApi() {
+        given()
+             .when().get("/api/books")
+             .then()
+             .statusCode(OK.getStatusCode())
+             .body("", hasSize(4))
+             .body("title", hasItem("The Silmarillion"));
+    }
+}
+
+```
+
+TIP: See full https://github.com/database-rider/database-rider/blob/master/rider-examples/quarkus-dbunit-sample/src/test/java/com/github/quarkus/sample/QuarkusDBUnitTest.java[example here^].
 
 == Leak Hunter
 
@@ -1623,7 +1661,7 @@ TIP: Complete source code of example above can be https://github.com/database-ri
 
 == Export DataSets
 
-Manual creation of datasets is a very error prone task. In order to export database state *after test* execution into datasets files or <<DataSet providers, DataSetBuilder>> (since v1.6.0) one can use *@ExportDataSet* Annotation or use DataSetExporter component.
+Manual creation of datasets is a very error prone task. In order to export database state *after test* execution into datasets files or <<DataSet providers, DataSetBuilder>> (since v1.7.1) one can use *@ExportDataSet* Annotation or use DataSetExporter component.
 
 === Example
 
@@ -1720,6 +1758,7 @@ The examples module which contains:
 * https://github.com/database-rider/database-rider/tree/master/rider-examples/jOOQ-DBUnit-flyway-example/[jOOQ Flyway DBUnit^]
 * https://github.com/database-rider/database-rider/tree/master/rider-examples/spring-boot-dbunit-sample/[SpringBoot Data DBUnit^]
 * https://github.com/rmpestano/spring-events/blob/master/src/test/java/com/sambrannen/spring/events/repository/EventRepositoryTests.java#L47[Gradle, SpringBoot and JUnit5 example^]
+* https://github.com/database-rider/database-rider/tree/master/rider-examples/quarkus-dbunit-sample/[Quarkus DBUnit^]
 
 And also each module contain a lot of tests that you can use as example.
 
