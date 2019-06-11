@@ -10,14 +10,14 @@
 :docinfo:
 :source-highlighter: highlightjs
 :toclevels: 3
-:revnumber: 1.7.1
+:revnumber: 1.7.2-SNAPSHOT
 :hardbreaks:
 :chapter-label: Chapter
 :version-label: Version
 
 = *Database Rider Documentation*
 
-include::/home/PROCERGS.REDERS/rafael-pestano/projetos/database-rider/rider-core/target/test-classes/cukedoctor-intro.adoc[leveloffset=+1]
+include::/home/travis/build/database-rider/database-rider/rider-core/target/test-classes/cukedoctor-intro.adoc[leveloffset=+1]
 
 
 [[Seeding-database, Seeding database]]
