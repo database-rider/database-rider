@@ -54,7 +54,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     private static final String SEQUENCE_TABLE_NAME;
 
     private static final EnumMap<DBType, Set<String>> SYSTEM_SCHEMAS = new EnumMap<>(DBType.class);
-    
+
     private static final List<String> RESERVED_TABLE_NAMES;
 
     private final AtomicBoolean printDBUnitConfig = new AtomicBoolean(true);
@@ -75,10 +75,10 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         SEQUENCE_TABLE_NAME = System.getProperty("SEQUENCE_TABLE_NAME") == null ? "SEQ"
                 : System.getProperty("SEQUENCE_TABLE_NAME");
         SYSTEM_SCHEMAS.put(DBType.MSSQL, Collections.singleton("SYS"));
-        if(System.getProperty("RESERVED_TABLE_NAMES") != null) {
+        if (System.getProperty("RESERVED_TABLE_NAMES") != null) {
             RESERVED_TABLE_NAMES = Arrays.asList(System.getProperty("RESERVED_TABLE_NAMES").split(","));
         } else {
-            RESERVED_TABLE_NAMES = Arrays.asList("user","password", "value");
+            RESERVED_TABLE_NAMES = Arrays.asList("user", "password", "value");
         }
     }
 
@@ -151,8 +151,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         resultingDataSet = loadDataSets(dataSetConfig.getDatasets());
                     } else {
                         resultingDataSet = loadDataSetFromDataSetProvider(dataSetConfig.getProvider());
-                        if(resultingDataSet == null) {
-                            throw new RuntimeException("Provided dataset cannot be null. DataSet provider: "+dataSetConfig.getProvider().getName());
+                        if (resultingDataSet == null) {
+                            throw new RuntimeException("Provided dataset cannot be null. DataSet provider: " + dataSetConfig.getProvider().getName());
                         }
                     }
                     resultingDataSet = performSequenceFiltering(dataSetConfig, resultingDataSet);
@@ -169,7 +169,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 }
 
             } catch (Exception e) {
-                if(log.isDebugEnabled() && resultingDataSet != null) {
+                if (log.isDebugEnabled() && resultingDataSet != null) {
                     logDataSet(resultingDataSet, e);
                 }
                 throw new DataBaseSeedingException("Could not initialize dataset: " + dataSetConfig, e);
@@ -181,8 +181,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     private void logDataSet(IDataSet resultingDataSet, Exception e) {
         try {
             File datasetFile = Files.createTempFile("dataset-log", ".yml").toFile();
-            log.info("Saving current dataset to "+datasetFile.getAbsolutePath());
-            try(FileOutputStream fos = new FileOutputStream(datasetFile)) {
+            log.info("Saving current dataset to " + datasetFile.getAbsolutePath());
+            try (FileOutputStream fos = new FileOutputStream(datasetFile)) {
                 FlatXmlDataSet.write(resultingDataSet, fos);
             }
         } catch (Exception e1) {
@@ -195,7 +195,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             DataSetProvider dataSetProvider = provider.newInstance();
             return dataSetProvider.provide();
         } catch (Exception e) {
-            throw new RuntimeException("Could not load dataset from provider: "+provider.getName(), e);
+            throw new RuntimeException("Could not load dataset from provider: " + provider.getName(), e);
         }
     }
 
@@ -203,11 +203,15 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         SeedStrategy strategy = dataSetConfig.getstrategy();
         if (getRiderDataSource().getDBType() == RiderDataSource.DBType.MSSQL && dataSetConfig.isFillIdentityColumns()) {
             switch (strategy) {
-                case INSERT: return InsertIdentityOperation.INSERT;
-                case REFRESH: return InsertIdentityOperation.REFRESH;
-                case CLEAN_INSERT: return InsertIdentityOperation.CLEAN_INSERT;
-                case TRUNCATE_INSERT: return new CompositeOperation(DatabaseOperation.TRUNCATE_TABLE,
-                        InsertIdentityOperation.INSERT);
+                case INSERT:
+                    return InsertIdentityOperation.INSERT;
+                case REFRESH:
+                    return InsertIdentityOperation.REFRESH;
+                case CLEAN_INSERT:
+                    return InsertIdentityOperation.CLEAN_INSERT;
+                case TRUNCATE_INSERT:
+                    return new CompositeOperation(DatabaseOperation.TRUNCATE_TABLE,
+                            InsertIdentityOperation.INSERT);
             }
         }
         return strategy.getOperation();
@@ -529,12 +533,12 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             }
         }
         try {
-			return DriverManager.getConnection(connectionConfig.getUrl(), connectionConfig.getUser(),
-			        connectionConfig.getPassword());
-		} catch (SQLException e) {
-			 log.error("Could not create connection from configuration.",e);
-			 throw new RuntimeException("Could not create connection from configuration. See documentation here: https://github.com/database-rider/database-rider#jdbc-connection");
-		}
+            return DriverManager.getConnection(connectionConfig.getUrl(), connectionConfig.getUser(),
+                    connectionConfig.getPassword());
+        } catch (SQLException e) {
+            log.error("Could not create connection from configuration.", e);
+            throw new RuntimeException("Could not create connection from configuration. See documentation here: https://github.com/database-rider/database-rider#jdbc-connection");
+        }
     }
 
     public Connection getConnection() {
@@ -556,7 +560,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             return false;
         }
         DataSetExecutorImpl otherExecutor = (DataSetExecutorImpl) other;
-        if(executorId == null || otherExecutor.getExecutorId() == null) {
+        if (executorId == null || otherExecutor.getExecutorId() == null) {
             return false;
         }
         return executorId.equals(otherExecutor.getExecutorId());
@@ -593,7 +597,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     @Override
     public void clearDatabase(DataSetConfig dataset) throws SQLException {
         Connection connection = getRiderDataSource().getConnection();
-
         if (dataset != null && dataset.getTableOrdering() != null && dataset.getTableOrdering().length > 0) {
             for (String table : dataset.getTableOrdering()) {
                 if (table.toUpperCase().contains(SEQUENCE_TABLE_NAME)) {
@@ -601,9 +604,13 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     // https://github.com/rmpestano/dbunit-rules/issues/26
                     continue;
                 }
+                final String escapedTableName = getEscapedTableName(table);
                 try (Statement statement = connection.createStatement()) {
-                    statement.executeUpdate("DELETE FROM " + table + " where 1=1");
+                    statement.executeUpdate("DELETE FROM " + escapedTableName + " where 1=1");
                     connection.commit();
+                } catch (Exception e) {
+                    log.warn("Could not clear table " + escapedTableName + ", message:" + e.getMessage() + ", cause: "
+                            + e.getCause());
                 }
             }
         }
@@ -614,15 +621,30 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 // tables containing 'SEQ' will NOT be cleared see https://github.com/rmpestano/dbunit-rules/issues/26
                 continue;
             }
+            final String escapedTableName = getEscapedTableName(tableName);
             try (Statement statement = connection.createStatement()) {
-                statement.executeUpdate("DELETE FROM " + tableName + " where 1=1");
+                statement.executeUpdate("DELETE FROM " + escapedTableName + " where 1=1");
                 connection.commit();
             } catch (Exception e) {
-                log.warn("Could not clear table " + tableName + ", message:" + e.getMessage() + ", cause: "
+                log.warn("Could not clear table " + escapedTableName + ", message:" + e.getMessage() + ", cause: "
                         + e.getCause());
             }
         }
 
+    }
+
+    private String getEscapedTableName(String table) {
+        boolean hasEscapePattern = dbUnitConfig.getProperties().containsKey("escapePattern") && !"".equals(dbUnitConfig.getProperties().get("escapePattern").toString());
+        if (hasEscapePattern) {
+            String escapePattern = dbUnitConfig.getProperties().get("escapePattern").toString();
+            if (table.contains(".")) {//skip schema and applies the pattern only on the table
+                return table.substring(0, table.indexOf(".") + 1) + escapePattern.replace("?", table.substring(table.indexOf(".")+1));
+            } else {
+                return escapePattern.replace("?", table);
+            }
+        } else {
+            return table;
+        }
     }
 
     private List<String> getTableNames(Connection con) {
@@ -636,8 +658,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 String schema = resolveSchema(result);
                 if (!isSystemSchema(schema)) {
                     String name = result.getString("TABLE_NAME");
-                    if(RESERVED_TABLE_NAMES.contains(name.toLowerCase())) {
-                    	name = escapeTableName(name);
+                    if (RESERVED_TABLE_NAMES.contains(name.toLowerCase())) {
+                        name = escapeTableName(name);
                     }
                     tables.add(schema != null ? schema + "." + name : name);
                 }
@@ -655,23 +677,23 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     private String escapeTableName(String name) {
-		switch (getRiderDataSource().getDBType()) {
-		case MSSQL:
-			return "["+name+"]";  
-		case HSQLDB:	
-		case H2:
-		case DB2:	
-		case POSTGRESQL:
-		case ORACLE:
-			return "\""+name+"\"";  
-		case MYSQL:
-			return "`"+name+"`";
-		default:
-			return name;
-		}
-	}
+        switch (getRiderDataSource().getDBType()) {
+            case MSSQL:
+                return "[" + name + "]";
+            case HSQLDB:
+            case H2:
+            case DB2:
+            case POSTGRESQL:
+            case ORACLE:
+                return "\"" + name + "\"";
+            case MYSQL:
+                return "`" + name + "`";
+            default:
+                return name;
+        }
+    }
 
-	private boolean isSystemSchema(String schema) throws SQLException {
+    private boolean isSystemSchema(String schema) {
         DBType dbType = getRiderDataSource().getDBType();
         Set<String> systemSchemas = SYSTEM_SCHEMAS.get(dbType);
         return systemSchemas != null && schema != null && systemSchemas.contains(schema.toUpperCase());
@@ -817,12 +839,12 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         }
         try {
             current = getRiderDataSource().getDBUnitConnection().createDataSet();
-            if(expectedDataSetConfig.hasDataSetProvider()) {
+            if (expectedDataSetConfig.hasDataSetProvider()) {
                 expected = loadDataSetFromDataSetProvider(expectedDataSetConfig.getProvider());
-            } else if(expectedDataSetConfig.hasDataSets()) {
+            } else if (expectedDataSetConfig.hasDataSets()) {
                 expected = loadDataSets(expectedDataSetConfig.getDatasets());
             }
-            if(expected == null) {
+            if (expected == null) {
                 throw new RuntimeException("Expected dataset was not provided.");
             }
             if (!expectedDataSetReplacers.isEmpty()) {
@@ -911,7 +933,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             if (connectionHolder == null) {
                 initConnectionFromConfig(dbUnitConfig.getConnectionConfig());
             }
-		    riderDataSource = new RiderDataSource(connectionHolder, dbUnitConfig);
+            riderDataSource = new RiderDataSource(connectionHolder, dbUnitConfig);
         }
         return riderDataSource;
     }

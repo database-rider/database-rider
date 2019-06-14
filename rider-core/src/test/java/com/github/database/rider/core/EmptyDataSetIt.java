@@ -34,7 +34,6 @@ public class EmptyDataSetIt {
     @BeforeClass
     public static void init(){
         User user = new User();
-        user.setName("user");
         user.setName("@rmpestano");
         EntityManagerProvider.tx("rules-it").begin();
         EntityManagerProvider.em("rules-it").persist(user);
