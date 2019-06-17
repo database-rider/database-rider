@@ -10,7 +10,7 @@
 :docinfo:
 :source-highlighter: highlightjs
 :toclevels: 3
-:revnumber: 1.7.3-SNAPSHOT
+:revnumber: 1.7.2
 :hardbreaks:
 :chapter-label: Chapter
 :version-label: Version
