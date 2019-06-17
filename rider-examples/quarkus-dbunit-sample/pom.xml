@@ -9,7 +9,7 @@
     </parent>-->
      <groupId>com.github.database-rider</groupId>
      <artifactId>rider-quarkus-sample</artifactId>
-     <version>1.7.2</version>
+     <version>1.7.3-SNAPSHOT</version>
 
      <properties>
         <quarkus.version>0.16.1</quarkus.version>
