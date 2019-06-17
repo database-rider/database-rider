@@ -136,6 +136,7 @@ public class DBUnitInterceptorImpl implements Serializable {
 				}
 			} finally {
 				dataSetProcessor.exportDataSet(invocationContext.getMethod());
+				dataSetProcessor.afterTest();
 			}
 
 		}

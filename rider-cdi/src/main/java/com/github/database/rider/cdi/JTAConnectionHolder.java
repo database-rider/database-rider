@@ -29,4 +29,11 @@ public class JTAConnectionHolder {
 	public Connection getConnection() {
 		return connection;
 	}
+
+	/**
+	 * Execute after test, by default we do nothing but can be extended in order to optimize connection handling via connection pool
+	 */
+	public void tearDown() {
+		//no-op
+	}
 }

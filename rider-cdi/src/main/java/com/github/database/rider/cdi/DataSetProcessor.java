@@ -175,4 +175,10 @@ public class DataSetProcessor {
     public DataSetExecutor getDataSetExecutor() {
         return dataSetExecutor;
     }
+
+    public void afterTest() {
+        if(isJta()) {
+            jtaConnectionHolder.get().tearDown();
+        }
+    }
 }
