@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.contentOf;
 
 @RunWith(JUnit4.class)
-public class DatasetBuilderTest {
+public class DataSetBuilderTest {
 
     private static final String NEW_LINE = System.getProperty("line.separator");
 
