@@ -30,17 +30,11 @@ import static javax.transaction.Transactional.TxType.SUPPORTS;
 @ApplicationScoped
 public class BookRepository {
 
-    // ======================================
-    // =             Injection              =
-    // ======================================
 
     @Inject
     EntityManager entityManager;
 
-    // ======================================
-    // =              Methods               =
-    // ======================================
-
+ 
     @Transactional(SUPPORTS)
     public Book findById(final Long id) {
         return entityManager.find(Book.class, id);
