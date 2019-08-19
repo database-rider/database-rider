@@ -1,4 +1,4 @@
-package com.github.database.rider.core.dataset.builder2;
+package com.github.database.rider.core.dataset.builder;
 
 import com.github.database.rider.core.dataset.builder.ColumnSpec;
 import com.github.database.rider.core.dataset.builder.DataSetBuilder;
