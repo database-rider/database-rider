@@ -1,7 +1,10 @@
 package com.github.database.rider.core.util;
 
+import com.github.database.rider.core.spi.DriverNameService;
+
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ServiceLoader;
 
 /**
  * Created by pestano on 07/09/16.
@@ -38,6 +41,10 @@ public class DriverUtils {
 
     public static String getDriverName(Connection connection) {
         try {
+             ServiceLoader<DriverNameService> driverNameService = ServiceLoader.load(DriverNameService.class);
+             if(driverNameService.iterator().hasNext()) {
+                 return driverNameService.iterator().next().getDriverName(connection);
+             }
             return connection.getMetaData().getDriverName().toLowerCase();
         } catch (SQLException e) {
             throw new RuntimeException("Could not get driver information from provided connection.",e);
