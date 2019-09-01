@@ -3,7 +3,7 @@ cacheTableNames: false
 leakHunter: true
 properties:
   batchedStatements:  true
-  caseSensitiveTableNames: true
+  caseSensitiveTableNames: false
   qualifiedTableNames: true
   batchSize: 200
   fetchSize: 200
