@@ -91,6 +91,9 @@ public class BuilderUtil {
         if (value instanceof BigDecimal) {
             columnType = DataType.DECIMAL;
         }
+        if (value instanceof BigInteger) {
+            columnType = DataType.BIGINT;
+        }
         if (value instanceof Number) {
             columnType = DataType.NUMERIC;
         }
