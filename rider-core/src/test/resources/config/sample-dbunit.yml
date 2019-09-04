@@ -9,6 +9,5 @@ properties:
   fetchSize: 200
   allowEmptyFields: true
   escapePattern: "[?]"
-  datatypeFactory: !!com.gith
-ub.database.rider.core.configuration.DBUnitConfigTest$MockDataTypeFactory {}
+  datatypeFactory: !!com.github.database.rider.core.configuration.DBUnitConfigTest$MockDataTypeFactory {}
   replacers: [!!com.github.database.rider.core.replacers.CustomReplacer {}]
