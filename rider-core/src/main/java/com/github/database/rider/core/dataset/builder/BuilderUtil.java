@@ -64,40 +64,4 @@ public class BuilderUtil {
     public static boolean isEclipseLinkOnClasspath() {
         return isOnClasspath("org.eclipse.persistence.mappings.DirectToFieldMapping");
     }
-
-    public static DataType resolveColumnDataType(Object value) {
-        DataType columnType = DataType.UNKNOWN;
-        if(value == null) {
-            return columnType;
-        }
-        if (value instanceof Integer) {
-            columnType = DataType.INTEGER;
-        }
-        if (value instanceof Long) {
-            columnType = DataType.BIGINT_AUX_LONG;
-        }
-        if (value instanceof Double) {
-            columnType = DataType.DOUBLE;
-        }
-        if (value instanceof Float) {
-            columnType = DataType.FLOAT;
-        }
-        if (value instanceof Date) {
-            columnType = DataType.DATE;
-        }
-        if (value instanceof Boolean) {
-            columnType = DataType.BOOLEAN;
-        }
-        if (value instanceof BigDecimal) {
-            columnType = DataType.DECIMAL;
-        }
-        if (value instanceof BigInteger) {
-            columnType = DataType.BIGINT;
-        }
-        if (value instanceof Number) {
-            columnType = DataType.NUMERIC;
-        }
-        return columnType;
-    }
-
 }

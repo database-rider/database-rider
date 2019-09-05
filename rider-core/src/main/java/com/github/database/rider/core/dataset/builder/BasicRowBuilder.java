@@ -33,7 +33,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static com.github.database.rider.core.dataset.builder.BuilderUtil.convertCase;
-import static com.github.database.rider.core.dataset.builder.BuilderUtil.resolveColumnDataType;
 
 public class BasicRowBuilder {
 
@@ -92,8 +91,7 @@ public class BasicRowBuilder {
     }
 
     protected Column createColumn(String columnName) {
-        Object value = columnNameToValue.get(columnName);
-        DataType columnType = resolveColumnDataType(value);
+        DataType columnType = DataType.UNKNOWN; // dbunit will deduct the type from database
         return new Column(columnName, columnType);
     }
 
