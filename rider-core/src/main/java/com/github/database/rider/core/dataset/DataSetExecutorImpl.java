@@ -615,13 +615,12 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             }
         }
         // clear remaining tables in any order(if there are any, also no problem clearing again)
-        List<String> tables = null;
-        if(config.getTablesToClean() != null && config.getTablesToClean().length > 0) {
-            tables = Arrays.asList(config.getTablesToClean());
-        } else {
-            tables = getTableNames(connection);
-        }
+        List<String> tables = getTableNames(connection);
+        List<String> tablesToSkipCleaning = Arrays.asList(config.getSkipCleaningFor());
         for (String tableName : tables) {
+            if(shouldSkipFromCleaning(tablesToSkipCleaning, tableName)) {
+                continue;
+            }
             if (tableName.toUpperCase().contains(SEQUENCE_TABLE_NAME)) {
                 // tables containing 'SEQ' will NOT be cleared see https://github.com/rmpestano/dbunit-rules/issues/26
                 continue;
@@ -636,6 +635,15 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             }
         }
 
+    }
+
+    private boolean shouldSkipFromCleaning(List<String> tablesToSkipCleaning, String tableName) {
+        boolean skip = tablesToSkipCleaning.contains(tableName);
+        if(!skip && tableName.contains(".")) {
+            skip = tablesToSkipCleaning.contains(tableName.substring(tableName.indexOf(".")+1));
+        }
+
+        return skip;
     }
 
     private String getEscapedTableName(String table) {
@@ -656,7 +664,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         if (tableNames != null && dbUnitConfig.isCacheTableNames()) {
             return tableNames;
         }
-
         List<String> tables = new ArrayList<String>();
         try (ResultSet result = getTablesFromMetadata(con)) {
             while (result.next()) {

@@ -25,7 +25,7 @@ public class DataSetConfig {
     private String[] executeScriptsBefore = {};
     private String[] executeScriptsAfter = {};
     private Class<? extends DataSetProvider> provider;
-    private String[] tablesToClean;
+    private String[] skipCleaningFor;
 
 
     public DataSetConfig() {
@@ -116,8 +116,8 @@ public class DataSetConfig {
         return this;
     }
 
-    public DataSetConfig tablesToClean(String[] tablesToClean) {
-        this.tablesToClean = tablesToClean;
+    public DataSetConfig skipCleaningFor(String[] skipCleaningFor) {
+        this.skipCleaningFor = skipCleaningFor;
         return this;
     }
 
@@ -136,7 +136,7 @@ public class DataSetConfig {
                     transactional(dataSet.transactional()).
                     executeStatementsAfter(dataSet.executeStatementsAfter()).
                     executeScriptsAfter(dataSet.executeScriptsAfter()).
-                    tablesToClean(dataSet.tablesToClean()).
+                    skipCleaningFor(dataSet.skipCleaningFor()).
                     datasetProvider(dataSet.provider());
         } else{
             throw new RuntimeException("Cannot create DataSetConfig from Null DataSet");
@@ -229,16 +229,16 @@ public class DataSetConfig {
         this.cleanAfter = cleanAfter;
     }
 
-    public String[] getTablesToClean() {
-        return tablesToClean;
+    public String[] getSkipCleaningFor() {
+        return skipCleaningFor;
     }
 
     public void setTableOrdering(String[] tableOrdering) {
         this.tableOrdering = tableOrdering;
     }
 
-    public void setTablesToClean(String[] tablesToClean) {
-        this.tablesToClean = tablesToClean;
+    public void setTSkipCleaningFor(String[] tablesToClean) {
+        this.skipCleaningFor = tablesToClean;
     }
 
     public void setTransactional(boolean transactional) {

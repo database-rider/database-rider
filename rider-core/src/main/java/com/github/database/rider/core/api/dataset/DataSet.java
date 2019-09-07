@@ -99,9 +99,9 @@ public @interface DataSet {
     /**
      * By default ALL tables are cleaned when <code>cleanBefore</code> or <code>cleanAfter</code> is set to <code>true</code>.
      *
-     * This method allows user to provide tables which will be cleaned in <code>cleanBefore</code> and/or <code>cleanAfter</code> .
+     * This method allows user to provide tables which will NOT be cleaned in <code>cleanBefore</code> and/or <code>cleanAfter</code> .
      *
-     * @return list of table names to clean in <code>cleanBefore</code> and/or <code>cleanAfter</code>. If empty all tables will be cleaned when cleanBefore() or cleanAfter() is set to <code>true</code>
+     * @return list of table names to skip the cleaning in <code>cleanBefore</code> and/or <code>cleanAfter</code>. If empty all tables will be cleaned when cleanBefore() or cleanAfter() is set to <code>true</code>
      */
-  String[] tablesToClean() default {};
+  String[] skipCleaningFor() default {};
 }

@@ -6,13 +6,11 @@ import com.github.database.rider.core.model.Tweet;
 import com.github.database.rider.core.model.User;
 import com.github.database.rider.core.util.EntityManagerProvider;
 import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
 import static com.github.database.rider.core.util.EntityManagerProvider.em;
@@ -49,7 +47,7 @@ public class CleanSpecifiedTablesAfterIt {
 
 
     @Test
-    @DataSet(value = "datasets/yml/users.yml", cleanAfter = true, tablesToClean = "FOLLOWER")
+    @DataSet(value = "datasets/yml/users.yml", cleanAfter = true, skipCleaningFor = {"USER", "TWEET"})
     public void shouldCleanOnlySpecifiedTable() {
         List<User> users = em("rules-it").createQuery("select u from User u").getResultList();
         assertThat(users).isNotNull().hasSize(2);

@@ -177,7 +177,7 @@ public class DataSetImpl implements DataSet {
     }
 
     @Override
-    public String[] tablesToClean() {
+    public String[] skipCleaningFor() {
         return tablesToClean;
     }
 
