@@ -31,17 +31,17 @@ public class CleanSpecifiedTablesAfterIt {
     public static void after(){
         List<User> users = em("rules-it").createQuery("select u from User u").getResultList();
         if(users != null && users.isEmpty()){
-            fail("users should NOT be empty because we specified only 'FOLLOWER' table to be cleaned");
+            fail("users should NOT be empty because we specified it to be skipped from cleaning");
         }
 
         List<Tweet> tweets = em("rules-it").createQuery("select t from Tweet t").getResultList();
         if(tweets != null && tweets.isEmpty()){
-            fail("tweets should NOT be empty because we specified only 'FOLLOWER' table to be cleaned");
+            fail("tweets should NOT be empty because we specified it to be skipped from cleaning");
         }
 
         List<Follower> followers = em("rules-it").createQuery("select f from Follower f").getResultList();
         if(followers != null && !followers.isEmpty()){
-            fail("follower table should be empty as we specified only 'FOLLOWER' table to be cleaned");
+            fail("follower table should be empty because it is not present in the list of tables to be skipped from cleaning");
         }
     }
 

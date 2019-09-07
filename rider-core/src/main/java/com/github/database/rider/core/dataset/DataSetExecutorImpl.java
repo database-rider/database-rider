@@ -616,7 +616,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         }
         // clear remaining tables in any order(if there are any, also no problem clearing again)
         List<String> tables = getTableNames(connection);
-        List<String> tablesToSkipCleaning = Arrays.asList(config.getSkipCleaningFor());
+        List<String> tablesToSkipCleaning = config.getSkipCleaningFor() != null ? Arrays.asList(config.getSkipCleaningFor()) : Collections.<String>emptyList();
         for (String tableName : tables) {
             if(shouldSkipFromCleaning(tablesToSkipCleaning, tableName)) {
                 continue;
