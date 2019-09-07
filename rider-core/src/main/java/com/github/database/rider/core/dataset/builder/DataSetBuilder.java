@@ -54,6 +54,17 @@ public class DataSetBuilder {
         }
     }
 
+    public DataSetBuilder(DBUnitConfig config) {
+        try {
+            this.config = config;
+            consumer.startDataSet();
+        } catch (DataSetException e) {
+            LOGGER.error("Could not create DataSetBuilder.", e);
+            throw new RuntimeException("Could not create DataSetBuilder.", e);
+        }
+
+    }
+
     /**
      * Starts creating a dataset for the given table, ex:
      * <pre>
@@ -69,7 +80,7 @@ public class DataSetBuilder {
      * @return current table builder
      */
     public TableBuilder table(String tableName) {
-        tableBuilder = new TableBuilder(this, tableName);
+        tableBuilder = new TableBuilder(this, tableName, config);
         return tableBuilder;
     }
 

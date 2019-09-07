@@ -199,7 +199,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         }
     }
 
-    private DatabaseOperation getOperation(DataSetConfig dataSetConfig) throws SQLException {
+    private DatabaseOperation getOperation(DataSetConfig dataSetConfig) {
         SeedStrategy strategy = dataSetConfig.getstrategy();
         if (getRiderDataSource().getDBType() == RiderDataSource.DBType.MSSQL && dataSetConfig.isFillIdentityColumns()) {
             switch (strategy) {

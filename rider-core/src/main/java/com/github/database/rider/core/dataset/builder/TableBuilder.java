@@ -1,5 +1,7 @@
 package com.github.database.rider.core.dataset.builder;
 
+import com.github.database.rider.core.configuration.DBUnitConfig;
+import com.github.database.rider.core.configuration.DataSetConfig;
 import org.dbunit.dataset.IDataSet;
 
 import javax.persistence.metamodel.Attribute;
@@ -13,8 +15,8 @@ public class TableBuilder {
     private ColumnBuilder currentColumnBuilder;
     private String tableName;
 
-    public TableBuilder(DataSetBuilder dataSetBuilder, String tableName) {
-        this.currentRowBuilder = new RowBuilder(this, tableName);
+    public TableBuilder(DataSetBuilder dataSetBuilder, String tableName, DBUnitConfig config) {
+        this.currentRowBuilder = new RowBuilder(this, tableName, config);
         this.dataSetBuilder = dataSetBuilder;
         this.tableName = tableName;
     }
@@ -63,7 +65,7 @@ public class TableBuilder {
             saveCurrentRow(currentColumnBuilder);
             currentColumnBuilder.getColumnsValues().clear();
         }
-        currentColumnBuilder = new ColumnBuilder(this, tableName, columns);
+        currentColumnBuilder = new ColumnBuilder(this, tableName, currentRowBuilder.config, columns);
 
         return currentColumnBuilder;
     }

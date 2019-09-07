@@ -41,8 +41,9 @@ public class BasicRowBuilder {
     protected final Map<String, Object> columnNameToValue = new LinkedHashMap<>();
     private boolean added;
 
-    public BasicRowBuilder(String tableName) {
-        this.config = DBUnitConfig.fromGlobalConfig();
+
+    public BasicRowBuilder(String tableName, DBUnitConfig config) {
+        this.config = config;
         this.tableName = convertCase(tableName,config);
     }
 

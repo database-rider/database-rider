@@ -1,5 +1,7 @@
 package com.github.database.rider.core.dataset.builder;
 
+import com.github.database.rider.core.configuration.DBUnitConfig;
+import com.github.database.rider.core.configuration.DataSetConfig;
 import org.dbunit.dataset.IDataSet;
 
 import javax.persistence.metamodel.Attribute;
@@ -12,8 +14,8 @@ public class RowBuilder extends BasicRowBuilder {
 
     private final TableBuilder tableBuilder;
 
-    protected RowBuilder(TableBuilder tableBuilder, String tableName) {
-        super(tableName);
+    protected RowBuilder(TableBuilder tableBuilder, String tableName, DBUnitConfig config) {
+        super(tableName, config);
         this.tableBuilder = tableBuilder;
     }
 

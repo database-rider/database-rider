@@ -1,5 +1,6 @@
 package com.github.database.rider.core.dataset.builder;
 
+import com.github.database.rider.core.configuration.DBUnitConfig;
 import org.dbunit.dataset.IDataSet;
 
 import java.util.Calendar;
@@ -12,8 +13,8 @@ public class ColumnBuilder extends BasicRowBuilder {
     private final String[] columns;
     private final TableBuilder tableBuilder;
 
-    public ColumnBuilder(TableBuilder tableBuilder, String tableName, String... columns) {
-        super(tableName);
+    public ColumnBuilder(TableBuilder tableBuilder, String tableName, DBUnitConfig config, String... columns) {
+        super(tableName, config);
         this.columns = columns;
         this.tableBuilder = tableBuilder;
     }
