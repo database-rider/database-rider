@@ -184,6 +184,18 @@ public class DataSetProviderIt {
 
     }
 
+    @Test
+    @DataSet(provider = UserDataSetProviderWithDBUnitConfig.class,
+            cleanBefore = true)
+    public void shouldSeedDatabaseUsingDBUnitConfig() {
+        List<User> users = EntityManagerProvider.em().createQuery("select u from User u ").getResultList();
+        assertThat(users).
+                isNotNull().
+                isNotEmpty().hasSize(2).
+                extracting("name").
+                contains("@dbunit", "@dbrider");
+    }
+
     // tag::provider[]
     public static class UserDataSetProvider implements DataSetProvider {
 
@@ -355,6 +367,24 @@ public class DataSetProviderIt {
                     .build();
         }
 
+    }
+
+    public static class UserDataSetProviderWithDBUnitConfig implements DataSetProvider {
+
+        @Override
+        public IDataSet provide() {
+            DBUnitConfig config = new DBUnitConfig().cacheTableNames(true)
+                    .addDBUnitProperty("caseSensitiveTableNames", true);
+            DataSetBuilder builder = new DataSetBuilder(config);
+            builder.table("USER")//<1>
+                    .row() //<2>
+                    .column("ID", 1) //<3>
+                    .column("NAME", "@dbunit")
+                    .row() //<4>
+                    .column("ID", 2)
+                    .column("NAME", "@dbrider");
+            return builder.build(); //<5>
+        }
     }
 
 }
