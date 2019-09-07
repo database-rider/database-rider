@@ -65,6 +65,11 @@ public class BuilderUtil {
         return isOnClasspath("org.eclipse.persistence.mappings.DirectToFieldMapping");
     }
 
+    /**
+     * @deprecated use <code>DataType.UNKNOWN</code> instead of this method. See https://github.com/database-rider/database-rider/pull/154#issuecomment-527622138
+     * @param value
+     * @return
+     */
     public static DataType resolveColumnDataType(Object value) {
         DataType columnType = DataType.UNKNOWN;
         if(value == null) {

@@ -1,7 +1,5 @@
 package com.github.database.rider.core.dataset.builder;
 
-import com.github.database.rider.core.dataset.builder.ColumnSpec;
-import com.github.database.rider.core.dataset.builder.DataSetBuilder;
 import com.github.database.rider.core.dataset.writer.JSONWriter;
 import com.github.database.rider.core.dataset.writer.YMLWriter;
 import com.github.database.rider.core.metamodel.Contact_;
@@ -59,13 +57,13 @@ public class DataSetBuilderTest {
 
         assertThat(contentOf(datasetFile)).
                 contains("FOLLOWER:" + NEW_LINE +
-                        "  - ID: 1" + NEW_LINE +
-                        "    USER_ID: 1" + NEW_LINE +
-                        "    FOLLOWER_ID: 2" + NEW_LINE).
+                        "  - ID: \"1\"" + NEW_LINE +
+                        "    USER_ID: \"1\"" + NEW_LINE +
+                        "    FOLLOWER_ID: \"2\"" + NEW_LINE).
                 contains("USER:" + NEW_LINE +
-                "  - ID: 1" + NEW_LINE +
+                "  - ID: \"1\"" + NEW_LINE +
                 "    NAME: \"@realpestano\"" + NEW_LINE +
-                "  - ID: 2" + NEW_LINE +
+                "  - ID: \"2\"" + NEW_LINE +
                 "    NAME: \"@dbunit\"").
                 contains("TWEET:" + NEW_LINE +
                 "  - ID: \"abcdef12345\"" + NEW_LINE +
@@ -106,11 +104,11 @@ public class DataSetBuilderTest {
                 contains("{"+NEW_LINE  +
                         "  \"USER\": ["+NEW_LINE  +
                         "    {"+NEW_LINE  +
-                        "      \"ID\": 1,"+NEW_LINE  +
+                        "      \"ID\": \"1\","+NEW_LINE  +
                         "      \"NAME\": \"@realpestano\""+NEW_LINE  +
                         "    },"+NEW_LINE  +
                         "    {"+NEW_LINE  +
-                        "      \"ID\": 2,"+NEW_LINE  +
+                        "      \"ID\": \"2\","+NEW_LINE  +
                         "      \"NAME\": \"@dbunit\""+NEW_LINE  +
                         "    }"+NEW_LINE  +
                         "  ],"+NEW_LINE  +
@@ -123,9 +121,9 @@ public class DataSetBuilderTest {
                         "  ],"+NEW_LINE  +
                         "  \"FOLLOWER\": ["+NEW_LINE  +
                         "    {"+NEW_LINE  +
-                        "      \"ID\": 1,"+NEW_LINE  +
-                        "      \"USER_ID\": 1,"+NEW_LINE  +
-                        "      \"FOLLOWER_ID\": 2"+NEW_LINE  +
+                        "      \"ID\": \"1\","+NEW_LINE  +
+                        "      \"USER_ID\": \"1\","+NEW_LINE  +
+                        "      \"FOLLOWER_ID\": \"2\""+NEW_LINE  +
                         "    }"+NEW_LINE  +
                         "  ]"+NEW_LINE  +
                         "}");
@@ -192,7 +190,7 @@ public class DataSetBuilderTest {
 
         assertThat(contentOf(datasetFile)).
                 contains("USER:" + NEW_LINE +
-                        "  - ID: 1" + NEW_LINE +
+                        "  - ID: \"1\"" + NEW_LINE +
                         "    DATE: \"" + DateUtils.format(date) +"\"" + NEW_LINE +
                         "    CALENDAR: \"" + DateUtils.format(calendar.getTime()) +"\"" + NEW_LINE +
                         "");
@@ -228,10 +226,10 @@ public class DataSetBuilderTest {
 
         assertThat(contentOf(datasetFile)).
                 contains("USER:" + NEW_LINE +
-                        "  - ID: 1" + NEW_LINE +
+                        "  - ID: \"1\"" + NEW_LINE +
                         "    NAME: \"@realpestano\"" + NEW_LINE +
                         "    DATE: \"[DAY,NOW]\"" + NEW_LINE +
-                        "  - ID: 2" + NEW_LINE +
+                        "  - ID: \"2\"" + NEW_LINE +
                         "    NAME: \"DEFAULT\"" + NEW_LINE +
                         "    DATE: \"[DAY,NOW]\"" + NEW_LINE +
                         "" + NEW_LINE +
@@ -242,9 +240,9 @@ public class DataSetBuilderTest {
                         "    DATE: \"[DAY,NOW]\"" + NEW_LINE +
                         "" + NEW_LINE +
                         "FOLLOWER:" + NEW_LINE +
-                        "  - ID: 1" + NEW_LINE +
-                        "    USER_ID: 1" + NEW_LINE +
-                        "    FOLLOWER_ID: 2" + NEW_LINE +
+                        "  - ID: \"1\"" + NEW_LINE +
+                        "    USER_ID: \"1\"" + NEW_LINE +
+                        "    FOLLOWER_ID: \"2\"" + NEW_LINE +
                         "    NAME: \"DEFAULT\"" + NEW_LINE +
                         "    DATE: \"[DAY,NOW]\"" + NEW_LINE+ NEW_LINE );
     }
@@ -274,7 +272,7 @@ public class DataSetBuilderTest {
 
         assertThat(contentOf(datasetFile)).
                 contains("CONTACT:" + NEW_LINE +
-                        "  - ID: 1" + NEW_LINE +
+                        "  - ID: \"1\"" + NEW_LINE +
                         "    NAME: \"dbrider\"" + NEW_LINE +
                         "    DATE: \"" + DateUtils.format(date) +"\"" + NEW_LINE +
                         "    CALENDAR: \"" + DateUtils.format(calendar.getTime()) +"\"" + NEW_LINE +
@@ -317,7 +315,7 @@ public class DataSetBuilderTest {
 
         assertThat(contentOf(datasetFile)).
                 contains("CONTACT:" + NEW_LINE +
-                        "  - ID: 1" + NEW_LINE +
+                        "  - ID: \"1\"" + NEW_LINE +
                         "    NAME: \"dbrider\"" + NEW_LINE +
                         "    DATE: \"" + DateUtils.format(date) +"\"" + NEW_LINE +
                         "    CALENDAR: \"" + DateUtils.format(calendar.getTime()) +"\"" + NEW_LINE +
@@ -355,13 +353,13 @@ public class DataSetBuilderTest {
 
         assertThat(contentOf(datasetFile)).
                 contains("FOLLOWER:" + NEW_LINE +
-                        "  - ID: 1" + NEW_LINE +
-                        "    USER_ID: 1" + NEW_LINE +
-                        "    FOLLOWER_ID: 2" + NEW_LINE).
+                        "  - ID: \"1\"" + NEW_LINE +
+                        "    USER_ID: \"1\"" + NEW_LINE +
+                        "    FOLLOWER_ID: \"2\"" + NEW_LINE).
                 contains("USER:" + NEW_LINE +
-                        "  - ID: 1" + NEW_LINE +
+                        "  - ID: \"1\"" + NEW_LINE +
                         "    NAME: \"@realpestano\"" + NEW_LINE +
-                        "  - ID: 2" + NEW_LINE +
+                        "  - ID: \"2\"" + NEW_LINE +
                         "    NAME: \"@dbunit\"").
                 contains("TWEET:" + NEW_LINE +
                         "  - ID: \"abcdef12345\"" + NEW_LINE +
@@ -403,21 +401,21 @@ public class DataSetBuilderTest {
 
         assertThat(contentOf(datasetFile)).
                 contains("FOLLOWER:" + NEW_LINE +
-                        "  - ID: 1" + NEW_LINE +
-                        "    USER_ID: 1" + NEW_LINE +
-                        "    FOLLOWER_ID: 2" + NEW_LINE).
+                        "  - ID: \"1\"" + NEW_LINE +
+                        "    USER_ID: \"1\"" + NEW_LINE +
+                        "    FOLLOWER_ID: \"2\"" + NEW_LINE).
                 contains("USER:" + NEW_LINE +
-                        "  - ID: 1" + NEW_LINE +
+                        "  - ID: \"1\"" + NEW_LINE +
                         "    NAME: \"@realpestano\"" + NEW_LINE +
-                        "  - ID: 2" + NEW_LINE +
+                        "  - ID: \"2\"" + NEW_LINE +
                         "    NAME: \"@dbunit\"" + NEW_LINE +
-                        "  - ID: -1" + NEW_LINE +
+                        "  - ID: \"-1\"" + NEW_LINE +
                         "    NAME: \"@dbunit3\"").
                 contains("TWEET:" + NEW_LINE +
                         "  - ID: \"abcdef12345\"" + NEW_LINE +
                         "    CONTENT: \"dbunit rules!\"" + NEW_LINE +
                         "    DATE: \"[DAY,NOW]\""+ NEW_LINE  +
-                        "    LIKES: 99"+ NEW_LINE );
+                        "    LIKES: \"99\""+ NEW_LINE );
 
     }
 
@@ -447,21 +445,21 @@ public class DataSetBuilderTest {
 
         assertThat(contentOf(datasetFile)).
                 contains("FOLLOWER:" + NEW_LINE +
-                        "  - ID: 1" + NEW_LINE +
-                        "    USER_ID: 1" + NEW_LINE +
-                        "    FOLLOWER_ID: 2" + NEW_LINE).
+                        "  - ID: \"1\"" + NEW_LINE +
+                        "    USER_ID: \"1\"" + NEW_LINE +
+                        "    FOLLOWER_ID: \"2\"" + NEW_LINE).
                 contains("USER:" + NEW_LINE +
-                        "  - ID: 1" + NEW_LINE +
+                        "  - ID: \"1\"" + NEW_LINE +
                         "    NAME: \"@dbrider\"" + NEW_LINE +
-                        "  - ID: 2" + NEW_LINE +
+                        "  - ID: \"2\"" + NEW_LINE +
                         "    NAME: \"@dbunit\"" + NEW_LINE +
-                        "  - ID: -1" + NEW_LINE +
+                        "  - ID: \"-1\"" + NEW_LINE +
                         "    NAME: \"@dbunit3\"").
                 contains("TWEET:" + NEW_LINE +
                         "  - ID: \"abcdef12345\"" + NEW_LINE +
                         "    CONTENT: \"dbunit rules!\"" + NEW_LINE +
                         "    DATE: \"[DAY,NOW]\""+ NEW_LINE  +
-                        "    LIKES: 99"+ NEW_LINE );
+                        "    LIKES: \"99\""+ NEW_LINE );
     }
 
     @Test
@@ -491,21 +489,21 @@ public class DataSetBuilderTest {
 
         assertThat(contentOf(datasetFile)).
                 contains("FOLLOWER:" + NEW_LINE +
-                        "  - ID: 1" + NEW_LINE +
-                        "    USER_ID: 1" + NEW_LINE +
-                        "    FOLLOWER_ID: 2" + NEW_LINE).
+                        "  - ID: \"1\"" + NEW_LINE +
+                        "    USER_ID: \"1\"" + NEW_LINE +
+                        "    FOLLOWER_ID: \"2\"" + NEW_LINE).
                 contains("USER:" + NEW_LINE +
-                        "  - ID: 1" + NEW_LINE +
+                        "  - ID: \"1\"" + NEW_LINE +
                         "    NAME: \"@dbrider\"" + NEW_LINE +
-                        "  - ID: 2" + NEW_LINE +
+                        "  - ID: \"2\"" + NEW_LINE +
                         "    NAME: \"@dbunit\"" + NEW_LINE +
-                        "  - ID: -1" + NEW_LINE +
+                        "  - ID: \"-1\"" + NEW_LINE +
                         "    NAME: \"@dbunit3\"").
                 contains("TWEET:" + NEW_LINE +
                         "  - ID: \"abcdef12345\"" + NEW_LINE +
                         "    CONTENT: \"dbunit rules!\"" + NEW_LINE +
                         "    DATE: \"[DAY,NOW]\""+ NEW_LINE  +
-                        "    LIKES: 99"+ NEW_LINE );
+                        "    LIKES: \"99\""+ NEW_LINE );
     }
 
 

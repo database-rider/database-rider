@@ -1,6 +1,5 @@
 package com.github.database.rider.core.dataset.builder;
 
-import com.github.database.rider.core.util.DateUtils;
 import org.dbunit.dataset.IDataSet;
 
 import javax.persistence.metamodel.Attribute;
