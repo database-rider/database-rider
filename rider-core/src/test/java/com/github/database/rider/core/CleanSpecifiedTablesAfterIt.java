@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.fail;
  * Created by pestano on 26/02/16.
  */
 @RunWith(JUnit4.class)
-public class CleanSpecifiedAfterIt {
+public class CleanSpecifiedTablesAfterIt {
 
     @Rule
     public DBUnitRule dbUnitRule = DBUnitRule.instance(EntityManagerProvider.instance("rules-it").connection());
