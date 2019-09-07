@@ -595,10 +595,10 @@ public class DataSetExecutorImpl implements DataSetExecutor {
      * @throws SQLException if clean up cannot be performed
      */
     @Override
-    public void clearDatabase(DataSetConfig dataset) throws SQLException {
+    public void clearDatabase(DataSetConfig config) throws SQLException {
         Connection connection = getRiderDataSource().getConnection();
-        if (dataset != null && dataset.getTableOrdering() != null && dataset.getTableOrdering().length > 0) {
-            for (String table : dataset.getTableOrdering()) {
+        if (config != null && config.getTableOrdering() != null && config.getTableOrdering().length > 0) {
+            for (String table : config.getTableOrdering()) {
                 if (table.toUpperCase().contains(SEQUENCE_TABLE_NAME)) {
                     // tables containing 'SEQ'will NOT be cleared see
                     // https://github.com/rmpestano/dbunit-rules/issues/26
@@ -615,7 +615,12 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             }
         }
         // clear remaining tables in any order(if there are any, also no problem clearing again)
-        List<String> tables = getTableNames(connection);
+        List<String> tables = null;
+        if(config.getTablesToClean() != null && config.getTablesToClean().length > 0) {
+            tables = Arrays.asList(config.getTablesToClean());
+        } else {
+            tables = getTableNames(connection);
+        }
         for (String tableName : tables) {
             if (tableName.toUpperCase().contains(SEQUENCE_TABLE_NAME)) {
                 // tables containing 'SEQ' will NOT be cleared see https://github.com/rmpestano/dbunit-rules/issues/26

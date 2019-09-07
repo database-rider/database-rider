@@ -95,4 +95,13 @@ public @interface DataSet {
    * @return a dataset provider implementation responsible for generating the dataset programatically instead of providing an external file defining the dataset.
    */
   Class<? extends DataSetProvider> provider() default DataSetProvider.class;
+
+    /**
+     * By default ALL tables are cleaned when <code>cleanBefore</code> or <code>cleanAfter</code> is set to <code>true</code>.
+     *
+     * This method allows user to provide tables which will be cleaned in <code>cleanBefore</code> and/or <code>cleanAfter</code> .
+     *
+     * @return list of table names to clean in <code>cleanBefore</code> and/or <code>cleanAfter</code>. If empty all tables will be cleaned when cleanBefore() or cleanAfter() is set to <code>true</code>
+     */
+  String[] tablesToClean() default {};
 }

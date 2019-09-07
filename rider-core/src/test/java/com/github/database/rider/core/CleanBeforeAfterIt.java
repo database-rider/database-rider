@@ -53,4 +53,5 @@ public class CleanBeforeAfterIt {
         User userInsertedInBefore = new User(6);//user inserted in @before has id 6
         assertThat(users).doesNotContain(userInsertedInBefore);
     }
+
 }

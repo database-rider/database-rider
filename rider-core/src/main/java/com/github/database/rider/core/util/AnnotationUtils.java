@@ -173,7 +173,8 @@ public final class AnnotationUtils {
         String[] executeScriptsBefore = joinArray(classLevelDataSet.executeScriptsBefore(), methodLevelDataSet.executeScriptsBefore());
 
         DataSet mergedDataSet = new DataSetImpl(value, methodLevelDataSet.executorId(), methodLevelDataSet.strategy(), methodLevelDataSet.useSequenceFiltering(), tableOrdering, 
-                methodLevelDataSet.disableConstraints(), methodLevelDataSet.fillIdentityColumns(), executeStatementsBefore, executeScriptsAfter, executeScriptsBefore, executeStatementsAfter, methodLevelDataSet.cleanBefore(), methodLevelDataSet.cleanAfter(), methodLevelDataSet.transactional());
+                methodLevelDataSet.disableConstraints(), methodLevelDataSet.fillIdentityColumns(), executeStatementsBefore, executeScriptsAfter, executeScriptsBefore, executeStatementsAfter,
+                methodLevelDataSet.cleanBefore(), methodLevelDataSet.cleanAfter(), methodLevelDataSet.transactional(), methodLevelDataSet.tablesToClean());
         return mergedDataSet;
     }
 
