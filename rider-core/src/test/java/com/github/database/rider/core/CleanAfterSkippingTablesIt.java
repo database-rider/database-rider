@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.fail;
  * Created by pestano on 26/02/16.
  */
 @RunWith(JUnit4.class)
-public class CleanSpecifiedTablesAfterIt {
+public class CleanAfterSkippingTablesIt {
 
     @Rule
     public DBUnitRule dbUnitRule = DBUnitRule.instance(EntityManagerProvider.instance("rules-it").connection());
@@ -48,7 +48,7 @@ public class CleanSpecifiedTablesAfterIt {
 
     @Test
     @DataSet(value = "datasets/yml/users.yml", cleanAfter = true, skipCleaningFor = {"USER", "TWEET"})
-    public void shouldCleanOnlySpecifiedTable() {
+    public void shouldCleanAfterSkippingTables() {
         List<User> users = em("rules-it").createQuery("select u from User u").getResultList();
         assertThat(users).isNotNull().hasSize(2);
 
