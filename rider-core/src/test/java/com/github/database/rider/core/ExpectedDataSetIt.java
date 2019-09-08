@@ -125,6 +125,35 @@ public class ExpectedDataSetIt {
     }
 
     @Test
+    @DataSet(value = "yml/empty.yml", disableConstraints = true)
+    @ExpectedDataSet(value = "yml/expectedUsersAndTweetsIgnoreOrder.yml", orderBy = {"name", "content"})
+    public void shouldMatchExpectedDataSetIgnoringRowOrderInMultipleTables() {
+        User u1 = new User();
+        u1.setName("@arhohuttunen");
+        User u2 = new User();
+        u2.setName("@realpestano");
+        User u3 = new User();
+        u3.setName("@dbunit");
+
+        Tweet t1 = new Tweet();
+        t1.setContent("tweet1");
+
+        Tweet t2 = new Tweet();
+        t2.setContent("tweet2");
+
+        Tweet t3 = new Tweet();
+        t3.setContent("tweet3");
+        tx().begin();
+        em().persist(u1);
+        em().persist(u2);
+        em().persist(u3);
+        em().persist(t3);
+        em().persist(t2);
+        em().persist(t1);
+        tx().commit();
+    }
+
+    @Test
     @DataSet(value = "yml/user.yml", disableConstraints = true, cleanBefore = true)
     @ExpectedDataSet(value = "yml/empty.yml")
     public void shouldMatchEmptyYmlDataSet() {
@@ -182,6 +211,5 @@ public class ExpectedDataSetIt {
         u.setName("@dbrider");
         em().persist(u);
     }
-
 
 }

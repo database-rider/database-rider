@@ -642,7 +642,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         if(!skip && tableName.contains(".")) {
             skip = tablesToSkipCleaning.contains(tableName.substring(tableName.indexOf(".")+1));
         }
-
         return skip;
     }
 
@@ -882,15 +881,20 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 throw new RuntimeException("DataSet comparison failed due to following exception: ", e);
             }
             if (orderBy != null && orderBy.length > 0) {
+                List<String> validOrderByColumns = new ArrayList<>();//gather valid columns for sorting expected dataset
                 for (int i = 0; i < expectedTable.getRowCount(); i++) {
                     for (String orderColumn : orderBy) {
-                        if (expectedTable.getValue(i, orderColumn).toString().startsWith("regex:")) {
-                            throw new IllegalArgumentException("The orderBy columns cannot use regex matching");
+                        try {
+                            if (expectedTable.getValue(i, orderColumn).toString().startsWith("regex:")) {
+                                throw new IllegalArgumentException(String.format("The orderBy column %s cannot use regex matching on table %s.",orderColumn, tableName));
+                            }
+                            validOrderByColumns.add(orderColumn);//add only existing columns on current table
+                        } catch (NoSuchColumnException | NullPointerException ignored) {
                         }
                     }
                 }
-                expectedTable = new SortedTable(expectedTable, orderBy);
-                actualTable = new SortedTable(actualTable, orderBy);
+                expectedTable = new SortedTable(expectedTable, validOrderByColumns.toArray(new String[0]));
+                actualTable = new SortedTable(actualTable, validOrderByColumns.toArray(new String[0]));
             }
             ITable filteredActualTable = DefaultColumnFilter.includedColumnsTable(actualTable,
                     expectedTable.getTableMetaData().getColumns());
