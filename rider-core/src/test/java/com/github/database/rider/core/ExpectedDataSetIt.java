@@ -164,7 +164,7 @@ public class ExpectedDataSetIt {
     }
 
     @Test
-    @DataSet(value = "yml/user.yml", disableConstraints = true, transactional = true)
+    @DataSet(value = "yml/user.yml", disableConstraints = true, transactional = true, cleanBefore = true)
     @ExpectedDataSet(value = "yml/empty.yml")
     public void shouldMatchEmptyYmlDataSetWithTransaction() {
         EntityManagerProvider.em().remove(EntityManagerProvider.em().find(User.class, 1L));
