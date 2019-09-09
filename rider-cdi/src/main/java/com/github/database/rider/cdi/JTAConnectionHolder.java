@@ -13,12 +13,15 @@ import java.sql.SQLException;
 @ApplicationScoped
 public class JTAConnectionHolder {
 
-	private static final Logger log = LoggerFactory.getLogger(DataSetProcessor.class.getName());
+	private static final Logger log = LoggerFactory.getLogger(JTAConnectionHolder.class.getName());
 
-	Connection connection;
+	protected Connection connection;
 
 	@PostConstruct
 	public void init() {
+		if(connection != null) {
+			return;
+		}
 		try {
 			connection = CDI.current().select(DataSource.class).get().getConnection();
 		} catch (SQLException e) {
