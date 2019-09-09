@@ -20,9 +20,6 @@ public class JTAConnectionHolder {
 
 	@PostConstruct
 	public void init() {
-		if(connection != null) {
-			return;
-		}
 		try {
 			connection = CDI.current().select(DataSource.class).get().getConnection();
 		} catch (SQLException e) {
@@ -32,7 +29,6 @@ public class JTAConnectionHolder {
 
 	public Connection getConnection() {
 		if(!isCachedConnection()) {
-			connection = null;
 			this.init();
 		}
 		return connection;
