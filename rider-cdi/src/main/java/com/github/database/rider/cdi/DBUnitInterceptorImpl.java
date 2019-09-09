@@ -123,6 +123,7 @@ public class DBUnitInterceptorImpl implements Serializable {
 				if (leakHunter != null) {
 					leakHunter.checkConnectionsAfterExecution();
 				}
+				dataSetProcessor.afterTest();
 			} // end finally
 
 		} else {// no dataset provided, just proceed and check expectedDataSet
