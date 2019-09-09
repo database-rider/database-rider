@@ -24,4 +24,4 @@ Just annotate your Quarkus test class with `@DBUnitInterceptor`, provide a datas
 
 === Example
 
-See https://github.com/rmpestano/quarkus-dbunit-sample/blob/master/src/test/java/com/github/quarkus/sample/QuarkusDBUnitTest.java#L48[QuarkusDBUnitTest example^].
+See https://github.com/database-rider/database-rider/blob/master/rider-examples/quarkus-dbunit-sample/src/test/java/com/github/quarkus/sample/QuarkusDBUnitTest.java#L44[QuarkusDBUnitTest example^].
