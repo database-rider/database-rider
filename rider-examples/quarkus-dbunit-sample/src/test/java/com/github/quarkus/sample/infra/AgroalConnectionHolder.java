@@ -19,7 +19,7 @@ public class AgroalConnectionHolder extends JTAConnectionHolder {
 
     private static final Logger log = LoggerFactory.getLogger(AgroalConnectionHolder.class.getName());
 
-    private Connection connection;
+    private ThreadLocal<Connection> connection = new ThreadLocal<>();
 
     @Inject
     AgroalDataSource agroalDS;
@@ -31,24 +31,22 @@ public class AgroalConnectionHolder extends JTAConnectionHolder {
     @Override
     public Connection getConnection() {
         try {
-            if(connection == null) {
-                connection = agroalDS.getConnection();
-            }
+             connection.set(agroalDS.getConnection());
         } catch (SQLException e) {
             log.warn("Using default JTA connection.");
             //fallback to connection without pool
             super.init();
-            connection = super.getConnection();
+            connection.set(super.getConnection());
         }
-        return connection;
+        return connection.get();
     }
 
-    /*@Override
+    @Override
     public void tearDown() {
         try {
-            agroalDS.flush(AgroalDataSource.FlushMode.GRACEFUL);
+            connection.get().close();
         } catch (Exception e) {
             log.warn("Could not close current connection.", e);
         }
-    }*/
+    }
 }
