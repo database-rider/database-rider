@@ -1,5 +1,6 @@
 package com.github.database.rider.cdi;
 
+import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,13 +31,25 @@ public class JTAConnectionHolder {
 	}
 
 	public Connection getConnection() {
+		if(!isCachedConnection()) {
+			connection = null;
+			this.init();
+		}
 		return connection;
 	}
 
-	/**
-	 * Execute after test, by default we do nothing but can be extended in order to optimize connection handling via connection pool
-	 */
 	public void tearDown() {
-		//no-op
+		if(!isCachedConnection()) {
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				log.error("Could not close sql connection", e);
+			}
+		}
+	}
+
+	private boolean isCachedConnection() {
+		DataSetExecutorImpl cdiDataSetExecutor = DataSetExecutorImpl.getExecutorById(DataSetProcessor.CDI_DBUNIT_EXECUTOR);
+		return cdiDataSetExecutor != null && cdiDataSetExecutor.getDBUnitConfig().isCacheConnection();
 	}
 }
