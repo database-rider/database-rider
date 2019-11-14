@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.JarURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -758,15 +759,14 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     String[] readScriptStatements(URL resource) {
-        String absolutePath = resource.getFile();
         if ("jar".equals(resource.getProtocol())) {
-            return readScriptStatementsFromJar(absolutePath);
+            return readScriptStatementsFromJar(resource);
         }
-        return readScriptStatementsFromFile(new File(absolutePath));
+        return readScriptStatementsFromFile(resource);
     }
 
-    private String[] readScriptStatementsFromJar(String absolutePath) {
-        String jarEntry = "jar:" + absolutePath;
+    private String[] readScriptStatementsFromJar(URL resource) {
+        String jarEntry = "jar:" + resource.getFile();
         JarURLConnection conn;
         InputStreamReader r = null;
         try {
@@ -801,7 +801,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         }
     }
 
-    private String[] readScriptStatementsFromFile(File scriptFile) {
+    private String[] readScriptStatementsFromFile(URL resource) {
+        File scriptFile = getFileFromURL(resource);
+        if (scriptFile == null) return null;
         RandomAccessFile rad = null;
         int lineNum = 0;
         try {
@@ -812,7 +814,10 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 // a line can have multiple scripts separated by ;
                 String[] lineScripts = line.split(";");
                 for (int i = 0; i < lineScripts.length; i++) {
-                    scripts.add(lineScripts[i]);
+                    String trimmedStmt = lineScripts[i].trim();
+                    if (!"".equals(trimmedStmt)) {
+                        scripts.add(trimmedStmt);
+                    }
                 }
                 lineNum++;
             }
@@ -830,6 +835,15 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
                 }
             }
+        }
+    }
+
+    private File getFileFromURL(URL resource) {
+        try {
+            return new File(resource.toURI());
+        } catch (URISyntaxException e) {
+            log.error(String.format("Could not read script file %s.", resource.getFile()), e);
+            return null;
         }
     }
 
