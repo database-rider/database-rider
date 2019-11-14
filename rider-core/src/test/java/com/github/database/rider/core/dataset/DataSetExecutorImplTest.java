@@ -23,8 +23,27 @@ public class DataSetExecutorImplTest {
             }
         });
         // simulate URL resource read from jar file in classpath
-        URL resource = DataSetExecutorImpl.class.getResource("/scripts/users.jar");
+        URL resource = DataSetExecutorImpl.class.getResource("/folder with some%20 characters/users.jar");
         resource = new URL("jar", "localhost", "file:" + resource.getFile() + "!/users/user-script.sql");
+        String[] statements = dse.readScriptStatements(resource);
+        assertEquals(4, statements.length);
+        assertEquals("DELETE FROM User", statements[0]);
+        assertEquals("INSERT INTO USER VALUES (10,'user10')", statements[1]);
+        assertEquals("INSERT INTO USER VALUES (20,'user20')", statements[2]);
+        assertEquals("INSERT INTO USER VALUES (30,'user30')", statements[3]);
+    }
+
+    @Test
+    public void shouldReadScriptFromFileURL() {
+        DataSetExecutorImpl dse = DataSetExecutorImpl.instance(new ConnectionHolder() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Connection getConnection() {
+                return null;
+            }
+        });
+        URL resource = DataSetExecutorImpl.class.getResource("/folder with some%20 characters/user-script.sql");
         String[] statements = dse.readScriptStatements(resource);
         assertEquals(4, statements.length);
         assertEquals("DELETE FROM User", statements[0]);
