@@ -96,9 +96,9 @@ public class ExportNullPropertiesIt {
     public void shouldNotExportNullColumnsInJSONDataSet() throws SQLException, DatabaseUnitException{
         DataSetExporter.getInstance().export(new DatabaseConnection(emProvider.connection()), new DataSetExportConfig().
                 dataSetFormat(DataSetFormat.JSON).outputFileName("target/userWithNullProperty.json"));
-        File xmlDataSet = new File("target/userWithNullProperty.json");
-        assertThat(xmlDataSet).exists();
-        assertThat(contentOf(xmlDataSet).replaceAll("\r","")).isEqualTo(("{"+NEW_LINE +
+        File jsonDataSet = new File("target/userWithNullProperty.json");
+        assertThat(jsonDataSet).exists();
+        assertThat(contentOf(jsonDataSet).replaceAll("\r","")).isEqualTo(("{"+NEW_LINE +
                 "  \"FOLLOWER\": ["+NEW_LINE +
                 "  ],"+NEW_LINE +
                 "  \"SEQUENCE\": ["+NEW_LINE +
@@ -111,7 +111,7 @@ public class ExportNullPropertiesIt {
                 "  ],"+NEW_LINE +
                 "  \"USER\": ["+NEW_LINE +
                 "    {"+NEW_LINE +
-                "      \"ID\": 1,"+NEW_LINE +
+                "      \"ID\": 1"+NEW_LINE +
                 "    }"+NEW_LINE +
                 "  ]"+NEW_LINE +
                 "}").replaceAll("\r",""));
