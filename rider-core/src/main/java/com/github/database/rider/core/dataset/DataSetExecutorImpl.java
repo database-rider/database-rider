@@ -765,8 +765,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         return readScriptStatementsFromFile(resource);
     }
 
-    private String[] readScriptStatementsFromJar(URL resourse) {
-        String jarEntry = "jar:" + resourse.getFile();
+    private String[] readScriptStatementsFromJar(URL resource) {
+        String jarEntry = "jar:" + resource.getFile();
         JarURLConnection conn;
         InputStreamReader r = null;
         try {
@@ -803,7 +803,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private String[] readScriptStatementsFromFile(URL resource) {
         File scriptFile = getFileFromURL(resource);
-        if (Objects.isNull(scriptFile)) return null;
+        if (scriptFile == null) return null;
         RandomAccessFile rad = null;
         int lineNum = 0;
         try {
@@ -839,14 +839,12 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     private File getFileFromURL(URL resource) {
-        File scriptFile;
         try {
-            scriptFile = new File(resource.toURI());
+            return new File(resource.toURI());
         } catch (URISyntaxException e) {
             log.error(String.format("Could not read script file %s.", resource.getFile()), e);
             return null;
         }
-        return scriptFile;
     }
 
     @Override
