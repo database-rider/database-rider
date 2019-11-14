@@ -18,9 +18,17 @@ before_script:
 - git config --global user.name rmpestano
 - git config --global user.email rmpestano@gmail.com
 script:
-- mvn clean install jacoco:report coveralls:report -Pcoverage surefire-report:report-only && python html2text.py target/site/surefire-report.html
-- if [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_BRANCH == "master" ]]; then mvn sonar:sonar -Psonar -Dsonar.organization=database-rider -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${SONAR_KEY} ; fi ;
-- if [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_BRANCH == "master" ]]; then cd rider-core && mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs ; fi ;
-- if [[ $TRAVIS_COMMIT_MESSAGE == *"prepare release"* ]]; then mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs -Prelease ; fi ;
+- mvn clean install jacoco:report coveralls:report -Pcoverage surefire-report:report-only
+  && python html2text.py target/site/surefire-report.html
+- if [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_BRANCH == "master" ]]; then
+  mvn sonar:sonar -Psonar -Dsonar.organization=database-rider -Dsonar.host.url=https://sonarcloud.io
+  -Dsonar.login=${SONAR_KEY} ; fi ;
+- if [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_BRANCH == "master" ]]; then
+  cd rider-core && mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs ; fi ;
+- if [[ $TRAVIS_COMMIT_MESSAGE == *"prepare release"* ]]; then mvn -q cukedoctor:execute
+  scm-publish:publish-scm -Pdocs -Prelease ; fi ;
 after_script:
-- if [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_BRANCH == "master" ]]; then cd ../ && mvn clean package deploy --settings settings.xml -DskipTests=true ; fi;
+- if [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_BRANCH == "master" ]]; then
+  cd ../ && mvn clean package deploy --settings settings.xml -DskipTests=true ; fi;
+dd:
+  secure: bXaCBrXw7xXzOXTJ7RkS6z2o0Vatbq4rVmxD4R9C8bBVc44tMxQpm4rmynfl0OWRTPgL9yUamTQsukAEsyXOfSBZt390u70BcvE1WZjZ+2kDp7VBevH/vSf6bGz/uIqgierqBqsLVNJVpdRrgrD42yKCkaYQzMRjc0MKjSMwH4rF0n2X1fVozM9Pri2TD/OzV8U1axJkZmh9DSuDmqIn/+jOug4PrjEN19fHL4k620BbcQCYEy4G2fX0kZYcfJHcBCmB6KIUdysLPTflmXKyRPeZ+nBPw2p83t/W3le1WlEKze6vGsLFcOzcvVFmJepjXjgkGo5RL2w7jSnUaz0gL21D2h76lGRraN4T6FLxteXDuljugllOSweeQMyoHjR9L4dCpcU2kVJg3glECIRV6p66CY7laJPFnJ2IG9Pe0l6dpnpa6GE1E4E30GV3Jt0b0dpKzw8opQE/Gv7p/yNaBmpT2zIHVkjxDjhgdGvltarlla0vpuapU6D5ZmgqY2Qu/KOGghFAKeuHAAzCpp77HzwY4EnzJw1iu1fXHrv8RItp8AZkzzKAQb0Z+yye1hl9pX3eeLzrOxR/f7V49zlpf0oxW0YnlCQMhytDkSR3yWpo8lDsQeImmOlFGsMo93EZ4dUM2C00JTlp75TUo7Fdc9odSPR/N9r6DT0vHYtPLII=
