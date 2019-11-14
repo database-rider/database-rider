@@ -18,7 +18,6 @@ package com.github.quarkus.sample;
 
 
 import com.github.database.rider.cdi.api.DBUnitInterceptor;
-import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetProvider;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
@@ -81,7 +80,7 @@ public class QuarkusDBUnit2Test {
         assertThat(book)
                 .isNotNull()
                 .extracting("title")
-                .contains("DBrider loves Quarkus!");
+                .isEqualTo("DBrider loves Quarkus!");
     }
 
     @Test

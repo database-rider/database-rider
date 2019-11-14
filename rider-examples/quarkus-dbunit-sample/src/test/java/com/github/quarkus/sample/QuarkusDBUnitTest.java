@@ -78,7 +78,7 @@ public class QuarkusDBUnitTest {
         assertThat(book)
                 .isNotNull()
                 .extracting("title")
-                .contains("DBrider loves Quarkus!");
+                .isEqualTo("DBrider loves Quarkus!");
     }
 
     @Test

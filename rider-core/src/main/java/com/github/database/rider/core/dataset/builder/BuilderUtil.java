@@ -67,8 +67,8 @@ public class BuilderUtil {
 
     /**
      * @deprecated use <code>DataType.UNKNOWN</code> instead of this method. See https://github.com/database-rider/database-rider/pull/154#issuecomment-527622138
-     * @param value
-     * @return
+     * @param value column value
+     * @return resolved datatype
      */
     public static DataType resolveColumnDataType(Object value) {
         DataType columnType = DataType.UNKNOWN;

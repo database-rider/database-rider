@@ -80,7 +80,7 @@ public class QuarkusDBUnit7Test {
         assertThat(book)
                 .isNotNull()
                 .extracting("title")
-                .contains("DBrider loves Quarkus!");
+                .isEqualTo("DBrider loves Quarkus!");
     }
 
     @Test
