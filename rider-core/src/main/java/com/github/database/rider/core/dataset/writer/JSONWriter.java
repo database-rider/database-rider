@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by pestano on 11/09/16.
@@ -21,10 +23,10 @@ public class JSONWriter implements IDataSetConsumer {
 	private static final String NEW_LINE = System.getProperty("line.separator");
 	private static final String DOUBLE_SPACES = "  ";
 	private static final String FOUR_SPACES = DOUBLE_SPACES+DOUBLE_SPACES;
-	
+
     private static final Logger logger = LoggerFactory.getLogger(JSONWriter.class);
 
-	
+
 	private IDataSet dataSet;
 
 	private OutputStreamWriter out;
@@ -87,10 +89,8 @@ public class JSONWriter implements IDataSetConsumer {
 		rowCount++;
 		try {
 			out.write(FOUR_SPACES+"{"+NEW_LINE);
+			values = filterNullValues(values);
 			for (int i = 0; i < values.length; i++) {
-				if(values[i] == null){
-					continue;
-				}
 
 				Column currentColumn = metaData.getColumns()[i];
 				out.write(FOUR_SPACES+DOUBLE_SPACES+"\""+metaData.getColumns()[i].getColumnName() + "\": ");
@@ -99,8 +99,8 @@ public class JSONWriter implements IDataSetConsumer {
 					out.write("\"");
 				}
 				
-			    out.write(values[i].toString());
-			    
+				out.write(values[i].toString());
+
 				if (!isNumber) {
 					out.write("\"");
 				}
@@ -108,7 +108,7 @@ public class JSONWriter implements IDataSetConsumer {
 					out.write(",");
 				}
 				out.write(NEW_LINE);
-				
+
 			}
 			if(dataSet.getTable(metaData.getTableName()).getRowCount() != rowCount ){
 				out.write(FOUR_SPACES+"},"+NEW_LINE);
@@ -117,10 +117,19 @@ public class JSONWriter implements IDataSetConsumer {
 
 			}
 
-			
 		} catch (Exception e) {
 			logger.warn("Could not write row.", e);
 		}
+	}
+
+	private Object[] filterNullValues(Object[] values) {
+		List<Object> list = new ArrayList<>(values.length);
+		for (Object value : values) {
+			if(value != null){
+				list.add(value);
+			}
+		}
+		return list.toArray();
 	}
 
 	public synchronized void write() throws DataSetException {
