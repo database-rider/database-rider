@@ -88,7 +88,7 @@ public class JSONWriter implements IDataSetConsumer {
 		rowCount++;
 		try {
 			out.write(FOUR_SPACES+"{"+NEW_LINE);
-			String sb = createSetFromColumnValues(values);
+			String sb = createSetFromValues(values);
 			out.write(sb);
 			if(dataSet.getTable(metaData.getTableName()).getRowCount() != rowCount ){
 				out.write(FOUR_SPACES+"},"+NEW_LINE);
@@ -102,21 +102,22 @@ public class JSONWriter implements IDataSetConsumer {
 		}
 	}
 
-	private String createSetFromColumnValues(Object[] values) throws DataSetException {
+	private String createSetFromValues(Object[] values) throws DataSetException {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < values.length; i++) {
-				if(values[i] == null){
+			Object currentValue = values[i];
+			if(currentValue == null){
 					continue;
-				}
+			}
 
 			Column currentColumn = metaData.getColumns()[i];
-			sb.append(FOUR_SPACES + DOUBLE_SPACES + "\"").append(metaData.getColumns()[i].getColumnName()).append("\": ");
+			sb.append(FOUR_SPACES + DOUBLE_SPACES + '"').append(metaData.getColumns()[i].getColumnName()).append("\": ");
 			boolean isNumber = currentColumn.getDataType().isNumber();
 			if (!isNumber) {
 				sb.append('"');
 			}
 
-			sb.append(values[i].toString());
+			sb.append(currentValue.toString().replaceAll(NEW_LINE, "\\\\n"));
 
 			if (!isNumber) {
 				sb.append('"');
