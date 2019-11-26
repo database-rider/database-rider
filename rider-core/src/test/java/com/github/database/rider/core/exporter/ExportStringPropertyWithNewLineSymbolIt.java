@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.contentOf;
 
 /**
- * Created by rafael-pestano on 28/09/2016.
+ * Created by TonnTamerlan on 26/11/2019.
  */
 
 @RunWith(JUnit4.class)
