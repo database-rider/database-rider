@@ -58,7 +58,7 @@ public class UserController {
   @ResponseBody
   public String updateUser(long id, String email, String name) {
     try {
-      User user = userRepository.findOne(id);
+      User user = userRepository.findById(id).get();
       user.setEmail(email);
       user.setName(name);
       userRepository.save(user);

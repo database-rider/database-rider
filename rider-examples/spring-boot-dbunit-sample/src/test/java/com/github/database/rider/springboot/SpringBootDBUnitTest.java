@@ -2,23 +2,20 @@ package com.github.database.rider.springboot;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
-import com.github.database.rider.spring.api.DBRider;
+import com.github.database.rider.junit5.api.DBRider;
 import com.github.database.rider.springboot.models.User;
 import com.github.database.rider.springboot.models.UserRepository;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by pestano on 13/09/16.
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest
 @DBRider
+@SpringBootTest
 public class SpringBootDBUnitTest {
 
     @Autowired
@@ -38,7 +35,7 @@ public class SpringBootDBUnitTest {
     public void shouldDeleteUser() throws Exception {
         assertThat(userRepository).isNotNull();
         assertThat(userRepository.count()).isEqualTo(3);
-        userRepository.delete(userRepository.findOne(2L));
+        userRepository.delete(userRepository.findById(2L).get());
         //assertThat(userRepository.count()).isEqualTo(2); //assertion is made by @ExpectedDataset
     }
 

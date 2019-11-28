@@ -1,5 +1,7 @@
 package com.github.database.rider.junit5;
 
+import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
+
 import com.github.database.rider.core.RiderRunner;
 import com.github.database.rider.core.RiderTestContext;
 import com.github.database.rider.core.api.connection.ConnectionHolder;
@@ -7,6 +9,7 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetExecutor;
 import com.github.database.rider.core.api.leak.LeakHunter;
 import com.github.database.rider.core.configuration.DBUnitConfig;
+import com.github.database.rider.core.connection.ConnectionHolderImpl;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.leak.LeakHunterFactory;
 import com.github.database.rider.core.util.EntityManagerProvider;
@@ -16,9 +19,14 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 import org.junit.jupiter.api.extension.ExtensionContext.Store;
 import org.junit.platform.commons.util.AnnotationUtils;
+import org.springframework.boot.SpringApplicationExtensionsKt;
+import org.springframework.test.context.TestContextManager;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -89,13 +97,32 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     }
 
     private ConnectionHolder findTestConnection(ExtensionContext extensionContext) {
+        if (isSpringExtensionEnabled()) {
+            return getConnectionFromSpringContext(extensionContext);
+        } else {
+            return getConnectionFromTestClass(extensionContext);
+        }
+    }
+
+    private ConnectionHolder getConnectionFromSpringContext(ExtensionContext extensionContext) {
+        Store springStore = extensionContext.getRoot().getStore(Namespace.create(SpringExtension.class));
+        TestContextManager testContextManager = (TestContextManager)springStore.get(extensionContext.getTestClass().get());
+        DataSource dataSource = testContextManager.getTestContext().getApplicationContext().getBean(DataSource.class);
+        try {
+            return new ConnectionHolderImpl(dataSource.getConnection());
+        } catch (SQLException e) {
+            throw new RuntimeException("Could not get connection from DataSource.");
+        }
+    }
+
+    private ConnectionHolder getConnectionFromTestClass(ExtensionContext extensionContext) {
         Class<?> testClass = extensionContext.getRequiredTestClass();
         ConnectionHolder conn = findConnection(extensionContext, testClass);
         return conn;
     }
 
-	private ConnectionHolder findConnection(ExtensionContext extensionContext, Class<?> testClass) {
-		try {
+    private ConnectionHolder findConnection(ExtensionContext extensionContext, Class<?> testClass) {
+        try {
             Optional<Field> fieldFound = Arrays.stream(testClass.getDeclaredFields()).
                     filter(f -> f.getType() == ConnectionHolder.class).
                     findFirst();
@@ -133,13 +160,13 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         } catch (Exception e) {
             throw new RuntimeException("Could not get database connection for test " + testClass, e);
         }
-		
-		if (testClass.getSuperclass() != null) {
-			return findConnection(extensionContext, testClass.getSuperclass());
-		}
-		
-		return null;
-	}
+
+        if (testClass.getSuperclass() != null) {
+            return findConnection(extensionContext, testClass.getSuperclass());
+        }
+
+        return null;
+    }
 
     /**
      * one test context (datasetExecutor, dbunitConfig etc..) per test
@@ -149,5 +176,9 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         Store store = context.getStore(namespace);
 
         return store.getOrComputeIfAbsent(testClass, (tc) -> new DBUnitTestContext(), DBUnitTestContext.class);
+    }
+
+    private boolean isSpringExtensionEnabled() {
+        return isOnClasspath("org.springframework.test.context.junit.jupiter.SpringExtension");
     }
 }
