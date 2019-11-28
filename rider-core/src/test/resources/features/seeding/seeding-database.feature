@@ -133,6 +133,7 @@ include::../../../../rider-cdi/src/test/resources/datasets/yml/users.yml[]
  """
 
 #{TIP: Source code of the above example can be https://github.com/database-rider/database-rider/blob/master/rider-cdi/src/test/java/com/github/database/rider/cdi/DBUnitCDIIt.java#L74[found here^].}
+#{IMPORTANT: Since `v1.8.0` you can also use `com.github.database.rider.cdi.api.DBRider` annotation to enable database rider, both activate the DBUnitInterceptor.}
 #cukedoctor-discrete
 When The following test is executed:
  """
@@ -145,7 +146,6 @@ include::../../../../rider-cdi/src/test/java/com/github/database/rider/cdi/DBUni
 <1> https://deltaspike.apache.org/documentation/test-control.html[CdiTestRunner^] is provided by https://deltaspike.apache.org[Apache Deltaspike^] but you should be able to use other CDI test runners.
 <2> Needed to activate DBUnit interceptor
 
-IMPORTANT: Since `v1.8.0` you can also use `com.github.database.rider.cdi.api.DBRider` annotation to enable database rider, both activate the DBUnitInterceptor.
 
  """
 
@@ -190,6 +190,7 @@ include::../../../../rider-junit5/src/test/resources/datasets/users.yml[]
 #{----}
 #{<1> Shortcut for `@Test` and `@ExtendWith(DBUnitExtension.class)`}
 #{====}
+#{TIP: The same works for SpringBoot projects using JUnit5, see an example https://github.com/database-rider/database-rider/tree/master/rider-examples/spring-boot-dbunit-sample[project here^].}
 #cukedoctor-discrete
 When The following junit5 test is executed
 
@@ -203,15 +204,11 @@ include::../../../../rider-junit5/src/test/java/com/github/database/rider/junit5
 <3> As JUnit5 requires *Java8* you can use lambdas in your tests;
 <4> DBUnitExtension will get connection by reflection so just declare a field or a method with `ConnectionHolder` as return type.
 
-
-TIP: The same works for SpringBoot projects using JUnit5, see an example https://github.com/database-rider/database-rider/tree/master/rider-examples/spring-boot-dbunit-sample[project here^].
-
-
  """
 
 Then The database should be seeded with the dataset content before test execution
 
-  Scenario: Seeding database in BDD tests with `Rider Cucumber`
+Scenario: Seeding database in BDD tests with `Rider Cucumber`
 
 DBUnit enters the BDD world through a dedicated JUNit runner which is based on https://cucumber.io/[Cucumber^] and https://deltaspike.apache.org/[Apache DeltaSpike^].
 
@@ -225,8 +222,7 @@ include::../../../../rider-examples/jpa-productivity-boosters/src/test/java/com/
 
 IMPORTANT: As cucumber doesn't work with JUnit Rules, see https://github.com/cucumber/cucumber-jvm/issues/393[this issue^], you won't be able to use Cucumber runner with _DBUnit Rule_, but you can use DataSetExecutor in `@Before`, see https://github.com/database-rider/database-rider/tree/master/rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/withoutcdi[example here^].
 
-[discrete]
-==== *Dependencies*
+====== *Dependencies*
 Here is a set of maven dependencies needed by Database Rider Cucumber:
 
 NOTE: Most of the dependencies, except CDI container implementation, are brought by Database Rider Cucumber module transitively.
@@ -242,16 +238,60 @@ include::../../../../pom.xml[tags=version]
 ----
 
 .Cucumber dependencies
-[source,xml,indent=0]
+[source,xml]
 ----
-include::../../../pom.xml[tags=cucumber-deps]
+<dependency> <!--1-->
+    <groupId>info.cukes</groupId>
+    <artifactId>cucumber-junit</artifactId>
+    <version>1.2.4</version>
+    <scope>test</scope>
+</dependency>
+<dependency> <!--1-->
+    <groupId>info.cukes</groupId>
+    <artifactId>cucumber-java</artifactId>
+    <version>1.2.4</version>
+    <scope>test</scope>
+</dependency>
 ----
-<1> You don't need to declare because it comes with Database Rider Cucumber module dependency.
+<1>  You don't need to declare because it comes with Database Rider Cucumber module dependency.
 
 .DeltaSpike and CDI dependency
-[source,xml,indent=0]
+[source,xml]
 ----
-include::../../../../rider-cdi/pom.xml[tags=deltaspike-cdi-deps]
+<dependency> <!--1-->
+    <groupId>org.apache.deltaspike.modules</groupId>
+    <artifactId>deltaspike-test-control-module-api</artifactId>
+    <version>${ds.version}</version>
+    <scope>test</scope>
+</dependency>
+
+<dependency> <!--1-->
+    <groupId>org.apache.deltaspike.core</groupId>
+    <artifactId>deltaspike-core-impl</artifactId>
+    <version>${ds.version}</version>
+    <scope>test</scope>
+</dependency>
+
+<dependency> <!--1-->
+    <groupId>org.apache.deltaspike.modules</groupId>
+    <artifactId>deltaspike-test-control-module-impl</artifactId>
+    <version>${ds.version}</version>
+    <scope>test</scope>
+</dependency>
+
+<dependency> <!--2-->
+    <groupId>org.apache.deltaspike.cdictrl</groupId>
+    <artifactId>deltaspike-cdictrl-owb</artifactId>
+    <version>${ds.version}</version>
+    <scope>test</scope>
+</dependency>
+
+<dependency>  <!--2-->
+    <groupId>org.apache.openwebbeans</groupId>
+    <artifactId>openwebbeans-impl</artifactId>
+    <version>1.6.2</version>
+    <scope>test</scope>
+</dependency>
 ----
 <2> Also comes with Rider Cucumber.
 <3> You can use CDI implementation of your choice.
