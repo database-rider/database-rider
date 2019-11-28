@@ -17,6 +17,7 @@
 package com.github.quarkus.sample;
 
 
+import com.github.database.rider.cdi.api.DBRider;
 import com.github.database.rider.cdi.api.DBUnitInterceptor;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetProvider;
@@ -42,7 +43,7 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 
 @QuarkusTest
-@DBUnitInterceptor
+@DBRider
 public class QuarkusDBUnitTest {
 
     @Inject

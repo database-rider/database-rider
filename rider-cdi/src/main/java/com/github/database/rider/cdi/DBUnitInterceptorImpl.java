@@ -11,6 +11,7 @@ import javax.interceptor.InvocationContext;
 import javax.persistence.EntityManager;
 import javax.transaction.UserTransaction;
 
+import com.github.database.rider.cdi.api.DBRider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;

@@ -1505,6 +1505,8 @@ public class DBUnitJUnit5Test {
 ----
 <1> DBUnit extension will get JDBC connection by reflection so you need to declare a *field* or *method* with `ConnectionHolder` as return type.
 
+IMPORTANT: If you use SpringBoot extension for JUnit5 you don't need to declare the field or method, see an https://github.com/database-rider/database-rider/blob/master/rider-examples/spring-boot-dbunit-sample/src/test/java/com/github/database/rider/springboot/SpringBootDBUnitTest.java#L19[example here^].
+
 TIP: You can configure JDBC connection using @DBUnit annotation or dbunit.yml, see <<JDBC Connection>>.
 
 [NOTE]

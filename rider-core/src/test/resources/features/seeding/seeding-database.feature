@@ -145,6 +145,8 @@ include::../../../../rider-cdi/src/test/java/com/github/database/rider/cdi/DBUni
 <1> https://deltaspike.apache.org/documentation/test-control.html[CdiTestRunner^] is provided by https://deltaspike.apache.org[Apache Deltaspike^] but you should be able to use other CDI test runners.
 <2> Needed to activate DBUnit interceptor
 
+IMPORTANT: Since `v1.8.0` you can also use `com.github.database.rider.cdi.api.DBRider` annotation to enable database rider, both activate the DBUnitInterceptor.
+
  """
 
 Then The database should be seeded with the dataset content before test execution
@@ -200,6 +202,8 @@ include::../../../../rider-junit5/src/test/java/com/github/database/rider/junit5
 <2> JUnit 5 runner;
 <3> As JUnit5 requires *Java8* you can use lambdas in your tests;
 <4> DBUnitExtension will get connection by reflection so just declare a field or a method with `ConnectionHolder` as return type.
+
+TIP: The same works for SpringBoot projects using JUnit5, see an example https://github.com/database-rider/database-rider/tree/master/rider-examples/spring-boot-dbunit-sample[project here^].
 
  """
 
