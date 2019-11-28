@@ -203,7 +203,9 @@ include::../../../../rider-junit5/src/test/java/com/github/database/rider/junit5
 <3> As JUnit5 requires *Java8* you can use lambdas in your tests;
 <4> DBUnitExtension will get connection by reflection so just declare a field or a method with `ConnectionHolder` as return type.
 
+
 TIP: The same works for SpringBoot projects using JUnit5, see an example https://github.com/database-rider/database-rider/tree/master/rider-examples/spring-boot-dbunit-sample[project here^].
+
 
  """
 
