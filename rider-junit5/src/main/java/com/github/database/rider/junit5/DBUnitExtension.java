@@ -19,7 +19,6 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 import org.junit.jupiter.api.extension.ExtensionContext.Store;
 import org.junit.platform.commons.util.AnnotationUtils;
-import org.springframework.boot.SpringApplicationExtensionsKt;
 import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -89,7 +88,6 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
                 LeakHunter leakHunter = dbUnitTestContext.getLeakHunter();
                 leakHunter.checkConnectionsAfterExecution();
             }
-
             riderRunner.runAfterTest(riderTestContext);
         } finally {
             riderRunner.teardown(riderTestContext);
@@ -97,7 +95,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     }
 
     private ConnectionHolder findTestConnection(ExtensionContext extensionContext) {
-        if (isSpringExtensionEnabled()) {
+        if (isSpringExtensionEnabled() && isSpringTestContextEnabled(extensionContext)) {
             return getConnectionFromSpringContext(extensionContext);
         } else {
             return getConnectionFromTestClass(extensionContext);
@@ -117,11 +115,11 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
 
     private ConnectionHolder getConnectionFromTestClass(ExtensionContext extensionContext) {
         Class<?> testClass = extensionContext.getRequiredTestClass();
-        ConnectionHolder conn = findConnection(extensionContext, testClass);
+        ConnectionHolder conn = findConnectionFromTestClass(extensionContext, testClass);
         return conn;
     }
 
-    private ConnectionHolder findConnection(ExtensionContext extensionContext, Class<?> testClass) {
+    private ConnectionHolder findConnectionFromTestClass(ExtensionContext extensionContext, Class<?> testClass) {
         try {
             Optional<Field> fieldFound = Arrays.stream(testClass.getDeclaredFields()).
                     filter(f -> f.getType() == ConnectionHolder.class).
@@ -162,7 +160,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         }
 
         if (testClass.getSuperclass() != null) {
-            return findConnection(extensionContext, testClass.getSuperclass());
+            return findConnectionFromTestClass(extensionContext, testClass.getSuperclass());
         }
 
         return null;
@@ -180,5 +178,10 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
 
     private boolean isSpringExtensionEnabled() {
         return isOnClasspath("org.springframework.test.context.junit.jupiter.SpringExtension");
+    }
+
+    private boolean isSpringTestContextEnabled(ExtensionContext extensionContext) {
+        Store springStore = extensionContext.getRoot().getStore(Namespace.create(SpringExtension.class));
+        return springStore.get(extensionContext.getTestClass().get()) != null;
     }
 }
