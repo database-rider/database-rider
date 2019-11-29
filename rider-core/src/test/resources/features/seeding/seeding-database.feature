@@ -146,6 +146,7 @@ include::../../../../rider-cdi/src/test/java/com/github/database/rider/cdi/DBUni
 <1> https://deltaspike.apache.org/documentation/test-control.html[CdiTestRunner^] is provided by https://deltaspike.apache.org[Apache Deltaspike^] but you should be able to use other CDI test runners.
 <2> Needed to activate DBUnit interceptor
 
+IMPORTANT: Since `v1.8.0` you can also use `com.github.database.rider.cdi.api.DBRider` annotation to enable database rider, both activate the DBUnitInterceptor.
 
  """
 
@@ -204,11 +205,15 @@ include::../../../../rider-junit5/src/test/java/com/github/database/rider/junit5
 <3> As JUnit5 requires *Java8* you can use lambdas in your tests;
 <4> DBUnitExtension will get connection by reflection so just declare a field or a method with `ConnectionHolder` as return type.
 
+TIP: The same works for SpringBoot projects using JUnit5, see an example https://github.com/database-rider/database-rider/tree/master/rider-examples/spring-boot-dbunit-sample[project here^].
+
+NOTE: If you use SpringBoot extension for JUnit5 you don’t need to declare the field or method, see an https://github.com/database-rider/database-rider/blob/master/rider-examples/spring-boot-dbunit-sample/src/test/java/com/github/database/rider/springboot/SpringBootDBUnitTest.java#L19[example here^].
+
  """
 
 Then The database should be seeded with the dataset content before test execution
 
-Scenario: Seeding database in BDD tests with `Rider Cucumber`
+  Scenario: Seeding database in BDD tests with `Rider Cucumber`
 
 DBUnit enters the BDD world through a dedicated JUNit runner which is based on https://cucumber.io/[Cucumber^] and https://deltaspike.apache.org/[Apache DeltaSpike^].
 
@@ -222,7 +227,8 @@ include::../../../../rider-examples/jpa-productivity-boosters/src/test/java/com/
 
 IMPORTANT: As cucumber doesn't work with JUnit Rules, see https://github.com/cucumber/cucumber-jvm/issues/393[this issue^], you won't be able to use Cucumber runner with _DBUnit Rule_, but you can use DataSetExecutor in `@Before`, see https://github.com/database-rider/database-rider/tree/master/rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/withoutcdi[example here^].
 
-====== *Dependencies*
+[discrete]
+==== *Dependencies*
 Here is a set of maven dependencies needed by Database Rider Cucumber:
 
 NOTE: Most of the dependencies, except CDI container implementation, are brought by Database Rider Cucumber module transitively.
@@ -238,7 +244,7 @@ include::../../../../pom.xml[tags=version]
 ----
 
 .Cucumber dependencies
-[source,xml]
+[source,xml,indent=0]
 ----
 <dependency> <!--1-->
     <groupId>info.cukes</groupId>
@@ -256,7 +262,7 @@ include::../../../../pom.xml[tags=version]
 <1>  You don't need to declare because it comes with Database Rider Cucumber module dependency.
 
 .DeltaSpike and CDI dependency
-[source,xml]
+[source,xml, indent=0]
 ----
 <dependency> <!--1-->
     <groupId>org.apache.deltaspike.modules</groupId>
