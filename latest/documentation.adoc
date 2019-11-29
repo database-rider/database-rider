@@ -195,6 +195,9 @@ include::../../../../rider-cdi/src/test/java/com/github/database/rider/cdi/DBUni
 <1> https://deltaspike.apache.org/documentation/test-control.html[CdiTestRunner^] is provided by https://deltaspike.apache.org[Apache Deltaspike^] but you should be able to use other CDI test runners.
 [discrete]
 <2> Needed to activate DBUnit interceptor
+[discrete]
+[discrete]
+IMPORTANT: Since `v1.8.0` you can also use `com.github.database.rider.cdi.api.DBRider` annotation to enable database rider, both activate the DBUnitInterceptor.
 
 
 ******
@@ -257,6 +260,12 @@ include::../../../../rider-junit5/src/test/java/com/github/database/rider/junit5
 <3> As JUnit5 requires *Java8* you can use lambdas in your tests;
 [discrete]
 <4> DBUnitExtension will get connection by reflection so just declare a field or a method with `ConnectionHolder` as return type.
+[discrete]
+[discrete]
+TIP: The same works for SpringBoot projects using JUnit5, see an example https://github.com/database-rider/database-rider/tree/master/rider-examples/spring-boot-dbunit-sample[project here^].
+[discrete]
+[discrete]
+NOTE: If you use SpringBoot extension for JUnit5 you don’t need to declare the field or method, see an https://github.com/database-rider/database-rider/blob/master/rider-examples/spring-boot-dbunit-sample/src/test/java/com/github/database/rider/springboot/SpringBootDBUnitTest.java#L19[example here^].
 
 
 ******
@@ -296,7 +305,8 @@ include::../../../../rider-examples/jpa-productivity-boosters/src/test/java/com/
 
 IMPORTANT: As cucumber doesn't work with JUnit Rules, see https://github.com/cucumber/cucumber-jvm/issues/393[this issue^], you won't be able to use Cucumber runner with _DBUnit Rule_, but you can use DataSetExecutor in `@Before`, see https://github.com/database-rider/database-rider/tree/master/rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/withoutcdi[example here^].
 
-====== *Dependencies*
+[discrete]
+==== *Dependencies*
 Here is a set of maven dependencies needed by Database Rider Cucumber:
 
 NOTE: Most of the dependencies, except CDI container implementation, are brought by Database Rider Cucumber module transitively.
@@ -304,67 +314,67 @@ NOTE: Most of the dependencies, except CDI container implementation, are brought
 [source,xml]
 ----
 <dependency>
-     <groupId>com.github.database-rider</groupId>
-     <artifactId>rider-cucumber</artifactId>
+   <groupId>com.github.database-rider</groupId>
+   <artifactId>rider-cucumber</artifactId>
 include::../../../../pom.xml[tags=version]
-     <scope>test</scope>
+   <scope>test</scope>
 </dependency>
 ----
 
 .Cucumber dependencies
-[source,xml]
+[source,xml,indent=0]
 ----
 <dependency> <!--1-->
-  <groupId>info.cukes</groupId>
-  <artifactId>cucumber-junit</artifactId>
-  <version>1.2.4</version>
-  <scope>test</scope>
+<groupId>info.cukes</groupId>
+<artifactId>cucumber-junit</artifactId>
+<version>1.2.4</version>
+<scope>test</scope>
 </dependency>
 <dependency> <!--1-->
-  <groupId>info.cukes</groupId>
-  <artifactId>cucumber-java</artifactId>
-  <version>1.2.4</version>
-  <scope>test</scope>
+<groupId>info.cukes</groupId>
+<artifactId>cucumber-java</artifactId>
+<version>1.2.4</version>
+<scope>test</scope>
 </dependency>
 ----
 <1>  You don't need to declare because it comes with Database Rider Cucumber module dependency.
 
 .DeltaSpike and CDI dependency
-[source,xml]
+[source,xml, indent=0]
 ----
 <dependency> <!--1-->
-  <groupId>org.apache.deltaspike.modules</groupId>
-  <artifactId>deltaspike-test-control-module-api</artifactId>
-  <version>${ds.version}</version>
-  <scope>test</scope>
+<groupId>org.apache.deltaspike.modules</groupId>
+<artifactId>deltaspike-test-control-module-api</artifactId>
+<version>${ds.version}</version>
+<scope>test</scope>
 </dependency>
 
 <dependency> <!--1-->
-  <groupId>org.apache.deltaspike.core</groupId>
-  <artifactId>deltaspike-core-impl</artifactId>
-  <version>${ds.version}</version>
-  <scope>test</scope>
+<groupId>org.apache.deltaspike.core</groupId>
+<artifactId>deltaspike-core-impl</artifactId>
+<version>${ds.version}</version>
+<scope>test</scope>
 </dependency>
 
 <dependency> <!--1-->
-  <groupId>org.apache.deltaspike.modules</groupId>
-  <artifactId>deltaspike-test-control-module-impl</artifactId>
-  <version>${ds.version}</version>
-  <scope>test</scope>
+<groupId>org.apache.deltaspike.modules</groupId>
+<artifactId>deltaspike-test-control-module-impl</artifactId>
+<version>${ds.version}</version>
+<scope>test</scope>
 </dependency>
 
 <dependency> <!--2-->
-  <groupId>org.apache.deltaspike.cdictrl</groupId>
-  <artifactId>deltaspike-cdictrl-owb</artifactId>
-  <version>${ds.version}</version>
-  <scope>test</scope>
+<groupId>org.apache.deltaspike.cdictrl</groupId>
+<artifactId>deltaspike-cdictrl-owb</artifactId>
+<version>${ds.version}</version>
+<scope>test</scope>
 </dependency>
 
 <dependency>  <!--2-->
-  <groupId>org.apache.openwebbeans</groupId>
-  <artifactId>openwebbeans-impl</artifactId>
-  <version>1.6.2</version>
-  <scope>test</scope>
+<groupId>org.apache.openwebbeans</groupId>
+<artifactId>openwebbeans-impl</artifactId>
+<version>1.6.2</version>
+<scope>test</scope>
 </dependency>
 ----
 <2> Also comes with Rider Cucumber.

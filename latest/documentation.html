@@ -538,10 +538,7 @@ table.CodeRay td.code>pre{padding:0}
        <li><a href="#_seed_database_with_code_dbunit_rule_code">2.1. Seed database with <code>DBUnit Rule</code></a></li> 
        <li><a href="#_seed_database_with_code_dbunit_interceptor_code">2.2. Seed database with <code>DBUnit Interceptor</code></a></li> 
        <li><a href="#_seed_database_with_code_junit_5_extension_code">2.3. Seed database with <code>JUnit 5 extension</code></a></li> 
-       <li><a href="#_seeding_database_in_bdd_tests_with_code_rider_cucumber_code">2.4. Seeding database in BDD tests with <code>Rider Cucumber</code></a> 
-        <ul class="sectlevel5"> 
-         <li><a href="#_strong_dependencies_strong_4"><strong>Dependencies</strong></a></li> 
-        </ul> </li> 
+       <li><a href="#_seeding_database_in_bdd_tests_with_code_rider_cucumber_code">2.4. Seeding database in BDD tests with <code>Rider Cucumber</code></a></li> 
       </ul> </li> 
      <li><a href="#DataSet-creation">3. <strong>DataSet creation</strong></a> 
       <ul class="sectlevel2"> 
@@ -1010,7 +1007,7 @@ FOLLOWER:
              </tr> 
              <tr> 
               <td><i class="conum" data-value="2"></i><b>2</b></td> 
-              <td>Needed to activate DBUnit interceptor</td> 
+              <td>Needed to activate DBUnit interceptor<br> IMPORTANT: Since <code>v1.8.0</code> you can also use <code>com.github.database.rider.cdi.api.DBRider</code> annotation to enable database rider, both activate the DBUnitInterceptor.</td> 
              </tr> 
             </tbody> 
            </table> 
@@ -1144,7 +1141,10 @@ FOLLOWER:
              </tr> 
              <tr> 
               <td><i class="conum" data-value="4"></i><b>4</b></td> 
-              <td>DBUnitExtension will get connection by reflection so just declare a field or a method with <code>ConnectionHolder</code> as return type.</td> 
+              <td>DBUnitExtension will get connection by reflection so just declare a field or a method with <code>ConnectionHolder</code> as return type.<br> TIP: The same works for SpringBoot projects using JUnit5, see an example <a href="https://github.com/database-rider/database-rider/tree/master/rider-examples/spring-boot-dbunit-sample" target="_blank" rel="noopener">project here</a>. 
+               <div class="paragraph"> 
+                <p>NOTE: If you use SpringBoot extension for JUnit5 you don’t need to declare the field or method, see an <a href="https://github.com/database-rider/database-rider/blob/master/rider-examples/spring-boot-dbunit-sample/src/test/java/com/github/database/rider/springboot/SpringBootDBUnitTest.java#L19" target="_blank" rel="noopener">example here</a>.</p> 
+               </div></td> 
              </tr> 
             </tbody> 
            </table> 
@@ -1256,132 +1256,131 @@ FOLLOWER:
         </tbody> 
        </table> 
       </div> 
-      <div class="sect5"> 
-       <h6 id="_strong_dependencies_strong_4"><a class="anchor" href="#_strong_dependencies_strong_4"></a><strong>Dependencies</strong></h6> 
-       <div class="paragraph"> 
-        <p>Here is a set of maven dependencies needed by Database Rider Cucumber:</p> 
-       </div> 
-       <div class="admonitionblock note"> 
-        <table> 
-         <tbody> 
-          <tr> 
-           <td class="icon"> <i class="fa icon-note" title="Note"></i> </td> 
-           <td class="content"> Most of the dependencies, except CDI container implementation, are brought by Database Rider Cucumber module transitively. </td> 
-          </tr> 
-         </tbody> 
-        </table> 
-       </div> 
-       <div class="listingblock"> 
-        <div class="content"> 
-         <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
-     <span class="tag">&lt;groupId&gt;</span>com.github.database-rider<span class="tag">&lt;/groupId&gt;</span>
-     <span class="tag">&lt;artifactId&gt;</span>rider-cucumber<span class="tag">&lt;/artifactId&gt;</span>
+      <h4 id="_strong_dependencies_strong_4" class="discrete"><strong>Dependencies</strong></h4> 
+      <div class="paragraph"> 
+       <p>Here is a set of maven dependencies needed by Database Rider Cucumber:</p> 
+      </div> 
+      <div class="admonitionblock note"> 
+       <table> 
+        <tbody> 
+         <tr> 
+          <td class="icon"> <i class="fa icon-note" title="Note"></i> </td> 
+          <td class="content"> Most of the dependencies, except CDI container implementation, are brought by Database Rider Cucumber module transitively. </td> 
+         </tr> 
+        </tbody> 
+       </table> 
+      </div> 
+      <div class="listingblock"> 
+       <div class="content"> 
+        <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
+   <span class="tag">&lt;groupId&gt;</span>com.github.database-rider<span class="tag">&lt;/groupId&gt;</span>
+   <span class="tag">&lt;artifactId&gt;</span>rider-cucumber<span class="tag">&lt;/artifactId&gt;</span>
     <span class="tag">&lt;version&gt;</span>1.8.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
-     <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+   <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
-        </div> 
        </div> 
-       <div class="listingblock"> 
-        <div class="title">
-          Cucumber dependencies 
-        </div> 
-        <div class="content"> 
-         <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
-  <span class="tag">&lt;groupId&gt;</span>info.cukes<span class="tag">&lt;/groupId&gt;</span>
-  <span class="tag">&lt;artifactId&gt;</span>cucumber-junit<span class="tag">&lt;/artifactId&gt;</span>
-  <span class="tag">&lt;version&gt;</span>1.2.4<span class="tag">&lt;/version&gt;</span>
-  <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+      </div> 
+      <div class="listingblock"> 
+       <div class="title">
+         Cucumber dependencies 
+       </div> 
+       <div class="content"> 
+        <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="tag">&lt;groupId&gt;</span>info.cukes<span class="tag">&lt;/groupId&gt;</span>
+<span class="tag">&lt;artifactId&gt;</span>cucumber-junit<span class="tag">&lt;/artifactId&gt;</span>
+<span class="tag">&lt;version&gt;</span>1.2.4<span class="tag">&lt;/version&gt;</span>
+<span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span>
 <span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
-  <span class="tag">&lt;groupId&gt;</span>info.cukes<span class="tag">&lt;/groupId&gt;</span>
-  <span class="tag">&lt;artifactId&gt;</span>cucumber-java<span class="tag">&lt;/artifactId&gt;</span>
-  <span class="tag">&lt;version&gt;</span>1.2.4<span class="tag">&lt;/version&gt;</span>
-  <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+<span class="tag">&lt;groupId&gt;</span>info.cukes<span class="tag">&lt;/groupId&gt;</span>
+<span class="tag">&lt;artifactId&gt;</span>cucumber-java<span class="tag">&lt;/artifactId&gt;</span>
+<span class="tag">&lt;version&gt;</span>1.2.4<span class="tag">&lt;/version&gt;</span>
+<span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
-        </div> 
        </div> 
-       <div class="colist arabic"> 
-        <table> 
-         <tbody> 
-          <tr> 
-           <td><i class="conum" data-value="1"></i><b>1</b></td> 
-           <td>You don’t need to declare because it comes with Database Rider Cucumber module dependency.</td> 
-          </tr> 
-         </tbody> 
-        </table> 
+      </div> 
+      <div class="colist arabic"> 
+       <table> 
+        <tbody> 
+         <tr> 
+          <td><i class="conum" data-value="1"></i><b>1</b></td> 
+          <td>You don’t need to declare because it comes with Database Rider Cucumber module dependency.</td> 
+         </tr> 
+        </tbody> 
+       </table> 
+      </div> 
+      <div class="listingblock"> 
+       <div class="title">
+         DeltaSpike and CDI dependency 
        </div> 
-       <div class="listingblock"> 
-        <div class="title">
-          DeltaSpike and CDI dependency 
-        </div> 
-        <div class="content"> 
-         <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
-  <span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.modules<span class="tag">&lt;/groupId&gt;</span>
-  <span class="tag">&lt;artifactId&gt;</span>deltaspike-test-control-module-api<span class="tag">&lt;/artifactId&gt;</span>
-  <span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
-  <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+       <div class="content"> 
+        <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.modules<span class="tag">&lt;/groupId&gt;</span>
+<span class="tag">&lt;artifactId&gt;</span>deltaspike-test-control-module-api<span class="tag">&lt;/artifactId&gt;</span>
+<span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
+<span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span>
 
 <span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
-  <span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.core<span class="tag">&lt;/groupId&gt;</span>
-  <span class="tag">&lt;artifactId&gt;</span>deltaspike-core-impl<span class="tag">&lt;/artifactId&gt;</span>
-  <span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
-  <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+<span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.core<span class="tag">&lt;/groupId&gt;</span>
+<span class="tag">&lt;artifactId&gt;</span>deltaspike-core-impl<span class="tag">&lt;/artifactId&gt;</span>
+<span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
+<span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span>
 
 <span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="1"></i><b>(1)</b>
-  <span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.modules<span class="tag">&lt;/groupId&gt;</span>
-  <span class="tag">&lt;artifactId&gt;</span>deltaspike-test-control-module-impl<span class="tag">&lt;/artifactId&gt;</span>
-  <span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
-  <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+<span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.modules<span class="tag">&lt;/groupId&gt;</span>
+<span class="tag">&lt;artifactId&gt;</span>deltaspike-test-control-module-impl<span class="tag">&lt;/artifactId&gt;</span>
+<span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
+<span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span>
 
 <span class="tag">&lt;dependency&gt;</span> <i class="conum" data-value="2"></i><b>(2)</b>
-  <span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.cdictrl<span class="tag">&lt;/groupId&gt;</span>
-  <span class="tag">&lt;artifactId&gt;</span>deltaspike-cdictrl-owb<span class="tag">&lt;/artifactId&gt;</span>
-  <span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
-  <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+<span class="tag">&lt;groupId&gt;</span>org.apache.deltaspike.cdictrl<span class="tag">&lt;/groupId&gt;</span>
+<span class="tag">&lt;artifactId&gt;</span>deltaspike-cdictrl-owb<span class="tag">&lt;/artifactId&gt;</span>
+<span class="tag">&lt;version&gt;</span>${ds.version}<span class="tag">&lt;/version&gt;</span>
+<span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span>
 
 <span class="tag">&lt;dependency&gt;</span>  <i class="conum" data-value="2"></i><b>(2)</b>
-  <span class="tag">&lt;groupId&gt;</span>org.apache.openwebbeans<span class="tag">&lt;/groupId&gt;</span>
-  <span class="tag">&lt;artifactId&gt;</span>openwebbeans-impl<span class="tag">&lt;/artifactId&gt;</span>
-  <span class="tag">&lt;version&gt;</span>1.6.2<span class="tag">&lt;/version&gt;</span>
-  <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
+<span class="tag">&lt;groupId&gt;</span>org.apache.openwebbeans<span class="tag">&lt;/groupId&gt;</span>
+<span class="tag">&lt;artifactId&gt;</span>openwebbeans-impl<span class="tag">&lt;/artifactId&gt;</span>
+<span class="tag">&lt;version&gt;</span>1.6.2<span class="tag">&lt;/version&gt;</span>
+<span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
+       </div> 
+      </div> 
+      <div class="colist arabic"> 
+       <table> 
+        <tbody> 
+         <tr> 
+          <td><i class="conum" data-value="1"></i><b>1</b></td> 
+          <td>Also comes with Rider Cucumber.</td> 
+         </tr> 
+         <tr> 
+          <td><i class="conum" data-value="2"></i><b>2</b></td> 
+          <td>You can use CDI implementation of your choice.</td> 
+         </tr> 
+        </tbody> 
+       </table> 
+      </div> 
+      <div class="exampleblock"> 
+       <div class="content"> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Given 
+          </dt> 
+          <dd> 
+           <p>The following feature <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
+         </dl> 
         </div> 
-       </div> 
-       <div class="colist arabic"> 
-        <table> 
-         <tbody> 
-          <tr> 
-           <td><i class="conum" data-value="1"></i><b>1</b></td> 
-           <td>Also comes with Rider Cucumber.</td> 
-          </tr> 
-          <tr> 
-           <td><i class="conum" data-value="2"></i><b>2</b></td> 
-           <td>You can use CDI implementation of your choice.</td> 
-          </tr> 
-         </tbody> 
-        </table> 
-       </div> 
-       <div class="exampleblock"> 
-        <div class="content"> 
-         <div class="dlist"> 
-          <dl> 
-           <dt class="hdlist1">
-             Given 
-           </dt> 
-           <dd> 
-            <p>The following feature <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-           </dd> 
-          </dl> 
-         </div> 
-         <div class="sidebarblock"> 
-          <div class="content"> 
-           <div class="listingblock"> 
-            <div class="content"> 
-             <pre>Feature: Contacts test
+        <div class="sidebarblock"> 
+         <div class="content"> 
+          <div class="listingblock"> 
+           <div class="content"> 
+            <pre>Feature: Contacts test
   As a user of contacts repository
   I want to crud contacts
   So that I can expose contacts service
@@ -1405,25 +1404,25 @@ FOLLOWER:
     Given we have a list of contacts
     When we delete contact by id 1
     Then we should not find contact 1</pre> 
-            </div> 
            </div> 
           </div> 
          </div> 
-         <div class="dlist"> 
-          <dl> 
-           <dt class="hdlist1">
-             And 
-           </dt> 
-           <dd> 
-            <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-           </dd> 
-          </dl> 
-         </div> 
-         <div class="sidebarblock"> 
-          <div class="content"> 
-           <div class="listingblock"> 
-            <div class="content"> 
-             <pre>CONTACT:
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            And 
+          </dt> 
+          <dd> 
+           <p>The following dataset <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
+         </dl> 
+        </div> 
+        <div class="sidebarblock"> 
+         <div class="content"> 
+          <div class="listingblock"> 
+           <div class="content"> 
+            <pre>CONTACT:
   - ID: 1
     NAME: "deltaspike"
     EMAIL: "users@deltaspike.apache.org"
@@ -1446,25 +1445,25 @@ COMPANY:
     NAME: "Pivotal"
   - ID: 4
     NAME: "Google"</pre> 
-            </div> 
            </div> 
           </div> 
          </div> 
-         <div class="dlist"> 
-          <dl> 
-           <dt class="hdlist1">
-             And 
-           </dt> 
-           <dd> 
-            <p>The following Cucumber test <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-           </dd> 
-          </dl> 
-         </div> 
-         <div class="sidebarblock"> 
-          <div class="content"> 
-           <div class="listingblock"> 
-            <div class="content"> 
-             <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.github.database.rider.examples.cucumber</span>;
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            And 
+          </dt> 
+          <dd> 
+           <p>The following Cucumber test <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
+         </dl> 
+        </div> 
+        <div class="sidebarblock"> 
+         <div class="content"> 
+          <div class="listingblock"> 
+           <div class="content"> 
+            <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.github.database.rider.examples.cucumber</span>;
 
 <span class="keyword">import</span> <span class="include">com.github.database.rider.cucumber.CdiCucumberTestRunner</span>;
 <span class="keyword">import</span> <span class="include">cucumber.api.CucumberOptions</span>;
@@ -1479,25 +1478,25 @@ COMPANY:
 )
 <span class="directive">public</span> <span class="type">class</span> <span class="class">ContactFeature</span> {
 }</code></pre> 
-            </div> 
            </div> 
           </div> 
          </div> 
-         <div class="dlist"> 
-          <dl> 
-           <dt class="hdlist1">
-             When 
-           </dt> 
-           <dd> 
-            <p>The following cucumber steps are executed <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-           </dd> 
-          </dl> 
-         </div> 
-         <div class="sidebarblock"> 
-          <div class="content"> 
-           <div class="listingblock"> 
-            <div class="content"> 
-             <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.github.database.rider.examples.cucumber</span>;
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            When 
+          </dt> 
+          <dd> 
+           <p>The following cucumber steps are executed <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
+         </dl> 
+        </div> 
+        <div class="sidebarblock"> 
+         <div class="content"> 
+          <div class="listingblock"> 
+           <div class="content"> 
+            <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">package</span> <span class="namespace">com.github.database.rider.examples.cucumber</span>;
 
 <span class="keyword">import</span> <span class="include">com.github.database.rider.core.api.dataset.DataSet</span>;
 <span class="keyword">import</span> <span class="include">com.github.database.rider.cdi.api.DBUnitInterceptor</span>;
@@ -1550,48 +1549,47 @@ COMPANY:
         assertEquals(result, count);
     }
 }</code></pre> 
-            </div> 
-           </div> 
-           <div class="colist arabic"> 
-            <table> 
-             <tbody> 
-              <tr> 
-               <td><i class="conum" data-value="1"></i><b>1</b></td> 
-               <td>Activates DBUnit CDI interceptor</td> 
-              </tr> 
-              <tr> 
-               <td><i class="conum" data-value="2"></i><b>2</b></td> 
-               <td>As the Cucumber cdi runner enables CDI, you can use injection into your Cucumber steps.</td> 
-              </tr> 
-              <tr> 
-               <td><i class="conum" data-value="3"></i><b>3</b></td> 
-               <td>Dataset is prepared before step execution by <code>@DBUnitInterceptor</code>.</td> 
-              </tr> 
-             </tbody> 
-            </table> 
            </div> 
           </div> 
+          <div class="colist arabic"> 
+           <table> 
+            <tbody> 
+             <tr> 
+              <td><i class="conum" data-value="1"></i><b>1</b></td> 
+              <td>Activates DBUnit CDI interceptor</td> 
+             </tr> 
+             <tr> 
+              <td><i class="conum" data-value="2"></i><b>2</b></td> 
+              <td>As the Cucumber cdi runner enables CDI, you can use injection into your Cucumber steps.</td> 
+             </tr> 
+             <tr> 
+              <td><i class="conum" data-value="3"></i><b>3</b></td> 
+              <td>Dataset is prepared before step execution by <code>@DBUnitInterceptor</code>.</td> 
+             </tr> 
+            </tbody> 
+           </table> 
+          </div> 
          </div> 
-         <div class="admonitionblock tip"> 
-          <table> 
-           <tbody> 
-            <tr> 
-             <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
-             <td class="content"> Source code for the example above can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactSteps.java#L17" target="_blank" rel="noopener">found here</a>. </td> 
-            </tr> 
-           </tbody> 
-          </table> 
-         </div> 
-         <div class="dlist"> 
-          <dl> 
-           <dt class="hdlist1">
-             Then 
-           </dt> 
-           <dd> 
-            <p>The database should be seeded with the dataset content before step execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
-           </dd> 
-          </dl> 
-         </div> 
+        </div> 
+        <div class="admonitionblock tip"> 
+         <table> 
+          <tbody> 
+           <tr> 
+            <td class="icon"> <i class="fa icon-tip" title="Tip"></i> </td> 
+            <td class="content"> Source code for the example above can be <a href="https://github.com/database-rider/database-rider/blob/master/rider-examples/jpa-productivity-boosters/src/test/java/com/github/database/rider/examples/cucumber/ContactSteps.java#L17" target="_blank" rel="noopener">found here</a>. </td> 
+           </tr> 
+          </tbody> 
+         </table> 
+        </div> 
+        <div class="dlist"> 
+         <dl> 
+          <dt class="hdlist1">
+            Then 
+          </dt> 
+          <dd> 
+           <p>The database should be seeded with the dataset content before step execution <span class="icon green"><i class="fa fa-thumbs-up" title="Passed"></i></span></p> 
+          </dd> 
+         </dl> 
         </div> 
        </div> 
       </div> 
@@ -4064,8 +4062,8 @@ public @interface AnotherMetaDataSet {
   </div> 
   <div id="footer" style="color:gray;font-size:11px">
     Generated by 
-   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.2.1</a> - Nov 28, 2019 10:44:04 PM 
-   <span style="float:right;font-size:11px"> Execution time: 10.881 seconds</span> 
+   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 1.2.1</a> - Nov 29, 2019 8:25:46 AM 
+   <span style="float:right;font-size:11px"> Execution time: 11.809 seconds</span> 
   </div> 
   <style>  
 
