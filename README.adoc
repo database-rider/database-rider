@@ -174,7 +174,7 @@ This module is the basis for subsequent modules. It contains a JUnit rule (shown
 <dependency>
       <groupId>com.github.database-rider</groupId>
       <artifactId>rider-core</artifactId>
-      <version>1.7.3</version>
+      <version>1.8.0</version>
       <scope>test</scope>
 </dependency>
 ----
@@ -1210,7 +1210,7 @@ If you use CDI in your tests then you should give a try in Database Rider https:
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-cdi</artifactId>
-    <version>1.7.3</version>
+    <version>1.8.0</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -1277,7 +1277,7 @@ NOTE: If you don't use CDI you'll need to https://github.com/database-rider/data
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-cucumber</artifactId>
-    <version>1.7.3</version>
+    <version>1.8.0</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -1482,7 +1482,7 @@ http://junit.org/junit5/[JUnit 5] is the new version of JUnit and comes with a n
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-junit5</artifactId>
-    <version>1.7.3</version>
+    <version>1.8.0</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -1505,7 +1505,13 @@ public class DBUnitJUnit5Test {
 ----
 <1> DBUnit extension will get JDBC connection by reflection so you need to declare a *field* or *method* with `ConnectionHolder` as return type.
 
-IMPORTANT: If you use SpringBoot extension for JUnit5 you don't need to declare the field or method, see an https://github.com/database-rider/database-rider/blob/master/rider-examples/spring-boot-dbunit-sample/src/test/java/com/github/database/rider/springboot/SpringBootDBUnitTest.java#L19[example here^].
+[IMPORTANT]
+====
+
+If you use SpringBoot extension for JUnit5 you don't need to declare the field or method, see an https://github.com/database-rider/database-rider/blob/master/rider-examples/spring-boot-dbunit-sample/src/test/java/com/github/database/rider/springboot/SpringBootDBUnitTest.java#L19[example here^].
+
+TIP: If you're using JUnit4 and SpringTestRunner, see <<Spring, Rider Spring module>>
+====
 
 TIP: You can configure JDBC connection using @DBUnit annotation or dbunit.yml, see <<JDBC Connection>>.
 
@@ -1542,12 +1548,12 @@ Add Database Rider Spring extension to your project
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-spring</artifactId>
-    <version>1.7.3</version>
+    <version>1.8.0</version>
     <scope>test</scope>
 </dependency>
 ----
 
-To enable Database Rider tests use `@DBRider` annotation, example:
+To enable Database Rider tests use `@DBRider` annotation (from `rider-spring` module), example:
 
 [source, java, linenums]
 ----
@@ -1572,7 +1578,8 @@ public class SpringBootDBUnitTest {
 
 Database Rider will access to database via dataSource registered in application context.
 
-TIP: Complete source code of example above can be found in the https://github.com/database-rider/database-rider/blob/master/rider-examples/spring-boot-dbunit-sample/src/test/java/com/github/database/rider/springboot/SpringBootDBUnitTest.java[sample^].
+IMPORTANT: This module is designed to work with *JUnit4* and *SpringRunner*, for JUnit5 please use `@DBRider` annotation from `JUnit5` module, see an https://github.com/database-rider/database-rider/blob/master/rider-examples/spring-boot-dbunit-sample/src/test/java/com/github/database/rider/springboot/SpringBootDBUnitTest.java#L19[example here^].
+
 
 == Quarkus
 
