@@ -22,13 +22,13 @@ import static com.github.database.rider.core.util.EntityManagerProvider.tx;
 public class TransactionIt {
 
     @Rule
-    public EntityManagerProvider emProvider = EntityManagerProvider.instance("rules-it");
+    public EntityManagerProvider emProvider = EntityManagerProvider.newInstance("rules-it");
 
     @Rule
-    public DBUnitRule dbUnitRule = DBUnitRule.instance("TransactionIt",emProvider.connection());
+    public DBUnitRule dbUnitRule = DBUnitRule.instance("TransactionIt", emProvider.connection());
 
     @Test
-    @DataSet(cleanBefore = true,executorId = "TransactionIt")
+    @DataSet(cleanBefore = true, executorId = "TransactionIt")
     @ExpectedDataSet(value = "yml/expectedUsersRegex.yml")
     public void shouldManageTransactionInsideTest() {
         User u = new User();
@@ -43,7 +43,7 @@ public class TransactionIt {
 
     //tag::transaction[]
     @Test
-    @DataSet(cleanBefore = true, transactional = true,executorId = "TransactionIt")
+    @DataSet(cleanBefore = true, transactional = true, executorId = "TransactionIt")
     @ExpectedDataSet(value = "yml/expectedUsersRegex.yml")
     @DBUnit(cacheConnection = true)
     public void shouldManageTransactionAutomatically() {

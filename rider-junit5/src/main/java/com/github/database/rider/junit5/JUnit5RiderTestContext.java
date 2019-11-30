@@ -32,6 +32,5 @@ public class JUnit5RiderTestContext extends AbstractRiderTestContext {
     @Override
     public <T extends Annotation> T getClassAnnotation(Class<T> clazz) {
         return AnnotationUtils.findAnnotation(extensionContext.getTestClass(), clazz).orElse(null);
-
     }
 }

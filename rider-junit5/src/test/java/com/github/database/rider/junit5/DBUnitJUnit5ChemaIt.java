@@ -17,7 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Created by pestano on 26/10/17.
  */
 @RunWith(JUnitPlatform.class)
-@DataSet(cleanBefore = true)
 public class DBUnitJUnit5ChemaIt {
 
     private ConnectionHolder connectionHolder = () ->
@@ -25,14 +24,14 @@ public class DBUnitJUnit5ChemaIt {
 
 
     @DBRider
-    @DataSet(value = "usersWithTweetAndSchema.yml")
+    @DataSet(value = "usersWithTweetAndSchema.yml", executorId = "schemaIt")
     public void shouldListUsers() {
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
         assertThat(users).isNotNull().isNotEmpty().hasSize(2);
     }
 
     @DBRider
-    @DataSet("usersWithTweetAndSchema.yml") //no need for clean before because DBUnit uses CLEAN_INSERT seeding strategy which clears involved tables before seeding
+    @DataSet(value = "usersWithTweetAndSchema.yml", executorId = "schemaIt") //no need for clean before because DBUnit uses CLEAN_INSERT seeding strategy which clears involved tables before seeding
     public void shouldUpdateUser() {
         User user = (User) EntityManagerProvider.em().createQuery("select u from User u  where u.id = 1").getSingleResult();
         assertThat(user).isNotNull();
@@ -45,7 +44,7 @@ public class DBUnitJUnit5ChemaIt {
     }
 
     @DBRider
-    @DataSet(value = "usersWithTweetAndSchema.yml", transactional = true, cleanBefore = true)
+    @DataSet(value = "usersWithTweetAndSchema.yml", transactional = true, cleanBefore = true, executorId = "schemaIt")
     @ExpectedDataSet("expectedUser.yml")
     public void shouldDeleteUser() {
         User user = (User) EntityManagerProvider.em().createQuery("select u from User u  where u.id = 1").getSingleResult();
