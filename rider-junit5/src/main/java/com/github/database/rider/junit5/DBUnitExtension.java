@@ -179,8 +179,11 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     }
 
     private boolean isSpringTestContextEnabled(ExtensionContext extensionContext) {
+        if(!extensionContext.getTestClass().isPresent()) {
+            return false;
+        }
         Store springStore = extensionContext.getRoot().getStore(Namespace.create(SpringExtension.class));
-        return springStore.get(extensionContext.getTestClass().get()) != null;
+        return springStore != null && springStore.get(extensionContext.getTestClass().get()) != null;
     }
 
     private boolean isCachedConnection(DataSetExecutor executor) {

@@ -1,6 +1,5 @@
 package com.github.database.rider.springboot;
 
-import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.junit5.api.DBRider;
@@ -36,7 +35,7 @@ public class SpringBootDBUnitTest {
     public void shouldDeleteUser() {
         assertThat(userRepository).isNotNull();
         assertThat(userRepository.count()).isEqualTo(3);
-        userRepository.delete(userRepository.findById(2L).get());
+        userRepository.findById(2L).ifPresent(userRepository::delete);
         //assertThat(userRepository.count()).isEqualTo(2); //assertion is made by @ExpectedDataset
     }
 
