@@ -3,6 +3,7 @@ package com.github.database.rider.core.exporter;
 import com.github.database.rider.core.DBUnitRule;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetFormat;
+import com.github.database.rider.core.api.exporter.BuilderType;
 import com.github.database.rider.core.api.exporter.DataSetExportConfig;
 import com.github.database.rider.core.api.exporter.ExportDataSet;
 import com.github.database.rider.core.configuration.DataSetConfig;
@@ -232,11 +233,23 @@ public class ExportDataSetIt {
 
     }
 
+    @Test
+    @DataSet("datasets/yml/users.yml") //<1>
+    @ExportDataSet(format = DataSetFormat.XML, outputName = "target/exported/xml/AllTables.xml", builderType = BuilderType.DEFAULT)
+    public void shouldExportDataSetAsBuilderInDefaultSyntax() {
+        //AllTables.java file containing DataSetBuilder code will be generated along with AllTables.xml file.
+    }
+
+    @Test
+    @DataSet("datasets/yml/users.yml") //<1>
+    @ExportDataSet(format = DataSetFormat.XML, outputName = "target/exported/xml/AllTables2.xml", builderType = BuilderType.COLUMNS_VALUES)
+    public void shouldExportDataSetAsBuilderInColumnValuesSyntax() {
+        //AllTables.java file containing DataSetBuilder code will be generated along with AllTables2.xml file.
+    }
 
     @AfterClass
     public static void assertGeneratedDataSets() {
     		assertXMLFileContent("target/exported/xml/allTables.xml");
-    		
     		assertXMLFileContent("target/exported/xml_dtd/allTables.xml");
     		assertDTDFileContent("target/exported/xml_dtd/allTables.dtd");
     		
@@ -330,6 +343,56 @@ public class ExportDataSetIt {
                         "  - ID: 1" + NEW_LINE +
                         "    USER_ID: 1" + NEW_LINE +
                         "    FOLLOWER_ID: 2");
+
+        File datasetBuilderInDefaultSyntax = new File("target/exported/xml/AllTables.java");
+        assertThat(contentOf(datasetBuilderInDefaultSyntax)).
+                contains("DataSetBuilder builder = new DataSetBuilder();" + NEW_LINE +
+                        "IDataSet dataSet = builder" + NEW_LINE +
+                        "    .table(\"FOLLOWER\")" + NEW_LINE +
+                        "    .row()" + NEW_LINE +
+                        "        .column(\"ID\", 1)" + NEW_LINE +
+                        "        .column(\"USER_ID\", 1)" + NEW_LINE +
+                        "        .column(\"FOLLOWER_ID\", 2)" + NEW_LINE +
+                        "    .table(\"SEQUENCE\")" + NEW_LINE +
+                        "    .row()" + NEW_LINE +
+                        "        .column(\"SEQ_NAME\", \"SEQ_GEN\")" + NEW_LINE +
+                        "        .column(\"SEQ_COUNT\", 50)" + NEW_LINE +
+                        "    .table(\"TWEET\")" + NEW_LINE +
+                        "    .row()" + NEW_LINE +
+                        "        .column(\"ID\", \"abcdef12345\")" + NEW_LINE +
+                        "        .column(\"CONTENT\", \"dbunit rules!\")" + NEW_LINE +
+                        "        .column(\"DATE\", \"")
+                .contains("        .column(\"LIKES\", null)" + NEW_LINE +
+                        "        .column(\"TIMESTAMP\", null)" + NEW_LINE +
+                        "        .column(\"USER_ID\", 1)" + NEW_LINE +
+                        "    .table(\"USER\")" + NEW_LINE +
+                        "    .row()" + NEW_LINE +
+                        "        .column(\"ID\", 1)" + NEW_LINE +
+                        "        .column(\"NAME\", \"@realpestano\")" + NEW_LINE +
+                        "    .row()" + NEW_LINE +
+                        "        .column(\"ID\", 2)" + NEW_LINE +
+                        "        .column(\"NAME\", \"@dbunit\").build();");
+        
+        
+        
+
+        File datasetBuilderInColumnValuesSyntax = new File("target/exported/xml/AllTables2.java");
+        assertThat(contentOf(datasetBuilderInColumnValuesSyntax)).
+                contains("DataSetBuilder builder = new DataSetBuilder();" + NEW_LINE +
+                        "IDataSet dataSet = builder" + NEW_LINE +
+                        "    .table(\"FOLLOWER\")" + NEW_LINE +
+                        "        .columns(\"ID\", \"USER_ID\", \"FOLLOWER_ID\")" + NEW_LINE +
+                        "        .values(1, 1, 2)" + NEW_LINE +
+                        "    .table(\"SEQUENCE\")" + NEW_LINE +
+                        "        .columns(\"SEQ_NAME\", \"SEQ_COUNT\")" + NEW_LINE +
+                        "        .values(\"SEQ_GEN\", 50)" + NEW_LINE +
+                        "    .table(\"TWEET\")" + NEW_LINE +
+                        "        .columns(\"ID\", \"CONTENT\", \"DATE\", \"LIKES\", \"TIMESTAMP\", \"USER_ID\")")
+                .contains("        .values(\"abcdef12345\", \"dbunit rules!\"")
+                .contains("    .table(\"USER\")" + NEW_LINE +
+                        "        .columns(\"ID\", \"NAME\")" + NEW_LINE +
+                        "        .values(1, \"@realpestano\")" + NEW_LINE +
+                        "        .values(2, \"@dbunit\").build();");
     }
 
     private static void assertXMLFileContentFiltered(String filename) {

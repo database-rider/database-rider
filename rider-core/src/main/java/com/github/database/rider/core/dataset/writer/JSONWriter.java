@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Created by pestano on 11/09/16.
@@ -21,10 +22,10 @@ public class JSONWriter implements IDataSetConsumer {
 	private static final String NEW_LINE = System.getProperty("line.separator");
 	private static final String DOUBLE_SPACES = "  ";
 	private static final String FOUR_SPACES = DOUBLE_SPACES+DOUBLE_SPACES;
-	
+
     private static final Logger logger = LoggerFactory.getLogger(JSONWriter.class);
 
-	
+
 	private IDataSet dataSet;
 
 	private OutputStreamWriter out;
@@ -32,8 +33,8 @@ public class JSONWriter implements IDataSetConsumer {
 	private int tableCount;
 	private int rowCount;
 
-	public JSONWriter(OutputStream outputStream, IDataSet dataSet) throws IOException {
-		out = new OutputStreamWriter(outputStream, "UTF-8");
+	public JSONWriter(OutputStream outputStream, IDataSet dataSet) {
+		out = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
 		this.dataSet = dataSet;
 	}
 
@@ -87,40 +88,55 @@ public class JSONWriter implements IDataSetConsumer {
 		rowCount++;
 		try {
 			out.write(FOUR_SPACES+"{"+NEW_LINE);
-			for (int i = 0; i < values.length; i++) {
-				if(values[i] == null){
-					continue;
-				}
-
-				Column currentColumn = metaData.getColumns()[i];
-				out.write(FOUR_SPACES+DOUBLE_SPACES+"\""+metaData.getColumns()[i].getColumnName() + "\": ");
-				boolean isNumber = currentColumn.getDataType().isNumber();
-				if (!isNumber) {
-					out.write("\"");
-				}
-				
-			    out.write(values[i].toString());
-			    
-				if (!isNumber) {
-					out.write("\"");
-				}
-				if(i != values.length-1){
-					out.write(",");
-				}
-				out.write(NEW_LINE);
-				
-			}
+			String sb = createSetFromValues(values);
+			out.write(sb);
 			if(dataSet.getTable(metaData.getTableName()).getRowCount() != rowCount ){
 				out.write(FOUR_SPACES+"},"+NEW_LINE);
 			}else {
 				out.write(FOUR_SPACES+"}"+NEW_LINE);
-
 			}
 
-			
+
 		} catch (Exception e) {
 			logger.warn("Could not write row.", e);
 		}
+	}
+
+	private String createSetFromValues(Object[] values) throws DataSetException {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < values.length; i++) {
+			Object currentValue = values[i];
+			if(currentValue == null){
+					continue;
+			}
+
+			Column currentColumn = metaData.getColumns()[i];
+			sb.append(FOUR_SPACES + DOUBLE_SPACES + '"').append(metaData.getColumns()[i].getColumnName()).append("\": ");
+			boolean isNumber = currentColumn.getDataType().isNumber();
+			if (!isNumber) {
+				sb.append('"');
+			}
+
+			sb.append(currentValue.toString().replaceAll(NEW_LINE, "\\\\n"));
+
+			if (!isNumber) {
+				sb.append('"');
+			}
+			if(i != values.length-1){
+				sb.append(',');
+			}
+			sb.append(NEW_LINE);
+
+		}
+		return replaceExtraCommaInTheEnd(sb);
+	}
+
+	private String replaceExtraCommaInTheEnd(StringBuilder sb) {
+		int indexOfPenultimateSymbol = sb.length() - 2;
+		if(sb.length() > 1 && sb.charAt(indexOfPenultimateSymbol) == ','){
+			sb.deleteCharAt(indexOfPenultimateSymbol);
+		}
+		return sb.toString();
 	}
 
 	public synchronized void write() throws DataSetException {

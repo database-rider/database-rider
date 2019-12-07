@@ -35,7 +35,7 @@ public class PropertyResolutionUtil {
     
     /**
      * Resolves a Union of System.env and System.getProperties() and overridingProperties where the KeyValue-Pairs of the later have the highest precedence.
-     * @param overridingProperties
+     * @param overridingProperties overridingProperties
      *
      * @return Map or null if there are no entries that match the Persistence Filter {@link #PROP_FILTER}
      */

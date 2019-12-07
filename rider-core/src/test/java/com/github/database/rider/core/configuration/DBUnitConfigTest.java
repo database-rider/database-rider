@@ -3,7 +3,6 @@ package com.github.database.rider.core.configuration;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.configuration.Orthography;
 import com.github.database.rider.core.replacers.CustomReplacer;
-
 import org.dbunit.database.IMetadataHandler;
 import org.dbunit.dataset.datatype.DataType;
 import org.junit.After;

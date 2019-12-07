@@ -1,12 +1,11 @@
 package com.github.database.rider.core;
 
-import static com.github.database.rider.core.util.EntityManagerProvider.em;
-import static com.github.database.rider.core.util.EntityManagerProvider.tx;
-import static org.assertj.core.api.Assertions.assertThat;
-
-import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.configuration.DBUnit;
+import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
+import com.github.database.rider.core.api.exporter.BuilderType;
+import com.github.database.rider.core.api.exporter.ExportDataSet;
+import com.github.database.rider.core.model.User;
 import com.github.database.rider.core.util.EntityManagerProvider;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -16,7 +15,7 @@ import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.github.database.rider.core.model.User;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by rmpestano on 8/21/16.
@@ -35,7 +34,6 @@ public class EmptyDataSetIt {
     @BeforeClass
     public static void init(){
         User user = new User();
-        user.setName("user");
         user.setName("@rmpestano");
         EntityManagerProvider.tx("rules-it").begin();
         EntityManagerProvider.em("rules-it").persist(user);
@@ -61,6 +59,7 @@ public class EmptyDataSetIt {
     @Test
     @DataSet("yml/empty.yml")
     @ExpectedDataSet("yml/empty.yml")
+    @ExportDataSet(builderType = BuilderType.COLUMNS_VALUES)
     public void shouldSeedAndExpectEmptyDataSet() {
     }
 

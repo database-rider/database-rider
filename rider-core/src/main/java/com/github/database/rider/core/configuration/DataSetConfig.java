@@ -1,6 +1,7 @@
 package com.github.database.rider.core.configuration;
 
 import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.DataSetProvider;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 
@@ -14,6 +15,7 @@ public class DataSetConfig {
     private SeedStrategy strategy = SeedStrategy.CLEAN_INSERT;
     private boolean useSequenceFiltering = true;
     private boolean disableConstraints = false;
+    private boolean fillIdentityColumns = false;
     private boolean cleanBefore = false;
     private boolean cleanAfter = false;
     private boolean transactional = false;
@@ -22,10 +24,11 @@ public class DataSetConfig {
     private String[] executeStatementsAfter = {};
     private String[] executeScriptsBefore = {};
     private String[] executeScriptsAfter = {};
+    private Class<? extends DataSetProvider> provider;
+    private String[] skipCleaningFor;
 
 
     public DataSetConfig() {
-        //loadDefaultConfiguration();
     }
 
     public DataSetConfig(String dataset) {
@@ -53,6 +56,11 @@ public class DataSetConfig {
 
     public DataSetConfig disableConstraints(boolean disableConstraints) {
         this.disableConstraints = disableConstraints;
+        return this;
+    }
+
+    public DataSetConfig fillIdentityColumns(boolean fillIdentityColumns) {
+        this.fillIdentityColumns = fillIdentityColumns;
         return this;
     }
 
@@ -108,6 +116,10 @@ public class DataSetConfig {
         return this;
     }
 
+    public DataSetConfig skipCleaningFor(String[] skipCleaningFor) {
+        this.skipCleaningFor = skipCleaningFor;
+        return this;
+    }
 
     public DataSetConfig from(DataSet dataSet) {
         if(dataSet != null){
@@ -115,6 +127,7 @@ public class DataSetConfig {
                     useSequenceFiltering(dataSet.useSequenceFiltering()).
                     tableOrdering(dataSet.tableOrdering()).
                     disableConstraints(dataSet.disableConstraints()).
+                    fillIdentityColumns(dataSet.fillIdentityColumns()).
                     executorId(dataSet.executorId()).
                     executeStatementsBefore(dataSet.executeStatementsBefore()).
                     executeScripsBefore(dataSet.executeScriptsBefore()).
@@ -122,13 +135,19 @@ public class DataSetConfig {
                     cleanAfter(dataSet.cleanAfter()).
                     transactional(dataSet.transactional()).
                     executeStatementsAfter(dataSet.executeStatementsAfter()).
-                    executeScriptsAfter(dataSet.executeScriptsAfter());
+                    executeScriptsAfter(dataSet.executeScriptsAfter()).
+                    skipCleaningFor(dataSet.skipCleaningFor()).
+                    datasetProvider(dataSet.provider());
         } else{
             throw new RuntimeException("Cannot create DataSetConfig from Null DataSet");
         }
 
     }
 
+    public DataSetConfig datasetProvider(Class<? extends DataSetProvider> provider) {
+        this.provider = provider;
+        return this;
+    }
 
     public String[] getDatasets() {
         return datasets;
@@ -144,6 +163,10 @@ public class DataSetConfig {
 
     public boolean isDisableConstraints() {
         return disableConstraints;
+    }
+
+    public boolean isFillIdentityColumns() {
+        return fillIdentityColumns;
     }
 
     public boolean isTransactional() {
@@ -174,6 +197,10 @@ public class DataSetConfig {
         return executorId;
     }
 
+    public Class<? extends DataSetProvider> getProvider() {
+        return provider;
+    }
+
     public boolean isCleanBefore() {
         return cleanBefore;
     }
@@ -202,6 +229,18 @@ public class DataSetConfig {
         this.cleanAfter = cleanAfter;
     }
 
+    public String[] getSkipCleaningFor() {
+        return skipCleaningFor;
+    }
+
+    public void setTableOrdering(String[] tableOrdering) {
+        this.tableOrdering = tableOrdering;
+    }
+
+    public void setTSkipCleaningFor(String[] tablesToClean) {
+        this.skipCleaningFor = tablesToClean;
+    }
+
     public void setTransactional(boolean transactional) {
         this.transactional = transactional;
     }
@@ -210,21 +249,31 @@ public class DataSetConfig {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (String dataset : datasets) {
-            sb.append(dataset).append(",");
+            sb.append(dataset).append(", ");
+        }
+        if(hasDataSetProvider()) {
+            sb.append("dataset provider: "+provider.getName()).append(", ");
         }
         if(sb.toString().contains(",")){
             sb.deleteCharAt(sb.lastIndexOf(","));
         }
         return sb.toString().trim();
     }
+    
+    /**
+     * 
+     * @return true if dataset provider is not null and is not an interface (which means user has provided an implementation)
+     */
+    public boolean hasDataSetProvider() {
+        return provider != null && !provider.isInterface();
+    }
 
-    public boolean hasDatasets() {
-        if(datasets == null || datasets.length == 0){
+    public boolean hasDataSets() {
+        if((datasets == null || datasets.length == 0)){
             return false;
         }
-
         for (String dataset : datasets) {
-            if(dataset != null && !"".equals(dataset.trim())){
+            if (dataset != null && !"".equals(dataset.trim())) {
                 return true;
             }
         }

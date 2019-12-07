@@ -12,7 +12,7 @@ This module brings `Database Rider` as a CDI interceptor so you can easily prepa
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-cdi</artifactId>
-    <version>1.0.0</version>
+    <version>1.7.1</version>
     <scope>test</scope>
 </dependency>
 ----

@@ -16,7 +16,7 @@ public @interface ExpectedDataSet {
   /**
    * @return dataset file name using resources folder as root directory
    */
-  String[] value();
+  String[] value() default "";
 
   /**
    *
@@ -35,4 +35,9 @@ public @interface ExpectedDataSet {
   String[] orderBy() default {};
 
   CompareOperation compareOperation() default CompareOperation.EQUALS;
+  
+  /**
+   * @return a dataset provider implementation responsible for generating the expected dataset programatically instead of providing an external file defining the dataset.
+   */
+  Class<? extends DataSetProvider> provider() default DataSetProvider.class;
 }

@@ -1,0 +1,25 @@
+BOOK:
+  - ID: 2001
+    AUTHOR: "Douglas Adams"
+    GENRE: "sci-fi"
+    ISBN: "2-207-30340-3"
+    TITLE: "H2G2"
+    YEAR: 1979
+  - ID: 2002
+    AUTHOR: "Frank Herbert"
+    GENRE: "sci-fi"
+    ISBN: "9780240807720"
+    TITLE: "Dune"
+    YEAR: 1965
+  - ID: 3003
+    AUTHOR: "George Orwell"
+    GENRE: "sci-fi"
+    ISBN: "0061810886"
+    TITLE: "Nineteen Eighty-Four"
+    YEAR: 1949
+  - ID: 4004
+    AUTHOR: "J. R. R. Tolkien"
+    GENRE: "fantasy"
+    ISBN: "0048231398"
+    TITLE: "The Silmarillion"
+    YEAR: 1977

@@ -174,7 +174,7 @@ This module is the basis for subsequent modules. It contains a JUnit rule (shown
 <dependency>
       <groupId>com.github.database-rider</groupId>
       <artifactId>rider-core</artifactId>
-      <version>1.5.1</version>
+      <version>1.8.1</version>
       <scope>test</scope>
 </dependency>
 ----
@@ -561,7 +561,7 @@ Now we don't need to `ignore id column` in the above example:
 
 ==== Expected Dataset with order by column
 
-To ignore how order in expected dataset one can use **orderBy** attribute in expected dataset.
+To ignore row ordering in expected dataset one can use **orderBy** attribute in expected dataset.
 
 This way both actual and expected datasets will be ordered by same column:
 
@@ -594,7 +594,49 @@ USER:
     }
 ----
 
-Note on the example above that the order of insertion is different from declared on the dataset but the test passes because of `orderBy`.
+Note on the example above that the order of insertion is different from declared on the dataset but the test passes because of `orderBy` will make both expected dataset and database table ordered by the same column.
+
+==== Using `CONTAINS` in expected datatset
+
+By default the dataset you use in `@ExpectedDataSet` must be *EQUAL* to the state of the database after test execution which means same rows. 
+
+Since `v1.5.2` expected dataset can be configured to use a *CONTAINS* operation and in this case its rows must be present in actual database after test.
+
+
+Consider following datasets:
+
+.users.yml
+----
+USER:
+  - ID: 1
+    NAME: "@realpestano"
+  - ID: 2
+    NAME: "@dbunit"
+----
+
+.expectedUsersContains.yml
+----
+USER:
+  - ID: 3
+    NAME: "@dbrider"
+----
+
+And the integration test below:
+
+[source,java]
+----
+    @Test
+    @DataSet(value = "user.yml", transactional = true)
+    @ExpectedDataSet(value = "expectedUsersContains.yml", compareOperation = CompareOperation.CONTAINS)
+    public void shouldMatchExpectedDataSetContains() {
+        User u = new User();
+        u.setId(3);
+        u.setName("@dbrider");
+        em().persist(u);
+    }
+----
+
+NOTE: This test will pass if database state after test contains a row in `user table` with `id=3` and `name = @dbrider`. Other rows doesn't matter.
 
 === Meta DataSets
 
@@ -882,6 +924,115 @@ properties:
 
 ====
 
+=== DataSet providers
+
+A dataset provider is a *Java class responsible for defining a dataset* instead of having `yml`, `json`, `xml` files representing your datasets. Following are the steps for creating and using a dataset provider:
+
+. First create a class which implements `DataSetProvider` interface:
++ 
+[source, java]
+----
+public class UserDataSetProvider implements DataSetProvider {
+
+        @Override
+        public IDataSet provide() throws DataSetException {
+            DataSetBuilder builder = new DataSetBuilder();
+            IDataSet dataSet = builder
+                    .defaultValue("id", -1) //default value for all tables that don't provide a value for 'id' column
+                    .table("USER") //start adding rows to 'USER' table
+                        .column("ID",1)
+                        .column(name,"@realpestano")
+                    .row() //keeps adding rows to the current table
+                        .column(id,2)
+                        .column("NAME","@dbunit")
+                    .table("TWEET") //starts adding rows to 'TWEET' table
+                        .defaultValue("LIKES", 99) //default value only for table tweet, the value will be used if column is not specified
+                        .column("ID","abcdef12345")
+                        .column("CONTENT","dbunit rules!")
+                        .column("DATE","[DAY,NOW]")
+                    .table("FOLLOWER").column(id,1)
+                        .column("USER_ID",1)
+                        .column("FOLLOWER_ID",2)
+                    .table("USER")// we still can add rows to table already added
+                        .column(name,"@new row")
+                    .build();
+            return dataSet;
+        }
+    }
+----
++
+The above DataSet provider will generate a dataset like below:
++
+----
+FOLLOWER:
+  - ID: 1
+    USER_ID: 1
+    FOLLOWER_ID: 2
+
+TWEET:
+  - ID: "abcdef12345"
+    CONTENT: "dbunit rules!"
+    DATE: "2019-05-14 19:26:56.0"
+    LIKES: 99
+
+USER:
+  - ID: 1
+    NAME: "@dbunit"
+  - ID: 2
+    NAME: "@dbrider"
+  - ID: -1
+    NAME: "@new row"
+----
++
+TIP: For more complex dataset examples see https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/dataset/builder/DataSetBuilderTest.java[DataSetBuilder tests here^].
++
+
+[NOTE]
+====
+The above dataset can be declared using `columns`...`values` syntax:
+
+----
+builder.defaultValue("id", -1)
+       .table("user")
+            .columns("id", "name")
+            .values(1,  "@dbrider")
+            .values(2,  "@dbunit")
+            .values(null,  "@dbunit3")//will use default value
+       .table("tweet")
+            .defaultValue("likes", 99)
+            .columns("id", "content", "date")
+            .values("abcdef12345", "dbunit rules!", "[DAY,NOW]")
+       .table("follower")
+            .columns("id", "user_id", "follower_id")
+            .values(1,  1, 2)
+       .build();
+----
+
+TIP: For datasets with lots of rows and few columns this approach can fit better.
+
+====
+
+
+. Now use the DataSet provider in `@DataSet` annotation:
++
+[source, java]
+----
+    @Test
+    @DataSet(provider = UserDataSetProvider.class, cleanBefore = true)
+    public void shouldSeedDatabaseProgrammatically() {
+        List<User> users = EntityManagerProvider.em().createQuery("select u from User u ").getResultList();
+        assertThat(users).
+                isNotNull().
+                isNotEmpty().hasSize(3).
+                extracting("name").
+                contains("@dbunit", "@dbrider", "@new row");
+    }
+---- 
++
+TIP: For more examples, see dataset provider https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/DataSetProviderIt.java[tests here^].
+
+NOTE: You can also use DataSetProvider in `@ExpectedDataset` annotation.
+
 === Dynamic connection config
 
 In order to have dynamic JDBC connection on your tests one can use system properties, see example below:
@@ -926,6 +1077,8 @@ public class EntityManagerSystemConfigOverrideTestIt {
 ----
 
 This way the https://github.com/database-rider/database-rider/blob/78b0ae11eeed17354f8adc6c35640a160a1447ee/rider-core/src/test/resources/META-INF/persistence.xml#L4-L20[original persistence.xml^] configuration was replaced dynamically before test execution.
+
+TIP: see source code of example above https://github.com/database-rider/database-rider/blob/78b0ae11eeed17354f8adc6c35640a160a1447ee/rider-core/src/test/java/com/github/database/rider/core/EntityManagerDynamicOverrideTestIt.java[here].
 
 === Transactional Tests
 
@@ -1057,7 +1210,7 @@ If you use CDI in your tests then you should give a try in Database Rider https:
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-cdi</artifactId>
-    <version>1.5.1</version>
+    <version>1.8.1</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -1116,7 +1269,7 @@ property in test/resources/META-INF/apache-deltaspike.properties:
 
 this module brings a Cucumber runner which is CDI aware.
 
-NOTE: If you don't use CDI you need to <<Programmatically creating datasets, create datasets Programmatically>> because Cucumber `official` runner https://github.com/cucumber/cucumber-jvm/issues/393[doesn't support JUnit rules^].
+NOTE: If you don't use CDI you'll need to https://github.com/database-rider/database-rider#programmatic-creating-datasets[create datasets programmatically] because Cucumber `official` runner https://github.com/cucumber/cucumber-jvm/issues/393[doesn't support JUnit rules^].
 
 
 [source,xml]
@@ -1124,7 +1277,7 @@ NOTE: If you don't use CDI you need to <<Programmatically creating datasets, cre
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-cucumber</artifactId>
-    <version>1.5.1</version>
+    <version>1.8.1</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -1246,7 +1399,9 @@ public class ContactSteps {
 
 == Programmatic creating datasets
 
-You can create datasets without JUnit Rule or CDI as we saw above, here is a pure cucumber example (for the same <<Examples,feature above>>):
+You can create datasets without JUnit Rule or CDI as we saw above, here is a pure cucumber example (for the same https://github.com/database-rider/database-rider#51-examples[feature above]):
+
+NOTE: If you are looking for a way to *define datasets programmatically* look into https://github.com/database-rider/database-rider#dataset-providers[DataSet providers^].
 
 [source,java,linenums]
 ----
@@ -1326,8 +1481,8 @@ http://junit.org/junit5/[JUnit 5] is the new version of JUnit and comes with a n
 ----
 <dependency>
     <groupId>com.github.database-rider</groupId>
-    <artifactId>junit5</artifactId>
-    <version>1.5.1</version>
+    <artifactId>rider-junit5</artifactId>
+    <version>1.8.1</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -1349,6 +1504,14 @@ public class DBUnitJUnit5Test {
     }
 ----
 <1> DBUnit extension will get JDBC connection by reflection so you need to declare a *field* or *method* with `ConnectionHolder` as return type.
+
+[IMPORTANT]
+====
+
+If you use SpringBoot extension for JUnit5 you don't need to declare the field or method, see an https://github.com/database-rider/database-rider/blob/master/rider-examples/spring-boot-dbunit-sample/src/test/java/com/github/database/rider/springboot/SpringBootDBUnitTest.java#L19[example here^].
+
+TIP: If you're using JUnit4 and SpringTestRunner, see <<Spring, Rider Spring module>>
+====
 
 TIP: You can configure JDBC connection using @DBUnit annotation or dbunit.yml, see <<JDBC Connection>>.
 
@@ -1385,12 +1548,12 @@ Add Database Rider Spring extension to your project
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-spring</artifactId>
-    <version>1.5.1</version>
+    <version>1.8.1</version>
     <scope>test</scope>
 </dependency>
 ----
 
-To enable Database Rider tests use `@DBRider` annotation, example:
+To enable Database Rider tests use `@DBRider` annotation (from `rider-spring` module), example:
 
 [source, java, linenums]
 ----
@@ -1415,8 +1578,47 @@ public class SpringBootDBUnitTest {
 
 Database Rider will access to database via dataSource registered in application context.
 
-TIP: Complete source code of example above can be found in the https://github.com/database-rider/database-rider/blob/master/rider-examples/spring-boot-dbunit-sample/src/test/java/com/github/database/rider/springboot/SpringBootDBUnitTest.java[sample^].
+IMPORTANT: This module is designed to work with *JUnit4* and *SpringRunner*, for JUnit5 please use `@DBRider` annotation from `JUnit5` module, see an https://github.com/database-rider/database-rider/blob/master/rider-examples/spring-boot-dbunit-sample/src/test/java/com/github/database/rider/springboot/SpringBootDBUnitTest.java#L19[example here^].
 
+
+== Quarkus
+
+As Quarkus tests are CDI beans you can just use `@DBUnitInterceptor` from <<CDI module, CDI module>>:
+
+```
+@QuarkusTest
+@DBUnitInterceptor
+public class QuarkusDBUnitTest {
+
+    @Inject
+    BookRepository repository;
+
+    @Test
+    @DataSet(value = "books.yml")
+    public void shouldFindAllBooks() {
+        List<Book> books = repository.findAll();
+        assertThat(books)
+                .isNotNull()
+                .hasSize(4)
+                .extracting("title")
+                .contains("H2G2","Dune", "Nineteen Eighty-Four", "The Silmarillion");
+    }
+
+    @Test
+    @DataSet(value = "books.yml")
+    public void shouldFindAllBooksViaRestApi() {
+        given()
+             .when().get("/api/books")
+             .then()
+             .statusCode(OK.getStatusCode())
+             .body("", hasSize(4))
+             .body("title", hasItem("The Silmarillion"));
+    }
+}
+
+```
+
+TIP: See full https://github.com/database-rider/database-rider/blob/master/rider-examples/quarkus-dbunit-sample/src/test/java/com/github/quarkus/sample/QuarkusDBUnitTest.java[example here^].
 
 == Leak Hunter
 
@@ -1468,7 +1670,7 @@ TIP: Complete source code of example above can be https://github.com/database-ri
 
 == Export DataSets
 
-Manual creation of datasets is a very error prone task. In order to export database state *after test* execution into datasets files one can use *@ExportDataSet* Annotation or use DataSetExporter component.
+Manual creation of datasets is a very error prone task. In order to export database state *after test* execution into datasets files or <<DataSet providers, DataSetBuilder>> one can use *@ExportDataSet* Annotation or use DataSetExporter component.
 
 === Example
 
@@ -1486,6 +1688,25 @@ After above test execution all tables will be exported to a xml dataset.
 
 
 NOTE: *XML*, *YML*, *JSON*, *XLS* and *CSV* formats are supported.
+
+For generating `DataSetBuilder` code you just need to specify *builderType* attribute in `@ExportDataSet`:
+
+[source, java]
+----
+    @Test
+    @DataSet("datasets/yml/users.yml") //<1>
+    @ExportDataSet(format = DataSetFormat.XML, outputName = "target/exported/xml/AllTables.xml", builderType = BuilderType.DEFAULT)
+    public void shouldExportDataSetAsBuilderInDefaultSyntax() {
+        //AllTables.java file containing DataSetBuilder code will be generated along with AllTables.xml file.
+    }
+
+    @Test
+    @DataSet("datasets/yml/users.yml") //<1>
+    @ExportDataSet(format = DataSetFormat.XML, outputName = "target/exported/xml/AllTables2.xml", builderType = BuilderType.COLUMNS_VALUES)
+    public void shouldExportDataSetAsBuilderInColumnValuesSyntax() {
+        //AllTables.java file containing DataSetBuilder code will be generated along with AllTables2.xml file.
+    }
+----
 
 TIP: Full example above (and other related tests) can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/exporter/ExportDataSetIt.java#L32[found here^].
 
@@ -1546,6 +1767,7 @@ The examples module which contains:
 * https://github.com/database-rider/database-rider/tree/master/rider-examples/jOOQ-DBUnit-flyway-example/[jOOQ Flyway DBUnit^]
 * https://github.com/database-rider/database-rider/tree/master/rider-examples/spring-boot-dbunit-sample/[SpringBoot Data DBUnit^]
 * https://github.com/rmpestano/spring-events/blob/master/src/test/java/com/sambrannen/spring/events/repository/EventRepositoryTests.java#L47[Gradle, SpringBoot and JUnit5 example^]
+* https://github.com/database-rider/database-rider/tree/master/rider-examples/quarkus-dbunit-sample/[Quarkus DBUnit^]
 
 And also each module contain a lot of tests that you can use as example.
 

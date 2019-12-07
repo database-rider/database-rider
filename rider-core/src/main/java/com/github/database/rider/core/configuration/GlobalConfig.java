@@ -30,7 +30,7 @@ public class GlobalConfig {
         DBUnitConfig dbUnitConfig = DBUnitConfig.fromCustomGlobalFile();
 
         if (dbUnitConfig.getProperties().containsKey("escapePattern")
-                && dbUnitConfig.getProperties().get("escapePattern").equals("")) {
+                && "".equals(dbUnitConfig.getProperties().get("escapePattern"))) {
             // avoid Caused by: org.dbunit.DatabaseUnitRuntimeException: Empty string is an invalid escape pattern!
             // because @DBUnit annotation and dbunit.yml global config have escapePattern defaults to ""
             dbUnitConfig.getProperties().remove("escapePattern");

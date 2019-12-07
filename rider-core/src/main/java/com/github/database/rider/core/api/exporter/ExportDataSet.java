@@ -40,5 +40,19 @@ public @interface ExportDataSet {
      */
     boolean dependentTables() default false;
 
+    /**
+     *
+     * @return file path, relative to the directory where project is executed, to generate the dataset. Ex: target/generated/my-dataset.yml.
+     * Default is current directory where the project runs.
+     */
     String outputName() default "";
+
+    /**
+     *
+     * @return type of dataset builder, 'default' or 'column...values' syntax.
+     * By default the type is 'NONE' meaning that dataset builder will not be generated.
+     *
+     * Note that the builder (java) file will be generated on the same path as <code>outputName</code> but the file suffix will be changed to <b>.java</b>.
+     */
+    BuilderType builderType() default BuilderType.NONE;
 }

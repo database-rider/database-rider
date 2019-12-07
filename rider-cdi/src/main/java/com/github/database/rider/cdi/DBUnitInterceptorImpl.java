@@ -3,12 +3,15 @@ package com.github.database.rider.cdi;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
+import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import javax.persistence.EntityManager;
+import javax.transaction.UserTransaction;
 
+import com.github.database.rider.cdi.api.DBRider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -55,11 +58,16 @@ public class DBUnitInterceptorImpl implements Serializable {
 					.executeStatementsAfter(usingDataSet.executeStatementsAfter())
 					.executeStatementsBefore(usingDataSet.executeStatementsBefore()).strategy(usingDataSet.strategy())
 					.transactional(usingDataSet.transactional()).tableOrdering(usingDataSet.tableOrdering())
+					.datasetProvider(usingDataSet.provider())
 					.useSequenceFiltering(usingDataSet.useSequenceFiltering());
 			dataSetProcessor.process(dataSetConfig, dbUnitConfig);
 			boolean isTransactionalTest = dataSetConfig.isTransactional();
 			if (isTransactionalTest) {
-				em.getTransaction().begin();
+				if(dataSetProcessor.isJta()) {
+					CDI.current().select(UserTransaction.class).get().begin();
+				} else {
+					em.getTransaction().begin();
+				}
 			}
 			LeakHunter leakHunter = null;
 			try {
@@ -71,22 +79,29 @@ public class DBUnitInterceptorImpl implements Serializable {
 				proceed = invocationContext.proceed();
 
 				if (isTransactionalTest) {
-					em.getTransaction().commit();
+					if(dataSetProcessor.isJta()) {
+						CDI.current().select(UserTransaction.class).get().commit();
+					} else {
+						em.getTransaction().commit();
+					}
 				}
 				ExpectedDataSet expectedDataSet = invocationContext.getMethod().getAnnotation(ExpectedDataSet.class);
 				if (expectedDataSet != null) {
 					dataSetProcessor.compareCurrentDataSetWith(
-							new DataSetConfig(expectedDataSet.value()).disableConstraints(true),
+							new DataSetConfig(expectedDataSet.value())
+									 .datasetProvider(expectedDataSet.provider())
+									.disableConstraints(true),
 							expectedDataSet.ignoreCols());
 				}
 			} finally {
-				if (isTransactionalTest && em.getTransaction().isActive()) {
-					em.getTransaction().rollback();
+				if (isTransactionalTest) {
+					if(dataSetProcessor.isJta()) {
+						CDI.current().select(UserTransaction.class).get().rollback();
+					} else if(em.getTransaction().isActive()) {
+						em.getTransaction().rollback();
+					}
 				}
 
-				if (leakHunter != null) {
-					leakHunter.checkConnectionsAfterExecution();
-				}
 
 				dataSetProcessor.exportDataSet(invocationContext.getMethod());
 
@@ -106,6 +121,10 @@ public class DBUnitInterceptorImpl implements Serializable {
 
 				dataSetProcessor.enableConstraints();
 				em.clear();
+				if (leakHunter != null) {
+					leakHunter.checkConnectionsAfterExecution();
+				}
+				dataSetProcessor.afterTest();
 			} // end finally
 
 		} else {// no dataset provided, just proceed and check expectedDataSet
@@ -119,6 +138,7 @@ public class DBUnitInterceptorImpl implements Serializable {
 				}
 			} finally {
 				dataSetProcessor.exportDataSet(invocationContext.getMethod());
+				dataSetProcessor.afterTest();
 			}
 
 		}

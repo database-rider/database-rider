@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.github.database-rider</groupId>
         <artifactId>rider-parent</artifactId>
-        <version>1.5.1</version>
+        <version>1.8.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>rider-examples</artifactId>
@@ -16,6 +16,7 @@
         <module>jOOQ-DBUnit-flyway-example</module>
         <module>dbunit-tomee-appcomposer-sample</module>
 	    <module>spring-boot-dbunit-sample</module>
+        <module>quarkus-dbunit-sample</module>
     </modules>
 
     <name>Database Rider examples</name>

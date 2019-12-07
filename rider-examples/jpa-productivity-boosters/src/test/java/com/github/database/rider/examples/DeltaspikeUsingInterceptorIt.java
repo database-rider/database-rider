@@ -1,5 +1,6 @@
 package com.github.database.rider.examples;
 
+import com.github.database.rider.cdi.api.DBRider;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.cdi.api.DBUnitInterceptor;
 import org.apache.deltaspike.testcontrol.api.junit.CdiTestRunner;
@@ -22,7 +23,7 @@ import static org.junit.Assert.assertNotNull;
  */
 
 @RunWith(CdiTestRunner.class)
-@DBUnitInterceptor
+@DBRider
 public class DeltaspikeUsingInterceptorIt {
 
     @Inject

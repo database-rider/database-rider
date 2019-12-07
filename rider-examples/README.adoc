@@ -11,4 +11,5 @@ Gathers some example applications that use Database Rider for testing the databa
 * https://github.com/database-rider/database-rider/tree/master/rider-examples/dbunit-tomee-appcomposer-sample[DBUnit Application Composer^]
 * https://github.com/database-rider/database-rider/tree/master/rider-examples/jOOQ-DBUnit-flyway-example/[jOOQ Flyway DBUnit^]
 * https://github.com/database-rider/database-rider/tree/master/rider-examples/spring-boot-dbunit-sample/[SpringBoot Data DBUnit^]
+* https://github.com/database-rider/database-rider/tree/master/rider-examples/quarkus-dbunit-sample/[Quarkus DBUnit^]
 

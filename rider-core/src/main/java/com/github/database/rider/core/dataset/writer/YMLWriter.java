@@ -41,6 +41,12 @@ public class YMLWriter implements IDataSetConsumer {
             out.flush();
         } catch (IOException e) {
         	logger.warn("Could not end dataset.", e);
+        } finally {
+            try {
+                out.close();
+            } catch (IOException e) {
+                logger.error("Could not close dataset writer.", e);
+            }
         }
     }
 

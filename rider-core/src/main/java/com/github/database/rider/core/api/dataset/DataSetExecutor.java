@@ -71,7 +71,7 @@ public interface DataSetExecutor{
 
     DBUnitConfig getDBUnitConfig();
 
-    RiderDataSource getRiderDataSource() throws SQLException;
+    RiderDataSource getRiderDataSource();
 
     void enableConstraints() throws SQLException ;
 

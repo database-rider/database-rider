@@ -45,6 +45,11 @@ public @interface DataSet {
   boolean disableConstraints() default false;
 
   /**
+   * @return true if dataset contains values for identity columns (some databases like MS SQL Server have issues with such cases)
+   */
+  boolean fillIdentityColumns() default false;
+
+  /**
    * @return a list of jdbc statements to execute before test
    *
    */
@@ -84,4 +89,19 @@ public @interface DataSet {
    *
    */
   boolean transactional() default false;
+
+
+  /**
+   * @return a dataset provider implementation responsible for generating the dataset programatically instead of providing an external file defining the dataset.
+   */
+  Class<? extends DataSetProvider> provider() default DataSetProvider.class;
+
+    /**
+     * By default ALL tables are cleaned when <code>cleanBefore</code> or <code>cleanAfter</code> is set to <code>true</code>.
+     *
+     * This method allows user to provide tables which will NOT be cleaned in <code>cleanBefore</code> and/or <code>cleanAfter</code> .
+     *
+     * @return list of table names to skip the cleaning in <code>cleanBefore</code> and/or <code>cleanAfter</code>. If empty all tables will be cleaned when cleanBefore() or cleanAfter() is set to <code>true</code>
+     */
+  String[] skipCleaningFor() default {};
 }

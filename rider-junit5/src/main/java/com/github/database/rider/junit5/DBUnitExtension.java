@@ -7,6 +7,7 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetExecutor;
 import com.github.database.rider.core.api.leak.LeakHunter;
 import com.github.database.rider.core.configuration.DBUnitConfig;
+import com.github.database.rider.core.connection.ConnectionHolderImpl;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.leak.LeakHunterFactory;
 import com.github.database.rider.core.util.EntityManagerProvider;
@@ -16,11 +17,16 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 import org.junit.jupiter.api.extension.ExtensionContext.Store;
 import org.junit.platform.commons.util.AnnotationUtils;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Optional;
+
+import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
 
 /**
  * Created by pestano on 27/08/16.
@@ -28,41 +34,30 @@ import java.util.Optional;
 public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestExecutionCallback {
 
     private static final Namespace namespace = Namespace.create(DBUnitExtension.class);
+    private static final String JUNIT5_EXECUTOR = "junit5";
 
     @Override
     public void beforeTestExecution(ExtensionContext extensionContext) throws Exception {
-        ConnectionHolder connectionHolder = findTestConnection(extensionContext);
 
         if (EntityManagerProvider.isEntityManagerActive()) {
             EntityManagerProvider.em().clear();
         }
-
         DataSet dataSet = AnnotationUtils.findAnnotation(extensionContext.getRequiredTestMethod(), DataSet.class).orElse(null);
-
         if (dataSet == null) {
             dataSet = AnnotationUtils.findAnnotation(extensionContext.getRequiredTestClass(), DataSet.class).orElse(null);
         }
-
-        DataSetExecutor executor;
-        if (dataSet == null) {
-            executor = DataSetExecutorImpl.instance(DataSetExecutorImpl.DEFAULT_EXECUTOR_ID, connectionHolder);
-        } else {
-            executor = DataSetExecutorImpl.instance(dataSet.executorId(), connectionHolder);
-        }
-
+        final String executorId = (dataSet == null || "".equals(dataSet.executorId())) ? JUNIT5_EXECUTOR :  dataSet.executorId();
+        ConnectionHolder connectionHolder = getTestConnection(extensionContext, executorId);
+        DataSetExecutor dataSetExecutor =  DataSetExecutorImpl.instance(executorId, connectionHolder);
         DBUnitTestContext dbUnitTestContext = getTestContext(extensionContext);
-        dbUnitTestContext.setExecutor(executor);
-
+        dbUnitTestContext.setExecutor(dataSetExecutor);
         RiderTestContext riderTestContext = new JUnit5RiderTestContext(dbUnitTestContext.getExecutor(), extensionContext);
-
         RiderRunner riderRunner = new RiderRunner();
         riderRunner.setup(riderTestContext);
         riderRunner.runBeforeTest(riderTestContext);
-
         DBUnitConfig dbUnitConfig = riderTestContext.getDataSetExecutor().getDBUnitConfig();
-
         if (dbUnitConfig.isLeakHunter()) {
-            LeakHunter leakHunter = LeakHunterFactory.from(executor.getRiderDataSource(), extensionContext.getRequiredTestMethod().getName());
+            LeakHunter leakHunter = LeakHunterFactory.from(dataSetExecutor.getRiderDataSource(), extensionContext.getRequiredTestMethod().getName());
             leakHunter.measureConnectionsBeforeExecution();
             dbUnitTestContext.setLeakHunter(leakHunter);
         }
@@ -81,15 +76,49 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
                 LeakHunter leakHunter = dbUnitTestContext.getLeakHunter();
                 leakHunter.checkConnectionsAfterExecution();
             }
-
             riderRunner.runAfterTest(riderTestContext);
         } finally {
             riderRunner.teardown(riderTestContext);
         }
     }
 
-    private ConnectionHolder findTestConnection(ExtensionContext extensionContext) {
+    private ConnectionHolder getTestConnection(ExtensionContext extensionContext, String executorId) {
+        if (isSpringExtensionEnabled() && isSpringTestContextEnabled(extensionContext)) {
+            return getConnectionFromSpringContext(extensionContext, executorId);
+        } else {
+            return getConnectionFromTestClass(extensionContext, executorId);
+        }
+    }
+
+    private ConnectionHolder getConnectionFromSpringContext(ExtensionContext extensionContext, String executorId) {
+        DataSource dataSource = SpringExtension.getApplicationContext(extensionContext).getBean(DataSource.class);
+        try {
+            DataSetExecutor dataSetExecutor = DataSetExecutorImpl.getExecutorById(executorId);
+            if (isCachedConnection(dataSetExecutor)) {
+                return new ConnectionHolderImpl(dataSetExecutor.getRiderDataSource().getConnection());
+            } else {
+                return new ConnectionHolderImpl(dataSource.getConnection());
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Could not get connection from DataSource.");
+        }
+    }
+
+    private ConnectionHolder getConnectionFromTestClass(ExtensionContext extensionContext, String executorId) {
+        DataSetExecutor dataSetExecutor = DataSetExecutorImpl.getExecutorById(executorId);
+        if (isCachedConnection(dataSetExecutor)) {
+            try {
+                return new ConnectionHolderImpl(dataSetExecutor.getRiderDataSource().getConnection());
+            } catch (SQLException e) {
+                //intentional, if cached connection is invalid we can get a new one from test class method
+            }
+        }
         Class<?> testClass = extensionContext.getRequiredTestClass();
+        ConnectionHolder conn = findConnectionFromTestClass(extensionContext, testClass);
+        return conn;
+    }
+
+    private ConnectionHolder findConnectionFromTestClass(ExtensionContext extensionContext, Class<?> testClass) {
         try {
             Optional<Field> fieldFound = Arrays.stream(testClass.getDeclaredFields()).
                     filter(f -> f.getType() == ConnectionHolder.class).
@@ -129,6 +158,10 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
             throw new RuntimeException("Could not get database connection for test " + testClass, e);
         }
 
+        if (testClass.getSuperclass() != null) {
+            return findConnectionFromTestClass(extensionContext, testClass.getSuperclass());
+        }
+
         return null;
     }
 
@@ -138,7 +171,24 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     private DBUnitTestContext getTestContext(ExtensionContext context) {
         Class<?> testClass = context.getRequiredTestClass();
         Store store = context.getStore(namespace);
-
         return store.getOrComputeIfAbsent(testClass, (tc) -> new DBUnitTestContext(), DBUnitTestContext.class);
     }
+
+    private boolean isSpringExtensionEnabled() {
+        return isOnClasspath("org.springframework.test.context.junit.jupiter.SpringExtension");
+    }
+
+    private boolean isSpringTestContextEnabled(ExtensionContext extensionContext) {
+        if(!extensionContext.getTestClass().isPresent()) {
+            return false;
+        }
+        Store springStore = extensionContext.getRoot().getStore(Namespace.create(SpringExtension.class));
+        return springStore != null && springStore.get(extensionContext.getTestClass().get()) != null;
+    }
+
+    private boolean isCachedConnection(DataSetExecutor executor) {
+        return executor != null && executor.getDBUnitConfig().isCacheConnection();
+    }
+
+
 }

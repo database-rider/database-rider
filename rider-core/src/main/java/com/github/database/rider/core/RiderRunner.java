@@ -9,6 +9,7 @@ import com.github.database.rider.core.api.exporter.ExportDataSet;
 import com.github.database.rider.core.configuration.ConnectionConfig;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
+import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.exporter.DataSetExporter;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.assertion.DbUnitAssert;
@@ -77,15 +78,14 @@ public class RiderRunner {
             }
         }
 
-        exportDataSet(riderTestContext);
         performDataSetComparison(riderTestContext);
     }
 
     public void teardown(RiderTestContext riderTestContext) throws SQLException {
+        exportDataSet(riderTestContext);
         String currentMethod = riderTestContext.getMethodName();
         DataSetExecutor executor = riderTestContext.getDataSetExecutor();
         DataSet dataSet = riderTestContext.getAnnotation(DataSet.class);
-
         if (dataSet != null) {
             DataSetConfig dataSetConfig = new DataSetConfig().from(dataSet);
 
@@ -124,10 +124,15 @@ public class RiderRunner {
             } catch (SQLException e) {
                 logger.warn("Could not enable constraints.", e);
             }
-            
-             if (isEntityManagerActive()) {
-                 em().clear();
-             }
+
+            if (isEntityManagerActive()) {
+                em().clear();
+            }
+        }
+
+        if (!executor.getDBUnitConfig().isCacheConnection() && !executor.getRiderDataSource().getConnection().isClosed()) {
+            executor.getRiderDataSource().getConnection().close();
+            ((DataSetExecutorImpl) executor).clearRiderDataSource();
         }
     }
 
@@ -163,7 +168,8 @@ public class RiderRunner {
 
         if (expectedDataSet != null) {
             riderTestContext.getDataSetExecutor()
-                    .compareCurrentDataSetWith(new DataSetConfig(expectedDataSet.value()).disableConstraints(true),
+                    .compareCurrentDataSetWith(new DataSetConfig(expectedDataSet.value())
+                                    .disableConstraints(true).datasetProvider(expectedDataSet.provider()),
                             expectedDataSet.ignoreCols(),
                             expectedDataSet.replacers(),
                             expectedDataSet.orderBy(),

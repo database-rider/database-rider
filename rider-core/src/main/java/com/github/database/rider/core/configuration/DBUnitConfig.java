@@ -12,6 +12,7 @@ import org.dbunit.database.IMetadataHandler;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -98,13 +99,16 @@ public class DBUnitConfig {
     }
 
     public static DBUnitConfig fromCustomGlobalFile() {
-        InputStream customConfiguration = Thread.currentThread().getContextClassLoader().getResourceAsStream("dbunit.yml");
-        if (customConfiguration != null) {
-            DBUnitConfig configFromFile = new Yaml().loadAs(customConfiguration, DBUnitConfig.class);
-            configFromFile.initDefaultProperties();
-            configFromFile.initDefaultConnectionConfig();
+        try (InputStream customConfiguration = Thread.currentThread().getContextClassLoader().getResourceAsStream("dbunit.yml")) {
+            if (customConfiguration != null) {
+                DBUnitConfig configFromFile = new Yaml().loadAs(customConfiguration, DBUnitConfig.class);
+                configFromFile.initDefaultProperties();
+                configFromFile.initDefaultConnectionConfig();
 
-            return configFromFile;
+                return configFromFile;
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("Can't load config from global file", e);
         }
 
         return new DBUnitConfig();
@@ -310,5 +314,10 @@ public class DBUnitConfig {
     public void setMergeDataSets(Boolean mergeDataSets) {
         this.mergeDataSets = mergeDataSets;
     }
-    
+
+    public boolean isCaseSensitiveTableNames() {
+        return properties.containsKey("caseSensitiveTableNames") && Boolean.parseBoolean(properties.get("caseSensitiveTableNames").toString());
+    }
+
+
 }

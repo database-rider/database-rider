@@ -18,11 +18,10 @@ package com.github.database.rider.core.api.dataset;
 import java.lang.annotation.Annotation;
 
 /**
- *
  * @author rmpestano
  */
 public class DataSetImpl implements DataSet {
-    
+
     private static DataSetImpl instance;
 
     private String[] value;
@@ -31,6 +30,7 @@ public class DataSetImpl implements DataSet {
     private boolean useSequenceFiltering;
     private String[] tableOrdering;
     private boolean disableConstraints;
+    private boolean fillIdentityColumns;
     private String[] executeStatementsBefore;
     private String[] executeScriptsAfter;
     private String[] executeScriptsBefore;
@@ -38,17 +38,19 @@ public class DataSetImpl implements DataSet {
     private boolean cleanBefore;
     private boolean cleanAfter;
     private boolean transactional;
+    private String[] tablesToClean;
 
     public DataSetImpl() {
     }
-    
-    public DataSetImpl(String[] value, String executorId, SeedStrategy strategy, boolean useSequenceFiltering, String[] tableOrdering, boolean disableConstraints, String[] executeStatementsBefore, String[] executeScriptsAfter, String[] executeScriptsBefore, String[] executeStatementsAfter, boolean cleanBefore, boolean cleanAfter, boolean transactional) {
+
+    public DataSetImpl(String[] value, String executorId, SeedStrategy strategy, boolean useSequenceFiltering, String[] tableOrdering, boolean disableConstraints, boolean fillIdentityColumns, String[] executeStatementsBefore, String[] executeScriptsAfter, String[] executeScriptsBefore, String[] executeStatementsAfter, boolean cleanBefore, boolean cleanAfter, boolean transactional, String[] tablesToClean) {
         this.value = value;
         this.executorId = executorId;
         this.strategy = strategy;
         this.useSequenceFiltering = useSequenceFiltering;
         this.tableOrdering = tableOrdering;
         this.disableConstraints = disableConstraints;
+        this.fillIdentityColumns = fillIdentityColumns;
         this.executeStatementsBefore = executeStatementsBefore;
         this.executeScriptsAfter = executeScriptsAfter;
         this.executeScriptsBefore = executeScriptsBefore;
@@ -56,43 +58,48 @@ public class DataSetImpl implements DataSet {
         this.cleanBefore = cleanBefore;
         this.cleanAfter = cleanAfter;
         this.transactional = transactional;
+        this.tablesToClean = tablesToClean;
     }
-    
+
     public static DataSetImpl instance() {
         instance = new DataSetImpl();
         return instance;
     }
-    
+
     public DataSetImpl withValue(String... value) {
         instance.value = value;
         return instance;
-    } 
-    
+    }
+
     public DataSetImpl withExecuteScriptsBefore(String... executeScriptsBefore) {
         instance.executeScriptsBefore = executeScriptsBefore;
         return instance;
-    } 
-    
+    }
+
     public DataSetImpl withExecuteScriptsAfter(String... executeScriptsAfter) {
         instance.executeScriptsAfter = executeScriptsAfter;
         return instance;
-    } 
-    
-     public DataSetImpl withExecuteStatementsBefore(String... executeStatementsBefore) {
+    }
+
+    public DataSetImpl withExecuteStatementsBefore(String... executeStatementsBefore) {
         instance.executeStatementsBefore = executeStatementsBefore;
         return instance;
-    } 
-    
+    }
+
     public DataSetImpl withExecuteStatementsAfter(String... executeStatementsAfter) {
         instance.executeStatementsAfter = executeStatementsAfter;
         return instance;
-    } 
-    
-     public DataSetImpl withTableOrdering(String... tableOrdering) {
+    }
+
+    public DataSetImpl withTableOrdering(String... tableOrdering) {
         instance.tableOrdering = tableOrdering;
         return instance;
-    } 
-    
+    }
+
+    public DataSetImpl withTablesToClean(String[] tablesToClean) {
+        instance.tablesToClean = tablesToClean;
+        return instance;
+    }
 
     @Override
     public String[] value() {
@@ -122,6 +129,11 @@ public class DataSetImpl implements DataSet {
     @Override
     public boolean disableConstraints() {
         return this.disableConstraints;
+    }
+
+    @Override
+    public boolean fillIdentityColumns() {
+        return this.fillIdentityColumns;
     }
 
     @Override
@@ -160,8 +172,18 @@ public class DataSetImpl implements DataSet {
     }
 
     @Override
+    public Class<DataSetProvider> provider() {
+        return DataSetProvider.class;
+    }
+
+    @Override
+    public String[] skipCleaningFor() {
+        return tablesToClean;
+    }
+
+    @Override
     public Class<? extends Annotation> annotationType() {
         return DataSet.class;
     }
-    
+
 }

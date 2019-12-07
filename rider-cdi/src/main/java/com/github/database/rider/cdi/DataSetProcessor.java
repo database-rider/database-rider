@@ -6,8 +6,8 @@ import com.github.database.rider.core.api.exporter.ExportDataSet;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.connection.ConnectionHolderImpl;
-import com.github.database.rider.core.exporter.DataSetExporter;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
+import com.github.database.rider.core.exporter.DataSetExporter;
 import org.dbunit.DatabaseUnitException;
 import org.hibernate.Session;
 import org.hibernate.internal.SessionImpl;
@@ -16,13 +16,13 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.logging.Level;
 
 /**
  * Created by rafael-pestano on 08/10/2015.
@@ -41,6 +41,12 @@ public class DataSetProcessor {
 
     private DataSetExecutor dataSetExecutor;
 
+    private Boolean isJta;
+
+    @Inject
+    Instance<JTAConnectionHolder> jtaConnectionHolder;
+
+
     @PostConstruct
     public void init() {
         if (em == null) {
@@ -58,16 +64,21 @@ public class DataSetProcessor {
      */
     private Connection createConnection() {
         try {
-            EntityTransaction tx = this.em.getTransaction();
-            if (isHibernatePresentOnClasspath() && em.getDelegate() instanceof Session) {
-                connection = ((SessionImpl) em.unwrap(Session.class)).connection();
+            if (isJta()) {
+                return jtaConnectionHolder.get().getConnection();
             } else {
-                /**
-                 * see here:http://wiki.eclipse.org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager
-                 */
-                tx.begin();
-                connection = em.unwrap(Connection.class);
-                tx.commit();
+                if (isHibernatePresentOnClasspath() && em.getDelegate() instanceof Session) {
+                    connection = ((SessionImpl) em.unwrap(Session.class)).connection();
+                } else {
+                    /**
+                     * see here:http://wiki.eclipse.org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager
+                     */
+                    EntityTransaction tx = this.em.getTransaction();
+                    tx.begin();
+                    connection = em.unwrap(Connection.class);
+                    tx.commit();
+                }
+
             }
         } catch (Exception e) {
             throw new RuntimeException("Could not create database connection", e);
@@ -76,11 +87,22 @@ public class DataSetProcessor {
         return connection;
     }
 
+    boolean isJta() {
+        if (isJta == null) {
+            try {
+                em.getTransaction();
+                isJta = false;
+            } catch (IllegalStateException iex) {
+                isJta = true;
+            }
+        }
+        return isJta;
+    }
+
     public void process(DataSetConfig dataSetConfig, DBUnitConfig config) {
         dataSetExecutor.setDBUnitConfig(config);
         dataSetExecutor.createDataSet(dataSetConfig);
     }
-
 
     private boolean isHibernatePresentOnClasspath() {
         try {
@@ -150,5 +172,11 @@ public class DataSetProcessor {
 
     public DataSetExecutor getDataSetExecutor() {
         return dataSetExecutor;
+    }
+
+    public void afterTest() {
+        if(isJta()) {
+            jtaConnectionHolder.get().tearDown();
+        }
     }
 }

@@ -2,23 +2,20 @@ package com.github.database.rider.springboot;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
-import com.github.database.rider.spring.api.DBRider;
+import com.github.database.rider.junit5.api.DBRider;
 import com.github.database.rider.springboot.models.User;
 import com.github.database.rider.springboot.models.UserRepository;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by pestano on 13/09/16.
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest
 @DBRider
+@SpringBootTest
 public class SpringBootDBUnitTest {
 
     @Autowired
@@ -26,7 +23,7 @@ public class SpringBootDBUnitTest {
 
     @Test
     @DataSet("users.yml")
-    public void shouldListUsers() throws Exception {
+    public void shouldListUsers() {
         assertThat(userRepository).isNotNull();
         assertThat(userRepository.count()).isEqualTo(3);
         assertThat(userRepository.findByEmail("springboot@gmail.com")).isEqualTo(new User(3));
@@ -35,10 +32,10 @@ public class SpringBootDBUnitTest {
     @Test
     @DataSet("users.yml")
     @ExpectedDataSet("expectedUsers.yml")
-    public void shouldDeleteUser() throws Exception {
+    public void shouldDeleteUser() {
         assertThat(userRepository).isNotNull();
         assertThat(userRepository.count()).isEqualTo(3);
-        userRepository.delete(userRepository.findOne(2L));
+        userRepository.findById(2L).ifPresent(userRepository::delete);
         //assertThat(userRepository.count()).isEqualTo(2); //assertion is made by @ExpectedDataset
     }
 
@@ -46,7 +43,7 @@ public class SpringBootDBUnitTest {
     @Test
     @DataSet(cleanBefore = true)//as we didn't declared a dataset DBUnit wont clear the table
     @ExpectedDataSet("user.yml")
-    public void shouldInsertUser() throws Exception {
+    public void shouldInsertUser() {
         assertThat(userRepository).isNotNull();
         assertThat(userRepository.count()).isEqualTo(0);
         userRepository.save(new User("newUser@gmail.com", "new user"));

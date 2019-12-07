@@ -48,7 +48,6 @@ public class DBUnitRule implements TestRule {
     public static DBUnitRule instance(String executorName, ConnectionHolder connectionHolder) {
         DBUnitRule instance = new DBUnitRule();
         instance.executor = DataSetExecutorImpl.instance(executorName, connectionHolder);
-
         return instance;
     }
 
@@ -87,7 +86,6 @@ public class DBUnitRule implements TestRule {
                     if (dbUnitConfig.isLeakHunter() && leakHunter != null) {
                         leakHunter.checkConnectionsAfterExecution();
                     }
-
                     riderRunner.runAfterTest(riderTestContext);
                 } finally {
                     riderRunner.teardown(riderTestContext);
