@@ -10,7 +10,7 @@ import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.connection.ConnectionHolderImpl;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.leak.LeakHunterFactory;
-import com.github.database.rider.core.util.EntityManagerProvider;
+import com.github.database.rider.junit5.util.EntityManagerProvider;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
