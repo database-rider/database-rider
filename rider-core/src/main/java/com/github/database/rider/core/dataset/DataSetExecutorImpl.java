@@ -10,6 +10,7 @@ import com.github.database.rider.core.connection.RiderDataSource;
 import com.github.database.rider.core.connection.RiderDataSource.DBType;
 import com.github.database.rider.core.exception.DataBaseSeedingException;
 import com.github.database.rider.core.replacers.Replacer;
+import com.github.database.rider.core.util.ContainsFilterTable;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.database.DatabaseSequenceFilter;
@@ -913,8 +914,15 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             ITable filteredActualTable = DefaultColumnFilter.includedColumnsTable(actualTable,
                     expectedTable.getTableMetaData().getColumns());
 
-            if (compareOperation == CompareOperation.CONTAINS) {
-                filteredActualTable = filterTableByPrimaryKey(expectedTable, filteredActualTable);
+            switch (compareOperation) {
+                case CONTAINS:
+                    filteredActualTable = filterTableByPrimaryKey(expectedTable, filteredActualTable);
+                    break;
+                case CONTAINS_COLUMNS:
+                    filteredActualTable = new ContainsFilterTable(filteredActualTable, expectedTable);
+                    break;
+                default:
+                    break;
             }
 
             DataSetAssertion.assertEqualsIgnoreCols(expectedTable, filteredActualTable, excludeCols);

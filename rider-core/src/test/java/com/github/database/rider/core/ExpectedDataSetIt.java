@@ -212,4 +212,24 @@ public class ExpectedDataSetIt {
         em().persist(u);
     }
 
+    @Test
+    @DataSet(value = "yml/user.yml", transactional = true)
+    @ExpectedDataSet(value = "yml/expectedUsersContainsColumns.yml", compareOperation = CompareOperation.CONTAINS_COLUMNS)
+    public void shouldMatchExpectedDataSetContainsColumns() {
+        User u = new User();
+        u.setId(3);
+        u.setName("@dbrider");
+        em().persist(u);
+    }
+
+    @Test
+    @DataSet(value = {"yml/user.yml","yml/empty.yml"}, transactional = true)
+    @ExpectedDataSet(value = "yml/expectedUsersContainsColumnsRegex.yml", compareOperation = CompareOperation.CONTAINS_COLUMNS)
+    public void shouldMatchExpectedDataSetContainsColumnsRegex() {
+        User u = new User();
+        u.setId(3);
+        u.setName("@dbrider");
+        em().persist(u);
+    }
+
 }
