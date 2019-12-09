@@ -1,12 +1,15 @@
 package com.github.database.rider.core;
 
-import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetExecutor;
 import com.github.database.rider.core.util.AnnotationUtils;
-
 import org.junit.runner.Description;
 
 import java.lang.annotation.Annotation;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import static com.github.database.rider.core.util.EntityManagerProvider.em;
+import static com.github.database.rider.core.util.EntityManagerProvider.isEntityManagerActive;
 
 public class JUnit4RiderTestContext extends AbstractRiderTestContext {
 
@@ -35,4 +38,44 @@ public class JUnit4RiderTestContext extends AbstractRiderTestContext {
     public <T extends Annotation> T getClassAnnotation(Class<T> clazz) {
         return AnnotationUtils.findAnnotation(description.getTestClass(), clazz);
     }
+
+    @Override
+    public void commit() throws SQLException {
+        if (isEntityManagerActive() && em().getTransaction().isActive()) {
+            em().getTransaction().commit();
+        } else {
+            Connection connection = executor.getRiderDataSource().getConnection();
+            connection.commit();
+            connection.setAutoCommit(false);
+        }
+    }
+
+    @Override
+    public void beginTransaction() throws SQLException {
+        if (isEntityManagerActive()) {
+            em().getTransaction().begin();
+        } else {
+            Connection connection = executor.getRiderDataSource().getConnection();
+            connection.setAutoCommit(false);
+        }
+    }
+
+    @Override
+    public void rollback() throws SQLException {
+        if (isEntityManagerActive() && em().getTransaction().isActive()) {
+            em().getTransaction().rollback();
+        } else {
+            Connection connection = executor.getRiderDataSource().getConnection();
+            connection.rollback();
+        }
+    }
+
+    @Override
+    public void clearEntityManager() {
+        if (isEntityManagerActive()) {
+            em().clear();
+        }
+    }
+
+
 }

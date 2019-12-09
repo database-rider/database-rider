@@ -9,6 +9,7 @@ import org.springframework.test.context.TestContext;
 
 import javax.sql.DataSource;
 import java.lang.annotation.Annotation;
+import java.sql.SQLException;
 
 class SpringRiderTestContext extends AbstractRiderTestContext {
 
@@ -52,5 +53,25 @@ class SpringRiderTestContext extends AbstractRiderTestContext {
     @Override
     public <T extends Annotation> T getClassAnnotation(Class<T> clazz) {
         return AnnotatedElementUtils.findMergedAnnotation(testContext.getTestClass(), clazz);
+    }
+
+    @Override
+    public void commit() throws SQLException {
+        //no-op, this is done by SpringTest runner
+    }
+
+    @Override
+    public void beginTransaction() throws SQLException {
+        //no-op, this is done by SpringTest runner
+    }
+
+    @Override
+    public void rollback() throws SQLException {
+        //no-op, this is done by SpringTest runner
+    }
+
+    @Override
+    public void clearEntityManager() {
+        //no-op, this is done by SpringTest runner
     }
 }

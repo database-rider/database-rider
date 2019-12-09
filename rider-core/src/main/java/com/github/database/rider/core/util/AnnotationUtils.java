@@ -68,7 +68,7 @@ public final class AnnotationUtils {
         }
 
         // Directly present?
-        annotation = element.getDeclaredAnnotation(annotationType);
+        annotation = getDeclaredAnnotation(element, annotationType);
         if (annotation != null) {
             annotationCache.put(key, annotation);
             return annotation;
@@ -103,6 +103,15 @@ public final class AnnotationUtils {
 
         // Meta-present on indirectly present annotations?
         return findMetaAnnotation(annotationType, element.getAnnotations(), key, visited);
+    }
+
+    private static <A extends Annotation> A getDeclaredAnnotation(AnnotatedElement element, Class<A> annotationType) {
+        for (Annotation annotation: element.getAnnotations()) {
+            if(annotation.annotationType().equals(annotationType)) {
+                return (A) annotation;
+            }
+        }
+        return null;
     }
 
 

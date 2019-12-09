@@ -19,8 +19,6 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static com.github.database.rider.core.util.EntityManagerProvider.em;
-import static com.github.database.rider.core.util.EntityManagerProvider.isEntityManagerActive;
 
 public class RiderRunner {
 
@@ -48,14 +46,8 @@ public class RiderRunner {
             } catch (Exception e) {
                 throw new RuntimeException(String.format("Could not create dataset for test '%s'.", riderTestContext.getMethodName()), e);
             }
-
             if (dataSetConfig.isTransactional()) {
-                if (isEntityManagerActive()) {
-                    em().getTransaction().begin();
-                } else {
-                    Connection connection = executor.getRiderDataSource().getConnection();
-                    connection.setAutoCommit(false);
-                }
+                riderTestContext.beginTransaction();
             }
         }
     }
@@ -68,13 +60,7 @@ public class RiderRunner {
             DataSetConfig dataSetConfig = new DataSetConfig().from(dataSet);
 
             if (dataSetConfig.isTransactional()) {
-                if (isEntityManagerActive() && em().getTransaction().isActive()) {
-                    em().getTransaction().commit();
-                } else {
-                    Connection connection = executor.getRiderDataSource().getConnection();
-                    connection.commit();
-                    connection.setAutoCommit(false);
-                }
+                riderTestContext.commit();
             }
         }
 
@@ -90,12 +76,7 @@ public class RiderRunner {
             DataSetConfig dataSetConfig = new DataSetConfig().from(dataSet);
 
             if (dataSetConfig.isTransactional()) {
-                if (isEntityManagerActive() && em().getTransaction().isActive()) {
-                    em().getTransaction().rollback();
-                } else {
-                    Connection connection = executor.getRiderDataSource().getConnection();
-                    connection.rollback();
-                }
+                riderTestContext.rollback();
             }
 
             if (dataSetConfig.getExecuteStatementsAfter() != null && dataSetConfig.getExecuteStatementsAfter().length > 0) {
@@ -125,9 +106,7 @@ public class RiderRunner {
                 logger.warn("Could not enable constraints.", e);
             }
 
-            if (isEntityManagerActive()) {
-                em().clear();
-            }
+            riderTestContext.clearEntityManager();
         }
 
         if (!executor.getDBUnitConfig().isCacheConnection() && !executor.getRiderDataSource().getConnection().isClosed()) {

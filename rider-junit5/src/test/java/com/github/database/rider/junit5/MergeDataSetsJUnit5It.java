@@ -5,8 +5,8 @@ import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.github.database.rider.junit5.model.User;
-import com.github.database.rider.core.util.EntityManagerProvider;
-import static com.github.database.rider.core.util.EntityManagerProvider.em;
+import com.github.database.rider.junit5.util.EntityManagerProvider;
+import static com.github.database.rider.junit5.util.EntityManagerProvider.em;
 import com.github.database.rider.junit5.api.DBRider;
 import com.github.database.rider.junit5.model.Tweet;
 
