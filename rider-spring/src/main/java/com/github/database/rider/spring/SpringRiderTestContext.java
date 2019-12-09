@@ -1,17 +1,23 @@
 package com.github.database.rider.spring;
 
-import com.github.database.rider.core.AbstractRiderTestContext;
-import com.github.database.rider.core.api.dataset.DataSetExecutor;
-import com.github.database.rider.core.dataset.DataSetExecutorImpl;
+import java.lang.annotation.Annotation;
+import java.sql.SQLException;
+
+import javax.sql.DataSource;
+
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.test.context.TestContext;
 
-import javax.sql.DataSource;
-import java.lang.annotation.Annotation;
-import java.sql.SQLException;
+import com.github.database.rider.core.AbstractRiderTestContext;
+import com.github.database.rider.core.api.dataset.DataSetExecutor;
+import com.github.database.rider.core.dataset.DataSetExecutorImpl;
+import com.github.database.rider.spring.api.DBRider;
 
 class SpringRiderTestContext extends AbstractRiderTestContext {
+
+    private static final String EMPTY_STRING = "";
 
     private final TestContext testContext;
 
@@ -20,11 +26,24 @@ class SpringRiderTestContext extends AbstractRiderTestContext {
     }
 
     private static DataSetExecutor createDataSetExecutor(TestContext testContext) {
-        DataSource dataSource = wrapInTransactionAwareProxy(testContext.getApplicationContext().getBean(DataSource.class));
-        DataSetExecutorImpl dataSetExecutor = DataSetExecutorImpl.instance(dataSource::getConnection);
+        String beanName = getConfiguredDataSourceBeanName(testContext);
+        DataSource dataSourceBean = getDataSource(testContext, beanName);
+        DataSource dataSource = wrapInTransactionAwareProxy(dataSourceBean);
+        String instanceId = beanName.isEmpty() ? "default" : beanName;
+        DataSetExecutorImpl dataSetExecutor = DataSetExecutorImpl.instance(instanceId, dataSource::getConnection);
         dataSetExecutor.clearRiderDataSource();
 
         return dataSetExecutor;
+    }
+
+    private static DataSource getDataSource(TestContext testContext, String beanName) {
+        ApplicationContext context = testContext.getApplicationContext();
+        return beanName.isEmpty() ? context.getBean(DataSource.class) : context.getBean(beanName, DataSource.class);
+    }
+
+    private static String getConfiguredDataSourceBeanName(final TestContext testContext) {
+        DBRider dbRiderAnnotation = testContext.getTestClass().getAnnotation(DBRider.class);
+        return dbRiderAnnotation != null ? dbRiderAnnotation.dataSourceBeanName() : EMPTY_STRING;
     }
 
     private static DataSource wrapInTransactionAwareProxy(DataSource dataSource) {

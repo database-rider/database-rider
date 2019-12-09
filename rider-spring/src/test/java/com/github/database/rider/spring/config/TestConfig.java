@@ -1,16 +1,18 @@
 package com.github.database.rider.spring.config;
 
-import com.github.database.rider.spring.model.EntityUtils;
+import javax.sql.DataSource;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.sql.DataSource;
+import com.github.database.rider.spring.model.EntityUtils;
 
 /**
  * @author Artemy Osipov
@@ -20,14 +22,25 @@ import javax.sql.DataSource;
 @Import(EntityUtils.class)
 public class TestConfig {
 
-    @Bean
-    public DataSource dataSource() {
+    @Bean(name = "data-source-1")
+    @Primary
+    public DataSource dataSourcePrimary() {
         return new EmbeddedDatabaseBuilder()
                 .generateUniqueName(true)
                 .setType(EmbeddedDatabaseType.HSQL)
                 .setScriptEncoding("UTF-8")
                 .addScript("schema.sql")
                 .build();
+    }
+
+    @Bean(name = "data-source-2")
+    public DataSource dataSourceSecondary() {
+        return new EmbeddedDatabaseBuilder()
+            .generateUniqueName(true)
+            .setType(EmbeddedDatabaseType.HSQL)
+            .setScriptEncoding("UTF-8")
+            .addScript("schema2.sql")
+            .build();
     }
 
     @Bean
