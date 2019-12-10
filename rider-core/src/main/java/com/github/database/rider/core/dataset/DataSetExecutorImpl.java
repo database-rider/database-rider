@@ -97,7 +97,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         } else if (!instance.dbUnitConfig.isCacheConnection()) {
             instance.setConnectionHolder(connectionHolder);
         }
-
         return instance;
     }
 

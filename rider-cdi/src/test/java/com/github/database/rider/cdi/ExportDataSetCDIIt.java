@@ -33,7 +33,6 @@ public class ExportDataSetCDIIt {
 	@Inject
     EntityManager em;
 
-
 	@Test
 	@DataSet("datasets/yml/users.yml")
 	@ExportDataSet(format = DataSetFormat.XML,outputName="target/exported/xml/allTables.xml")

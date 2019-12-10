@@ -8,7 +8,6 @@ import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
-import javax.persistence.EntityManager;
 import javax.transaction.UserTransaction;
 
 import com.github.database.rider.cdi.api.DBRider;
@@ -35,9 +34,6 @@ public class DBUnitInterceptorImpl implements Serializable {
 	@Inject
 	DataSetProcessor dataSetProcessor;
 
-	@Inject
-	private EntityManager em;
-
 	@AroundInvoke
 	public Object intercept(InvocationContext invocationContext) throws Exception {
 
@@ -50,6 +46,8 @@ public class DBUnitInterceptorImpl implements Serializable {
 
 		DataSet usingDataSet = resolveDataSet(invocationContext, dbUnitConfig);
 
+        String entityManagerName = resolveEntityManagerName(invocationContext);
+        dataSetProcessor.init(entityManagerName);
 		if (usingDataSet != null) {
 			DataSetConfig dataSetConfig = new DataSetConfig(usingDataSet.value()).cleanAfter(usingDataSet.cleanAfter())
 					.cleanBefore(usingDataSet.cleanBefore()).disableConstraints(usingDataSet.disableConstraints())
@@ -66,7 +64,7 @@ public class DBUnitInterceptorImpl implements Serializable {
 				if(dataSetProcessor.isJta()) {
 					CDI.current().select(UserTransaction.class).get().begin();
 				} else {
-					em.getTransaction().begin();
+					dataSetProcessor.getEntityManager().getTransaction().begin();
 				}
 			}
 			LeakHunter leakHunter = null;
@@ -82,7 +80,7 @@ public class DBUnitInterceptorImpl implements Serializable {
 					if(dataSetProcessor.isJta()) {
 						CDI.current().select(UserTransaction.class).get().commit();
 					} else {
-						em.getTransaction().commit();
+						dataSetProcessor.getEntityManager().getTransaction().commit();
 					}
 				}
 				ExpectedDataSet expectedDataSet = invocationContext.getMethod().getAnnotation(ExpectedDataSet.class);
@@ -97,8 +95,8 @@ public class DBUnitInterceptorImpl implements Serializable {
 				if (isTransactionalTest) {
 					if(dataSetProcessor.isJta()) {
 						CDI.current().select(UserTransaction.class).get().rollback();
-					} else if(em.getTransaction().isActive()) {
-						em.getTransaction().rollback();
+					} else if(dataSetProcessor.getEntityManager().getTransaction().isActive()) {
+						dataSetProcessor.getEntityManager().getTransaction().rollback();
 					}
 				}
 
@@ -120,11 +118,11 @@ public class DBUnitInterceptorImpl implements Serializable {
 				}
 
 				dataSetProcessor.enableConstraints();
-				em.clear();
+				dataSetProcessor.getEntityManager().clear();
 				if (leakHunter != null) {
 					leakHunter.checkConnectionsAfterExecution();
 				}
-				dataSetProcessor.afterTest();
+				dataSetProcessor.afterTest(entityManagerName);
 			} // end finally
 
 		} else {// no dataset provided, just proceed and check expectedDataSet
@@ -138,7 +136,7 @@ public class DBUnitInterceptorImpl implements Serializable {
 				}
 			} finally {
 				dataSetProcessor.exportDataSet(invocationContext.getMethod());
-				dataSetProcessor.afterTest();
+				dataSetProcessor.afterTest(entityManagerName);
 			}
 
 		}
@@ -146,7 +144,25 @@ public class DBUnitInterceptorImpl implements Serializable {
 		return proceed;
 	}
 
-	private DataSet resolveDataSet(InvocationContext invocationContext, DBUnitConfig config) {
+    private String resolveEntityManagerName(InvocationContext invocationContext) {
+	    String entityManagerName = "";
+        DBRider dbRiderClassLevel = AnnotationUtils.findAnnotation(invocationContext.getMethod().getDeclaringClass(), DBRider.class);
+        DBRider dbRiderMethodLevel = AnnotationUtils.findAnnotation(invocationContext.getMethod(), DBRider.class);
+        DBUnitInterceptor dbunitInterceptorClassLevel = AnnotationUtils.findAnnotation(invocationContext.getMethod().getDeclaringClass(), DBUnitInterceptor.class);
+        DBUnitInterceptor dbunitInterceptorMethodLevel = AnnotationUtils.findAnnotation(invocationContext.getMethod(), DBUnitInterceptor.class);
+	    if(dbRiderMethodLevel != null) {
+            entityManagerName = dbRiderMethodLevel.entityManagerName();
+        } else if(dbRiderClassLevel != null) {
+            entityManagerName = dbRiderClassLevel.entityManagerName();
+        } else if(dbunitInterceptorMethodLevel != null) {
+            entityManagerName = dbunitInterceptorMethodLevel.entityManagerName();
+        } else if(dbunitInterceptorClassLevel != null) {
+            entityManagerName = dbunitInterceptorClassLevel.entityManagerName();
+        }
+	    return entityManagerName;
+    }
+
+    private DataSet resolveDataSet(InvocationContext invocationContext, DBUnitConfig config) {
 		DataSet methodAnnotation = AnnotationUtils.findAnnotation(invocationContext.getMethod(), DataSet.class);
 		DataSet classAnnotation = AnnotationUtils.findAnnotation(invocationContext.getMethod().getDeclaringClass(),
 				DataSet.class);

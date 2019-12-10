@@ -1,22 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
 
     <persistence-unit name="cdipu" transaction-type="RESOURCE_LOCAL">
 
-    <class>com.github.database.rider.cdi.model.User</class>
-    <class>com.github.database.rider.cdi.model.Tweet</class>
-    <class>com.github.database.rider.cdi.model.Follower</class>
+        <class>com.github.database.rider.cdi.model.User</class>
+        <class>com.github.database.rider.cdi.model.Tweet</class>
+        <class>com.github.database.rider.cdi.model.Follower</class>
 
-    <properties>
-        <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:test-cdi;DB_CLOSE_DELAY=-1"/>
-        <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver"/>
-        <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
-        <property name="javax.persistence.jdbc.user" value="sa"/>
-        <property name="javax.persistence.jdbc.password" value=""/>
-        <!-- <property name="eclipselink.logging.level" value="INFO"/>
-        <property name="eclipselink.logging.level.sql" value="FINE"/> -->
-        <property name="eclipselink.logging.parameters" value="false"/>
-    </properties>
+        <properties>
+            <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:test-cdi;DB_CLOSE_DELAY=-1"/>
+            <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver"/>
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="javax.persistence.jdbc.user" value="sa"/>
+            <property name="javax.persistence.jdbc.password" value=""/>
+            <!-- <property name="eclipselink.logging.level" value="INFO"/>
+            <property name="eclipselink.logging.level.sql" value="FINE"/> -->
+            <property name="eclipselink.logging.parameters" value="false"/>
+        </properties>
+
+    </persistence-unit>
+
+    <persistence-unit name="cdipu2" transaction-type="RESOURCE_LOCAL">
+
+        <class>com.github.database.rider.cdi.model.User</class>
+        <class>com.github.database.rider.cdi.model.Tweet</class>
+        <class>com.github.database.rider.cdi.model.Follower</class>
+
+        <properties>
+            <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:test-cdi2;DB_CLOSE_DELAY=-1"/>
+            <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver"/>
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="javax.persistence.jdbc.user" value="sa"/>
+            <property name="javax.persistence.jdbc.password" value=""/>
+            <!-- <property name="eclipselink.logging.level" value="INFO"/>
+            <property name="eclipselink.logging.level.sql" value="FINE"/> -->
+            <property name="eclipselink.logging.parameters" value="false"/>
+        </properties>
 
     </persistence-unit>
 

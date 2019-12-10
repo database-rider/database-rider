@@ -84,7 +84,7 @@
         <dependency>  <!--2-->
             <groupId>org.apache.openwebbeans</groupId>
             <artifactId>openwebbeans-impl</artifactId>
-            <version>1.6.2</version>
+            <version>1.6.3</version>
             <scope>test</scope>
         </dependency>
         <!--end::deltaspike-cdi-deps[]-->
