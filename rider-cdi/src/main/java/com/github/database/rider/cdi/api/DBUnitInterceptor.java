@@ -6,6 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import javax.enterprise.util.Nonbinding;
 import javax.interceptor.InterceptorBinding;
 
 /**
@@ -18,4 +19,11 @@ import javax.interceptor.InterceptorBinding;
 public @interface DBUnitInterceptor {
 
 
+    /**
+     * @since 1.9.0
+     * @return name of the entity manager bean name.
+     * If empty then default entity manager will be used.
+     */
+    @Nonbinding
+    String entityManagerName() default "";
 }

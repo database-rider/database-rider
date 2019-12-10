@@ -5,9 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 
 import com.github.database.rider.cdi.api.DBRider;
+import com.github.database.rider.cdi.api.RiderPU;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.cdi.api.DBUnitInterceptor;
 import com.github.database.rider.cdi.model.User;
@@ -24,10 +26,11 @@ import org.junit.runner.RunWith;
  */
 
 @RunWith(CdiTestRunner.class)
-@DBRider
+@DBRider(entityManagerName = "cdipu2")
 public class CrudCDIIt {
 
     @Inject
+    @RiderPU("cdipu2")
     EntityManager em;
 
     @Test

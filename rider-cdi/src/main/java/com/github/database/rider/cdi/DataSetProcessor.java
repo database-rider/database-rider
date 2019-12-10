@@ -1,5 +1,6 @@
 package com.github.database.rider.cdi;
 
+import com.github.database.rider.cdi.api.RiderPUAnnotation;
 import com.github.database.rider.core.api.dataset.DataSetExecutor;
 import com.github.database.rider.core.api.exporter.DataSetExportConfig;
 import com.github.database.rider.core.api.exporter.ExportDataSet;
@@ -14,9 +15,10 @@ import org.hibernate.internal.SessionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -34,8 +36,7 @@ public class DataSetProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(DataSetProcessor.class.getName());
 
-    @Inject
-    private EntityManager em;
+    private EntityManager entityManager;
 
     private Connection connection;
 
@@ -47,14 +48,29 @@ public class DataSetProcessor {
     Instance<JTAConnectionHolder> jtaConnectionHolder;
 
 
-    @PostConstruct
-    public void init() {
-        if (em == null) {
+    public void init(String entityManagerBeanName) {
+        this.entityManager = resolveEntityManager(entityManagerBeanName);
+        if (entityManager == null) {
             throw new RuntimeException("Please provide an entity manager via CDI producer, see examples here: https://deltaspike.apache.org/documentation/jpa.html");
         }
-        em.clear();
-        this.connection = createConnection();
-        dataSetExecutor = DataSetExecutorImpl.instance(CDI_DBUNIT_EXECUTOR, new ConnectionHolderImpl(connection));
+        entityManager.clear();
+        this.connection = createConnection(entityManagerBeanName);
+        final String executorName = CDI_DBUNIT_EXECUTOR+entityManagerBeanName;//one executor per entityManager
+        dataSetExecutor = DataSetExecutorImpl.instance(executorName, new ConnectionHolderImpl(connection));
+    }
+
+    private EntityManager resolveEntityManager(String entityManagerBeanName) {
+        try {
+            if ("".equals(entityManagerBeanName)) {
+                return CDI.current().select(EntityManager.class).get();
+            } else {
+                BeanManager beanManager = CDI.current().getBeanManager();
+                return (EntityManager) beanManager.getReference(beanManager.getBeans(EntityManager.class, new RiderPUAnnotation(entityManagerBeanName){}).iterator().next(), EntityManager.class, null);
+            }
+        } catch (Exception e) {
+            log.warn("Could not resolve entity manager named {}. Default one will be used.", entityManagerBeanName, e);
+            return CDI.current().select(EntityManager.class).get();//quarkus wont have multiple entity manager
+        }
     }
 
     /**
@@ -62,20 +78,20 @@ public class DataSetProcessor {
      *
      * @return JDBC connection
      */
-    private Connection createConnection() {
+    private Connection createConnection(String entityManagerBeanName) {
         try {
             if (isJta()) {
-                return jtaConnectionHolder.get().getConnection();
+                return jtaConnectionHolder.get().getConnection(entityManagerBeanName);
             } else {
-                if (isHibernatePresentOnClasspath() && em.getDelegate() instanceof Session) {
-                    connection = ((SessionImpl) em.unwrap(Session.class)).connection();
+                if (isHibernatePresentOnClasspath() && entityManager.getDelegate() instanceof Session) {
+                    connection = ((SessionImpl) entityManager.unwrap(Session.class)).connection();
                 } else {
                     /**
                      * see here:http://wiki.eclipse.org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager
                      */
-                    EntityTransaction tx = this.em.getTransaction();
+                    EntityTransaction tx = this.entityManager.getTransaction();
                     tx.begin();
-                    connection = em.unwrap(Connection.class);
+                    connection = entityManager.unwrap(Connection.class);
                     tx.commit();
                 }
 
@@ -90,7 +106,7 @@ public class DataSetProcessor {
     boolean isJta() {
         if (isJta == null) {
             try {
-                em.getTransaction();
+                entityManager.getTransaction();
                 isJta = false;
             } catch (IllegalStateException iex) {
                 isJta = true;
@@ -139,15 +155,15 @@ public class DataSetProcessor {
 
     public void exportDataSet(Method method) {
         ExportDataSet exportDataSet = resolveExportDataSet(method);
-        if(exportDataSet != null){
+        if (exportDataSet != null) {
             DataSetExportConfig exportConfig = DataSetExportConfig.from(exportDataSet);
             String outputName = exportConfig.getOutputFileName();
-            if(outputName == null || "".equals(outputName.trim())){
-                outputName = method.getName().toLowerCase()+"."+exportConfig.getDataSetFormat().name().toLowerCase();
+            if (outputName == null || "".equals(outputName.trim())) {
+                outputName = method.getName().toLowerCase() + "." + exportConfig.getDataSetFormat().name().toLowerCase();
             }
             exportConfig.outputFileName(outputName);
             try {
-                DataSetExporter.getInstance().export(dataSetExecutor.getRiderDataSource().getDBUnitConnection(),exportConfig);
+                DataSetExporter.getInstance().export(getConnection(), exportConfig);
             } catch (Exception e) {
                 log.warn("Could not export dataset after method " + method.getName(), e);
             }
@@ -162,7 +178,7 @@ public class DataSetProcessor {
         return exportDataSet;
     }
 
-    public void enableConstraints(){
+    public void enableConstraints() {
         try {
             dataSetExecutor.enableConstraints();
         } catch (SQLException e) {
@@ -174,9 +190,13 @@ public class DataSetProcessor {
         return dataSetExecutor;
     }
 
-    public void afterTest() {
-        if(isJta()) {
-            jtaConnectionHolder.get().tearDown();
+    public void afterTest(String datasource) {
+        if (isJta()) {
+            jtaConnectionHolder.get().tearDown(datasource);
         }
+    }
+
+    public EntityManager getEntityManager() {
+        return entityManager;
     }
 }

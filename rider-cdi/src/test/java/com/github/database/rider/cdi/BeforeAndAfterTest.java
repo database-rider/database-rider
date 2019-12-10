@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class BeforeAndAfterTest {
         em.createNativeQuery("DELETE FROM FOLLOWER").executeUpdate();
         em.createNativeQuery("DELETE FROM TWEET").executeUpdate();
         em.createNativeQuery("DELETE FROM USER").executeUpdate();//delete users inserted in other tests
-        for (int i=0;i<6;i++ ) {
+        for (int i = 0; i < 6; i++) {
             User u = new User();
             u.setName("user" + i);
             em.persist(u);
@@ -46,7 +47,7 @@ public class BeforeAndAfterTest {
 
     @Test
     @DataSet(value = "yml/users.yml", strategy = SeedStrategy.INSERT,
-              cleanBefore = true, cleanAfter = true
+            cleanBefore = true, cleanAfter = true
     )
     public void shouldClearDatabaseBeforeAndAfter() {
         //six users in @before must be deleted by cleanBefore

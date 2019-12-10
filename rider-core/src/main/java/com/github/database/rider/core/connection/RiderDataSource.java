@@ -51,7 +51,6 @@ public class RiderDataSource {
         if (!dbUnitConfig.isCacheConnection() || connection == null || connection.isClosed()) {
             connection = connectionHolder.getConnection();
         }
-
         return connection;
     }
 
@@ -59,7 +58,6 @@ public class RiderDataSource {
         if (!dbUnitConfig.isCacheConnection()) {
             initDBUnitConnection();
         }
-
         return dbUnitConnection;
     }
 
