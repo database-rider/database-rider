@@ -14,10 +14,8 @@ import com.github.database.rider.core.util.ContainsFilterTable;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.database.DatabaseSequenceFilter;
-import org.dbunit.database.PrimaryKeyFilteredTableWrapper;
 import org.dbunit.dataset.*;
 import org.dbunit.dataset.csv.CsvDataSet;
-import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.excel.XlsDataSet;
 import org.dbunit.dataset.filter.DefaultColumnFilter;
 import org.dbunit.dataset.filter.ITableFilter;
@@ -916,9 +914,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
             switch (compareOperation) {
                 case CONTAINS:
-                    filteredActualTable = filterTableByPrimaryKey(expectedTable, filteredActualTable);
-                    break;
-                case CONTAINS_COLUMNS:
                     filteredActualTable = new ContainsFilterTable(filteredActualTable, expectedTable);
                     break;
                 default:
@@ -928,17 +923,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             DataSetAssertion.assertEqualsIgnoreCols(expectedTable, filteredActualTable, excludeCols);
         }
 
-    }
-
-    private ITable filterTableByPrimaryKey(ITable expectedDataSet, ITable actualDataSet) throws DataSetException {
-        //PrimaryKeyFilteredTableWrapper uses Set.contains to check PK values, so types should be the same in both datasets
-        DataType dataType = actualDataSet.getTableMetaData().getPrimaryKeys()[0].getDataType();
-        String pkName = actualDataSet.getTableMetaData().getPrimaryKeys()[0].getColumnName();
-        Set<Object> pkSet = new HashSet<>();
-        for (int i = 0; i < expectedDataSet.getRowCount(); i++) {
-            pkSet.add(dataType.typeCast(expectedDataSet.getValue(i, pkName)));
-        }
-        return new PrimaryKeyFilteredTableWrapper(actualDataSet, pkSet);
     }
 
     @Override

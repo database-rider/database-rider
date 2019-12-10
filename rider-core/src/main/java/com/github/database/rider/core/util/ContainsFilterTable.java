@@ -1,6 +1,7 @@
 package com.github.database.rider.core.util;
 
 import org.dbunit.dataset.*;
+import org.dbunit.dataset.datatype.DataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,12 +101,17 @@ public class ContainsFilterTable implements ITable {
         for ( int row=0; row<fullSize; row++ ) {
             boolean match = true;
             for (int column = 0; column < columns.size(); column++) {
-                if (values.get(column).toString().startsWith("regex:")) {
+                if (values.get(column) != null && values.get(column).toString().startsWith("regex:")) {
                     if (!regexMatches(values.get(column).toString(), this.originalTable.getValue(row, columns.get(column)).toString())) {
                         match = false;
                         break;
                     }
-                } else if (!this.originalTable.getValue(row, columns.get(column)).equals(values.get(column))) {
+                    continue;
+                }
+
+                int columnIndex = this.originalTable.getTableMetaData().getColumnIndex(columns.get(column));
+                DataType dataType = this.originalTable.getTableMetaData().getColumns()[columnIndex].getDataType();
+                if (dataType.compare(values.get(column), this.originalTable.getValue(row, columns.get(column))) != 0) {
                     match = false;
                     break;
                 }
