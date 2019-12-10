@@ -214,7 +214,7 @@ public class ExpectedDataSetIt {
 
     @Test
     @DataSet(value = "yml/user.yml", transactional = true)
-    @ExpectedDataSet(value = "yml/expectedUsersContainsColumns.yml", compareOperation = CompareOperation.CONTAINS_COLUMNS)
+    @ExpectedDataSet(value = "yml/expectedUsersContainsColumns.yml", compareOperation = CompareOperation.CONTAINS)
     public void shouldMatchExpectedDataSetContainsColumns() {
         User u = new User();
         u.setId(3);
@@ -224,7 +224,7 @@ public class ExpectedDataSetIt {
 
     @Test
     @DataSet(value = {"yml/user.yml","yml/empty.yml"}, transactional = true)
-    @ExpectedDataSet(value = "yml/expectedUsersContainsColumnsRegex.yml", compareOperation = CompareOperation.CONTAINS_COLUMNS)
+    @ExpectedDataSet(value = "yml/expectedUsersContainsColumnsRegex.yml", compareOperation = CompareOperation.CONTAINS)
     public void shouldMatchExpectedDataSetContainsColumnsRegex() {
         User u = new User();
         u.setId(3);
