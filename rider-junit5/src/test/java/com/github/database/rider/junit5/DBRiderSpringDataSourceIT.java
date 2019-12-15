@@ -68,7 +68,7 @@ public class DBRiderSpringDataSourceIT {
   }
 
   @DBRider
-  @DataSet(value = "entity-ds1-test.yml")
+  @DataSet(value = "entity-ds1-test.yml", executorId = "primary-ds-executor")
   public void shouldPopulateDataSourcePrimary() {
     Set<String> expected = new HashSet<>(Arrays.asList("value1", "value2"));
     Set<String> actual = new HashSet<>(jdbcTemplatePrimary.queryForList("SELECT value FROM Entity1", String.class));
