@@ -3,7 +3,6 @@ package com.github.database.rider.springboot;
 import com.github.database.rider.core.api.dataset.CompareOperation;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
-import com.github.database.rider.core.api.exporter.ExportDataSet;
 import com.github.database.rider.junit5.api.DBRider;
 import com.github.database.rider.springboot.model.company.Company;
 import com.github.database.rider.springboot.model.company.CompanyRepository;
@@ -15,15 +14,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DBRider
+@DBRider //default datasource is used
 @SpringBootTest
 public class MultipleDataSourcesTest {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepository userRepository; //from user datasource
 
     @Autowired
-    private CompanyRepository companyRepository;
+    private CompanyRepository companyRepository; //from company datasource
 
 
     @Test
@@ -34,7 +33,7 @@ public class MultipleDataSourcesTest {
     }
 
     @Test
-    @DBRider(dataSourceBeanName = "companyDataSource")
+    @DBRider(dataSourceBeanName = "companyDataSource") //secondary (company) datasource will be used
     @DataSet("companies.yml")
     public void shouldListCompanies() {
         assertThat(companyRepository.count()).isEqualTo(2);
