@@ -12,6 +12,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.util.Random;
+
 import static com.github.database.rider.core.util.EntityManagerProvider.em;
 import static com.github.database.rider.core.util.EntityManagerProvider.tx;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -228,6 +230,16 @@ public class ExpectedDataSetIt {
     public void shouldMatchExpectedDataSetContainsColumnsRegex() {
         User u = new User();
         u.setId(3);
+        u.setName("@dbrider");
+        em().persist(u);
+    }
+
+    @Test
+    @DataSet(value = {"yml/user.yml","yml/empty.yml"}, transactional = true)
+    @ExpectedDataSet(value = "yml/expectedUsersContains.yml", compareOperation = CompareOperation.CONTAINS, ignoreCols = "id")
+    public void shouldMatchExpectedDataSetContainsIgnoringColumn() {
+        User u = new User();
+        u.setId(new Random(System.currentTimeMillis()).nextInt());
         u.setName("@dbrider");
         em().persist(u);
     }

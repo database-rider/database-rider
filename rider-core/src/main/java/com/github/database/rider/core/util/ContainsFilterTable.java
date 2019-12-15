@@ -45,7 +45,7 @@ public class ContainsFilterTable implements ITable {
      * @param expectedTable actualTable will be filtered by this table
      * @throws DataSetException throws DataSetException
      */
-    public ContainsFilterTable(ITable actualTable, ITable expectedTable) throws DataSetException {
+    public ContainsFilterTable(ITable actualTable, ITable expectedTable, List<String> ignoredCols) throws DataSetException {
         if ( expectedTable == null || actualTable == null ) {
             throw new IllegalArgumentException( "Constructor cannot receive null arguments" );
         }
@@ -53,10 +53,19 @@ public class ContainsFilterTable implements ITable {
         // sets the rows for the new table
         // NOTE: this conversion might be an issue for long tables, as it iterates for
         // all values of the original table and that might take time and memory leaks.
-        this.filteredRowIndexes = setRows(expectedTable);
+        this.filteredRowIndexes = setRows(expectedTable, toUpper(ignoredCols));
     }
 
-    private List<Integer> setRows(ITable expectedTable) throws DataSetException {
+    private List<String> toUpper(List<String> ignoredCols) {
+        List<String> upperCaseColumns = new ArrayList<>();
+        for (String ignoredCol : ignoredCols) {
+            upperCaseColumns.add(ignoredCol.toUpperCase());
+        }
+        return upperCaseColumns;
+
+    }
+
+    private List<Integer> setRows(ITable expectedTable, List<String> ignoredCols) throws DataSetException {
 
         ITableMetaData tableMetadata = this.originalTable.getTableMetaData();
         this.logger.debug("Setting rows for table {}",  tableMetadata.getTableName() );
@@ -75,7 +84,7 @@ public class ContainsFilterTable implements ITable {
             for (String column : columns) {
                 values.add(expectedTable.getValue(row, column));
             }
-            Integer actualRowIndex = tableContains(columns, values, filteredRowIndexes);
+            Integer actualRowIndex = tableContains(columns, values, filteredRowIndexes, ignoredCols);
             if (actualRowIndex == null) {
                 this.logger.debug("Discarding row {}", row);
                 continue;
@@ -95,12 +104,15 @@ public class ContainsFilterTable implements ITable {
      * @return row index of original table containing all requested values
      * @throws DataSetException throws DataSetException
      */
-    private Integer tableContains(List<String> columns, List<Object> values, List<Integer> filteredRowIndexes) throws DataSetException {
+    private Integer tableContains(List<String> columns, List<Object> values, List<Integer> filteredRowIndexes, List<String> ignoredCols) throws DataSetException {
         int fullSize = this.originalTable.getRowCount();
 
         for ( int row=0; row<fullSize; row++ ) {
             boolean match = true;
             for (int column = 0; column < columns.size(); column++) {
+                if(ignoredCols != null && ignoredCols.contains(columns.get(column).toUpperCase())) {
+                    continue;
+                }
                 if (values.get(column) != null && values.get(column).toString().startsWith("regex:")) {
                     if (!regexMatches(values.get(column).toString(), this.originalTable.getValue(row, columns.get(column)).toString())) {
                         match = false;
@@ -111,7 +123,7 @@ public class ContainsFilterTable implements ITable {
 
                 int columnIndex = this.originalTable.getTableMetaData().getColumnIndex(columns.get(column));
                 DataType dataType = this.originalTable.getTableMetaData().getColumns()[columnIndex].getDataType();
-                if (dataType.compare(values.get(column), this.originalTable.getValue(row, columns.get(column))) != 0) {
+                if (dataType.compare(values.get(columnIndex), this.originalTable.getValue(row, columns.get(columnIndex))) != 0) {
                     match = false;
                     break;
                 }

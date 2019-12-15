@@ -913,7 +913,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
             switch (compareOperation) {
                 case CONTAINS:
-                    filteredActualTable = new ContainsFilterTable(filteredActualTable, expectedTable);
+                    filteredActualTable = new ContainsFilterTable(filteredActualTable, expectedTable, Arrays.asList(excludeCols));
                     break;
                 default:
                     break;
