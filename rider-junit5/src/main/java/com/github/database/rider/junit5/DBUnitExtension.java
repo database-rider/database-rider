@@ -1,5 +1,25 @@
 package com.github.database.rider.junit5;
 
+import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Optional;
+
+import javax.sql.DataSource;
+
+import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
+import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
+import org.junit.jupiter.api.extension.ExtensionContext.Store;
+import org.junit.platform.commons.util.AnnotationUtils;
+import org.junit.platform.commons.util.StringUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import com.github.database.rider.core.RiderRunner;
 import com.github.database.rider.core.RiderTestContext;
 import com.github.database.rider.core.api.connection.ConnectionHolder;
@@ -10,23 +30,8 @@ import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.connection.ConnectionHolderImpl;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.leak.LeakHunterFactory;
+import com.github.database.rider.junit5.api.DBRider;
 import com.github.database.rider.junit5.util.EntityManagerProvider;
-import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
-import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
-import org.junit.jupiter.api.extension.ExtensionContext.Store;
-import org.junit.platform.commons.util.AnnotationUtils;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import javax.sql.DataSource;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Optional;
-
-import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
 
 /**
  * Created by pestano on 27/08/16.
@@ -35,6 +40,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
 
     private static final Namespace namespace = Namespace.create(DBUnitExtension.class);
     private static final String JUNIT5_EXECUTOR = "junit5";
+    private static final String EMPTY_STRING = "";
 
     @Override
     public void beforeTestExecution(ExtensionContext extensionContext) throws Exception {
@@ -42,11 +48,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         if (EntityManagerProvider.isEntityManagerActive()) {
             EntityManagerProvider.em().clear();
         }
-        DataSet dataSet = AnnotationUtils.findAnnotation(extensionContext.getRequiredTestMethod(), DataSet.class).orElse(null);
-        if (dataSet == null) {
-            dataSet = AnnotationUtils.findAnnotation(extensionContext.getRequiredTestClass(), DataSet.class).orElse(null);
-        }
-        final String executorId = (dataSet == null || "".equals(dataSet.executorId())) ? JUNIT5_EXECUTOR :  dataSet.executorId();
+        final String executorId = getExecutorId(extensionContext);
         ConnectionHolder connectionHolder = getTestConnection(extensionContext, executorId);
         DataSetExecutor dataSetExecutor =  DataSetExecutorImpl.instance(executorId, connectionHolder);
         DBUnitTestContext dbUnitTestContext = getTestContext(extensionContext);
@@ -61,6 +63,22 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
             leakHunter.measureConnectionsBeforeExecution();
             dbUnitTestContext.setLeakHunter(leakHunter);
         }
+    }
+
+    private String getExecutorId(final ExtensionContext extensionContext) {
+        Optional<DataSet> annDataSet = AnnotationUtils.findAnnotation(extensionContext.getRequiredTestMethod(), DataSet.class);
+        if (!annDataSet.isPresent()) {
+            annDataSet = AnnotationUtils.findAnnotation(extensionContext.getRequiredTestClass(), DataSet.class);
+        }
+
+        String dataSourceBeanName = getConfiguredDataSourceBeanName(extensionContext);
+        String executionIdSuffix = dataSourceBeanName.isEmpty() ? EMPTY_STRING : "-" + dataSourceBeanName;
+
+        return annDataSet
+            .map(DataSet::executorId)
+            .filter(StringUtils::isNotBlank)
+            .map(id -> id + executionIdSuffix)
+            .orElseGet(() -> JUNIT5_EXECUTOR + executionIdSuffix);
     }
 
     @Override
@@ -91,7 +109,8 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     }
 
     private ConnectionHolder getConnectionFromSpringContext(ExtensionContext extensionContext, String executorId) {
-        DataSource dataSource = SpringExtension.getApplicationContext(extensionContext).getBean(DataSource.class);
+        String configuredDataSourceBeanName = getConfiguredDataSourceBeanName(extensionContext);
+        DataSource dataSource = getDataSource(extensionContext, configuredDataSourceBeanName);
         try {
             DataSetExecutor dataSetExecutor = DataSetExecutorImpl.getExecutorById(executorId);
             if (isCachedConnection(dataSetExecutor)) {
@@ -102,6 +121,19 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         } catch (SQLException e) {
             throw new RuntimeException("Could not get connection from DataSource.");
         }
+    }
+
+    private static DataSource getDataSource(ExtensionContext extensionContext, String beanName) {
+        ApplicationContext context = SpringExtension.getApplicationContext(extensionContext);
+        return beanName.isEmpty() ? context.getBean(DataSource.class) : context.getBean(beanName, DataSource.class);
+    }
+
+    private static String getConfiguredDataSourceBeanName(ExtensionContext extensionContext) {
+        Optional<DBRider> annotation = AnnotationUtils.findAnnotation(extensionContext.getRequiredTestMethod(), DBRider.class);
+        if (!annotation.isPresent()) {
+            annotation = AnnotationUtils.findAnnotation(extensionContext.getRequiredTestClass(), DBRider.class);
+        }
+        return annotation.map(DBRider::dataSourceBeanName).orElse(EMPTY_STRING);
     }
 
     private ConnectionHolder getConnectionFromTestClass(ExtensionContext extensionContext, String executorId) {
