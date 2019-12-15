@@ -31,7 +31,7 @@ import com.github.database.rider.spring.model.EntityUtils;
 @RunWith(SpringRunner.class)
 @DBRider(dataSourceBeanName = "data-source-2")
 @ContextConfiguration(classes = TestConfig.class)
-public class DataSetSecondaryDataSourceIT {
+public class MultipleDataSourcesIT {
 
     @Autowired
     @Qualifier("data-source-2")
