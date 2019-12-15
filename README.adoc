@@ -38,7 +38,7 @@ This project aims for bringing http://dbunit.sourceforge.net/[DBUnit] closer to 
 
 Watch https://www.youtube.com/watch?v=A5ryED3a8FY[1.0 promo video^] to get an idea.
 
-A lot of this work is based on https://github.com/arquillian/arquillian-extension-persistence/[Arquillian persistence extension] and focus on simplicity (one dependency - dbunit). If you need a more robust and reliable solution (tests closer to production), I'd suggest arquillian persistence.
+A lot of this work is based on https://github.com/arquillian/arquillian-extension-persistence/[Arquillian persistence extension] and focus on simplicity (one dependency - dbunit).
 
 
 == Introduction
@@ -467,6 +467,82 @@ Also note that the same can be done using @Rule but pay attention that you must 
 
 <1> *exec1* is the id of executor responsible for dataset1-pu
 <2> executorId must match id provided in @Rule annotation
+
+==== Multiple databases in Spring tests
+
+Since `v1.9.0` both `Rider Spring` and `Rider JUnit 5` with `SpringBoot` support multiple datasources. You just need to specify the *dataSourceBeanName* property in `@DBRider` annotation:
+
+[source, java]
+----
+@DBRider //default datasource is used
+@SpringBootTest
+public class MultipleDataSourcesTest {
+
+    @Autowired
+    private UserRepository userRepository; //from user datasource
+
+    @Autowired
+    private CompanyRepository companyRepository; //from company datasource
+
+
+    @Test
+    @DataSet("users.yml")
+    public void shouldListUsers() {
+        assertThat(userRepository.count()).isEqualTo(3);
+        assertThat(userRepository.findByEmail("springboot@gmail.com")).isEqualTo(new User(3));
+    }
+
+    @Test
+    @DBRider(dataSourceBeanName = "companyDataSource") //secondary (company) datasource will be used
+    @DataSet("companies.yml")
+    public void shouldListCompanies() {
+        assertThat(companyRepository.count()).isEqualTo(2);
+        assertThat(companyRepository.findByNameLike("Umbrella%")).isEqualTo(new Company(2));
+
+    }
+----
+
+TIP: Full `rider-junit5` example can be found https://github.com/database-rider/database-rider/blob/master/rider-examples/spring-boot-dbunit-sample/src/test/java/com/github/database/rider/springboot/MultipleDataSourcesTest.java#L20[here^] and https://github.com/database-rider/database-rider/blob/master/rider-junit5/src/test/java/com/github/database/rider/junit5/DBRiderSpringDataSourceIT.java#L28[here^].
+
+TIP: Full `rider-spring` example can be found https://github.com/database-rider/database-rider/blob/master/rider-spring/src/test/java/com/github/database/rider/spring/dataset/MultipleDataSourcesIT.java#L33[here^].
+
+
+==== Multiple databases in CDI tests
+
+For `rider-cdi` you must use `entityManagerName` property of `@DBRider` from CDI module:
+
+[source, java]
+----
+@RunWith(CdiTestRunner.class)
+@DBRider
+public class MultipleEntityManagerIt {
+
+
+    @Inject
+    EntityManager em;
+
+    @Inject
+    @RiderPU("cdipu2")
+    EntityManager em2;
+
+
+    @Test
+    @DataSet("yml/users.yml")
+    public void shouldListUsersFromDefaultEntityManager() {
+        List<User> users = em.createQuery("select u from User u").getResultList();
+        assertThat(users).isNotNull().isNotEmpty().hasSize(2);
+    }
+
+    @Test
+    @DBRider(entityManagerName = "cdipu2")
+    @DataSet("yml/users.yml")
+    public void shouldListUsersFromEntityManager2() {
+        List<User> users = em2.createQuery("select u from User u").getResultList();
+        assertThat(users).isNotNull().isNotEmpty().hasSize(2);
+    }
+----
+
+TIP: Full CDI example can be found https://github.com/database-rider/database-rider/blob/master/rider-cdi/src/test/java/com/github/database/rider/cdi/MultipleEntityManagerIt.java#L27[here^].
 
 === Expected DataSet
 Using `@ExpectedDataSet` annotation you can specify the database state you expect after test execution, example:
