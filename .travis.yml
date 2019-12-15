@@ -13,6 +13,7 @@ env:
   - secure: k1YKkVK3vFzfPVPCVZ4utM6GeAAXAKPgMwnGgrjTn5Lx7Rg0SP9yCD82LraLrY2KXe4niao16+XuUPrEQMeaRKETDUnVFHYgThP1cgC9vJj/f8C1TBJRYJnP+pYceC+xLkl+u8BL31cqwejQDyUqtJ8OWACg6tfK9iRr6Qx/AXm4Hnx5ib0rn1y5/mTfRRL0NdH29wbosgPyhMQMrd7vpu+hZFb6oO0F0ZrfK7TnKuvO8aY1rOJRQmOHEA/qr+81oeXO6vClunE2W55aBRttV7jfwDoRpSPoHoJFunQXhefsJ5OrYolAlaXZsoGwrdnm85NjlT0wrIu+w6zoxW/vQ0+SOHZxxPDcYtXaMqu2C7AuVIGAd5rz3NczqdfGhFjnzhiqTuanNI19cMZ5Wa4KzgR/Wxy0xwMwUgGqzi/47o8hNYtOjNs0JS5dGA/YLOiMzaKk/rUTeEft/w/rn/vLf0hyDouIl107+ullw5lgDpba8Uv584Yk7jrnQG5SOxBkxKwx78tyokXFSLWJmjF9oj3ZXqbfqxfjCSwnP0HFpsZ8V197101K2u3yn9plNKeWT9JjrG087ArPq2ycYboeUxM6c/kd4QsE+8WnK/BwcpMQaLsdTLE5oZTtGOSKVYZZWyrI8ip1bLvgsw7MsldPzEFlhZjJudvVUR0X4qmYtU4=
   - secure: FpkvCRryICAVwOjNn3JK8JWzSxXm3TToEAz6f85Y9xlrprL5C6b0Pf85gzzonlldHMnJzB0pukC+35NWDv1/iKXth5Pk7IJvEcKPkqBYLPHXXjqvnOdm7oLwPh4E+fDPIciTbuTIkbYPRSWMq7hpXnFh1iFsMq2Ty1BfPQAUdFRMj+Lm8cbHh0oDeVkPDdqfY3HJE0I0GfCYpNwUgdfvzbRleNznkMa3U0z8OFQDpN4llkjulArICb4UV4zjpWBJY8yl9BYMqpvKRal0qeZK9Rmh/MzgF258MXbAKh2Swo5iEjLTzNO5IYUyNutAttrqz6qdMSy7i+IBISCcw0I1wxGYZD0639wqekiPN/Jg+9FdlavAXzQSw3cVzklmyujif86Eq2Ib+nfNHHmnBPGLrrRNPC3gwWKgdzGLS+cDT11w6rUAXc/9/kilPocyplM7QgFzu5Dz/PzTBkdN9HJRcNB2SPTDEKgndQl2+ckkZqOgGZB+Gcqf8niXW099F+w0+i2V7yb9Qb+39dIfOtud8trkBpB7bVbzjBRyiwmzTJe9Seygk4zDLLTto6ev3KxRCV/T3J6+37bD/WSbrfFKdiY3UCXuC3eit+zvmoDFKs//nXdUhjLowYCOt8TPXCSpH+fVIiGjCHr0/5f1fVnoncLO1pJSALdIMyssSDq5e3w=
   - secure: aCoBB0MwU48Zxwfg7uZrVocADOa4hVCvjPXnynQ8ehYOlabtWFMOFrgozV+rMsMH4WlnYilwUweUsNH6bTeKV9ANfaznbu5uW5Dt0qCQKVlxK3WNqjOYx7TL7mRVpguAXvha+HADj1QirXIc8G72AGDMT1jFJV/IzxZ0JeA9+6M2x4e7cadBZ4dyhkXOWBZOjCn2HO3r29ubS0YH5tn+bohIQepaZ5ikyY18wZtSmOislopTrQvjnUpuZEqmqFVdekP7H6jSkLYCYZVguFk2ithGsmLfVdt2T186DLrUGdGSTxNJBLs5inFrcxNa4BB7JdVYf9hB1aGICx7fCW9UQDCYcVgQruWtYkBN77VdR9O6Q6DaQUjUI0uvt+gZ3OMaJPCEEdBcW8sJnNB/tnK4f7HgheKaixhsKNzJ50yKTHkWUIYRIBuXcX7sLzKs2JDRFEdMbxDPk94sDaDliprd1SglSLeGiibp5ZxoQ2ZcKrsLsvRWPPlQwMBou7WgVP8WTtYU2+fcgDa1Apo+VuH9kkTBAhxQja+PvmNfGkqZ5d8jFpyf3SYNiiVZEF3nJBmGsRIq1B8jfecEKnwnELwdziK53jm47YgKBrfC4ifafMkbb9Ua4LtLKPZDmnig7gPZxPRq3ZgakIOoBP2FWfVAuGp01gpBa4gwv4XOYX0NW40=
+  - secure: pYvVWSjT2Islizh2mjs3KkEqpr6qM+A1ZkunjpBxIgSv/sbHS8MZSRnP7MCas3R+rmBU/aLbp2LZKvqGPXkN6t9zvEi2jBYcRxbqK18vMSXV9RZ1jAv7hKWwP/EI32OFpl8HS5JeNCLpFhD4daGRtSBef0yfkyym1o8BlzlEfSXHr7BWDqcyuLfqVP/KUPbBCZct/mkPcEOPyuxshLPQyMuTTjL2KlJfNi8WADKnm+TGz4BHKe+Kz+ouo5yMmUPbV3tV98VJZaB2c34Ekc0jTLYFq+cifnGDyoJLYv9jyxDPDL2aVbdhIs4W0ydkWObtL/h+R0smJZVMfq/sZb94w10z0n0kMPYIEIRZdq8mEoBbp8u+/GpiBCbuvQ1hPrZXMkYcG4R7TI4qpOud7hGN2KOc+W3GOV5n5Ghc3EEkfDPD2wbwv17KmCpDbDsvkbRjIEmWc3e9Ilh/QciBXnvhirDORLyT4zUy7P51vo1KIYQUED5auvaLVkAuY9sK8f0AR+OP1+L5Al136/P4/Eq7MV+ttmCYN5pUMn9S82EDiKGaU4/FLFw7g18dN1LrUdIZLxZ3nXWAR7rCnXwx76s0uegs6e8ShDa70RBBEq8XmXA5aB3WQSeW1fLLpo3+aKrSDCrKh4pGgSrCFrlRrR48R3Xk67X65264VoNKdsyPASE=
 before_script:
 - git config --global user.name rmpestano
 - git config --global user.email rmpestano@gmail.com
@@ -20,10 +21,12 @@ script:
 - mvn clean install jacoco:report coveralls:report -Pcoverage surefire-report:report-only
   && python html2text.py target/site/surefire-report.html
 - if [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_BRANCH == "master" ]]; then
-  mvn sonar:sonar -Psonar -Dsonar.organization=database-rider -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${SONAR_TOKEN} ; fi ;
+  mvn sonar:sonar -Psonar -Dsonar.organization=database-rider -Dsonar.host.url=https://sonarcloud.io
+  -Dsonar.login=${SONAR_TOKEN} ; fi ;
 - if [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_BRANCH == "master" ]]; then
   cd rider-core && mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs ; fi ;
-- if [[ $TRAVIS_COMMIT_MESSAGE == *"prepare release"* ]]; then mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs -Prelease ; fi ;
+- if [[ $TRAVIS_COMMIT_MESSAGE == *"prepare release"* ]]; then mvn -q cukedoctor:execute
+  scm-publish:publish-scm -Pdocs -Prelease ; fi ;
 after_script:
 - if [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_BRANCH == "master" ]]; then
   cd ../ && mvn clean package deploy --settings settings.xml -DskipTests=true ; fi;
