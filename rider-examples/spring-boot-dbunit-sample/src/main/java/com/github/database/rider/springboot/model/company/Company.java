@@ -1,11 +1,11 @@
-package com.github.database.rider.springboot.models;
+package com.github.database.rider.springboot.model.company;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "company")
+public class Company {
 
 
     @Id
@@ -13,24 +13,19 @@ public class User {
     private long id;
 
     @NotNull
-    private String email;
-
-    @NotNull
     private String name;
 
 
-    public User() {
+    public Company() {
     }
 
-    public User(long id) {
+    public Company(long id) {
         this.id = id;
     }
 
-    public User(String email, String name) {
-        this.email = email;
+    public Company(String name) {
         this.name = name;
     }
-
 
     public long getId() {
         return id;
@@ -38,14 +33,6 @@ public class User {
 
     public void setId(long value) {
         this.id = value;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String value) {
-        this.email = value;
     }
 
     public String getName() {
@@ -61,7 +48,7 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        User user = (User) o;
+        Company user = (Company) o;
 
         return id == user.id;
 

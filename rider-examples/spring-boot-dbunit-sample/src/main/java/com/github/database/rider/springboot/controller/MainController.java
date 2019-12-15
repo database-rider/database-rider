@@ -1,4 +1,4 @@
-package com.github.database.rider.springboot.controllers;
+package com.github.database.rider.springboot.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

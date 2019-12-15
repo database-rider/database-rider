@@ -1,4 +1,4 @@
-package com.github.database.rider.springboot.models;
+package com.github.database.rider.springboot.model.user;
 
 import javax.transaction.Transactional;
 
@@ -11,6 +11,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
    *
    * @param email the user email.
    */
-  public User findByEmail(String email);
+   User findByEmail(String email);
 
 }

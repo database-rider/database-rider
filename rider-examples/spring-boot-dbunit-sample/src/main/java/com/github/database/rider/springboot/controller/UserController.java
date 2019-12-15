@@ -1,7 +1,7 @@
-package com.github.database.rider.springboot.controllers;
+package com.github.database.rider.springboot.controller;
 
-import com.github.database.rider.springboot.models.User;
-import com.github.database.rider.springboot.models.UserRepository;
+import com.github.database.rider.springboot.model.user.User;
+import com.github.database.rider.springboot.model.user.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
