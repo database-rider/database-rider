@@ -37,8 +37,6 @@ public class MultipleDataSourcesTest {
     @DBRider(dataSourceBeanName = "companyDataSource")
     @DataSet("companies.yml")
     public void shouldListCompanies() {
-        companyRepository.save(new Company("Rider company"));
-        companyRepository.save(new Company("Umbrella corporation"));
         assertThat(companyRepository.count()).isEqualTo(2);
         assertThat(companyRepository.findByNameLike("Umbrella%")).isEqualTo(new Company(2));
 
