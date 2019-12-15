@@ -53,9 +53,7 @@ public class RiderRunner {
     }
 
     public void runAfterTest(RiderTestContext riderTestContext) throws SQLException, DatabaseUnitException {
-        DataSetExecutor executor = riderTestContext.getDataSetExecutor();
         DataSet dataSet = riderTestContext.getAnnotation(DataSet.class);
-
         if (dataSet != null) {
             DataSetConfig dataSetConfig = new DataSetConfig().from(dataSet);
 
@@ -63,7 +61,6 @@ public class RiderRunner {
                 riderTestContext.commit();
             }
         }
-
         performDataSetComparison(riderTestContext);
     }
 
