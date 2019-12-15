@@ -16,7 +16,7 @@ import com.github.database.rider.spring.DBRiderTestExecutionListener;
  *
  * @author Artemy Osipov
  */
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @TestExecutionListeners(value = DBRiderTestExecutionListener.class, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public @interface DBRider {

@@ -2,6 +2,7 @@ package com.github.database.rider.spring.dataset;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,25 +34,34 @@ import com.github.database.rider.spring.model.EntityUtils;
 public class DataSetSecondaryDataSourceIT {
 
     @Autowired
-    private EntityUtils entityUtils;
+    @Qualifier("data-source-2")
+    private DataSource secondaryDataSource;
 
     @Autowired
-    @Qualifier("data-source-2")
-    private DataSource dataSource;
+    private DataSource defaultDataSource;
 
     private JdbcTemplate jdbcTemplate;
 
-    @Before
-    public void setupJdbcTemplate() {
-        jdbcTemplate = new JdbcTemplate(dataSource);
-    }
-
     @Test
     @DataSet(value = "ds2-test.yml")
-    public void testOnMethod() {
+    public void shouldUseSecondaryDataSource() {
+        jdbcTemplate = new JdbcTemplate(secondaryDataSource);
         Set<String> expected = new HashSet<>(Arrays.asList("value1", "value2"));
         Set<String> actual = new HashSet<>(jdbcTemplate.queryForList("SELECT value FROM Entity2", String.class));
 
         assertThat(actual).containsExactlyElementsOf(expected);
     }
+
+    @Test
+    @DataSet(value = "test.yml")
+    @DBRider
+    public void shouldUseDefaultDataSource() throws SQLException {
+        jdbcTemplate = new JdbcTemplate(defaultDataSource);
+        Set<String> expected = new HashSet<>(Arrays.asList("value1", "value2"));
+        Set<String> actual = new HashSet<>(jdbcTemplate.queryForList("SELECT value FROM Entity", String.class));
+
+        assertThat(actual).containsExactlyElementsOf(expected);
+    }
+
+
 }

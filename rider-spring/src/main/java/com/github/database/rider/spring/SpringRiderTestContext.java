@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import com.github.database.rider.core.connection.ConnectionHolderImpl;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
@@ -21,16 +22,16 @@ class SpringRiderTestContext extends AbstractRiderTestContext {
 
     private final TestContext testContext;
 
-    static SpringRiderTestContext create(TestContext testContext) {
+    static SpringRiderTestContext create(TestContext testContext) throws SQLException {
         return new SpringRiderTestContext(createDataSetExecutor(testContext), testContext);
     }
 
-    private static DataSetExecutor createDataSetExecutor(TestContext testContext) {
+    private static DataSetExecutor createDataSetExecutor(TestContext testContext) throws SQLException {
         String beanName = getConfiguredDataSourceBeanName(testContext);
         DataSource dataSourceBean = getDataSource(testContext, beanName);
         DataSource dataSource = wrapInTransactionAwareProxy(dataSourceBean);
         String instanceId = beanName.isEmpty() ? "default" : beanName;
-        DataSetExecutorImpl dataSetExecutor = DataSetExecutorImpl.instance(instanceId, dataSource::getConnection);
+        DataSetExecutorImpl dataSetExecutor = DataSetExecutorImpl.instance(instanceId, new ConnectionHolderImpl(dataSource.getConnection()));
         dataSetExecutor.clearRiderDataSource();
 
         return dataSetExecutor;
@@ -42,7 +43,10 @@ class SpringRiderTestContext extends AbstractRiderTestContext {
     }
 
     private static String getConfiguredDataSourceBeanName(final TestContext testContext) {
-        DBRider dbRiderAnnotation = testContext.getTestClass().getAnnotation(DBRider.class);
+        DBRider dbRiderAnnotation = testContext.getTestMethod().getAnnotation(DBRider.class);
+        if(dbRiderAnnotation == null) {
+            dbRiderAnnotation = testContext.getTestClass().getAnnotation(DBRider.class);
+        }
         return dbRiderAnnotation != null ? dbRiderAnnotation.dataSourceBeanName() : EMPTY_STRING;
     }
 
