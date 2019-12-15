@@ -1,14 +1,10 @@
 package com.github.database.rider.junit5.api;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
+import com.github.database.rider.junit5.DBUnitExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.github.database.rider.junit5.DBUnitExtension;
+import java.lang.annotation.*;
 
 /**
  * Created by rafael-pestano on 26/10/2016.
@@ -22,10 +18,10 @@ import com.github.database.rider.junit5.DBUnitExtension;
 @Test
 public @interface DBRider {
 
-  /**
-   * @return name of the DataSource bean in Spring Context.
-   * If empty then dataSource bean will be loaded by class and thus default one will be used.
-   */
-  String dataSourceBeanName() default "";
+    /**
+     * @return name of the DataSource bean in Spring Context.
+     * If empty then default dataSource will be used.
+     */
+    String dataSourceBeanName() default "";
 
 }
