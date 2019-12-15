@@ -43,7 +43,7 @@ public class ContainsFilterTable implements ITable {
      * Creates a new {@link ITable} where some rows can be filtered out from the original table
      * @param actualTable The table to be wrapped
      * @param expectedTable actualTable will be filtered by this table
-     * @throws DataSetException
+     * @throws DataSetException throws DataSetException
      */
     public ContainsFilterTable(ITable actualTable, ITable expectedTable) throws DataSetException {
         if ( expectedTable == null || actualTable == null ) {
@@ -93,7 +93,7 @@ public class ContainsFilterTable implements ITable {
      * @param values column values
      * @param filteredRowIndexes list of row indexes already found by previous runs
      * @return row index of original table containing all requested values
-     * @throws DataSetException
+     * @throws DataSetException throws DataSetException
      */
     private Integer tableContains(List<String> columns, List<Object> values, List<Integer> filteredRowIndexes) throws DataSetException {
         int fullSize = this.originalTable.getRowCount();

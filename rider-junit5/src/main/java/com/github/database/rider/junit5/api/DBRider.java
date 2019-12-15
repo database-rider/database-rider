@@ -18,5 +18,10 @@ import java.lang.annotation.*;
 @Test
 public @interface DBRider {
 
+    /**
+     * @return name of the DataSource bean in Spring Context.
+     * If empty then default dataSource will be used.
+     */
+    String dataSourceBeanName() default "";
 
 }
