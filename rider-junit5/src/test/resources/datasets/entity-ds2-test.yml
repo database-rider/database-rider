@@ -1,0 +1,5 @@
+ENTITY2:
+  - ID: 1
+    VALUE: "value1"
+  - ID: 2
+    VALUE: "value2"
