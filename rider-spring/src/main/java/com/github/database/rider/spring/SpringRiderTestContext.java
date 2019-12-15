@@ -5,7 +5,6 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import com.github.database.rider.core.connection.ConnectionHolderImpl;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
@@ -22,16 +21,16 @@ class SpringRiderTestContext extends AbstractRiderTestContext {
 
     private final TestContext testContext;
 
-    static SpringRiderTestContext create(TestContext testContext) throws SQLException {
+    static SpringRiderTestContext create(TestContext testContext) {
         return new SpringRiderTestContext(createDataSetExecutor(testContext), testContext);
     }
 
-    private static DataSetExecutor createDataSetExecutor(TestContext testContext) throws SQLException {
+    private static DataSetExecutor createDataSetExecutor(TestContext testContext) {
         String beanName = getConfiguredDataSourceBeanName(testContext);
         DataSource dataSourceBean = getDataSource(testContext, beanName);
         DataSource dataSource = wrapInTransactionAwareProxy(dataSourceBean);
         String instanceId = beanName.isEmpty() ? "default" : beanName;
-        DataSetExecutorImpl dataSetExecutor = DataSetExecutorImpl.instance(instanceId, new ConnectionHolderImpl(dataSource.getConnection()));
+        DataSetExecutorImpl dataSetExecutor = DataSetExecutorImpl.instance(instanceId, dataSource::getConnection);
         dataSetExecutor.clearRiderDataSource();
 
         return dataSetExecutor;

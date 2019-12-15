@@ -55,7 +55,7 @@ public class MultipleDataSourcesIT {
     @Test
     @DataSet(value = "test.yml")
     @DBRider
-    public void shouldUseDefaultDataSource() throws SQLException {
+    public void shouldUseDefaultDataSource() {
         jdbcTemplate = new JdbcTemplate(defaultDataSource);
         Set<String> expected = new HashSet<>(Arrays.asList("value1", "value2"));
         Set<String> actual = new HashSet<>(jdbcTemplate.queryForList("SELECT value FROM Entity", String.class));
