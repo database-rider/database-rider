@@ -123,7 +123,7 @@ public class ContainsFilterTable implements ITable {
 
                 int columnIndex = this.originalTable.getTableMetaData().getColumnIndex(columns.get(column));
                 DataType dataType = this.originalTable.getTableMetaData().getColumns()[columnIndex].getDataType();
-                if (dataType.compare(values.get(columnIndex), this.originalTable.getValue(row, columns.get(columnIndex))) != 0) {
+                if (dataType.compare(values.get(column), this.originalTable.getValue(row, columns.get(column))) != 0) {
                     match = false;
                     break;
                 }
