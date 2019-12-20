@@ -183,7 +183,7 @@
                             </checkinComment>
                             <content>target/docs</content>
                             <skipDeletedFiles>true</skipDeletedFiles>
-                            <pubScmUrl>scm:git:https://${USER}:${PASS}@github.com/database-rider/database-rider.git
+                            <pubScmUrl>scm:git:https://${GH_TOKEN}@github.com/database-rider/database-rider.git
                             </pubScmUrl>
                             <scmBranch>gh-pages</scmBranch>
                         </configuration>
