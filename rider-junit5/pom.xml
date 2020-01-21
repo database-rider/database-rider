@@ -42,7 +42,6 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${version.junit-jupiter}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <!-- contains the runner that adapts Jupiter-tests for a v4-run -->

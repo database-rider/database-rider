@@ -7,12 +7,14 @@ import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.sql.DataSource;
 
-import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
-import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
+import com.github.database.rider.core.configuration.DataSetConfig;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.*;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 import org.junit.jupiter.api.extension.ExtensionContext.Store;
 import org.junit.platform.commons.util.AnnotationUtils;
@@ -36,7 +38,7 @@ import com.github.database.rider.junit5.util.EntityManagerProvider;
 /**
  * Created by pestano on 27/08/16.
  */
-public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestExecutionCallback {
+public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestExecutionCallback, BeforeEachCallback {
 
     private static final Namespace namespace = Namespace.create(DBUnitExtension.class);
     private static final String JUNIT5_EXECUTOR = "junit5";
@@ -44,11 +46,8 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
 
     @Override
     public void beforeTestExecution(ExtensionContext extensionContext) throws Exception {
-
-        if (EntityManagerProvider.isEntityManagerActive()) {
-            EntityManagerProvider.em().clear();
-        }
-        final String executorId = getExecutorId(extensionContext);
+        clearEntityManager();
+        final String executorId = getExecutorId(extensionContext, null);
         ConnectionHolder connectionHolder = getTestConnection(extensionContext, executorId);
         DataSetExecutor dataSetExecutor =  DataSetExecutorImpl.instance(executorId, connectionHolder);
         DBUnitTestContext dbUnitTestContext = getTestContext(extensionContext);
@@ -65,10 +64,12 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         }
     }
 
-    private String getExecutorId(final ExtensionContext extensionContext) {
-        Optional<DataSet> annDataSet = AnnotationUtils.findAnnotation(extensionContext.getRequiredTestMethod(), DataSet.class);
-        if (!annDataSet.isPresent()) {
-            annDataSet = AnnotationUtils.findAnnotation(extensionContext.getRequiredTestClass(), DataSet.class);
+    private String getExecutorId(final ExtensionContext extensionContext, DataSet dataSet) {
+        Optional<DataSet> annDataSet = Optional.empty();
+        if(dataSet != null) {
+            annDataSet = Optional.of(dataSet);
+        } else {
+            annDataSet = findDataSetAnnotation(extensionContext);
         }
 
         String dataSourceBeanName = getConfiguredDataSourceBeanName(extensionContext);
@@ -79,6 +80,14 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
             .filter(StringUtils::isNotBlank)
             .map(id -> id + executionIdSuffix)
             .orElseGet(() -> JUNIT5_EXECUTOR + executionIdSuffix);
+    }
+
+    private Optional<DataSet> findDataSetAnnotation(ExtensionContext extensionContext) {
+        Optional<DataSet> annDataSet = AnnotationUtils.findAnnotation(extensionContext.getRequiredTestMethod(), DataSet.class);
+        if (!annDataSet.isPresent()) {
+            annDataSet = AnnotationUtils.findAnnotation(extensionContext.getRequiredTestClass(), DataSet.class);
+        }
+        return annDataSet;
     }
 
     @Override
@@ -97,6 +106,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
             riderRunner.runAfterTest(riderTestContext);
         } finally {
             riderRunner.teardown(riderTestContext);
+            afterEach(extensionContext);
         }
     }
 
@@ -222,5 +232,55 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         return executor != null && executor.getDBUnitConfig().isCacheConnection();
     }
 
+    public Optional<DataSet> getDataSetFromCallbackMethod(ExtensionContext extensionContext, Class callback) {
+      Optional<Method> callbackMethod = findCallbackMethod(extensionContext, callback);
+      if(callbackMethod.isPresent()) {
+          DataSet dataSet = AnnotationUtils.findAnnotation(callbackMethod.get(), DataSet.class).orElse(null);
+          if(dataSet != null) {
+              return Optional.of(dataSet);
+          }
+      }
 
+      return Optional.empty();
+
+    }
+
+    private Optional<Method> findCallbackMethod(ExtensionContext extensionContext, Class callback) {
+
+        return Stream.of(extensionContext.getTestClass().get()
+                .getDeclaredMethods())
+                .filter(m -> m.getAnnotation(callback) != null)
+                .findFirst();
+    }
+
+
+    @Override
+    public void beforeEach(ExtensionContext extensionContext) throws Exception {
+        Optional<DataSet> dataSet = getDataSetFromCallbackMethod(extensionContext, BeforeEach.class);
+        if(dataSet.isPresent()) {
+            clearEntityManager();
+            final String executorId = getExecutorId(extensionContext, dataSet.get());
+            ConnectionHolder connectionHolder = getTestConnection(extensionContext, executorId);
+            DataSetExecutor dataSetExecutor =  DataSetExecutorImpl.instance(executorId, connectionHolder);
+            dataSetExecutor.createDataSet(new DataSetConfig().from(dataSet.get()));
+        }
+    }
+
+    public void afterEach(ExtensionContext extensionContext) {
+        Optional<DataSet> dataSet = getDataSetFromCallbackMethod(extensionContext, AfterEach.class);
+        if(dataSet.isPresent()) {
+            clearEntityManager();
+            final String executorId = getExecutorId(extensionContext, dataSet.get());
+            ConnectionHolder connectionHolder = getTestConnection(extensionContext, executorId);
+            DataSetExecutor dataSetExecutor =  DataSetExecutorImpl.instance(executorId, connectionHolder);
+            dataSetExecutor.createDataSet(new DataSetConfig().from(dataSet.get()));
+        }
+    }
+
+
+    private void clearEntityManager() {
+        if (EntityManagerProvider.isEntityManagerActive()) {
+            EntityManagerProvider.em().clear();
+        }
+    }
 }
