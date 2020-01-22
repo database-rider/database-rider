@@ -233,17 +233,17 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     }
 
     public Optional<DataSet> getDataSetFromCallbackMethod(ExtensionContext extensionContext, Class callback) {
-        DataSet dataSet;
-        Optional<Method> callbackMethod = findCallbackMethod(extensionContext.getTestClass().get(), callback);
-        if (callbackMethod.isPresent()) {
-            dataSet = AnnotationUtils.findAnnotation(callbackMethod.get(), DataSet.class).orElse(null);
-            if (dataSet != null) {
-                return Optional.of(dataSet);
-            }
-        }
-
-        //try to get callback method from superclass
         if (extensionContext.getTestClass().isPresent()) {
+            DataSet dataSet;
+            Optional<Method> callbackMethod = findCallbackMethod(extensionContext.getTestClass().get(), callback);
+            if (callbackMethod.isPresent()) {
+                dataSet = AnnotationUtils.findAnnotation(callbackMethod.get(), DataSet.class).orElse(null);
+                if (dataSet != null) {
+                    return Optional.of(dataSet);
+                }
+            }
+
+            //try to get callback method from superclass
             Class<?> testSuperclass = extensionContext.getTestClass().get().getSuperclass();
             if (testSuperclass != null) {
                 Optional<Method> callbackMethodFromSuperclass = findCallbackMethod(testSuperclass, callback);
