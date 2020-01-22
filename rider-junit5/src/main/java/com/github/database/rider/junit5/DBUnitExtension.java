@@ -243,7 +243,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
                 }
             }
 
-            //try to get callback method from superclass
+           //try to get callback method from superclass
             Class<?> testSuperclass = extensionContext.getTestClass().get().getSuperclass();
             if (testSuperclass != null) {
                 Optional<Method> callbackMethodFromSuperclass = findCallbackMethod(testSuperclass, callback);
@@ -262,7 +262,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     private Optional<Method> findCallbackMethod(Class testClass, Class callback) {
 
         return Stream.of(testClass
-                .getDeclaredMethods())
+                .getMethods())
                 .filter(m -> m.getAnnotation(callback) != null)
                 .findFirst();
     }
