@@ -233,21 +233,35 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     }
 
     public Optional<DataSet> getDataSetFromCallbackMethod(ExtensionContext extensionContext, Class callback) {
-      Optional<Method> callbackMethod = findCallbackMethod(extensionContext, callback);
-      if(callbackMethod.isPresent()) {
-          DataSet dataSet = AnnotationUtils.findAnnotation(callbackMethod.get(), DataSet.class).orElse(null);
-          if(dataSet != null) {
-              return Optional.of(dataSet);
-          }
-      }
+        DataSet dataSet;
+        Optional<Method> callbackMethod = findCallbackMethod(extensionContext.getTestClass().get(), callback);
+        if (callbackMethod.isPresent()) {
+            dataSet = AnnotationUtils.findAnnotation(callbackMethod.get(), DataSet.class).orElse(null);
+            if (dataSet != null) {
+                return Optional.of(dataSet);
+            }
+        }
 
-      return Optional.empty();
+        //try to get callback method from superclass
+        if (extensionContext.getTestClass().isPresent()) {
+            Class<?> testSuperclass = extensionContext.getTestClass().get().getSuperclass();
+            if (testSuperclass != null) {
+                Optional<Method> callbackMethodFromSuperclass = findCallbackMethod(testSuperclass, callback);
+                if (callbackMethodFromSuperclass.isPresent()) {
+                    dataSet = AnnotationUtils.findAnnotation(callbackMethodFromSuperclass.get(), DataSet.class).orElse(null);
+                    if (dataSet != null) {
+                        return Optional.of(dataSet);
+                    }
+                }
+            }
+        }
+        return Optional.empty();
 
     }
 
-    private Optional<Method> findCallbackMethod(ExtensionContext extensionContext, Class callback) {
+    private Optional<Method> findCallbackMethod(Class testClass, Class callback) {
 
-        return Stream.of(extensionContext.getTestClass().get()
+        return Stream.of(testClass
                 .getDeclaredMethods())
                 .filter(m -> m.getAnnotation(callback) != null)
                 .findFirst();
