@@ -39,7 +39,6 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 
 @QuarkusTest
-@DBRider
 public class QuarkusSuperclassDataSetTest extends BaseQuarkusTest {
 
     @Inject
