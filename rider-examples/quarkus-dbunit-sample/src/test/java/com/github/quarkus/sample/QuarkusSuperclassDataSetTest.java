@@ -17,7 +17,6 @@
 package com.github.quarkus.sample;
 
 
-import com.github.database.rider.cdi.api.DBRider;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetProvider;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
@@ -65,7 +64,7 @@ public class QuarkusSuperclassDataSetTest extends BaseQuarkusTest {
     }
 
     @Test
-    @DataSet("book-empty.yml") //this overrides superclass dataset
+    @DataSet("book-empty.yml") //this overrides dataset declared in superclass beforeEach because CLEAN_INSERT on the same table
     public void shouldCreateBook() {
         final Book book = new Book("Joshua Bloch", "Effective Java (2nd Edition)", 2001, "Tech", "978-0-3213-5668-0");
 
