@@ -17,7 +17,7 @@
 package com.github.quarkus.sample;
 
 
-import com.github.database.rider.cdi.api.DBUnitInterceptor;
+import com.github.database.rider.cdi.api.DBRider;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetProvider;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
@@ -28,15 +28,10 @@ import org.dbunit.dataset.IDataSet;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.transaction.Transactional;
 import javax.ws.rs.core.MediaType;
-import java.io.StringReader;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
-import static javax.transaction.Transactional.TxType.REQUIRED;
 import static javax.ws.rs.core.Response.Status.CREATED;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -44,14 +39,13 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 
 @QuarkusTest
-@DBUnitInterceptor
-public class QuarkusDBUnit8Test {
+@DBRider
+public class QuarkusSuperclassDataSetTest extends BaseQuarkusTest {
 
     @Inject
     BookRepository repository;
 
     @Test
-    @DataSet(value = "books.yml")
     public void shouldFindAllBooks() {
         List<Book> books = repository.findAll();
         assertThat(books)
@@ -62,7 +56,6 @@ public class QuarkusDBUnit8Test {
     }
 
     @Test
-    @DataSet(value = "books.yml")
     public void shouldFindAllBooksViaRestApi() {
         given()
              .when().get("/api/books")
@@ -72,32 +65,8 @@ public class QuarkusDBUnit8Test {
              .body("title", hasItem("The Silmarillion"));
     }
 
-
     @Test
-    @DataSet(provider = BookDataSetProvider.class)
-    public void shouldFindBookById() {
-        Book book = repository.findById(1L);
-        assertThat(book)
-                .isNotNull()
-                .extracting("title")
-                .isEqualTo("DBrider loves Quarkus!");
-    }
-
-    @Test
-    @DataSet(provider = BookDataSetProvider.class)
-    public void shouldFindBookByIdViaRestApi() {
-       String json =  given()
-                .when().get("/api/books/1")
-                .then()
-                .statusCode(OK.getStatusCode()).extract().asString();
-
-        JsonObject jsonObject = Json.createReader(new StringReader(json)).readObject();
-        assertThat(jsonObject.getString("author")).isEqualTo("DBrider");
-    }
-
-    @Test
-    @DataSet("book-empty.yml")
-    @Transactional(REQUIRED)
+    @DataSet("book-empty.yml") //this overrides superclass dataset
     public void shouldCreateBook() {
         final Book book = new Book("Joshua Bloch", "Effective Java (2nd Edition)", 2001, "Tech", "978-0-3213-5668-0");
 
@@ -107,6 +76,16 @@ public class QuarkusDBUnit8Test {
         assertThat(bookeCreated)
                 .extracting("isbn","title")//isbn is changed with prefix only on rest api
                 .contains("978-0-3213-5668-0","Effective Java (2nd Edition)");
+    }
+
+    @Test
+    @DataSet(provider = QuarkusDBUnitTest.BookDataSetProvider.class)
+    public void shouldFindBookById() {
+        Book book = repository.findById(1L);
+        assertThat(book)
+                .isNotNull()
+                .extracting("title")
+                .isEqualTo("DBrider loves Quarkus!");
     }
 
     @Test
