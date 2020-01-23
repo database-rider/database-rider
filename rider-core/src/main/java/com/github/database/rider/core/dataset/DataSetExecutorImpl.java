@@ -112,6 +112,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             StringBuilder sb = new StringBuilder(150);
             sb.append("cacheConnection: ").append("" + dbUnitConfig.isCacheConnection()).append("\n")
                     .append("cacheTableNames: ").append(dbUnitConfig.isCacheTableNames()).append("\n")
+                    .append("mergeDataSets: ").append(dbUnitConfig.isMergeDataSets()).append("\n")
+                    .append("caseSensitiveTableNames: ").append(dbUnitConfig.isCaseSensitiveTableNames()).append("\n")
+                    .append("caseInsensitiveStrategy: ").append(dbUnitConfig.getCaseInsensitiveStrategy()).append("\n")
                     .append("leakHunter: ").append("" + dbUnitConfig.isLeakHunter()).append("\n");
 
             for (Entry<String, Object> entry : dbUnitConfig.getProperties().entrySet()) {
@@ -179,7 +182,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private void logDataSet(IDataSet resultingDataSet, Exception e) {
         try {
-            File datasetFile = Files.createTempFile("dataset-log", ".yml").toFile();
+            File datasetFile = Files.createTempFile("dataset-log", ".xml").toFile();
             log.info("Saving current dataset to " + datasetFile.getAbsolutePath());
             try (FileOutputStream fos = new FileOutputStream(datasetFile)) {
                 FlatXmlDataSet.write(resultingDataSet, fos);
@@ -224,7 +227,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     @Override
     public IDataSet loadDataSet(String name) throws DataSetException, IOException {
         String[] dataSetNames = name.trim().split(",");
-
         List<IDataSet> dataSets = new ArrayList<>();
         for (String dataSet : dataSetNames) {
             IDataSet target = null;
@@ -264,7 +266,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 dataSets.add(target);
             }
         }
-
         if (dataSets.isEmpty()) {
             throw new RuntimeException("No dataset loaded for name " + name);
         }
@@ -291,11 +292,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     @Override
     public IDataSet loadDataSets(String[] datasets) throws DataSetException, IOException {
         List<IDataSet> dataSetList = new ArrayList<>();
-
         for (String name : datasets) {
             dataSetList.add(loadDataSet(name));
         }
-
         return new CompositeDataSet(dataSetList.toArray(new IDataSet[dataSetList.size()]));
     }
 
@@ -459,14 +458,13 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 getRiderDataSource().getConnection().commit();
                 getRiderDataSource().getConnection().setAutoCommit(autoCommit);
             } catch (Exception e) {
-                log.error("Could execute statements:" + e.getMessage(), e);
+                throw new RuntimeException("Could execute statements:" + e.getMessage(), e);
             } finally {
                 if (statement != null) {
                     try {
                         statement.close();
                     } catch (SQLException ex) {
                         log.error("Could close statement.", ex);
-
                     }
                 }
             }
@@ -786,8 +784,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             }
             return result.toArray(new String[result.size()]);
         } catch (IOException e) {
-            log.warn(String.format("Could not read script file %s.", jarEntry), e);
-            return null;
+            throw new RuntimeException(String.format("Could not read script file %s.", jarEntry), e);
         } finally {
             try {
                 if (r != null) {
@@ -821,9 +818,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             }
             return scripts.toArray(new String[scripts.size()]);
         } catch (Exception e) {
-            log.warn(String.format("Could not read script file %s. Error in line %d.", scriptFile.getAbsolutePath(),
-                    lineNum), e);
-            return null;
+            throw new RuntimeException(String.format(String.format("Could not read script file %s. Error in line %d.", scriptFile.getAbsolutePath(),
+                    lineNum), e));
         } finally {
             if (rad != null) {
                 try {
