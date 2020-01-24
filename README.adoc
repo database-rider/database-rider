@@ -31,8 +31,7 @@ image:https://travis-ci.org/database-rider/database-rider.svg[Build Status (Trav
 image:https://coveralls.io/repos/database-rider/database-rider/badge.png[Coverage, link=https://coveralls.io/r/database-rider/database-rider]
 image:https://img.shields.io/maven-central/v/com.github.database-rider/rider-core.svg?label=Maven%20Central["Maven Central",link="https://search.maven.org/search?q=g:com.github.database-rider"]
 image:https://sonarcloud.io/api/project_badges/measure?project=com.github.database-rider:rider-parent&metric=alert_status["Sonar", link="https://sonarcloud.io/dashboard?id=com.github.database-rider%3Arider-parent"]
-
-
+image:https://badges.gitter.im/database-rider/community.svg["Gitter", link="https://gitter.im/database-rider/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge"]
 
 This project aims for bringing http://dbunit.sourceforge.net/[DBUnit] closer to your JUnit tests *so database testing will feel like a breeze!*
 
