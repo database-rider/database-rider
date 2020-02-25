@@ -15,6 +15,7 @@ import org.dbunit.ext.h2.H2DataTypeFactory;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import org.dbunit.ext.mssql.MsSqlDataTypeFactory;
 import org.dbunit.ext.mysql.MySqlDataTypeFactory;
+import org.dbunit.ext.mysql.MySqlMetadataHandler;
 import org.dbunit.ext.oracle.Oracle10DataTypeFactory;
 import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 
@@ -43,7 +44,7 @@ public class RiderDataSource {
         try {
             init();
         } catch (SQLException e) {
-		    throw new RuntimeException("Could not initialize database rider datasource.", e);	 
+		    throw new RuntimeException("Could not initialize database rider datasource.", e);
 		}
     }
 
@@ -126,13 +127,16 @@ public class RiderDataSource {
                 return null;
         }
     }
-    
+
     private IMetadataHandler getMetadataHandler(DBType dbType) {
-    	if (dbType == DBType.DB2) {
-			return new Db2MetadataHandler();
-		} else {
-			return null;
-		}
+        switch (dbType) {
+            case MYSQL:
+                return new MySqlMetadataHandler();
+            case DB2:
+                return new Db2MetadataHandler();
+            default:
+                return null;
+        }
     }
 
     private DBType resolveDBType(String driverName) {
