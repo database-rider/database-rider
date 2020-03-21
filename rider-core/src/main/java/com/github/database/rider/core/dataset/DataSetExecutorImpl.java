@@ -799,13 +799,11 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     private String[] readScriptStatementsFromFile(URL resource) {
         File scriptFile = getFileFromURL(resource);
         if (scriptFile == null) return null;
-        RandomAccessFile rad = null;
         int lineNum = 0;
-        try {
-            rad = new RandomAccessFile(scriptFile, "r");
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(scriptFile), StandardCharsets.UTF_8))){
             String line;
             List<String> scripts = new ArrayList<>();
-            while ((line = rad.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
                 // a line can have multiple scripts separated by ;
                 String[] lineScripts = line.split(";");
                 for (int i = 0; i < lineScripts.length; i++) {
@@ -820,15 +818,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         } catch (Exception e) {
             throw new RuntimeException(String.format(String.format("Could not read script file %s. Error in line %d.", scriptFile.getAbsolutePath(),
                     lineNum), e));
-        } finally {
-            if (rad != null) {
-                try {
-                    rad.close();
-                } catch (IOException e) {
-                    log.warn("Could not close script file " + scriptFile.getAbsolutePath());
-
-                }
-            }
         }
     }
 
