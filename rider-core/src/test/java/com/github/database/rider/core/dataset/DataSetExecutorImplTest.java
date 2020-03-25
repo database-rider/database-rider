@@ -45,11 +45,13 @@ public class DataSetExecutorImplTest {
         });
         URL resource = DataSetExecutorImpl.class.getResource("/folder with some%20 characters/user-script.sql");
         String[] statements = dse.readScriptStatements(resource);
-        assertEquals(5, statements.length);
+        assertEquals(7, statements.length);
         assertEquals("DELETE FROM User", statements[0]);
         assertEquals("INSERT INTO USER VALUES (10,'user10')", statements[1]);
         assertEquals("INSERT INTO USER VALUES (20,'user20')", statements[2]);
         assertEquals("INSERT INTO USER VALUES (30,'user30')", statements[3]);
         assertEquals("INSERT INTO USER VALUES (40,'用户40')", statements[4]);
+        assertEquals("INSERT INTO USER VALUES (50, \"用户;50\")", statements[5]);
+        assertEquals("INSERT INTO USER VALUES (60, \"user60\"), (70, \"user;70\")", statements[6]);
     }
 }
