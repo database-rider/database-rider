@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.net.JarURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -763,36 +762,22 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private String[] readScriptStatementsFromJar(URL resource) {
         String jarEntry = "jar:" + resource.getFile();
-        JarURLConnection conn;
         InputStreamReader r = null;
-        try {
-            conn = (JarURLConnection) new URL(jarEntry).openConnection();
-            r = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
+        try (BufferedReader br = new BufferedReader(
+                new InputStreamReader(
+                        new URL(jarEntry).openConnection().getInputStream(),
+                        StandardCharsets.UTF_8
+                ))
+        ){
             StringBuilder sb = new StringBuilder();
-            int data = r.read();
-            while (data != -1) {
-                sb.append((char) data);
-                data = r.read();
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line + "\n");
             }
-            List<String> statements = Arrays.asList(sb.toString().split(";"));
-            List<String> result = new ArrayList<>();
-            for (int i = 0; i < statements.size(); i++) {
-                String trimmedStmt = statements.get(i).trim();
-                if (!"".equals(trimmedStmt)) {
-                    result.add(trimmedStmt);
-                }
-            }
-            return result.toArray(new String[result.size()]);
+            List<String> statements = splitScript(sb.toString());
+            return statements.toArray(new String[statements.size()]);
         } catch (IOException e) {
             throw new RuntimeException(String.format("Could not read script file %s.", jarEntry), e);
-        } finally {
-            try {
-                if (r != null) {
-                    r.close();
-                }
-            } catch (IOException e) {
-                log.warn("Could not close script file " + jarEntry);
-            }
         }
     }
 
@@ -802,23 +787,109 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         int lineNum = 0;
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(scriptFile), StandardCharsets.UTF_8))){
             String line;
-            List<String> scripts = new ArrayList<>();
+            StringBuilder sb = new StringBuilder();
             while ((line = br.readLine()) != null) {
-                // a line can have multiple scripts separated by ;
-                String[] lineScripts = line.split(";");
-                for (int i = 0; i < lineScripts.length; i++) {
-                    String trimmedStmt = lineScripts[i].trim();
-                    if (!"".equals(trimmedStmt)) {
-                        scripts.add(trimmedStmt);
-                    }
-                }
+                sb.append(line + "\n");
                 lineNum++;
             }
-            return scripts.toArray(new String[scripts.size()]);
+            List<String> statements = splitScript(sb.toString());
+            return statements.toArray(new String[statements.size()]);
         } catch (Exception e) {
             throw new RuntimeException(String.format(String.format("Could not read script file %s. Error in line %d.", scriptFile.getAbsolutePath(),
                     lineNum), e));
         }
+    }
+
+    /**
+     * Place to handle database difference
+     */
+    private List<String> splitScript(String script) {
+        String separator = ";";
+        String[] commentPrefixes = new String[]{"#", "--"};
+        String blockCommentStartDelimiter = "/*";
+        String blockCommentEndDelimiter = "*/";
+
+        return splitScript(script, separator, commentPrefixes, blockCommentStartDelimiter, blockCommentEndDelimiter);
+    }
+
+    /**
+     * Code below Modified from Spring org.springframework.jdbc.datasource.init.ScriptUtils
+     * Support multiple commentPrefixes
+     */
+    private List<String> splitScript(String script, String separator, String[] commentPrefixes, String blockCommentStartDelimiter, String blockCommentEndDelimiter) {
+        List<String> statements = new LinkedList<>();
+        StringBuilder sb = new StringBuilder();
+        boolean inSingleQuote = false;
+        boolean inDoubleQuote = false;
+        boolean inEscape = false;
+        for (int i = 0; i < script.length(); i++) {
+            char c = script.charAt(i);
+            if (inEscape) {
+                inEscape = false;
+                sb.append(c);
+                continue;
+            }
+            // MySQL style escapes
+            if (c == '\\') {
+                inEscape = true;
+                sb.append(c);
+                continue;
+            }
+            if (!inDoubleQuote && (c == '\'')) {
+                inSingleQuote = !inSingleQuote;
+            }
+            else if (!inSingleQuote && (c == '"')) {
+                inDoubleQuote = !inDoubleQuote;
+            }
+            if (!inSingleQuote && !inDoubleQuote) {
+                if (script.startsWith(separator, i)) {
+                    // We've reached the end of the current statement
+                    if (sb.length() > 0) {
+                        statements.add(sb.toString());
+                        sb = new StringBuilder();
+                    }
+                    continue;
+                } else {
+                    boolean startWithCommentPrefix = false;
+                    for (String commentPrefix : commentPrefixes) {
+                        startWithCommentPrefix |= script.startsWith(commentPrefix, i);
+                    }
+                    if (startWithCommentPrefix) {
+                        // Skip over any content from the start of the comment to the EOL
+                        int indexOfNextNewline = script.indexOf("\n", i);
+                        if (indexOfNextNewline > i) {
+                            i = indexOfNextNewline;
+                            continue;
+                        } else {
+                            // If there's no EOL, we must be at the end of the script, so stop here.
+                            break;
+                        }
+                    } else if (script.startsWith(blockCommentStartDelimiter, i)) {
+                        // Skip over any block comments
+                        int indexOfCommentEnd = script.indexOf(blockCommentEndDelimiter, i);
+                        if (indexOfCommentEnd > i) {
+                            i = indexOfCommentEnd + blockCommentEndDelimiter.length() - 1;
+                            continue;
+                        } else {
+                            throw new RuntimeException("Missing block comment end delimiter: " + blockCommentEndDelimiter);
+                        }
+                    } else if (c == ' ' || c == '\n' || c == '\t') {
+                        // Avoid multiple adjacent whitespace characters
+                        if (sb.length() > 0 && sb.charAt(sb.length() - 1) != ' ') {
+                            c = ' ';
+                        } else {
+                            continue;
+                        }
+                    }
+                }
+            }
+            sb.append(c);
+        }
+        String lastString = sb.toString().trim();
+        if (lastString.length() > 0) {
+            statements.add(lastString);
+        }
+        return statements;
     }
 
     private File getFileFromURL(URL resource) {
