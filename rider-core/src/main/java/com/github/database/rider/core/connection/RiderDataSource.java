@@ -75,7 +75,7 @@ public class RiderDataSource {
 
     private void initDBUnitConnection() throws SQLException {
         try {
-            dbUnitConnection = new DatabaseConnection(getConnection());
+            dbUnitConnection = new DatabaseConnection(getConnection(), dbUnitConfig.getSchema());
             configDatabaseProperties();
         } catch (DatabaseUnitException e) {
             throw new SQLException(e);

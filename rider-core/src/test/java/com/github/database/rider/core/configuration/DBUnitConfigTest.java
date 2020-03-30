@@ -50,6 +50,7 @@ public class DBUnitConfigTest {
         assertThat(config.getProperties()).
                 containsEntry("batchedStatements", false).
                 containsEntry("qualifiedTableNames", false).
+                containsEntry("schema", null).
                 containsEntry("caseSensitiveTableNames", false).
                 containsEntry("batchSize", 100).
                 containsEntry("fetchSize", 100).
@@ -87,6 +88,7 @@ public class DBUnitConfigTest {
                 containsEntry("allowEmptyFields", true).
                 containsEntry("batchedStatements", true).
                 containsEntry("qualifiedTableNames", true).
+                containsEntry("schema", "public").
                 containsEntry("batchSize", 200).
                 containsEntry("fetchSize", 200).
                 containsEntry("escapePattern", "[?]").
@@ -117,7 +119,7 @@ public class DBUnitConfigTest {
     }
 
     @Test
-    @DBUnit(cacheTableNames = false, allowEmptyFields = true, batchSize = 50)
+    @DBUnit(cacheTableNames = false, allowEmptyFields = true, batchSize = 50, schema = "public")
     public void shouldLoadDBUnitConfigViaAnnotation() throws NoSuchMethodException {
         Method method = getClass().getMethod("shouldLoadDBUnitConfigViaAnnotation");
         DBUnit dbUnit = method.getAnnotation(DBUnit.class);
@@ -131,10 +133,22 @@ public class DBUnitConfigTest {
                 containsEntry("allowEmptyFields", true).
                 containsEntry("batchedStatements", false).
                 containsEntry("qualifiedTableNames", false).
+                containsEntry("schema", "public").
                 containsEntry("batchSize", 50).
                 containsEntry("fetchSize", 100).
                 doesNotContainKey("escapePattern").
                 doesNotContainKey("datatypeFactory");
+    }
+
+    @Test
+    @DBUnit()
+    public void shouldTreatAnnotationWithNonExistingSchemaAsNull() throws NoSuchMethodException {
+        Method method = getClass().getMethod("shouldTreatAnnotationWithNonExistingSchemaAsNull");
+        DBUnit dbUnit = method.getAnnotation(DBUnit.class);
+        DBUnitConfig dbUnitConfig = DBUnitConfig.from(dbUnit);
+
+        assertThat(dbUnitConfig.getProperties()).
+                containsEntry("schema", null);
     }
 
     @Test

@@ -5,6 +5,7 @@ properties:
   batchedStatements:  true
   caseSensitiveTableNames: false
   qualifiedTableNames: true
+  schema: public
   batchSize: 200
   fetchSize: 200
   allowEmptyFields: true
