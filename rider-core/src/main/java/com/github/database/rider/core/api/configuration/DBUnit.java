@@ -141,4 +141,10 @@ public @interface DBUnit {
      */
     String password() default "";
 
+    /**
+     * @since 1.10.2
+     * @return Schema for the database connection.
+     */
+    String schema() default "";
+
 }

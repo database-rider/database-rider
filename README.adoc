@@ -322,6 +322,7 @@ caseInsensitiveStrategy: !!com.github.database.rider.core.api.configuration.Orth
 properties:
   batchedStatements:  false
   qualifiedTableNames: false
+  schema: null
   caseSensitiveTableNames: false
   batchSize: 100
   fetchSize: 100
@@ -989,6 +990,7 @@ leakHunter: true
 properties:
   batchedStatements:  true
   qualifiedTableNames: true
+  schema: public
   batchSize: 200
   fetchSize: 200
   allowEmptyFields: true

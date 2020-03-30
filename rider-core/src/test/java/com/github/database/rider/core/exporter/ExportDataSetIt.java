@@ -90,12 +90,30 @@ public class ExportDataSetIt {
         assertThat(ymlDataSet).exists();
         assertThat(contentOf(ymlDataSet)).
                 contains("USER:" + NEW_LINE +
-                                "  - ID: 1" + NEW_LINE +
+                                "  - ID: " + u1.getId() + NEW_LINE +
                                 "    NAME: \"u1\"" + NEW_LINE
                 );
     }
 
-//end::export-programmatically[]
+    @Test
+    @DataSet(cleanBefore = true)
+    public void shouldExportYMLDataSetWithExplicitSchemaProgrammatically() throws SQLException, DatabaseUnitException {
+        tx().begin();
+        User u1 = new User();
+        u1.setName("u1");
+        EntityManagerProvider.em().persist(u1);
+        tx().commit();
+        DataSetExporter.getInstance().export(emProvider.connection(),
+                new DataSetExportConfig().outputFileName("target/user.yml"), "public");
+        File ymlDataSet = new File("target/user.yml");
+        assertThat(ymlDataSet).exists();
+        assertThat(contentOf(ymlDataSet)).
+                contains("USER:" + NEW_LINE +
+                                "  - ID: " + u1.getId() + NEW_LINE +
+                                "    NAME: \"u1\"" + NEW_LINE
+                );
+    }
+    //end::export-programmatically[]
 
     @Test
     @DataSet(cleanBefore = true)

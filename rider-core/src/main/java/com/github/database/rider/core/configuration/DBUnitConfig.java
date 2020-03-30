@@ -62,6 +62,7 @@ public class DBUnitConfig {
 
         putIfAbsent(properties, "batchedStatements", false);
         putIfAbsent(properties, "qualifiedTableNames", false);
+        putIfAbsent(properties, "schema", null);
         putIfAbsent(properties, "caseSensitiveTableNames", false);
         putIfAbsent(properties, "batchSize", 100);
         putIfAbsent(properties, "fetchSize", 100);
@@ -126,6 +127,8 @@ public class DBUnitConfig {
                 .addDBUnitProperty("allowEmptyFields", dbUnit.allowEmptyFields())
                 .addDBUnitProperty("fetchSize", dbUnit.fetchSize())
                 .addDBUnitProperty("qualifiedTableNames", dbUnit.qualifiedTableNames())
+                .addDBUnitProperty("schema",
+                        dbUnit.schema() != null && !dbUnit.schema().isEmpty() ? dbUnit.schema() : null)
                 .addDBUnitProperty("caseSensitiveTableNames", dbUnit.caseSensitiveTableNames())
                 .caseInsensitiveStrategy(dbUnit.caseInsensitiveStrategy());
 
@@ -319,5 +322,8 @@ public class DBUnitConfig {
         return properties.containsKey("caseSensitiveTableNames") && Boolean.parseBoolean(properties.get("caseSensitiveTableNames").toString());
     }
 
+    public String getSchema() {
+        return (String) properties.get("schema");
+    }
 
 }

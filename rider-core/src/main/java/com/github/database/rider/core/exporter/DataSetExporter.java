@@ -64,7 +64,11 @@ public class DataSetExporter {
     }
 
     public OutputStream export(Connection connection, DataSetExportConfig dataSetExportConfig) throws SQLException, DatabaseUnitException {
-        return export(new DatabaseConnection(connection), dataSetExportConfig);
+        return export(connection, dataSetExportConfig, null);
+    }
+
+    public OutputStream export(Connection connection, DataSetExportConfig dataSetExportConfig, String schema) throws SQLException, DatabaseUnitException {
+        return export(new DatabaseConnection(connection, schema), dataSetExportConfig);
     }
 
     public OutputStream export(DatabaseConnection databaseConnection, DataSetExportConfig dataSetExportConfig) throws SQLException, DatabaseUnitException {
