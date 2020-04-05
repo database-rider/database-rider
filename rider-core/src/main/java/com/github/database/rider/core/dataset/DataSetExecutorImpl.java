@@ -614,8 +614,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             }
         }
         // clear remaining tables in any order(if there are any, also no problem clearing again)
-        List<String> tables = getTableNames(connection);
-        List<String> tablesToSkipCleaning = config.getSkipCleaningFor() != null ? Arrays.asList(config.getSkipCleaningFor()) : Collections.<String>emptyList();
+        final List<String> tables = getTableNames(connection);
+        final List<String> tablesToSkipCleaning = config.getSkipCleaningFor() != null ? Arrays.asList(config.getSkipCleaningFor()) : Collections.<String>emptyList();
         for (String tableName : tables) {
             if(shouldSkipFromCleaning(tablesToSkipCleaning, tableName)) {
                 continue;
@@ -671,7 +671,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     if (RESERVED_TABLE_NAMES.contains(name.toLowerCase())) {
                         name = escapeTableName(name);
                     }
-                    tables.add(schema != null ? schema + "." + name : name);
+                    tables.add(schema != null && !"".equals(schema.trim()) ? schema + "." + name : name);
                 }
             }
 
@@ -715,12 +715,17 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     private String resolveSchema(ResultSet result) {
+        String schema = null;
         try {
-            return result.getString("TABLE_SCHEM");
+            schema = result.getString("TABLE_SCHEM");
+            if(schema == null) {
+                schema = dbUnitConfig.getSchema();
+            }
         } catch (Exception e) {
             log.warn("Can't resolve schema", e);
-            return null;
+            schema = dbUnitConfig.getSchema();
         }
+        return schema;
     }
 
     private String resolveSchema() {
@@ -730,7 +735,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             }
         } catch (Exception e) {
             log.warn("Can't resolve schema", e);
-            return null;
+            return dbUnitConfig.getSchema();
         }
     }
 
