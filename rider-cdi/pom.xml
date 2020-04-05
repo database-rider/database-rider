@@ -4,7 +4,7 @@
         <groupId>com.github.database-rider</groupId>
         <artifactId>rider-parent</artifactId>
    <!-- tag::version[] -->
-   <version>1.11.1</version>
+   <version>1.11.2-SNAPSHOT</version>
    <!-- end::version[] -->
     </parent>
     <modelVersion>4.0.0</modelVersion>
