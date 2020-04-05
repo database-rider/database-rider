@@ -107,22 +107,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     @Override
     public void createDataSet(DataSetConfig dataSetConfig) {
-        if (printDBUnitConfig.compareAndSet(true, false)) {
-            StringBuilder sb = new StringBuilder(150);
-            sb.append("cacheConnection: ").append("" + dbUnitConfig.isCacheConnection()).append("\n")
-                    .append("cacheTableNames: ").append(dbUnitConfig.isCacheTableNames()).append("\n")
-                    .append("mergeDataSets: ").append(dbUnitConfig.isMergeDataSets()).append("\n")
-                    .append("caseSensitiveTableNames: ").append(dbUnitConfig.isCaseSensitiveTableNames()).append("\n")
-                    .append("caseInsensitiveStrategy: ").append(dbUnitConfig.getCaseInsensitiveStrategy()).append("\n")
-                    .append("leakHunter: ").append("" + dbUnitConfig.isLeakHunter()).append("\n");
-
-            for (Entry<String, Object> entry : dbUnitConfig.getProperties().entrySet()) {
-                sb.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
-            }
-            log.info(String.format("DBUnit configuration for dataset executor '%s':\n" + sb.toString(),
-                    this.executorId));
-        }
-
+        printDBUnitConfiguration();
         if (dataSetConfig != null) {
             IDataSet resultingDataSet = null;
             try {
@@ -176,6 +161,24 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 throw new DataBaseSeedingException("Could not initialize dataset: " + dataSetConfig, e);
             }
 
+        }
+    }
+
+    private void printDBUnitConfiguration() {
+        if (printDBUnitConfig.compareAndSet(true, false)) {
+            StringBuilder sb = new StringBuilder(150);
+            sb.append("cacheConnection: ").append("" + dbUnitConfig.isCacheConnection()).append("\n")
+                    .append("cacheTableNames: ").append(dbUnitConfig.isCacheTableNames()).append("\n")
+                    .append("mergeDataSets: ").append(dbUnitConfig.isMergeDataSets()).append("\n")
+                    .append("caseSensitiveTableNames: ").append(dbUnitConfig.isCaseSensitiveTableNames()).append("\n")
+                    .append("caseInsensitiveStrategy: ").append(dbUnitConfig.getCaseInsensitiveStrategy()).append("\n")
+                    .append("leakHunter: ").append("" + dbUnitConfig.isLeakHunter()).append("\n");
+
+            for (Entry<String, Object> entry : dbUnitConfig.getProperties().entrySet()) {
+                sb.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+            }
+            log.info(String.format("DBUnit configuration for dataset executor '%s':\n" + sb.toString(),
+                    this.executorId));
         }
     }
 
