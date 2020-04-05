@@ -142,7 +142,7 @@ public @interface DBUnit {
     String password() default "";
 
     /**
-     * @since 1.10.2
+     * @since 1.11.0
      * @return Schema for the database connection.
      */
     String schema() default "";
