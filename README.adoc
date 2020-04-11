@@ -1661,11 +1661,11 @@ IMPORTANT: This module is designed to work with *JUnit4* and *SpringRunner*, for
 
 == Quarkus
 
-As Quarkus tests are CDI beans you can just use `@DBUnitInterceptor` from <<CDI module, CDI module>>:
+As Quarkus tests are CDI beans you can just use `@DBRider` from <<CDI module, CDI module>>:
 
 ```
 @QuarkusTest
-@DBUnitInterceptor
+@DBRider
 public class QuarkusDBUnitTest {
 
     @Inject
