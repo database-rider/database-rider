@@ -170,7 +170,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     .append("cacheTableNames: ").append(dbUnitConfig.isCacheTableNames()).append("\n")
                     .append("mergeDataSets: ").append(dbUnitConfig.isMergeDataSets()).append("\n")
                     .append("caseInsensitiveStrategy: ").append(dbUnitConfig.getCaseInsensitiveStrategy()).append("\n")
-                    .append("leakHunter: ").append("" + dbUnitConfig.isLeakHunter()).append("\n");
+                    .append("leakHunter: ").append("" + dbUnitConfig.isLeakHunter()).append("\n")
+                    .append("columnSensing: ").append("" + dbUnitConfig.isColumnSensing()).append("\n");
 
             for (Entry<String, Object> entry : dbUnitConfig.getProperties().entrySet()) {
                 sb.append(entry.getKey()).append(": ").append(entry.getValue() == null ? "" : entry.getValue()).append("\n");
@@ -240,9 +241,15 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 }
                 case "xml": {
                     try {
-                        target = new ScriptableDataSet(sensitiveTableNames, new FlatXmlDataSetBuilder().setCaseSensitiveTableNames(sensitiveTableNames).build(getDataSetUrl(dataSetName)));
+                        target = new ScriptableDataSet(sensitiveTableNames, new FlatXmlDataSetBuilder()
+                            .setColumnSensing(dbUnitConfig.isColumnSensing())
+                            .setCaseSensitiveTableNames(sensitiveTableNames)
+                            .build(getDataSetUrl(dataSetName)));
                     } catch (Exception e) {
-                        target = new ScriptableDataSet(sensitiveTableNames, new FlatXmlDataSetBuilder().setCaseSensitiveTableNames(sensitiveTableNames).build(getDataSetStream(dataSetName)));
+                        target = new ScriptableDataSet(sensitiveTableNames, new FlatXmlDataSetBuilder()
+                            .setColumnSensing(dbUnitConfig.isColumnSensing())
+                            .setCaseSensitiveTableNames(sensitiveTableNames)
+                            .build(getDataSetStream(dataSetName)));
                     }
                     break;
                 }

@@ -27,6 +27,7 @@ public class DBUnitConfig {
     private Boolean cacheTableNames;
     private Boolean leakHunter;
     private Boolean mergeDataSets;
+    private Boolean columnSensing;
     private Orthography caseInsensitiveStrategy;
     private Map<String, Object> properties;
     private ConnectionConfig connectionConfig;
@@ -50,6 +51,7 @@ public class DBUnitConfig {
         leakHunter = false;
         caseInsensitiveStrategy = Orthography.UPPERCASE;
         mergeDataSets = Boolean.FALSE;
+        columnSensing = Boolean.FALSE;
 
         initDefaultProperties();
         initDefaultConnectionConfig();
@@ -122,6 +124,7 @@ public class DBUnitConfig {
                 .cacheTableNames(dbUnit.cacheTableNames())
                 .leakHunter(dbUnit.leakHunter())
                 .mergeDataSets(dbUnit.mergeDataSets())
+                .columnSensing(dbUnit.columnSensing())
                 .addDBUnitProperty("batchedStatements", dbUnit.batchedStatements())
                 .addDBUnitProperty("batchSize", dbUnit.batchSize())
                 .addDBUnitProperty("allowEmptyFields", dbUnit.allowEmptyFields())
@@ -225,6 +228,11 @@ public class DBUnitConfig {
         return this;
     }
 
+    public DBUnitConfig columnSensing(boolean columnSensing) {
+        this.columnSensing = columnSensing;
+        return this;
+    }
+
     public DBUnitConfig caseInsensitiveStrategy(Orthography orthography) {
         this.caseInsensitiveStrategy = orthography;
         return this;
@@ -284,7 +292,10 @@ public class DBUnitConfig {
     public Boolean isMergeDataSets() {
         return mergeDataSets;
     }
-    
+
+    public Boolean isColumnSensing() {
+        return columnSensing;
+    }
 
     public Boolean isLeakHunter() {
         return leakHunter;
