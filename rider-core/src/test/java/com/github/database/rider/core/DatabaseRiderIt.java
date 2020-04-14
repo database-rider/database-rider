@@ -1,13 +1,17 @@
 package com.github.database.rider.core;
 
+import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
-import com.github.database.rider.core.util.EntityManagerProvider;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.model.Follower;
 import com.github.database.rider.core.model.Tweet;
 import com.github.database.rider.core.model.User;
-import org.junit.*;
+import com.github.database.rider.core.util.EntityManagerProvider;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
@@ -167,6 +171,31 @@ public class DatabaseRiderIt {
         Follower expectedFollower = new Follower(2,1);
         assertThat(user.getFollowers()).contains(expectedFollower);
     }
+
+    @Test
+    @DataSet("yml/lowercaseUsers.yml") // note that hsqldb tables are in uppercase
+    @DBUnit(caseSensitiveTableNames = false)
+    public void shouldListUsersWithCaseInSensitiveTableNames() {
+        List<com.github.database.rider.core.model.lowercase.User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
+        assertThat(users).isNotNull().isNotEmpty().hasSize(2);
+    }
+
+    @Test
+    @DataSet("xml/lowercaseUsers.xml")
+    @DBUnit(caseSensitiveTableNames = false)
+    public void shouldListUsersUsingXmlDataSetAndCaseInsentiveTableNames() {
+        List<com.github.database.rider.core.model.lowercase.User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
+        assertThat(users).isNotNull().isNotEmpty().hasSize(2);
+    }
+
+    @Test
+    @DataSet("json/lowercaseUsers.json")
+    @DBUnit(caseSensitiveTableNames = false)
+    public void shouldListUsersUsingJsonDataSetAndCaseInsentiveTableNames() {
+        List<com.github.database.rider.core.model.lowercase.User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
+        assertThat(users).isNotNull().isNotEmpty().hasSize(2);
+    }
+
 
     @Test
     @DataSet(value = "datasets/csv/USER.csv", cleanBefore = true)

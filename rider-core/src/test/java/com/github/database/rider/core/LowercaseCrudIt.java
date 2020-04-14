@@ -33,6 +33,20 @@ public class LowercaseCrudIt {
 		assertThat(users).isNotNull().isNotEmpty().hasSize(2);
 	}
 
+    @Test
+    @DataSet("xml/lowercaseUsers.xml")
+    public void shouldListUsersUsingXmlDataSet() {
+        List<User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
+        assertThat(users).isNotNull().isNotEmpty().hasSize(2);
+    }
+
+    @Test
+    @DataSet("json/lowercaseUsers.json")
+    public void shouldListUsersUsingJsonDataSet() {
+        List<User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
+        assertThat(users).isNotNull().isNotEmpty().hasSize(2);
+    }
+
 	@Test
 	@DataSet(cleanBefore=true) //avoid conflict with other tests
 	public void shouldInsertUser() {

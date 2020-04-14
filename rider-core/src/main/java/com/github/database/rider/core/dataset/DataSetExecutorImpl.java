@@ -13,7 +13,6 @@ import com.github.database.rider.core.replacers.Replacer;
 import com.github.database.rider.core.util.ContainsFilterTable;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.AmbiguousTableNameException;
-import org.dbunit.database.DatabaseSequenceFilter;
 import org.dbunit.dataset.*;
 import org.dbunit.dataset.csv.CsvDataSet;
 import org.dbunit.dataset.excel.XlsDataSet;
@@ -170,7 +169,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             sb.append("cacheConnection: ").append("" + dbUnitConfig.isCacheConnection()).append("\n")
                     .append("cacheTableNames: ").append(dbUnitConfig.isCacheTableNames()).append("\n")
                     .append("mergeDataSets: ").append(dbUnitConfig.isMergeDataSets()).append("\n")
-                    .append("caseSensitiveTableNames: ").append(dbUnitConfig.isCaseSensitiveTableNames()).append("\n")
                     .append("caseInsensitiveStrategy: ").append(dbUnitConfig.getCaseInsensitiveStrategy()).append("\n")
                     .append("leakHunter: ").append("" + dbUnitConfig.isLeakHunter()).append("\n");
 
@@ -230,34 +228,35 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     public IDataSet loadDataSet(String name) throws DataSetException, IOException {
         String[] dataSetNames = name.trim().split(",");
         List<IDataSet> dataSets = new ArrayList<>();
+        final boolean sensitiveTableNames = dbUnitConfig.isCaseSensitiveTableNames();
         for (String dataSet : dataSetNames) {
             IDataSet target = null;
             String dataSetName = dataSet.trim();
             String extension = dataSetName.substring(dataSetName.lastIndexOf('.') + 1).toLowerCase();
             switch (extension) {
                 case "yml": {
-                    target = new ScriptableDataSet(new YamlDataSet(getDataSetStream(dataSetName), dbUnitConfig));
+                    target = new ScriptableDataSet(sensitiveTableNames, new YamlDataSet(getDataSetStream(dataSetName), dbUnitConfig));
                     break;
                 }
                 case "xml": {
                     try {
-                        target = new ScriptableDataSet(new FlatXmlDataSetBuilder().build(getDataSetUrl(dataSetName)));
+                        target = new ScriptableDataSet(sensitiveTableNames, new FlatXmlDataSetBuilder().setCaseSensitiveTableNames(sensitiveTableNames).build(getDataSetUrl(dataSetName)));
                     } catch (Exception e) {
-                        target = new ScriptableDataSet(new FlatXmlDataSetBuilder().build(getDataSetStream(dataSetName)));
+                        target = new ScriptableDataSet(sensitiveTableNames, new FlatXmlDataSetBuilder().setCaseSensitiveTableNames(sensitiveTableNames).build(getDataSetStream(dataSetName)));
                     }
                     break;
                 }
                 case "csv": {
-                    target = new ScriptableDataSet(new CsvDataSet(
+                    target = new ScriptableDataSet(sensitiveTableNames, new CsvDataSet(
                             new File(getClass().getClassLoader().getResource(dataSetName).getFile()).getParentFile()));
                     break;
                 }
                 case "xls": {
-                    target = new ScriptableDataSet(new XlsDataSet(getDataSetStream(dataSetName)));
+                    target = new ScriptableDataSet(sensitiveTableNames, new XlsDataSet(getDataSetStream(dataSetName)));
                     break;
                 }
                 case "json": {
-                    target = new ScriptableDataSet(new JSONDataSet(getDataSetStream(dataSetName)));
+                    target = new ScriptableDataSet(sensitiveTableNames, new JSONDataSet(getDataSetStream(dataSetName)));
                     break;
                 }
                 default:
@@ -272,7 +271,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             throw new RuntimeException("No dataset loaded for name " + name);
         }
 
-        return new CompositeDataSet(dataSets.toArray(new IDataSet[dataSets.size()]));
+        return new CompositeDataSet(dataSets.toArray(new IDataSet[dataSets.size()]), true, sensitiveTableNames);
     }
 
     private URL getDataSetUrl(String dataSet) {
@@ -310,8 +309,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     private IDataSet performSequenceFiltering(DataSetConfig dataSet, IDataSet target)
             throws DatabaseUnitException, SQLException {
         if (dataSet.isUseSequenceFiltering()) {
-            ITableFilter filteredTable = new DatabaseSequenceFilter(getRiderDataSource().getDBUnitConnection(),
-                    target.getTableNames());
+            ITableFilter filteredTable = new RiderSequenceFilter(getRiderDataSource().getDBUnitConnection(),
+                    target.getTableNames(), dbUnitConfig);
             target = new FilteredDataSet(filteredTable, target);
         }
         return target;
@@ -617,7 +616,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         final List<String> tables = getTableNames(connection);
         final List<String> tablesToSkipCleaning = config.getSkipCleaningFor() != null ? Arrays.asList(config.getSkipCleaningFor()) : Collections.<String>emptyList();
         for (String tableName : tables) {
-            if(shouldSkipFromCleaning(tablesToSkipCleaning, tableName)) {
+            if (shouldSkipFromCleaning(tablesToSkipCleaning, tableName)) {
                 continue;
             }
             if (tableName.toUpperCase().contains(SEQUENCE_TABLE_NAME)) {
@@ -638,8 +637,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private boolean shouldSkipFromCleaning(List<String> tablesToSkipCleaning, String tableName) {
         boolean skip = tablesToSkipCleaning.contains(tableName);
-        if(!skip && tableName.contains(".")) {
-            skip = tablesToSkipCleaning.contains(tableName.substring(tableName.indexOf(".")+1));
+        if (!skip && tableName.contains(".")) {
+            skip = tablesToSkipCleaning.contains(tableName.substring(tableName.indexOf(".") + 1));
         }
         return skip;
     }
@@ -649,7 +648,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         if (hasEscapePattern) {
             String escapePattern = dbUnitConfig.getProperties().get("escapePattern").toString();
             if (table.contains(".")) {//skip schema and applies the pattern only on the table
-                return table.substring(0, table.indexOf(".") + 1) + escapePattern.replace("?", table.substring(table.indexOf(".")+1));
+                return table.substring(0, table.indexOf(".") + 1) + escapePattern.replace("?", table.substring(table.indexOf(".") + 1));
             } else {
                 return escapePattern.replace("?", table);
             }
@@ -718,7 +717,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         String schema = null;
         try {
             schema = result.getString("TABLE_SCHEM");
-            if(schema == null) {
+            if (schema == null) {
                 schema = dbUnitConfig.getSchema();
             }
         } catch (Exception e) {
@@ -776,7 +775,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         new URL(jarEntry).openConnection().getInputStream(),
                         StandardCharsets.UTF_8
                 ))
-        ){
+        ) {
             StringBuilder sb = new StringBuilder();
             String line;
             while ((line = br.readLine()) != null) {
@@ -793,7 +792,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         File scriptFile = getFileFromURL(resource);
         if (scriptFile == null) return null;
         int lineNum = 0;
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(scriptFile), StandardCharsets.UTF_8))){
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(scriptFile), StandardCharsets.UTF_8))) {
             String line;
             StringBuilder sb = new StringBuilder();
             while ((line = br.readLine()) != null) {
@@ -845,8 +844,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             }
             if (!inDoubleQuote && (c == '\'')) {
                 inSingleQuote = !inSingleQuote;
-            }
-            else if (!inSingleQuote && (c == '"')) {
+            } else if (!inSingleQuote && (c == '"')) {
                 inDoubleQuote = !inDoubleQuote;
             }
             if (!inSingleQuote && !inDoubleQuote) {
@@ -962,7 +960,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     for (String orderColumn : orderBy) {
                         try {
                             if (expectedTable.getValue(i, orderColumn).toString().startsWith("regex:")) {
-                                throw new IllegalArgumentException(String.format("The orderBy column %s cannot use regex matching on table %s.",orderColumn, tableName));
+                                throw new IllegalArgumentException(String.format("The orderBy column %s cannot use regex matching on table %s.", orderColumn, tableName));
                             }
                             validOrderByColumns.add(orderColumn);//add only existing columns on current table
                         } catch (NoSuchColumnException | NullPointerException ignored) {
