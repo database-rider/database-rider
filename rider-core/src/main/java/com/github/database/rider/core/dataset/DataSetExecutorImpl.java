@@ -623,12 +623,11 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 // tables containing 'SEQ' will NOT be cleared see https://github.com/rmpestano/dbunit-rules/issues/26
                 continue;
             }
-            final String escapedTableName = getEscapedTableName(tableName);
             try (Statement statement = connection.createStatement()) {
-                statement.executeUpdate("DELETE FROM " + escapedTableName + " where 1=1");
+                statement.executeUpdate("DELETE FROM " + tableName + " where 1=1");
                 connection.commit();
             } catch (Exception e) {
-                log.warn("Could not clear table " + escapedTableName + ", message:" + e.getMessage() + ", cause: "
+                log.warn("Could not clear table " + tableName + ", message:" + e.getMessage() + ", cause: "
                         + e.getCause());
             }
         }
@@ -661,7 +660,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         if (tableNames != null && dbUnitConfig.isCacheTableNames()) {
             return tableNames;
         }
-        List<String> tables = new ArrayList<String>();
+        List<String> tables = new ArrayList<>();
         try (ResultSet result = getTablesFromMetadata(con)) {
             while (result.next()) {
                 String schema = resolveSchema(result);
@@ -669,6 +668,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     String name = result.getString("TABLE_NAME");
                     if (RESERVED_TABLE_NAMES.contains(name.toLowerCase())) {
                         name = escapeTableName(name);
+                    } else {
+                        // table name escaping may have been defined as well
+                        name = getEscapedTableName(name);
                     }
                     tables.add(schema != null && !"".equals(schema.trim()) ? schema + "." + name : name);
                 }
@@ -680,7 +682,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
             return tables;
         } catch (SQLException ex) {
-            log.warn("An exception occured while trying to analyse the database.", ex);
+            log.warn("An exception occurred while trying to analyse the database.", ex);
             return new ArrayList<>();
         }
     }
