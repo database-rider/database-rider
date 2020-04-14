@@ -89,6 +89,14 @@ public @interface DBUnit {
     boolean mergeDataSets() default false;
 
     /**
+     * If enabled, when loading datasets, reads in the whole XML into a buffer and dynamically adds new columns as they appear.
+     * This way, it's not necessary to define all possible columns on the first line.
+     *
+     * @return Enables or disables column sensing. Defaults to false.
+     */
+    boolean columnSensing() default false;
+
+    /**
      * Allow to call INSERT/UPDATE with empty strings ('').
      * 
      * @return value which configures DatabaseConfig.FEATURE_ALLOW_EMPTY_FIELDS. Defaults to false.
