@@ -1125,11 +1125,11 @@ However, can pass a DBUnit configuration when creating your dataset provider:
    DBUnitConfig config = new DBUnitConfig().cacheTableNames(true)
                     .addDBUnitProperty("caseSensitiveTableNames", true);
             DataSetBuilder builder = new DataSetBuilder(config);
-            builder.table("USER")/
-                    .row() //<2>
+            builder.table("USER")
+                    .row()  
                     .column("ID", 1)
                     .column("NAME", "@dbunit")
-                    .row() //<4>
+                    .row()
                     .column("ID", 2)
                     .column("NAME", "@dbrider");
             return builder.build();
