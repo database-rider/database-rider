@@ -602,7 +602,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     // https://github.com/rmpestano/dbunit-rules/issues/26
                     continue;
                 }
-                final String escapedTableName = getEscapedTableName(table);
+                final String escapedTableName = applyDBUnitEscapePattern(table);
                 try (Statement statement = connection.createStatement()) {
                     statement.executeUpdate("DELETE FROM " + escapedTableName + " where 1=1");
                     connection.commit();
@@ -642,7 +642,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         return skip;
     }
 
-    private String getEscapedTableName(String table) {
+    private String applyDBUnitEscapePattern(String table) {
         boolean hasEscapePattern = dbUnitConfig.getProperties().containsKey("escapePattern") && !"".equals(dbUnitConfig.getProperties().get("escapePattern").toString());
         if (hasEscapePattern) {
             String escapePattern = dbUnitConfig.getProperties().get("escapePattern").toString();
@@ -670,7 +670,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         name = escapeTableName(name);
                     } else {
                         // table name escaping may have been defined as well
-                        name = getEscapedTableName(name);
+                        name = applyDBUnitEscapePattern(name);
                     }
                     tables.add(schema != null && !"".equals(schema.trim()) ? schema + "." + name : name);
                 }
