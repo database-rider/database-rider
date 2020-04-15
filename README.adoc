@@ -173,7 +173,7 @@ This module is the basis for subsequent modules. It contains a JUnit rule (shown
 <dependency>
       <groupId>com.github.database-rider</groupId>
       <artifactId>rider-core</artifactId>
-      <version>1.11.1</version>
+      <version>1.12.0</version>
       <scope>test</scope>
 </dependency>
 ----
@@ -265,8 +265,10 @@ public class ConnectionHolderIt {
 
 There are two types of configuration in Database Rider: `DataSet` and `DBUnit`.
 
-DataSet Configuration:: this basically setup the `dataset` which will be used. The only way to configure a dataset is using *@DataSet* annotation.
-+
+==== DataSet Configuration
+
+This basically setup the `dataset` which will be used. The only way to configure a dataset is using *@DataSet* annotation.
+
 It can be used at *class* or *method* level:
 +
 [source,java]
@@ -278,9 +280,9 @@ It can be used at *class* or *method* level:
 
       }
 ----
-+
+
 Here are possible values:
-+
+
 [cols="3*", options="header"]
 |===
 |Name | Description | Default
@@ -299,8 +301,10 @@ Here are possible values:
 |executeScriptsAfter| A list of sql script files to execute after test. Note that commands inside sql file must be separated by `;`.| {}
 |===
 
-DBUnit Configuration:: this basically setup `DBUnit` itself. It can be configured by *@DBUnit* annotation (class or method level) and *dbunit.yml* file present in test resources folder.
-+
+==== DBUnit Configuration
+
+This basically setup `DBUnit` itself. It can be configured by *@DBUnit* annotation (class or method level) and *dbunit.yml* file present in test resources folder.
+
 [source,java]
 ----
     @Test
@@ -309,9 +313,9 @@ DBUnit Configuration:: this basically setup `DBUnit` itself. It can be configure
 
     }
 ----
-+
-Here is a dbunit.yml example, also the default values :
-+
+
+Here is a dbunit.yml example, also the default values:
+
 .src/test/resources/dbunit.yml
 ----
 cacheConnection: true
@@ -338,10 +342,10 @@ connectionConfig:
 ----
 <1> Only applied when `caseSensitiveTableNames` is `false`. Valid values are `UPPERCASE` and `LOWERCASE`.
 <2> Make it possible to define a datatype factory, https://github.com/database-rider/database-rider/issues/30[see issue #30^] for details.
-+
-NOTE: `@DBUnit` annotation takes precedence over `dbunit.yml` global configuration which will be used only if the annotation is not present.
 
-TIP: Both configuration mechanisms work for all Database Rider modules.
+IMPORTANT: `@DBUnit` annotation takes precedence over `dbunit.yml` global configuration which will be used only if the annotation is not present.
+
+
 
 === JDBC Connection
 
@@ -1288,7 +1292,7 @@ If you use CDI in your tests then you should give a try in Database Rider https:
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-cdi</artifactId>
-    <version>1.11.1</version>
+    <version>1.12.0</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -1355,7 +1359,7 @@ NOTE: If you don't use CDI you'll need to https://github.com/database-rider/data
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-cucumber</artifactId>
-    <version>1.11.1</version>
+    <version>1.12.0</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -1560,7 +1564,7 @@ http://junit.org/junit5/[JUnit 5] is the new version of JUnit and comes with a n
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-junit5</artifactId>
-    <version>1.11.1</version>
+    <version>1.12.0</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -1626,7 +1630,7 @@ Add Database Rider Spring extension to your project
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-spring</artifactId>
-    <version>1.11.1</version>
+    <version>1.12.0</version>
     <scope>test</scope>
 </dependency>
 ----
