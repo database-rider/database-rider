@@ -26,7 +26,7 @@ script:
 - if [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_BRANCH == "master" ]]; then
   cd rider-core && mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs ; fi ;
 - if [[ $TRAVIS_COMMIT_MESSAGE == *"prepare release"* ]]; then
-  mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs -Prelease ; fi ;
+  cd rider-core && mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs -Prelease ; fi ;
 after_script:
 - if [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_BRANCH == "master" ]]; then
   cd ../ && mvn clean package deploy --settings settings.xml -DskipTests=true ; fi;
