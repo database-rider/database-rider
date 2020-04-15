@@ -1115,6 +1115,27 @@ TIP: For more examples, see dataset provider https://github.com/database-rider/d
 
 NOTE: You can also use DataSetProvider in `@ExpectedDataset` annotation.
 
+[IMPORTANT]
+====
+By default DataSetProviders will use <<DBUnit Configuration, global DBUnit configuration>> configured in `dbunit.yml` file.
+
+However, can pass a DBUnit configuration when creating your dataset provider:
+
+```
+   DBUnitConfig config = new DBUnitConfig().cacheTableNames(true)
+                    .addDBUnitProperty("caseSensitiveTableNames", true);
+            DataSetBuilder builder = new DataSetBuilder(config);
+            builder.table("USER")/
+                    .row() //<2>
+                    .column("ID", 1)
+                    .column("NAME", "@dbunit")
+                    .row() //<4>
+                    .column("ID", 2)
+                    .column("NAME", "@dbrider");
+            return builder.build();
+```
+====
+
 === Dynamic connection config
 
 In order to have dynamic JDBC connection on your tests one can use system properties, see example below:
