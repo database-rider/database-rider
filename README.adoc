@@ -270,7 +270,7 @@ There are two types of configuration in Database Rider: `DataSet` and `DBUnit`.
 This basically setup the `dataset` which will be used. The only way to configure a dataset is using *@DataSet* annotation.
 
 It can be used at *class* or *method* level:
-+
+
 [source,java]
 ----
      @Test
