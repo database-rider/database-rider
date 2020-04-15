@@ -21,6 +21,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 @RunWith(JUnit4.class)
 @DBUnit(caseSensitiveTableNames = true, escapePattern = "\"?\"")
@@ -65,6 +66,13 @@ public class PostgreSQLDatabaseIt {
     }
 
     @Test
+    @DataSet(value = "datasets/yml/lowercaseUsers.yml", tableOrdering = {"user","tweet","follower"}, cleanBefore = true, cleanAfter = true)
+    public void shouldListUsersWithCaseInSensitiveTableNamesAndTableOrdering() {
+        List<User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
+        assertThat(users).isNotNull().isNotEmpty().hasSize(2);
+    }
+
+    @Test
     @DataSet(value = "datasets/yml/lowercaseUsers.yml")
     @DBUnit(leakHunter = true, caseSensitiveTableNames = true, escapePattern = "\"?\"")
     public void shouldFindConnectionLeak() throws SQLException {
@@ -72,7 +80,7 @@ public class PostgreSQLDatabaseIt {
         exception.expectMessage("Execution of method shouldFindConnectionLeak left 1 open connection(s).");
         createLeak();
     }
-    
+
     private void createLeak() throws SQLException {
         //Connection connection = emProvider.connection(); //entityManager connections won't leak
     	Connection connection = getConnection();

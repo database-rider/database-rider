@@ -173,7 +173,7 @@ public class DatabaseRiderIt {
     }
 
     @Test
-    @DataSet("yml/lowercaseUsers.yml") // note that hsqldb tables are in uppercase
+    @DataSet(value = "yml/lowercaseUsers.yml") // note that hsqldb tables are in uppercase
     @DBUnit(caseSensitiveTableNames = false)
     public void shouldListUsersWithCaseInSensitiveTableNames() {
         List<com.github.database.rider.core.model.lowercase.User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();

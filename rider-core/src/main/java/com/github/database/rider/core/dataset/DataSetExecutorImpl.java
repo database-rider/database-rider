@@ -194,7 +194,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private IDataSet loadDataSetFromDataSetProvider(Class<? extends DataSetProvider> provider) {
         try {
-            DataSetProvider dataSetProvider = provider.newInstance();
+            DataSetProvider dataSetProvider = provider.getDeclaredConstructor().newInstance();
             return dataSetProvider.provide();
         } catch (Exception e) {
             throw new RuntimeException("Could not load dataset from provider: " + provider.getName(), e);
@@ -301,7 +301,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private IDataSet performTableOrdering(DataSetConfig dataSet, IDataSet target) throws AmbiguousTableNameException {
         if (dataSet.getTableOrdering().length > 0) {
-            target = new FilteredDataSet(new SequenceTableFilter(dataSet.getTableOrdering()), target);
+            target = new FilteredDataSet(new SequenceTableFilter(dataSet.getTableOrdering(), dbUnitConfig.isCaseSensitiveTableNames()), target);
         }
         return target;
     }
