@@ -1115,18 +1115,18 @@ TIP: For more examples, see dataset provider https://github.com/database-rider/d
 
 NOTE: You can also use DataSetProvider in `@ExpectedDataset` annotation.
 
-[IMPORTANT]
-====
-By default DataSetProviders will use <<DBUnit Configuration, global DBUnit configuration>> configured in `dbunit.yml` file.
+==== DataSet providers DBUnit config
 
-However, can pass a DBUnit configuration when creating your dataset provider:
+By default DataSetProviders will use <<DBUnit Configuration, global DBUnit configuration>> configured in `dbunit.yml` file so you *will not be able* to use `@DBUnit` to configure providers.
+
+However, you can pass a DBUnit configuration when creating your dataset provider:
 
 ```
    DBUnitConfig config = new DBUnitConfig().cacheTableNames(true)
                     .addDBUnitProperty("caseSensitiveTableNames", true);
             DataSetBuilder builder = new DataSetBuilder(config);
             builder.table("USER")
-                    .row()  
+                    .row()
                     .column("ID", 1)
                     .column("NAME", "@dbunit")
                     .row()
@@ -1134,7 +1134,8 @@ However, can pass a DBUnit configuration when creating your dataset provider:
                     .column("NAME", "@dbrider");
             return builder.build();
 ```
-====
+
+NOTE: Configuration from `@DataSet` is used the same way as in file based datasets.
 
 === Dynamic connection config
 
