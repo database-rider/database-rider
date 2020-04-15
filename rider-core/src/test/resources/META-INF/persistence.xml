@@ -192,6 +192,26 @@
 
     </persistence-unit>
 
+    <persistence-unit name="mysql-it" transaction-type="RESOURCE_LOCAL">
+
+        <class>com.github.database.rider.core.model.User</class>
+        <class>com.github.database.rider.core.model.Tweet</class>
+        <class>com.github.database.rider.core.model.Follower</class>
+
+        <properties>
+            <property name="javax.persistence.jdbc.driver" value="org.testcontainers.jdbc.ContainerDatabaseDriver"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:tc:mysql:5.6://localhost/test"/>
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
+            <property name="javax.persistence.jdbc.user" value="test"/>
+            <property name="javax.persistence.jdbc.password" value="test"/>
+            <property name="eclipselink.logging.level.sql" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="false"/>
+        </properties>
+
+    </persistence-unit>
+
+
     <persistence-unit name="contactPU" transaction-type="RESOURCE_LOCAL">
 
         <class>com.github.database.rider.core.metamodel.Contact</class>
