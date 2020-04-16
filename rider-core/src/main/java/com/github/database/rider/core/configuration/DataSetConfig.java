@@ -31,15 +31,11 @@ public class DataSetConfig {
     public DataSetConfig() {
     }
 
-    public DataSetConfig(String dataset) {
-        this.datasets = new String[]{dataset};
-    }
-
-    public DataSetConfig(String[] datasets) {
+    public DataSetConfig(String... datasets) {
         this.datasets = datasets;
     }
 
-    public DataSetConfig name(String[] datasets) {
+    public DataSetConfig name(String... datasets) {
         this.datasets = datasets;
         return this;
     }
@@ -64,7 +60,7 @@ public class DataSetConfig {
         return this;
     }
 
-    public DataSetConfig tableOrdering(String[] tableOrdering) {
+    public DataSetConfig tableOrdering(String... tableOrdering) {
         this.tableOrdering = tableOrdering;
         return this;
     }
@@ -79,22 +75,22 @@ public class DataSetConfig {
         return this;
     }
 
-    public DataSetConfig executeStatementsBefore(String[] executeStatementsBefore) {
+    public DataSetConfig executeStatementsBefore(String... executeStatementsBefore) {
         this.executeStatementsBefore = executeStatementsBefore;
         return this;
     }
 
-    public DataSetConfig executeStatementsAfter(String[] executeStatementsAfter) {
+    public DataSetConfig executeStatementsAfter(String... executeStatementsAfter) {
         this.executeStatementsAfter = executeStatementsAfter;
         return this;
     }
 
-    public DataSetConfig executeScripsBefore(String[] executeScriptsBefore) {
+    public DataSetConfig executeScripsBefore(String... executeScriptsBefore) {
         this.executeScriptsBefore = executeScriptsBefore;
         return this;
     }
 
-    public DataSetConfig executeScriptsAfter(String[] executeScriptsAfter) {
+    public DataSetConfig executeScriptsAfter(String... executeScriptsAfter) {
         this.executeScriptsAfter = executeScriptsAfter;
         return this;
     }
@@ -116,7 +112,7 @@ public class DataSetConfig {
         return this;
     }
 
-    public DataSetConfig skipCleaningFor(String[] skipCleaningFor) {
+    public DataSetConfig skipCleaningFor(String... skipCleaningFor) {
         this.skipCleaningFor = skipCleaningFor;
         return this;
     }
@@ -209,7 +205,7 @@ public class DataSetConfig {
         return cleanAfter;
     }
 
-    public void setstrategy(SeedStrategy strategy) {
+    public void setStrategy(SeedStrategy strategy) {
         this.strategy = strategy;
     }
 
@@ -237,8 +233,8 @@ public class DataSetConfig {
         this.tableOrdering = tableOrdering;
     }
 
-    public void setTSkipCleaningFor(String[] tablesToClean) {
-        this.skipCleaningFor = tablesToClean;
+    public void setSkipCleaningFor(String[] skipCleaningFor) {
+        this.skipCleaningFor = skipCleaningFor;
     }
 
     public void setTransactional(boolean transactional) {
@@ -248,8 +244,10 @@ public class DataSetConfig {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (String dataset : datasets) {
-            sb.append(dataset).append(", ");
+        if(hasDataSets()) {
+            for (String dataset : datasets) {
+                sb.append(dataset).append(", ");
+            }
         }
         if(hasDataSetProvider()) {
             sb.append("dataset provider: "+provider.getName()).append(", ");
