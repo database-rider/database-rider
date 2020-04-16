@@ -1,7 +1,6 @@
 package com.github.database.rider.core.dsl;
 
 import com.github.database.rider.core.DataSetProviderIt;
-import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.model.Follower;
@@ -12,6 +11,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
 import java.util.List;
 
 import static com.github.database.rider.core.api.dataset.SeedStrategy.INSERT;
