@@ -69,7 +69,7 @@ public class RiderDSL {
          * @param dataSetConfig {@link DataSetConfig}
          * @return A DBUnitConfigDSL to create DBUnit configuration ({@link DBUnitConfig}
          */
-        public static DBUnitConfigDSL withDataSet(DataSetConfig dataSetConfig) {
+        public static DBUnitConfigDSL withDataSetConfig(DataSetConfig dataSetConfig) {
             getInstance().dataSetConfig = dataSetConfig;
             return new DBUnitConfigDSL();
         }
@@ -79,8 +79,8 @@ public class RiderDSL {
          *
          * @return A DBUnitConfigDSL to create DBUnit configuration ({@link DBUnitConfig}
          */
-        public static DBUnitConfigDSL withDataSet() {
-            return withDataSet(getInstance().dataSetConfig);
+        public static DBUnitConfigDSL withDataSetConfig() {
+            return withDataSetConfig(getInstance().dataSetConfig);
         }
 
     }

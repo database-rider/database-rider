@@ -35,7 +35,7 @@ public class CustomReplacementIt {
     @Test
     public void shouldReplaceFooUsingRiderDSL() {
         RiderDSL.withConnection(emProvider.connection())
-                .withDataSet(new DataSetConfig("datasets/yml/custom-replacements.yml")
+                .withDataSetConfig(new DataSetConfig("datasets/yml/custom-replacements.yml")
                          .disableConstraints(true))
                 .withDBUnitConfig(new DBUnitConfig().addDBUnitProperty("replacers", Arrays.asList(new CustomReplacer())))
                 .createDataSet();
