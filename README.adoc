@@ -235,31 +235,38 @@ public class DataSetExecutorIt {
 <1> As we are not using @Rule, which is responsible for reading @DataSet annotation, we have to provide *DataSetConfig* so executor can create the dataset.
 <2> this is done implicitly by *@Rule DBUnitRule*.
 
-DataSet executor setup and logic is `hidden` by DBUnit @Rule and @DataSet annotation:
+DataSet executor setup and logic is `hidden` by DBUnit @Rule and @DataSet annotation.
 
-[source, java]
+[IMPORTANT]
+====
+Since `v1.13.0` you can use <<RiderDSL>> which provides a fluent api as an alternative to DataSetExecutor (and `@DataSet`):
+
+[source,java]
 ----
 import static com.github.database.rider.util.EntityManagerProvider.em;
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.github.database.rider.util.EntityManagerProvider.instance;
 
 @RunWith(JUnit4.class)
-public class ConnectionHolderIt {
+public class DataSetExecutorIt {
 
-    @Rule
-    public EntityManagerProvider emProvider = EntityManagerProvider.instance("rules-it");
-
-    @Rule
-    public DBUnitRule dbUnitRule = DBUnitRule.
-        instance(() -> emProvider.getConnection());
+    public EntityManagerProvider emProvider = instance("executor-it");
 
     @Test
-    @DataSet("yml/users.yml")
-    public void shouldListUsers() {
-        List<User> users = em().createQuery("select u from User u").getResultList();
-    	assertThat(users).isNotNull().isNotEmpty().hasSize(2);
-    }
+    public void shouldSeedUserDataSetUsingRiderDSL() {
+         RiderDSL.withConnection(emProvider.getConnection())
+                 .withDataSetConfig(new DataSetConfig("datasets/yml/users.yml")
+                                   .cleanBefore(true))
+                 .withDBUnitConfig(new DBUnitConfig()
+                                   .addDBUnitProperty("caseSensitiveTableNames", false))
+                 .createDataSet();
+         User user = (User) em().createQuery("select u from User u where u.id = 1").getSingleResult();
+         assertThat(user).isNotNull();
+         assertThat(user.getId()).isEqualTo(1);
+      }
 }
 ----
+
+====
 
 === Configuration
 
@@ -1137,6 +1144,31 @@ However, you can pass a DBUnit configuration when creating your dataset provider
 
 NOTE: Configuration from `@DataSet` is used the same way as in file based datasets.
 
+=== RiderDSL
+
+If you cannot rely on `@DataSet` annotation because your test runner will not read it (e.g cucumber test runner, spock, kotlin test etc...) or because you don't like annotations, you can use *RiderDSL* to create datasets:
+
+[source, java]
+----
+    @Test
+     /*same as: @DataSet(value = "yml/user.yml", cleanBefore=true)
+                @DBUnit(caseSensitiveTableNames = false) */
+    public void shouldSeedDatabaseUsingRiderDSL() {
+        RiderDSL.withConnection(emProvider.connection())
+                .withDataSetConfig(new DataSetConfig("datasets/yml/user.yml")
+                        .cleanBefore(true))
+                .withDBUnitConfig(new DBUnitConfig().addDBUnitProperty("caseSensitiveTableNames", false))
+                .createDataSet();
+        List<User> users = EntityManagerProvider.em().createQuery("select u from User u ").getResultList();
+        assertThat(users).
+                isNotNull().
+                isNotEmpty().
+                hasSize(2);
+    }
+----
+
+TIP: See more https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/dsl/RiderDSLIt.java#L24[examples here^].
+
 === Dynamic connection config
 
 In order to have dynamic JDBC connection on your tests one can use system properties, see example below:
@@ -1505,7 +1537,7 @@ public class ContactSteps {
 
 You can create datasets without JUnit Rule or CDI as we saw above, here is a pure cucumber example (for the same https://github.com/database-rider/database-rider#51-examples[feature above]):
 
-NOTE: If you are looking for a way to *define datasets programmatically* look into https://github.com/database-rider/database-rider#dataset-providers[DataSet providers^].
+NOTE: If you are looking for a way to *define datasets programmatically* look into <<DataSet providers>>.
 
 [source,java,linenums]
 ----
@@ -1576,6 +1608,8 @@ public class ContactStepsWithoutCDI {
     }
 }
 ----
+
+TIP: For a fluent API to create datasets, you can use <<RiderDSL>> instead of DataSetExecutor.
 
 == JUnit 5
 

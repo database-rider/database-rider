@@ -110,8 +110,8 @@ public class RiderDSLIt {
     }
 
     @Test
-    //@DataSet(value = "yml/lowercaseUsers.yml") // note that hsqldb tables are in uppercase
-    //@DBUnit(caseSensitiveTableNames = false)
+    /*same as: @DataSet(value = "yml/lowercaseUsers.yml") // note that hsqldb tables are in uppercase
+     @DBUnit(caseSensitiveTableNames = false) */
     public void shouldListUsersWithCaseInSensitiveTableNames() {
         RiderDSL.withConnection(emProvider.connection())
                 .withDataSetConfig(new DataSetConfig("yml/lowercaseUsers.yml"))
