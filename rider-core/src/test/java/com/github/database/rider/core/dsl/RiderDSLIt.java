@@ -16,7 +16,7 @@ import java.util.List;
 
 import static com.github.database.rider.core.api.dataset.SeedStrategy.INSERT;
 import static com.github.database.rider.core.api.dataset.SeedStrategy.TRUNCATE_INSERT;
-import static com.github.database.rider.core.dsl.RiderDSL.DataSetConfigDSL.withDataSet;
+import static com.github.database.rider.core.dsl.RiderDSL.DataSetConfigDSL.withDataSetConfig;
 import static com.github.database.rider.core.util.EntityManagerProvider.em;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,7 +29,7 @@ public class RiderDSLIt {
     @Test
     public void shouldCreateDataSetUsingDSL() {
         RiderDSL.withConnection(emProvider.connection())
-                .withDataSet(new DataSetConfig("datasets/yml/users.yml"))
+                .withDataSetConfig(new DataSetConfig("datasets/yml/users.yml"))
                 .createDataSet();
 
         List<User> users = em().createQuery("select u from User u").getResultList();
@@ -42,7 +42,7 @@ public class RiderDSLIt {
     @Test
     public void shouldCreateMultipleDataSetsReusingDSLInstance() {
         RiderDSL.withConnection(emProvider.connection())
-                .withDataSet(new DataSetConfig("datasets/yml/users.yml"))
+                .withDataSetConfig(new DataSetConfig("datasets/yml/users.yml"))
                 .createDataSet();
 
         List<User> users = em().createQuery("select u from User u").getResultList();
@@ -52,7 +52,7 @@ public class RiderDSLIt {
 
 
         RiderDSL.withConnection()
-                .withDataSet(new DataSetConfig("datasets/yml/empty.yml"))
+                .withDataSetConfig(new DataSetConfig("datasets/yml/empty.yml"))
                 .createDataSet();
 
         users = em().createQuery("select u from User u").getResultList();
@@ -61,7 +61,7 @@ public class RiderDSLIt {
 
         //you also don't need to use connection dsl if it is already initialized
         RiderDSL.DataSetConfigDSL
-                .withDataSet(new DataSetConfig("datasets/yml/users.yml"))
+                .withDataSetConfig(new DataSetConfig("datasets/yml/users.yml"))
                 .createDataSet();
 
         users = em().createQuery("select u from User u").getResultList();
@@ -71,7 +71,7 @@ public class RiderDSLIt {
 
         //you can also use static import if you're sure the connection is initialized
 
-        withDataSet(new DataSetConfig("datasets/yml/empty.yml"))
+        withDataSetConfig(new DataSetConfig("datasets/yml/empty.yml"))
                 .createDataSet();
 
         users = em().createQuery("select u from User u").getResultList();
@@ -83,7 +83,7 @@ public class RiderDSLIt {
             cleanBefore = true)*/
     public void shouldSeedDatabaseProgrammatically() {
         RiderDSL.withConnection(emProvider.connection())
-                .withDataSet(new DataSetConfig().datasetProvider(DataSetProviderIt.UserDataSetProvider.class)
+                .withDataSetConfig(new DataSetConfig().datasetProvider(DataSetProviderIt.UserDataSetProvider.class)
                      .cleanBefore(true))
                 .createDataSet();
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u ").getResultList();
@@ -98,7 +98,7 @@ public class RiderDSLIt {
     //@DataSet(provider = UserDataSetProviderWithColumnsSyntax.class)
     public void shouldSeedDatabaseUsingDataSetProviderWithColumnsSyntax() {
         RiderDSL.withConnection(emProvider.connection())
-                .withDataSet(new DataSetConfig().datasetProvider(DataSetProviderIt.UserDataSetProviderWithColumnsSyntax.class)
+                .withDataSetConfig(new DataSetConfig().datasetProvider(DataSetProviderIt.UserDataSetProviderWithColumnsSyntax.class)
                       .cleanBefore(true))
                 .createDataSet();
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u ").getResultList();
@@ -114,7 +114,7 @@ public class RiderDSLIt {
     //@DBUnit(caseSensitiveTableNames = false)
     public void shouldListUsersWithCaseInSensitiveTableNames() {
         RiderDSL.withConnection(emProvider.connection())
-                .withDataSet(new DataSetConfig("yml/lowercaseUsers.yml"))
+                .withDataSetConfig(new DataSetConfig("yml/lowercaseUsers.yml"))
                 .withDBUnitConfig(new DBUnitConfig().addDBUnitProperty("caseSensitiveTableNames", false))
                 .createDataSet();
         List<com.github.database.rider.core.model.lowercase.User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
@@ -125,7 +125,7 @@ public class RiderDSLIt {
     //@DataSet(value = "datasets/yml/user.yml", cleanBefore = true)
     public void shouldSeedDatabase() {
         RiderDSL.withConnection(emProvider.connection())
-                .withDataSet(new DataSetConfig("datasets/yml/user.yml")
+                .withDataSetConfig(new DataSetConfig("datasets/yml/user.yml")
                         .cleanBefore(true))
                 .createDataSet();
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u ").getResultList();
@@ -139,7 +139,7 @@ public class RiderDSLIt {
     //@DataSet(value = "datasets/yml/users.yml", executeStatementsBefore = "SET DATABASE REFERENTIAL INTEGRITY FALSE;", executeStatementsAfter = "SET DATABASE REFERENTIAL INTEGRITY TRUE;")
     public void shouldSeedDataSetDisablingContraintsViaStatement() {
         RiderDSL.withConnection(emProvider.connection())
-                .withDataSet(new DataSetConfig("datasets/yml/users.yml")
+                .withDataSetConfig(new DataSetConfig("datasets/yml/users.yml")
                         .executeStatementsBefore("SET DATABASE REFERENTIAL INTEGRITY FALSE;")
                         .executeStatementsAfter("SET DATABASE REFERENTIAL INTEGRITY TRUE;"))
                 .createDataSet();
@@ -158,7 +158,7 @@ public class RiderDSLIt {
             executeStatementsBefore = {"DELETE FROM FOLLOWER", "DELETE FROM TWEET", "DELETE FROM USER"})*/
     public void shouldSeedDataSetUsingTableCreationOrder() {
         RiderDSL.withConnection(emProvider.connection())
-                .withDataSet(new DataSetConfig("datasets/yml/users.yml")
+                .withDataSetConfig(new DataSetConfig("datasets/yml/users.yml")
                         .useSequenceFiltering(true)
                         .tableOrdering("USER", "TWEET", "FOLLOWER")
                         .executeStatementsBefore("DELETE FROM FOLLOWER", "DELETE FROM TWEET", "DELETE FROM USER"))
@@ -171,7 +171,7 @@ public class RiderDSLIt {
     //@DataSet(value = "datasets/yml/users.yml", strategy = SeedStrategy.TRUNCATE_INSERT, useSequenceFiltering = true)
     public void shouldSeedUserDataSetUsingTruncateInsert() {
         RiderDSL.withConnection(emProvider.connection())
-                .withDataSet(new DataSetConfig("datasets/yml/users.yml")
+                .withDataSetConfig(new DataSetConfig("datasets/yml/users.yml")
                         .useSequenceFiltering(true)
                         .strategy(TRUNCATE_INSERT))
                 .createDataSet();
@@ -188,7 +188,7 @@ public class RiderDSLIt {
     //@DataSet(value = "datasets/json/users.json")
     public void shouldLoadUsersFromJsonDataset() {
         RiderDSL.withConnection(emProvider.connection())
-                .withDataSet(new DataSetConfig("datasets/json/users.json"))
+                .withDataSetConfig(new DataSetConfig("datasets/json/users.json"))
                 .createDataSet();
         User user = (User) EntityManagerProvider.em().createQuery("select u from User u join fetch u.tweets join fetch u.followers left join fetch u.followers where u.id = 1").getSingleResult();
         assertThat(user).isNotNull();
@@ -204,7 +204,7 @@ public class RiderDSLIt {
     //@DataSet(value = "datasets/xml/users.xml")
     public void shouldLoadUsersFromXmlDataset() {
         RiderDSL.withConnection(emProvider.connection())
-                .withDataSet(new DataSetConfig("datasets/xml/users.xml"))
+                .withDataSetConfig(new DataSetConfig("datasets/xml/users.xml"))
                 .createDataSet();
         User user = (User) EntityManagerProvider.em().createQuery("select u from User u join fetch u.tweets join fetch u.followers left join fetch u.followers where u.id = 1").getSingleResult();
         assertThat(user).isNotNull();
@@ -220,7 +220,7 @@ public class RiderDSLIt {
     //@DataSet(strategy = SeedStrategy.INSERT, value = {"yml/user.yml", "yml/tweet.yml", "yml/follower.yml"}, executeStatementsBefore = {"DELETE FROM FOLLOWER", "DELETE FROM TWEET", "DELETE FROM USER"})
     public void shouldLoadDataFromMultipleDataSets() {
         RiderDSL.withConnection(emProvider.connection())
-                .withDataSet(new DataSetConfig("yml/user.yml","yml/tweet.yml","yml/follower.yml")
+                .withDataSetConfig(new DataSetConfig("yml/user.yml","yml/tweet.yml","yml/follower.yml")
                         .strategy(INSERT)
                         .executeStatementsBefore("DELETE FROM FOLLOWER", "DELETE FROM TWEET", "DELETE FROM USER"))
                 .createDataSet();
@@ -239,7 +239,7 @@ public class RiderDSLIt {
     // executeStatementsBefore = {"DELETE FROM FOLLOWER", "DELETE FROM TWEET", "DELETE FROM USER"})
     public void shouldLoadDataFromMultipleDataSetsUsingCommaToSeparateNames() {
         RiderDSL.withConnection(emProvider.connection())
-                .withDataSet(new DataSetConfig("yml/user.yml, yml/tweet.yml, yml/follower.yml")
+                .withDataSetConfig(new DataSetConfig("yml/user.yml, yml/tweet.yml, yml/follower.yml")
                         .strategy(INSERT)
                         .executeStatementsBefore("DELETE FROM FOLLOWER", "DELETE FROM TWEET", "DELETE FROM USER"))
                 .createDataSet();
@@ -258,7 +258,7 @@ public class RiderDSLIt {
     //@DataSet(value = "datasets/csv/USER.csv", cleanBefore = true)
     public void shouldSeedDatabaseWithCSVDataSet() {
         RiderDSL.withConnection(emProvider.connection())
-                .withDataSet(new DataSetConfig("datasets/csv/USER.csv")
+                .withDataSetConfig(new DataSetConfig("datasets/csv/USER.csv")
                         .cleanBefore(true))
                 .createDataSet();
         User user = (User) EntityManagerProvider.em().createQuery("select u from User u join u.tweets t where t.content = 'dbunit rules!'").getSingleResult();
@@ -271,7 +271,7 @@ public class RiderDSLIt {
     //@DataSet("xls/users.xls")
     public void shouldSeedDatabaseWithXLSDataSet() {
         RiderDSL.withConnection(emProvider.connection())
-                .withDataSet(new DataSetConfig("xls/users.xls")
+                .withDataSetConfig(new DataSetConfig("xls/users.xls")
                         .cleanBefore(true))
                 .createDataSet();
         User user = (User) EntityManagerProvider.em().createQuery("select u from User u join u.tweets t where t.content = 'dbunit rules!'").getSingleResult();
