@@ -641,7 +641,11 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         + e.getCause());
             }
         }
-        enableConstraints();
+
+        // enabling constraints only if `disableConstraints == false`
+        if(!config.isDisableConstraints()) {
+            enableConstraints();
+        }
 
     }
 
