@@ -325,63 +325,65 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private void disableConstraints() throws SQLException {
 
-        try (Statement statement = getRiderDataSource().getConnection().createStatement()) {
-            switch (getRiderDataSource().getDBType()) {
-                case HSQLDB:
-                    statement.execute("SET DATABASE REFERENTIAL INTEGRITY FALSE;");
-                    break;
-                case H2:
-                    statement.execute("SET foreign_key_checks = 0;");
-                    break;
-                case MYSQL:
-                    statement.execute(" SET FOREIGN_KEY_CHECKS=0;");
-                    break;
-                case POSTGRESQL:
-                    List<String> tables = getTableNames(getRiderDataSource().getConnection());
-                    for (String tableName : tables) {
-                        statement.execute("ALTER TABLE " + tableName + " DISABLE TRIGGER ALL;");
-                    }
-                    break;
-                case ORACLE:
-                    // adapted from Unitils:
-                    // https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
-                    ResultSet resultSet = null;
-                    final String schemaName = resolveSchema();// default schema
-                    try {
-                        boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
-                        // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
-                        // filtered out.
-                        resultSet = statement.executeQuery(
-                                "select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' "
-                                        + (hasSchema ? "and OWNER = '" + schemaName + "'" : "")
-                                        + " and CONSTRAINT_NAME not like 'BIN$%' and STATUS <> 'DISABLED'");
-                        while (resultSet.next()) {
-                            String tableName = resultSet.getString("TABLE_NAME");
-                            String constraintName = resultSet.getString("CONSTRAINT_NAME");
-                            String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'"
-                                    : "'" + tableName + "'";
-                            executeStatements(
-                                    "alter table " + qualifiedTableName + " disable constraint '" + constraintName + "'");
+        if (!isConstraintsDisabled) {
+            try (Statement statement = getRiderDataSource().getConnection().createStatement()) {
+                switch (getRiderDataSource().getDBType()) {
+                    case HSQLDB:
+                        statement.execute("SET DATABASE REFERENTIAL INTEGRITY FALSE;");
+                        break;
+                    case H2:
+                        statement.execute("SET foreign_key_checks = 0;");
+                        break;
+                    case MYSQL:
+                        statement.execute(" SET FOREIGN_KEY_CHECKS=0;");
+                        break;
+                    case POSTGRESQL:
+                        List<String> tables = getTableNames(getRiderDataSource().getConnection());
+                        for (String tableName : tables) {
+                            statement.execute("ALTER TABLE " + tableName + " DISABLE TRIGGER ALL;");
                         }
-                    } catch (Exception e) {
-                        throw new RuntimeException("Error while disabling referential constraints on schema " + schemaName, e);
-                    } finally {
-                        if (resultSet != null) {
-                            resultSet.close();
+                        break;
+                    case ORACLE:
+                        // adapted from Unitils:
+                        // https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
+                        ResultSet resultSet = null;
+                        final String schemaName = resolveSchema();// default schema
+                        try {
+                            boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
+                            // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
+                            // filtered out.
+                            resultSet = statement.executeQuery(
+                                    "select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' "
+                                            + (hasSchema ? "and OWNER = '" + schemaName + "'" : "")
+                                            + " and CONSTRAINT_NAME not like 'BIN$%' and STATUS <> 'DISABLED'");
+                            while (resultSet.next()) {
+                                String tableName = resultSet.getString("TABLE_NAME");
+                                String constraintName = resultSet.getString("CONSTRAINT_NAME");
+                                String qualifiedTableName = hasSchema ? "'" + schemaName + "'.'" + tableName + "'"
+                                        : "'" + tableName + "'";
+                                executeStatements(
+                                        "alter table " + qualifiedTableName + " disable constraint '" + constraintName + "'");
+                            }
+                        } catch (Exception e) {
+                            throw new RuntimeException("Error while disabling referential constraints on schema " + schemaName, e);
+                        } finally {
+                            if (resultSet != null) {
+                                resultSet.close();
+                            }
                         }
-                    }
-                    break;
-                case MSSQL:
-                    tables = getTableNames(getRiderDataSource().getConnection());
-                    for (String tableName : tables) {
-                        statement.execute("alter table " + tableName + " nocheck constraint all");
-                    }
-                    break;
+                        break;
+                    case MSSQL:
+                        tables = getTableNames(getRiderDataSource().getConnection());
+                        for (String tableName : tables) {
+                            statement.execute("alter table " + tableName + " nocheck constraint all");
+                        }
+                        break;
+                }
+
             }
 
+            isConstraintsDisabled = true;
         }
-
-        isConstraintsDisabled = true;
 
     }
 
