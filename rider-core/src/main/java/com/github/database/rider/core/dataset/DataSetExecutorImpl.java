@@ -601,6 +601,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
      */
     @Override
     public void clearDatabase(DataSetConfig config) throws SQLException {
+        disableConstraints();
         Connection connection = getRiderDataSource().getConnection();
         if (config != null && config.getTableOrdering() != null && config.getTableOrdering().length > 0) {
             for (String table : config.getTableOrdering()) {
@@ -638,6 +639,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         + e.getCause());
             }
         }
+        enableConstraints();
 
     }
 
