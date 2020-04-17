@@ -24,20 +24,13 @@ public class RiderDSL {
      * and dbunit configuration ({@link DBUnitConfig})
      */
     public void createDataSet() {
-        validateConnection(connection);
-        validateDataSetConfig(dataSetConfig);
+        validateConnection();
+        validateDataSetConfig();
         final DataSetExecutorImpl dataSetExecutor = DataSetExecutorImpl.instance(dataSetConfig.getExecutorId(), new ConnectionHolderImpl(connection));
         if (dbUnitConfig != null) {
             dataSetExecutor.setDBUnitConfig(dbUnitConfig);
         }
         dataSetExecutor.createDataSet(dataSetConfig);
-    }
-
-    private static synchronized void createInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new ThreadLocal<>();
-            INSTANCE.set(new RiderDSL());
-        }
     }
 
     /**
@@ -47,10 +40,16 @@ public class RiderDSL {
      * @return
      */
     public static DataSetConfigDSL withConnection(Connection connection) {
-        createInstance();
-        validateConnection(connection);
-        INSTANCE.get().connection = connection;
+        getInstance().connection = connection;
         return new DataSetConfigDSL();
+    }
+
+    private static RiderDSL getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new ThreadLocal<>();
+            INSTANCE.set(new RiderDSL());
+        }
+        return INSTANCE.get();
     }
 
     /**
@@ -59,7 +58,7 @@ public class RiderDSL {
      * @return DataSet config DSL
      */
     public static DataSetConfigDSL withConnection() {
-        return withConnection(INSTANCE.get().connection);
+        return withConnection(getInstance().connection);
     }
 
     public static class DataSetConfigDSL {
@@ -71,8 +70,7 @@ public class RiderDSL {
          * @return A DBUnitConfigDSL to create DBUnit configuration ({@link DBUnitConfig}
          */
         public static DBUnitConfigDSL withDataSet(DataSetConfig dataSetConfig) {
-            validateDataSetConfig(dataSetConfig);
-            INSTANCE.get().dataSetConfig = dataSetConfig;
+            getInstance().dataSetConfig = dataSetConfig;
             return new DBUnitConfigDSL();
         }
 
@@ -82,7 +80,7 @@ public class RiderDSL {
          * @return A DBUnitConfigDSL to create DBUnit configuration ({@link DBUnitConfig}
          */
         public static DBUnitConfigDSL withDataSet() {
-            return withDataSet(INSTANCE.get().dataSetConfig);
+            return withDataSet(getInstance().dataSetConfig);
         }
 
     }
@@ -96,7 +94,7 @@ public class RiderDSL {
          * @return
          */
         public static RiderDSL withDBUnitConfig(DBUnitConfig dbUnitConfig) {
-            RiderDSL riderDSL = INSTANCE.get();
+            RiderDSL riderDSL = getInstance();
             riderDSL.dbUnitConfig = dbUnitConfig;
             return riderDSL;
         }
@@ -106,17 +104,18 @@ public class RiderDSL {
          * and dbunit configuration ({@link DBUnitConfig})
          */
         public static void createDataSet() {
-            INSTANCE.get().createDataSet();
+            getInstance().createDataSet();
         }
     }
 
-    private static void validateConnection(Connection connection) {
-        if (connection == null) {
+    private static void validateConnection() {
+        if (getInstance().connection == null) {
             throw new RuntimeException("Invalid jdbc connection.");
         }
     }
 
-    private static void validateDataSetConfig(DataSetConfig dataSetConfig) {
+    private static void validateDataSetConfig() {
+        DataSetConfig dataSetConfig = getInstance().dataSetConfig;
         if (dataSetConfig == null || (!dataSetConfig.hasDataSets() && !dataSetConfig.hasDataSetProvider())) {
             throw new RuntimeException("Invalid dataset configuration. You must provide at least one dataset or dataset provider.");
         }
