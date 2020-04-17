@@ -14,11 +14,10 @@ import java.sql.Connection;
  */
 public class RiderDSL {
 
-    private static RiderDSL INSTANCE;
+    private static ThreadLocal<RiderDSL> INSTANCE;
     private Connection connection;
     private DataSetConfig dataSetConfig;
     private DBUnitConfig dbUnitConfig;
-
 
     /**
      * Creates a dataset in database using the provided connection ({@link Connection}), dataset configuration ({@link DataSetConfig}
@@ -34,9 +33,10 @@ public class RiderDSL {
         dataSetExecutor.createDataSet(dataSetConfig);
     }
 
-    private static void createInstance() {
+    private static synchronized void createInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new RiderDSL();
+            INSTANCE = new ThreadLocal<>();
+            INSTANCE.set(new RiderDSL());
         }
     }
 
@@ -49,7 +49,7 @@ public class RiderDSL {
     public static DataSetConfigDSL withConnection(Connection connection) {
         createInstance();
         validateConnection(connection);
-        INSTANCE.connection = connection;
+        INSTANCE.get().connection = connection;
         return new DataSetConfigDSL();
     }
 
@@ -59,7 +59,7 @@ public class RiderDSL {
      * @return DataSet config DSL
      */
     public static DataSetConfigDSL withConnection() {
-        return withConnection(INSTANCE.connection);
+        return withConnection(INSTANCE.get().connection);
     }
 
     public static class DataSetConfigDSL {
@@ -72,7 +72,7 @@ public class RiderDSL {
          */
         public static DBUnitConfigDSL withDataSet(DataSetConfig dataSetConfig) {
             validateDataSetConfig(dataSetConfig);
-            INSTANCE.dataSetConfig = dataSetConfig;
+            INSTANCE.get().dataSetConfig = dataSetConfig;
             return new DBUnitConfigDSL();
         }
 
@@ -82,7 +82,7 @@ public class RiderDSL {
          * @return A DBUnitConfigDSL to create DBUnit configuration ({@link DBUnitConfig}
          */
         public static DBUnitConfigDSL withDataSet() {
-            return withDataSet(INSTANCE.dataSetConfig);
+            return withDataSet(INSTANCE.get().dataSetConfig);
         }
 
     }
@@ -96,8 +96,9 @@ public class RiderDSL {
          * @return
          */
         public static RiderDSL withDBUnitConfig(DBUnitConfig dbUnitConfig) {
-            INSTANCE.dbUnitConfig = dbUnitConfig;
-            return INSTANCE;
+            RiderDSL riderDSL = INSTANCE.get();
+            riderDSL.dbUnitConfig = dbUnitConfig;
+            return riderDSL;
         }
 
         /**
@@ -105,7 +106,7 @@ public class RiderDSL {
          * and dbunit configuration ({@link DBUnitConfig})
          */
         public static void createDataSet() {
-            INSTANCE.createDataSet();
+            INSTANCE.get().createDataSet();
         }
     }
 
