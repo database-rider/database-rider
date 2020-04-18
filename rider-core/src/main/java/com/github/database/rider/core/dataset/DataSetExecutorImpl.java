@@ -624,7 +624,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         }
         // clear remaining tables in any order(if there are any, also no problem clearing again)
         final List<String> tables = getTableNames(connection);
-        final List<String> tablesToSkipCleaning = config.getSkipCleaningFor() != null ? Arrays.asList(config.getSkipCleaningFor()) : Collections.<String>emptyList();
+        final List<String> tablesToSkipCleaning = getTablesToSkipOnCleaning(config);
         for (String tableName : tables) {
             if (shouldSkipFromCleaning(tablesToSkipCleaning, tableName)) {
                 continue;
@@ -647,6 +647,19 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             enableConstraints();
         }
 
+    }
+
+    private List<String> getTablesToSkipOnCleaning(DataSetConfig config) {
+        List<String> tablesToSkipOnCleaning = config.getSkipCleaningFor() != null ? Arrays.asList(config.getSkipCleaningFor()) : Collections.<String>emptyList();
+        if(!tablesToSkipOnCleaning.isEmpty()) {
+            for (Iterator<String> it = tablesToSkipOnCleaning.iterator(); it.hasNext(); ) {
+                String tableName = it.next();
+                if (RESERVED_TABLE_NAMES.contains(tableName.toLowerCase())) {
+                    tablesToSkipOnCleaning.set(tablesToSkipOnCleaning.indexOf(tableName), escapeTableName(tableName));
+                }
+            }
+        }
+        return tablesToSkipOnCleaning;
     }
 
     private boolean shouldSkipFromCleaning(List<String> tablesToSkipCleaning, String tableName) {
