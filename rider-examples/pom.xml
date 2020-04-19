@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.github.database-rider</groupId>
         <artifactId>rider-parent</artifactId>
-        <version>1.13.0</version>
+        <version>1.13.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>rider-examples</artifactId>
