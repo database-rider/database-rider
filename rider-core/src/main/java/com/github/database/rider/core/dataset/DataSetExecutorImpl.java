@@ -340,7 +340,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     case POSTGRESQL:
                         List<String> tables = getTableNames(getRiderDataSource().getConnection());
                         for (String tableName : tables) {
-                            statement.execute("ALTER TABLE " + tableName + " DISABLE TRIGGER ALL;");
+                            statement.execute("SET session_replication_role = replica;");
                         }
                         break;
                     case ORACLE:
@@ -404,7 +404,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     case POSTGRESQL:
                         List<String> tables = getTableNames(getRiderDataSource().getConnection());
                         for (String tableName : tables) {
-                            statement.execute("ALTER TABLE " + tableName + " ENABLE TRIGGER ALL;");
+                            statement.execute("SET session_replication_role = DEFAULT;");
                         }
                         break;
                     case ORACLE:
