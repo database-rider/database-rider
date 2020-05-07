@@ -338,10 +338,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         statement.execute(" SET FOREIGN_KEY_CHECKS=0;");
                         break;
                     case POSTGRESQL:
-                        List<String> tables = getTableNames(getRiderDataSource().getConnection());
-                        for (String tableName : tables) {
-                            statement.execute("SET session_replication_role = replica;");
-                        }
+                        statement.execute("SET session_replication_role = replica;");
                         break;
                     case ORACLE:
                         // adapted from Unitils:
@@ -373,7 +370,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         }
                         break;
                     case MSSQL:
-                        tables = getTableNames(getRiderDataSource().getConnection());
+                        List<String> tables = getTableNames(getRiderDataSource().getConnection());
                         for (String tableName : tables) {
                             statement.execute("alter table " + tableName + " nocheck constraint all");
                         }
@@ -402,10 +399,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         statement.execute(" SET FOREIGN_KEY_CHECKS=1;");
                         break;
                     case POSTGRESQL:
-                        List<String> tables = getTableNames(getRiderDataSource().getConnection());
-                        for (String tableName : tables) {
-                            statement.execute("SET session_replication_role = DEFAULT;");
-                        }
+                        statement.execute("SET session_replication_role = DEFAULT;");
                         break;
                     case ORACLE:
                         // adapted from Unitils:
@@ -438,7 +432,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         }
                         break;
                     case MSSQL:
-                        tables = getTableNames(getRiderDataSource().getConnection());
+                        List<String> tables = getTableNames(getRiderDataSource().getConnection());
                         for (String tableName : tables) {
                             statement.execute("alter table " + tableName + " with check check constraint all");
                         }
