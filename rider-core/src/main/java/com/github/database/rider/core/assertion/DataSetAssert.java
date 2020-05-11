@@ -21,8 +21,9 @@ public class DataSetAssert extends DbUnitAssert {
 
     /**
      * Same as DBUnitAssert with support for regex in row values
-     * @param expectedTable expected table
-     * @param actualTable current table
+     *
+     * @param expectedTable  expected table
+     * @param actualTable    current table
      * @param comparisonCols columnName
      * @param failureHandler handler
      * @throws DataSetException if datasets does not match
@@ -72,8 +73,8 @@ public class DataSetAssert extends DbUnitAssert {
                     continue;
                 }
 
-                if(expectedValue != null && expectedValue.toString().startsWith("regex:")){
-                    if(!regexMatches(expectedValue.toString(),actualValue.toString())){
+                if (expectedValue != null && expectedValue.toString().startsWith("regex:")) {
+                    if (!regexMatches(expectedValue.toString(), actualValue)) {
                         Difference diff = new Difference(
                                 expectedTable, actualTable,
                                 i, columnName,
@@ -82,8 +83,7 @@ public class DataSetAssert extends DbUnitAssert {
                         // Handle the difference (throw error immediately or something else)
                         failureHandler.handle(diff);
                     }
-                }
-                else if (dataType.compare(expectedValue, actualValue) != 0) {
+                } else if (dataType.compare(expectedValue, actualValue) != 0) {
 
                     Difference diff = new Difference(
                             expectedTable, actualTable,
@@ -97,8 +97,11 @@ public class DataSetAssert extends DbUnitAssert {
         }
     }
 
-    private boolean regexMatches(String expectedValue, String actualValue) {
-        Pattern pattern = Pattern.compile(expectedValue.substring(expectedValue.indexOf(':')+1).trim());
-        return pattern.matcher(actualValue).matches();
+    private boolean regexMatches(String expectedValue, Object actualValue) {
+        if (actualValue == null) {
+            return false;
+        }
+        Pattern pattern = Pattern.compile(expectedValue.substring(expectedValue.indexOf(':') + 1).trim());
+        return pattern.matcher(actualValue.toString()).matches();
     }
 }
