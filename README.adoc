@@ -1634,8 +1634,18 @@ public class DBUnitJUnit5Test {
 
     private ConnectionHolder connectionHolder = () -> instance("junit5-pu").connection(); <1>
 
-    @Test
+    @BeforeAll
+    @DataSet("empty.yml")
+    public static void setUp() {
+    }
+
+    @BeforeEach
     @DataSet("users.yml")
+    public static void setUp() {
+    }
+
+    @Test
+    @DataSet(value = "usersWithTweet.yml")
     public void shouldListUsers() {
         List<User> users = em().createQuery("select u from User u").getResultList();
         assertThat(users).isNotNull().isNotEmpty().hasSize(2);
