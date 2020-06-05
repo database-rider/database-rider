@@ -98,6 +98,18 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         return instance;
     }
 
+    public static DataSetExecutorImpl instance(String executorId, ConnectionHolder connectionHolder, DBUnitConfig dbUnitConfig) {
+        DataSetExecutorImpl instance = executors.get(executorId);
+        if (instance == null) {
+            instance = new DataSetExecutorImpl(executorId, connectionHolder, dbUnitConfig);
+            log.debug("creating executor instance " + executorId);
+            executors.put(executorId, instance);
+        } else if (!instance.dbUnitConfig.isCacheConnection()) {
+            instance.setConnectionHolder(connectionHolder);
+        }
+        return instance;
+    }
+
     private DataSetExecutorImpl(String executorId, ConnectionHolder connectionHolder, DBUnitConfig dbUnitConfig) {
         this.connectionHolder = connectionHolder;
         this.executorId = executorId;
