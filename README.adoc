@@ -293,7 +293,16 @@ Here are possible values:
 [cols="3*", options="header"]
 |===
 |Name | Description | Default
-|value| Dataset file name using test resources folder as root directory. Multiple, comma separated, dataset file names can be provided.| ""
+|value
+a|Dataset file name using
+
+* test resources folder as root directory.
+** eg. 'yml/users.yml'
+* URL-Notation for registered stream-handlers
+** eg. 'file:///C:/dir/users.xml', 'http://...')
+** except: loading csv datasets is only supported by the file-protocol
+
+Multiple, comma separated, dataset file names can be provided.| ""
 |executorId| Name of dataset executor for the given dataset.| DataSetExecutorImpl.DEFAULT_EXECUTOR_ID
 |strategy| DataSet seed strategy. Possible values are: CLEAN_INSERT, INSERT, REFRESH and UPDATE.| CLEAN_INSERT, meaning that DBUnit will clean and then insert data in tables present on provided dataset.
 |useSequenceFiltering| If true dbunit will look at constraints and dataset to try to determine the correct ordering for the SQL statements.| true

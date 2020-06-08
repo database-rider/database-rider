@@ -12,8 +12,9 @@ import java.lang.annotation.*;
 public @interface DataSet {
 
   /**
-   * @return list of dataset file names using resources folder as root directory.
+   * @return list of dataset file names using 'resources' or 'resouces/datasets' folder as root directory.
    * Single dataset with multiple comma separated dataset file names can also be provided.
+   * Also URL-Notation is supported, e.g: 'file:///C:/dir/users.xml' OR 'http://...'
    */
   String[] value() default "";
 
