@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -246,36 +247,33 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             IDataSet target = null;
             String dataSetName = dataSet.trim();
             String extension = dataSetName.substring(dataSetName.lastIndexOf('.') + 1).toLowerCase();
+            URL dataSetUrl = getDataSetUrl(dataSetName);
             switch (extension) {
                 case "yml": {
-                    target = new ScriptableDataSet(sensitiveTableNames, new YamlDataSet(getDataSetStream(dataSetName), dbUnitConfig));
+                    target = new ScriptableDataSet(sensitiveTableNames, new YamlDataSet(getDataSetStream(dataSetUrl), dbUnitConfig));
                     break;
                 }
                 case "xml": {
-                    try {
-                        target = new ScriptableDataSet(sensitiveTableNames, new FlatXmlDataSetBuilder()
+                    target = new ScriptableDataSet(sensitiveTableNames, new FlatXmlDataSetBuilder()
                             .setColumnSensing(dbUnitConfig.isColumnSensing())
                             .setCaseSensitiveTableNames(sensitiveTableNames)
-                            .build(getDataSetUrl(dataSetName)));
-                    } catch (Exception e) {
-                        target = new ScriptableDataSet(sensitiveTableNames, new FlatXmlDataSetBuilder()
-                            .setColumnSensing(dbUnitConfig.isColumnSensing())
-                            .setCaseSensitiveTableNames(sensitiveTableNames)
-                            .build(getDataSetStream(dataSetName)));
-                    }
+                            .build(getDataSetStream(dataSetUrl)));
                     break;
                 }
                 case "csv": {
+                    if (!dataSetUrl.getProtocol().equals("file")) {
+                        throw new RuntimeException("Csv datasets can only be accessed from files");
+                    }
                     target = new ScriptableDataSet(sensitiveTableNames, new CsvDataSet(
-                            new File(getClass().getClassLoader().getResource(dataSetName).getFile()).getParentFile()));
+                            new File(getDataSetUrl(dataSetName).getPath()).getParentFile()));
                     break;
                 }
                 case "xls": {
-                    target = new ScriptableDataSet(sensitiveTableNames, new XlsDataSet(getDataSetStream(dataSetName)));
+                    target = new ScriptableDataSet(sensitiveTableNames, new XlsDataSet(getDataSetStream(dataSetUrl)));
                     break;
                 }
                 case "json": {
-                    target = new ScriptableDataSet(sensitiveTableNames, new JSONDataSet(getDataSetStream(dataSetName)));
+                    target = new ScriptableDataSet(sensitiveTableNames, new JSONDataSet(getDataSetStream(dataSetUrl)));
                     break;
                 }
                 default:
@@ -291,22 +289,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         }
 
         return new CompositeDataSet(dataSets.toArray(new IDataSet[dataSets.size()]), true, sensitiveTableNames);
-    }
-
-    private URL getDataSetUrl(String dataSet) {
-        if (!dataSet.startsWith("/")) {
-            dataSet = "/" + dataSet;
-        }
-        URL resource = getClass().getResource(dataSet);
-        if (resource == null) {// if not found try to get from datasets folder
-            resource = getClass().getResource("/datasets" + dataSet);
-        }
-        if (resource == null) {
-            throw new RuntimeException(
-                    String.format("Could not find dataset '%s' under 'resources' or 'resources/datasets' directory.",
-                            dataSet.substring(1)));
-        }
-        return resource;
     }
 
     @Override
@@ -588,21 +570,37 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         return executors.get(id);
     }
 
-    private InputStream getDataSetStream(String dataSet) {
-        if (!dataSet.startsWith("/")) {
-            dataSet = "/" + dataSet;
+    private URL getDataSetUrl(String dataSet) {
+        URL url = null;
+        String dataSetLeadingSlash = dataSet.startsWith("/") ? dataSet : "/" + dataSet;
+        url = getClass().getResource(dataSetLeadingSlash);
+
+        if (url == null) {
+            url = getClass().getResource("/datasets" + dataSetLeadingSlash);
         }
-        InputStream is = getClass().getResourceAsStream(dataSet);
-        if (is == null) {// if not found try to get from datasets folder
-            is = getClass().getResourceAsStream("/datasets" + dataSet);
+        if (url == null) {
+            try {
+                url = new URL(dataSet);
+            } catch (MalformedURLException e) {
+                log.info("The dataSet {} is not a valid URL", dataSet);
+            }
         }
-        if (is == null) {
-            throw new RuntimeException(
-                    String.format("Could not find dataset '%s' under 'resources' or 'resources/datasets' directory.",
-                            dataSet.substring(1)));
+        if (url == null) {
+            throw new RuntimeException(String.format("The dataset '%s' is neither a valid URL nor could be found under 'resources' or 'resources/datasets' directory.", dataSet));
         }
-        return is;
+        return url;
     }
+
+    private InputStream getDataSetStream(URL url) {
+        InputStream inputStream;
+        try {
+            inputStream = url.openStream();
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("The dataset '%s' cannot be accessed", url.getPath()));
+        }
+        return inputStream;
+    }
+
 
     /**
      * @throws SQLException if clean up cannot be performed
