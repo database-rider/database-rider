@@ -39,6 +39,8 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
+
 /**
  * Created by pestano on 27/08/16.
  */
@@ -76,10 +78,8 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         } else {
             annDataSet = findDataSetAnnotation(extensionContext);
         }
-
         String dataSourceBeanName = getConfiguredDataSourceBeanName(extensionContext);
         String executionIdSuffix = dataSourceBeanName.isEmpty() ? EMPTY_STRING : "-" + dataSourceBeanName;
-
         return annDataSet
                 .map(DataSet::executorId)
                 .filter(StringUtils::isNotBlank)
@@ -251,7 +251,11 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     }
 
     private boolean isSpringExtensionEnabled(ExtensionContext extensionContext) {
-        return extensionContext.getRoot().getStore(Namespace.create(SpringExtension.class)) != null;
+        try {
+            return isOnClasspath("org.springframework.test.context.junit.jupiter.SpringExtension") && extensionContext.getRoot().getStore(Namespace.create(SpringExtension.class)) != null;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private boolean isSpringTestContextEnabled(ExtensionContext extensionContext) {
@@ -271,7 +275,6 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
                     return Optional.of(appContext);
                 }
             } catch (ClassCastException ex) {
-
             }
         }
         return Optional.empty();
