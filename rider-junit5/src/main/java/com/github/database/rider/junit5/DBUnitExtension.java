@@ -15,6 +15,8 @@ import javax.sql.DataSource;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.configuration.DataSetConfig;
+import io.micronaut.inject.qualifiers.Qualifiers;
+import io.micronaut.test.extensions.junit5.MicronautJunit5Extension;
 import org.dbunit.DatabaseUnitException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -47,7 +49,7 @@ import com.github.database.rider.junit5.util.EntityManagerProvider;
 public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestExecutionCallback,
         BeforeEachCallback, AfterEachCallback, BeforeAllCallback, AfterAllCallback {
 
-    private static final Namespace namespace = Namespace.create(DBUnitExtension.class);
+    private static final Namespace NAMESPACE = Namespace.create(DBUnitExtension.class);
     private static final String JUNIT5_EXECUTOR = "junit5";
     private static final String EMPTY_STRING = "";
 
@@ -56,7 +58,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         clearEntityManager();
         final String executorId = getExecutorId(extensionContext, null);
         ConnectionHolder connectionHolder = getTestConnection(extensionContext, executorId);
-        DataSetExecutor dataSetExecutor =  DataSetExecutorImpl.instance(executorId, connectionHolder);
+        DataSetExecutor dataSetExecutor = DataSetExecutorImpl.instance(executorId, connectionHolder);
         DBUnitTestContext dbUnitTestContext = getTestContext(extensionContext);
         dbUnitTestContext.setExecutor(dataSetExecutor);
         RiderTestContext riderTestContext = new JUnit5RiderTestContext(dbUnitTestContext.getExecutor(), extensionContext);
@@ -73,7 +75,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
 
     private String getExecutorId(final ExtensionContext extensionContext, DataSet dataSet) {
         Optional<DataSet> annDataSet;
-        if(dataSet != null) {
+        if (dataSet != null) {
             annDataSet = Optional.of(dataSet);
         } else {
             annDataSet = findDataSetAnnotation(extensionContext);
@@ -83,10 +85,10 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         String executionIdSuffix = dataSourceBeanName.isEmpty() ? EMPTY_STRING : "-" + dataSourceBeanName;
 
         return annDataSet
-            .map(DataSet::executorId)
-            .filter(StringUtils::isNotBlank)
-            .map(id -> id + executionIdSuffix)
-            .orElseGet(() -> JUNIT5_EXECUTOR + executionIdSuffix);
+                .map(DataSet::executorId)
+                .filter(StringUtils::isNotBlank)
+                .map(id -> id + executionIdSuffix)
+                .orElseGet(() -> JUNIT5_EXECUTOR + executionIdSuffix);
     }
 
     private Optional<DataSet> findDataSetAnnotation(ExtensionContext extensionContext) {
@@ -124,14 +126,25 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     private ConnectionHolder getTestConnection(ExtensionContext extensionContext, String executorId) {
         if (isSpringExtensionEnabled() && isSpringTestContextEnabled(extensionContext)) {
             return getConnectionFromSpringContext(extensionContext, executorId);
-        } else {
-            return getConnectionFromTestClass(extensionContext, executorId);
+        } else if (isMicronautExtensionEnabled()) {
+            return getConnectionFromMicronautContext(extensionContext, executorId);
         }
+        return getConnectionFromTestClass(extensionContext, executorId);
     }
 
     private ConnectionHolder getConnectionFromSpringContext(ExtensionContext extensionContext, String executorId) {
         String configuredDataSourceBeanName = getConfiguredDataSourceBeanName(extensionContext);
-        DataSource dataSource = getDataSource(extensionContext, configuredDataSourceBeanName);
+        DataSource dataSource = getDataSourceFromSpringContext(extensionContext, configuredDataSourceBeanName);
+        return getConnectionHolder(executorId, dataSource);
+    }
+
+    private ConnectionHolder getConnectionFromMicronautContext(ExtensionContext extensionContext, String executorId) {
+        String configuredDataSourceBeanName = getConfiguredDataSourceBeanName(extensionContext);
+        DataSource dataSource = getDataSourceFromMicronautContext(extensionContext, configuredDataSourceBeanName);
+        return getConnectionHolder(executorId, dataSource);
+    }
+
+    private ConnectionHolder getConnectionHolder(String executorId, DataSource dataSource) {
         try {
             DataSetExecutor dataSetExecutor = DataSetExecutorImpl.getExecutorById(executorId);
             if (isCachedConnection(dataSetExecutor)) {
@@ -144,9 +157,17 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         }
     }
 
-    private static DataSource getDataSource(ExtensionContext extensionContext, String beanName) {
+    private static DataSource getDataSourceFromSpringContext(ExtensionContext extensionContext, String beanName) {
         ApplicationContext context = SpringExtension.getApplicationContext(extensionContext);
         return beanName.isEmpty() ? context.getBean(DataSource.class) : context.getBean(beanName, DataSource.class);
+    }
+
+    private static DataSource getDataSourceFromMicronautContext(ExtensionContext extensionContext, String beanName) {
+        Optional<io.micronaut.context.ApplicationContext> context = getMicronautApplicationContext(extensionContext);
+        if (context.isPresent()) {
+            return beanName.isEmpty() ? context.get().getBean(DataSource.class) : context.get().getBean(DataSource.class, Qualifiers.byName(beanName));
+        }
+        throw new RuntimeException("Micronaut context is not available for test: " + extensionContext.getTestClass().get().getName());
     }
 
     private static String getConfiguredDataSourceBeanName(ExtensionContext extensionContext) {
@@ -229,7 +250,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
      */
     private DBUnitTestContext getTestContext(ExtensionContext context) {
         Class<?> testClass = context.getRequiredTestClass();
-        Store store = context.getStore(namespace);
+        Store store = context.getStore(NAMESPACE);
         return store.getOrComputeIfAbsent(testClass, (tc) -> new DBUnitTestContext(), DBUnitTestContext.class);
     }
 
@@ -237,12 +258,31 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         return isOnClasspath("org.springframework.test.context.junit.jupiter.SpringExtension");
     }
 
+    private boolean isMicronautExtensionEnabled() {
+        return isOnClasspath("io.micronaut.test.extensions.junit5.MicronautJunit5Extension");
+    }
+
     private boolean isSpringTestContextEnabled(ExtensionContext extensionContext) {
-        if(!extensionContext.getTestClass().isPresent()) {
+        if (!extensionContext.getTestClass().isPresent()) {
             return false;
         }
         Store springStore = extensionContext.getRoot().getStore(Namespace.create(SpringExtension.class));
         return springStore != null && springStore.get(extensionContext.getTestClass().get()) != null;
+    }
+
+    private static Optional<io.micronaut.context.ApplicationContext> getMicronautApplicationContext(ExtensionContext extensionContext) {
+        Store micronautStore = extensionContext.getRoot().getStore(Namespace.create(MicronautJunit5Extension.class));
+        if (micronautStore != null) {
+            try {
+                io.micronaut.context.ApplicationContext appContext = (io.micronaut.context.ApplicationContext) micronautStore.get(io.micronaut.context.ApplicationContext.class);
+                if (appContext != null) {
+                    return Optional.of(appContext);
+                }
+            } catch (ClassCastException ex) {
+
+            }
+        }
+        return Optional.empty();
     }
 
     private boolean isCachedConnection(DataSetExecutor executor) {
@@ -319,7 +359,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
                 dataSetAnnotation = AnnotationUtils.findAnnotation(superclassCallbackMethod.get(), DataSet.class);
             }
         }
-        if(dataSetAnnotation.isPresent()) {
+        if (dataSetAnnotation.isPresent()) {
             clearEntityManager();
             DBUnitConfig dbUnitConfig = resolveDbUnitConfig(callbackAnnotation, callbackMethod, testClass);
             DataSet dataSet;

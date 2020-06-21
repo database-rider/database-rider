@@ -1768,6 +1768,31 @@ public class QuarkusDBUnitTest {
 
 TIP: See full https://github.com/database-rider/database-rider/blob/master/rider-examples/quarkus-dbunit-sample/src/test/java/com/github/quarkus/sample/QuarkusDBUnitTest.java[example here^].
 
+== Micronaut
+
+You can use DBRider in Micronaut JUnit5 tests:
+
+```
+@MicronautTest
+@com.github.database.rider.junit5.api.DBRider
+public class PetRepositoryTest {
+
+    @Inject
+    PetRepository petRepository;
+
+    @Test
+    @DataSet("pets.yml")
+    void testRetrievePetAndOwner() {
+        Pet lassie = petRepository.findByName("Lassie").orElse(null);
+        assertNotNull(lassie);
+        assertEquals("Lassie", lassie.getName());
+        assertEquals("Fred", lassie.getOwner().getName());
+    }
+}
+```
+
+TIP: See full https://github.com/database-rider/database-rider/blob/master/rider-examples/rider-micronaut/src/test/java/example/repositories/PetRepositoryTest.java[example here^].
+
 == Leak Hunter
 
 Leak hunter is a component based on https://vladmihalcea.com/2016/07/12/the-best-way-to-detect-database-connection-leaks/[this blog post^] which counts open jdbc connections before and after test execution.
