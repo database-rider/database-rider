@@ -1,20 +1,20 @@
 package com.github.database.rider.junit5;
 
-import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.stream.Stream;
-
-import javax.sql.DataSource;
-
+import com.github.database.rider.core.RiderRunner;
+import com.github.database.rider.core.RiderTestContext;
 import com.github.database.rider.core.api.configuration.DBUnit;
+import com.github.database.rider.core.api.connection.ConnectionHolder;
+import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.DataSetExecutor;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
+import com.github.database.rider.core.api.leak.LeakHunter;
+import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
+import com.github.database.rider.core.connection.ConnectionHolderImpl;
+import com.github.database.rider.core.dataset.DataSetExecutorImpl;
+import com.github.database.rider.core.leak.LeakHunterFactory;
+import com.github.database.rider.junit5.api.DBRider;
+import com.github.database.rider.junit5.util.EntityManagerProvider;
 import io.micronaut.inject.qualifiers.Qualifiers;
 import io.micronaut.test.extensions.junit5.MicronautJunit5Extension;
 import org.dbunit.DatabaseUnitException;
@@ -30,18 +30,14 @@ import org.junit.platform.commons.util.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.github.database.rider.core.RiderRunner;
-import com.github.database.rider.core.RiderTestContext;
-import com.github.database.rider.core.api.connection.ConnectionHolder;
-import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.core.api.dataset.DataSetExecutor;
-import com.github.database.rider.core.api.leak.LeakHunter;
-import com.github.database.rider.core.configuration.DBUnitConfig;
-import com.github.database.rider.core.connection.ConnectionHolderImpl;
-import com.github.database.rider.core.dataset.DataSetExecutorImpl;
-import com.github.database.rider.core.leak.LeakHunterFactory;
-import com.github.database.rider.junit5.api.DBRider;
-import com.github.database.rider.junit5.util.EntityManagerProvider;
+import javax.sql.DataSource;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Created by pestano on 27/08/16.
@@ -124,9 +120,9 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     }
 
     private ConnectionHolder getTestConnection(ExtensionContext extensionContext, String executorId) {
-        if (isSpringExtensionEnabled() && isSpringTestContextEnabled(extensionContext)) {
+        if (isSpringExtensionEnabled(extensionContext) && isSpringTestContextEnabled(extensionContext)) {
             return getConnectionFromSpringContext(extensionContext, executorId);
-        } else if (isMicronautExtensionEnabled()) {
+        } else if (getMicronautApplicationContext(extensionContext).isPresent()) {
             return getConnectionFromMicronautContext(extensionContext, executorId);
         }
         return getConnectionFromTestClass(extensionContext, executorId);
@@ -254,12 +250,8 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         return store.getOrComputeIfAbsent(testClass, (tc) -> new DBUnitTestContext(), DBUnitTestContext.class);
     }
 
-    private boolean isSpringExtensionEnabled() {
-        return isOnClasspath("org.springframework.test.context.junit.jupiter.SpringExtension");
-    }
-
-    private boolean isMicronautExtensionEnabled() {
-        return isOnClasspath("io.micronaut.test.extensions.junit5.MicronautJunit5Extension");
+    private boolean isSpringExtensionEnabled(ExtensionContext extensionContext) {
+        return extensionContext.getRoot().getStore(Namespace.create(SpringExtension.class)) != null;
     }
 
     private boolean isSpringTestContextEnabled(ExtensionContext extensionContext) {
