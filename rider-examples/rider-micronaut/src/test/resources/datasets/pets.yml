@@ -1,0 +1,22 @@
+OWNER:
+  - ID: 1
+    AGE: 45
+    NAME: "Fred"
+  - ID: 2
+    AGE: 40
+    NAME: "Barney"
+
+PET:
+  - ID: 3
+    NAME: "Lassie"
+    TYPE: 0
+    OWNER_ID: 1
+  - ID: 4
+    NAME: "Baby Puss"
+    TYPE: 1
+    OWNER_ID: 1
+  - ID: 5
+    NAME: "Hoppy"
+    TYPE: 0
+    OWNER_ID: 2
+
