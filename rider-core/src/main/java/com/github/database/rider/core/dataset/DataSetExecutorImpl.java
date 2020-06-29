@@ -248,16 +248,19 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             String dataSetName = dataSet.trim();
             String extension = dataSetName.substring(dataSetName.lastIndexOf('.') + 1).toLowerCase();
             URL dataSetUrl = getDataSetUrl(dataSetName);
+            InputStream datasetStream = null;
             switch (extension) {
                 case "yml": {
-                    target = new ScriptableDataSet(sensitiveTableNames, new YamlDataSet(getDataSetStream(dataSetUrl), dbUnitConfig));
+                    datasetStream = getDataSetStream(dataSetUrl);
+                    target = new ScriptableDataSet(sensitiveTableNames, new YamlDataSet(datasetStream, dbUnitConfig));
                     break;
                 }
                 case "xml": {
+                    datasetStream = getDataSetStream(dataSetUrl);
                     target = new ScriptableDataSet(sensitiveTableNames, new FlatXmlDataSetBuilder()
                             .setColumnSensing(dbUnitConfig.isColumnSensing())
                             .setCaseSensitiveTableNames(sensitiveTableNames)
-                            .build(getDataSetStream(dataSetUrl)));
+                            .build(datasetStream));
                     break;
                 }
                 case "csv": {
@@ -265,23 +268,27 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         throw new RuntimeException("Csv datasets can only be accessed from files");
                     }
                     target = new ScriptableDataSet(sensitiveTableNames, new CsvDataSet(
-                            new File(getDataSetUrl(dataSetName).getPath()).getParentFile()));
+                            new File(dataSetUrl.getPath()).getParentFile()));
                     break;
                 }
                 case "xls": {
-                    target = new ScriptableDataSet(sensitiveTableNames, new XlsDataSet(getDataSetStream(dataSetUrl)));
+                    datasetStream = getDataSetStream(dataSetUrl);
+                    target = new ScriptableDataSet(sensitiveTableNames, new XlsDataSet(datasetStream));
                     break;
                 }
                 case "json": {
-                    target = new ScriptableDataSet(sensitiveTableNames, new JSONDataSet(getDataSetStream(dataSetUrl)));
+                    datasetStream = getDataSetStream(dataSetUrl);
+                    target = new ScriptableDataSet(sensitiveTableNames, new JSONDataSet(datasetStream));
                     break;
                 }
                 default:
                     log.error("Unsupported dataset extension");
             }
-
             if (target != null) {
                 dataSets.add(target);
+            }
+            if(datasetStream != null) {
+                datasetStream.close();
             }
         }
         if (dataSets.isEmpty()) {
