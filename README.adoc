@@ -315,6 +315,8 @@ Multiple, comma separated, dataset file names can be provided.| ""
 |executeStatementsAfter| A list of jdbc statements to execute after test.| {}
 |executeScriptsBefore| A list of sql script files to execute before test. Note that commands inside sql file must be separated by `;`.| {}
 |executeScriptsAfter| A list of sql script files to execute after test. Note that commands inside sql file must be separated by `;`.| {}
+|skipCleaningFor| Allows user to provide tables which will NOT be cleaned in `cleanBefore` and `cleanAfter`.| {}
+|replacers| implementations of `com.github.database.rider.core.replacers.Replacer` to be used as dataset replacement during seeding database.
 |===
 
 ==== DBUnit Configuration
