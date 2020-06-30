@@ -27,7 +27,8 @@ public @interface ExpectedDataSet {
   String[] ignoreCols() default "";
   
   /**
-   * @return implementations of {@link Replacer} called during reading expected dataset before comparison
+   * @return implementations of {@link Replacer} called during reading expected dataset before comparison.
+   * Note that DataSet level replacer will <b>override</b> global level replacers.
    */
   Class<? extends Replacer>[] replacers() default {};
 

@@ -157,7 +157,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
                     resultingDataSet = performTableOrdering(dataSetConfig, resultingDataSet);
 
-                    resultingDataSet = performReplacements(resultingDataSet);
+                    resultingDataSet = performReplacements(resultingDataSet, getReplacerInstances(dataSetConfig.getReplacers()));
 
                     DatabaseOperation operation = getOperation(dataSetConfig);
 
@@ -478,33 +478,26 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     /**
-     * Perform replacements from all {@link Replacer} implementations,
-     * registered in {@link #dbUnitConfig}.
-     */
-    @SuppressWarnings("unchecked")
-    private IDataSet performReplacements(IDataSet dataSet) {
-        if (!dbUnitConfig.getProperties().containsKey("replacers")) {
-            return dataSet;
-        }
-        return performReplacements(dataSet, (List<Replacer>) dbUnitConfig.getProperties().get("replacers"));
-    }
-
-    /**
      * Perform replacements from all {@link Replacer} implementations to given dataset
      * registered in {@link #dbUnitConfig}.
      */
     private IDataSet performReplacements(IDataSet dataSet, List<Replacer> replacersList) {
 
-        if (replacersList == null || replacersList.isEmpty())
-            return dataSet;
-
+        if (replacersList == null || replacersList.isEmpty()) {
+            //try to get replacers from global config
+            if (dbUnitConfig.getProperties().containsKey("replacers")) {
+                replacersList = (List<Replacer>) dbUnitConfig.getProperties().get("replacers");
+                if (replacersList == null || replacersList.isEmpty()) {
+                    return dataSet;
+                }
+            }
+        }
         ReplacementDataSet replacementSet = new ReplacementDataSet(dataSet);
         // convert to set to remove duplicates
-        Set<Replacer> replacers = new HashSet<>((List<Replacer>) replacersList);
+        Set<Replacer> replacers = new HashSet<>(replacersList);
         for (Replacer replacer : replacers) {
             replacer.addReplacements(replacementSet);
         }
-
         return replacementSet;
     }
 
@@ -953,16 +946,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                                           Class<? extends Replacer>[] replacers, String[] orderBy, CompareOperation compareOperation) throws DatabaseUnitException {
         IDataSet current = null;
         IDataSet expected = null;
-        List<Replacer> expectedDataSetReplacers = new ArrayList<>();
-        if (replacers != null && replacers.length > 0) {
-            for (Class<? extends Replacer> replacerClass : replacers) {
-                try {
-                    expectedDataSetReplacers.add(replacerClass.newInstance());
-                } catch (InstantiationException | IllegalAccessException e) {
-                    throw new IllegalArgumentException(replacerClass.getName() + " could not be instantiated as Replacer");
-                }
-            }
-        }
+        List<Replacer> expectedDataSetReplacers = getReplacerInstances(replacers);
         try {
             current = getRiderDataSource().getDBUnitConnection().createDataSet();
             if (expectedDataSetConfig.hasDataSetProvider()) {
@@ -1025,6 +1009,20 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             DataSetAssertion.assertEqualsIgnoreCols(expectedTable, filteredActualTable, excludeCols);
         }
 
+    }
+
+    private List<Replacer> getReplacerInstances(Class<? extends Replacer>[] replacers) {
+        List<Replacer> replacerInstances = new ArrayList<>();
+        if (replacers != null && replacers.length > 0) {
+            for (Class<? extends Replacer> replacerClass : replacers) {
+                try {
+                    replacerInstances.add(replacerClass.newInstance());
+                } catch (InstantiationException | IllegalAccessException e) {
+                    throw new IllegalArgumentException(replacerClass.getName() + " could not be instantiated as Replacer");
+                }
+            }
+        }
+        return replacerInstances;
     }
 
     @Override

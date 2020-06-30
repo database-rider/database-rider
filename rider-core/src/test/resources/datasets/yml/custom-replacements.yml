@@ -2,3 +2,6 @@ TWEET:
 - ID: "1"
   CONTENT: "FOO"
   USER_ID: 1
+- ID: "2"
+  CONTENT: "BAR"
+  USER_ID: 1

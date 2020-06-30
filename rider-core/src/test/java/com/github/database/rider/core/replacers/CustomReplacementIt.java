@@ -26,10 +26,35 @@ public class CustomReplacementIt {
 
     @Test
     @DataSet(value = "datasets/yml/custom-replacements.yml", disableConstraints = true, executorId = "rules-it")
-    public void shouldReplaceFoo() {
+    public void shouldReplaceOnlyFoo() {
         Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
         assertThat(tweet).isNotNull();
         assertThat(tweet.getContent()).isNotNull().isEqualTo("BAR");
+        tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '2'").getSingleResult();
+        assertThat(tweet).isNotNull();
+        assertThat(tweet.getContent()).isNotNull().isEqualTo("BAR");//was not replaced because CustomReplacerBar is not used
+    }
+
+    @Test
+    @DataSet(value = "datasets/yml/custom-replacements.yml", disableConstraints = true, executorId = "rules-it", replacers = CustomReplacerBar.class)
+    public void shouldReplaceOnlyBar() {
+        Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
+        assertThat(tweet).isNotNull();
+        assertThat(tweet.getContent()).isNotNull().isEqualTo("FOO"); //was not replaced because CustomReplacer was not used (overriden @dataset replacer)
+        tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '2'").getSingleResult();
+        assertThat(tweet).isNotNull();
+        assertThat(tweet.getContent()).isNotNull().isEqualTo("BAZ");
+    }
+
+    @Test
+    @DataSet(value = "datasets/yml/custom-replacements.yml", disableConstraints = true, executorId = "rules-it", replacers = {CustomReplacer.class, CustomReplacerBar.class})
+    public void shouldReplaceFooAndBar() {
+        Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
+        assertThat(tweet).isNotNull();
+        assertThat(tweet.getContent()).isNotNull().isEqualTo("BAR");
+        tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '2'").getSingleResult();
+        assertThat(tweet).isNotNull();
+        assertThat(tweet.getContent()).isNotNull().isEqualTo("BAZ");
     }
 
     @Test
@@ -43,5 +68,6 @@ public class CustomReplacementIt {
         assertThat(tweet).isNotNull();
         assertThat(tweet.getContent()).isNotNull().isEqualTo("BAR");
     }
+
 
 }

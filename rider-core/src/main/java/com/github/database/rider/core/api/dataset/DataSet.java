@@ -1,5 +1,7 @@
 package com.github.database.rider.core.api.dataset;
 
+import com.github.database.rider.core.replacers.Replacer;
+
 import java.lang.annotation.*;
 
 /**
@@ -105,4 +107,10 @@ public @interface DataSet {
      * @return list of table names to skip the cleaning in <code>cleanBefore</code> and/or <code>cleanAfter</code>. If empty all tables will be cleaned when cleanBefore() or cleanAfter() is set to <code>true</code>
      */
   String[] skipCleaningFor() default {};
+
+    /**
+     * @return implementations of {@link Replacer} called during reading expected dataset before comparison.
+     * Note that DataSet level replacer will <b>override</b> global level replacers.
+     */
+    Class<? extends Replacer>[] replacers() default {};
 }

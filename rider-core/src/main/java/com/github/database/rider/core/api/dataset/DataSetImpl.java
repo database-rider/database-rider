@@ -15,6 +15,8 @@
  */
 package com.github.database.rider.core.api.dataset;
 
+import com.github.database.rider.core.replacers.Replacer;
+
 import java.lang.annotation.Annotation;
 
 /**
@@ -38,12 +40,14 @@ public class DataSetImpl implements DataSet {
     private boolean cleanBefore;
     private boolean cleanAfter;
     private boolean transactional;
-    private String[] tablesToClean;
+    private String[] skipCleaningFor;
+    private Class<? extends Replacer>[] replacers;
 
     public DataSetImpl() {
     }
 
-    public DataSetImpl(String[] value, String executorId, SeedStrategy strategy, boolean useSequenceFiltering, String[] tableOrdering, boolean disableConstraints, boolean fillIdentityColumns, String[] executeStatementsBefore, String[] executeScriptsAfter, String[] executeScriptsBefore, String[] executeStatementsAfter, boolean cleanBefore, boolean cleanAfter, boolean transactional, String[] tablesToClean) {
+    public DataSetImpl(String[] value, String executorId, SeedStrategy strategy, boolean useSequenceFiltering, String[] tableOrdering, boolean disableConstraints, boolean fillIdentityColumns, String[] executeStatementsBefore, String[] executeScriptsAfter, String[] executeScriptsBefore, String[] executeStatementsAfter,
+                       boolean cleanBefore, boolean cleanAfter, boolean transactional, String[] skipCleaningFor, Class<? extends Replacer>[] replacers) {
         this.value = value;
         this.executorId = executorId;
         this.strategy = strategy;
@@ -58,7 +62,8 @@ public class DataSetImpl implements DataSet {
         this.cleanBefore = cleanBefore;
         this.cleanAfter = cleanAfter;
         this.transactional = transactional;
-        this.tablesToClean = tablesToClean;
+        this.skipCleaningFor = skipCleaningFor;
+        this.replacers = replacers;
     }
 
     public static DataSetImpl instance() {
@@ -96,8 +101,13 @@ public class DataSetImpl implements DataSet {
         return instance;
     }
 
-    public DataSetImpl withTablesToClean(String[] tablesToClean) {
-        instance.tablesToClean = tablesToClean;
+    public DataSetImpl withSkipCleaningFor(String... skipCleaningFor) {
+        instance.skipCleaningFor = skipCleaningFor;
+        return instance;
+    }
+
+    public DataSetImpl withReplacers(Class<? extends Replacer>... replacers) {
+        instance.replacers = replacers;
         return instance;
     }
 
@@ -178,7 +188,12 @@ public class DataSetImpl implements DataSet {
 
     @Override
     public String[] skipCleaningFor() {
-        return tablesToClean;
+        return skipCleaningFor;
+    }
+
+    @Override
+    public Class<? extends Replacer>[] replacers() {
+        return replacers;
     }
 
     @Override

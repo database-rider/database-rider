@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.github.database.rider.core.replacers.Replacer;
 import org.junit.runner.Description;
 
 import com.github.database.rider.core.api.dataset.DataSet;
@@ -180,10 +181,11 @@ public final class AnnotationUtils {
         String[] executeStatementsAfter = joinArray(classLevelDataSet.executeStatementsAfter(), methodLevelDataSet.executeStatementsAfter());
         String[] executeScriptsAfter = joinArray(classLevelDataSet.executeScriptsAfter(), methodLevelDataSet.executeScriptsAfter());
         String[] executeScriptsBefore = joinArray(classLevelDataSet.executeScriptsBefore(), methodLevelDataSet.executeScriptsBefore());
-
+        String[] skipCleaningFor = joinArray(classLevelDataSet.skipCleaningFor(), methodLevelDataSet.skipCleaningFor());
+        Class<? extends Replacer>[] replacers = joinReplacers(classLevelDataSet.replacers(), methodLevelDataSet.replacers());
         DataSet mergedDataSet = new DataSetImpl(value, methodLevelDataSet.executorId(), methodLevelDataSet.strategy(), methodLevelDataSet.useSequenceFiltering(), tableOrdering, 
                 methodLevelDataSet.disableConstraints(), methodLevelDataSet.fillIdentityColumns(), executeStatementsBefore, executeScriptsAfter, executeScriptsBefore, executeStatementsAfter,
-                methodLevelDataSet.cleanBefore(), methodLevelDataSet.cleanAfter(), methodLevelDataSet.transactional(), methodLevelDataSet.skipCleaningFor());
+                methodLevelDataSet.cleanBefore(), methodLevelDataSet.cleanAfter(), methodLevelDataSet.transactional(), skipCleaningFor, replacers);
         return mergedDataSet;
     }
 
@@ -207,5 +209,28 @@ public final class AnnotationUtils {
 
         return result;
     }
+
+    private static Class<? extends Replacer>[] joinReplacers(Class<? extends Replacer>[]... arrays) {
+        int length = 0;
+        for (Class<? extends Replacer>[] array : arrays) {
+            if(array != null) {
+                length += array.length;
+            }
+        }
+
+        final Class<? extends Replacer>[] result = new Class[length];
+
+        int offset = 0;
+        for (Class<? extends Replacer>[] array : arrays) {
+            if(array != null){
+                System.arraycopy(array, 0, result, offset, array.length);
+                offset += array.length;
+            }
+        }
+
+        return result;
+    }
+
+
 
 }

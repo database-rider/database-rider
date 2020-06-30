@@ -17,19 +17,22 @@ package com.github.database.rider.core;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetImpl;
+import com.github.database.rider.core.replacers.CustomReplacer;
+import com.github.database.rider.core.replacers.CustomReplacerBar;
+import com.github.database.rider.core.replacers.NullReplacer;
 import com.github.database.rider.core.util.AnnotationUtils;
-import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
- *
  * @author rmpestano
  */
 @RunWith(JUnit4.class)
 public class MergeDataSetsTest {
-    
+
 
     @Test
     public void shouldMergeDataSets() {
@@ -86,7 +89,7 @@ public class MergeDataSetsTest {
         assertThat(mergeDataSets.executeStatementsAfter())
                 .isEqualTo(new String[]{"classStatementAfter.sql", "classStatementAfter2.sql", "methodStatementAfter.sql", "methodStatementAfter2.sql"});
     }
-    
+
     @Test
     public void shouldMergeTableOrdering() {
 
@@ -100,4 +103,29 @@ public class MergeDataSetsTest {
                 .isEqualTo(new String[]{"USER", "FOLLOWER", "TWEET"});
     }
 
+    @Test
+    public void shouldMergeSkipCleaningFor() {
+
+        DataSet classLevel = DataSetImpl.instance().withSkipCleaningFor("USER", "FOLLOWER");
+        DataSet methodLevel = DataSetImpl.instance().withSkipCleaningFor("TWEET");
+
+        DataSet mergeDataSets = AnnotationUtils.mergeDataSetAnnotations(classLevel, methodLevel);
+
+        assertThat(mergeDataSets).isNotNull();
+        assertThat(mergeDataSets.skipCleaningFor())
+                .isEqualTo(new String[]{"USER", "FOLLOWER", "TWEET"});
+    }
+
+    @Test
+    public void shouldMergeReplacersr() {
+
+        DataSet classLevel = DataSetImpl.instance().withReplacers(CustomReplacer.class);
+        DataSet methodLevel = DataSetImpl.instance().withReplacers(CustomReplacerBar.class, NullReplacer.class);
+
+        DataSet mergeDataSets = AnnotationUtils.mergeDataSetAnnotations(classLevel, methodLevel);
+
+        assertThat(mergeDataSets).isNotNull();
+        assertThat(mergeDataSets.replacers())
+                .isEqualTo(new Class[]{CustomReplacer.class, CustomReplacerBar.class, NullReplacer.class});
+    }
 }

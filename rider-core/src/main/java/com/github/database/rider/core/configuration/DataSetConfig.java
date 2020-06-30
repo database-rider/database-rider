@@ -4,6 +4,7 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetProvider;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
+import com.github.database.rider.core.replacers.Replacer;
 
 /**
  * Created by pestano on 26/07/15.
@@ -26,7 +27,7 @@ public class DataSetConfig {
     private String[] executeScriptsAfter = {};
     private Class<? extends DataSetProvider> provider;
     private String[] skipCleaningFor;
-
+    private Class<? extends Replacer>[] replacers;
 
     public DataSetConfig() {
     }
@@ -95,6 +96,11 @@ public class DataSetConfig {
         return this;
     }
 
+    public DataSetConfig replacers(Class<? extends Replacer>... replacers) {
+        this.replacers = replacers;
+        return this;
+    }
+
     /**
      *
      * @param executorId name of dataset executor for the given dataset. If not specified the default one will be used.
@@ -133,6 +139,7 @@ public class DataSetConfig {
                     executeStatementsAfter(dataSet.executeStatementsAfter()).
                     executeScriptsAfter(dataSet.executeScriptsAfter()).
                     skipCleaningFor(dataSet.skipCleaningFor()).
+                    replacers(dataSet.replacers()).
                     datasetProvider(dataSet.provider());
         } else{
             throw new RuntimeException("Cannot create DataSetConfig from Null DataSet");
@@ -205,6 +212,10 @@ public class DataSetConfig {
         return cleanAfter;
     }
 
+    public Class<? extends Replacer>[] getReplacers() {
+        return replacers;
+    }
+
     public void setStrategy(SeedStrategy strategy) {
         this.strategy = strategy;
     }
@@ -239,6 +250,10 @@ public class DataSetConfig {
 
     public void setTransactional(boolean transactional) {
         this.transactional = transactional;
+    }
+
+    public void setReplacers(Class<? extends Replacer>[] replacers) {
+        this.replacers = replacers;
     }
 
     @Override
