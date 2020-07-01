@@ -40,7 +40,8 @@ public class RiderDSL {
 
     /**
      * Compares current database state with an expected dataset. The same way as in @ExpectedDataSet.
-     *
+     * @param expectedDataSetConfig expected dataset configuration
+     * @throws DatabaseUnitException exception when comparison fails
      * @since 1.15.0
      */
     public void expectDataSet(ExpectedDataSetConfig expectedDataSetConfig) throws DatabaseUnitException {
@@ -57,7 +58,7 @@ public class RiderDSL {
      * Configures the DSL with provided JDBC connection
      *
      * @param connection jdbc connection to be used when populating the database
-     * @return
+     * @return {@link DataSetConfigDSL} instance
      */
     public static DataSetConfigDSL withConnection(Connection connection) {
         getInstance().connection = connection;
@@ -75,7 +76,7 @@ public class RiderDSL {
     /**
      * Reuses current connection configured in the DSL
      *
-     * @return DataSet config DSL
+     * @return {@link DataSetConfigDSL} instance
      */
     public static DataSetConfigDSL withConnection() {
         return withConnection(getInstance().connection);
@@ -87,7 +88,7 @@ public class RiderDSL {
          * Configures the DSL with provided DataSet configuration
          *
          * @param dataSetConfig {@link DataSetConfig}
-         * @return A DBUnitConfigDSL to create DBUnit configuration ({@link DBUnitConfig}
+         * @return A {@link DBUnitConfigDSL} to create DBUnit configuration ({@link DBUnitConfig}
          */
         public static DBUnitConfigDSL withDataSetConfig(DataSetConfig dataSetConfig) {
             getInstance().dataSetConfig = dataSetConfig;
@@ -97,7 +98,7 @@ public class RiderDSL {
         /**
          * Reuses dataset configuration already provided to the DSL
          *
-         * @return A DBUnitConfigDSL to create DBUnit configuration ({@link DBUnitConfig}
+         * @return A {@link DBUnitConfigDSL} instance to create DBUnit configuration ({@link DBUnitConfig}
          */
         public static DBUnitConfigDSL withDataSetConfig() {
             if(getInstance().dataSetConfig == null) {
@@ -112,7 +113,6 @@ public class RiderDSL {
          *                         .cleanBefore(true))
          *                 .createDataSet();</code>
          * @since 1.15.0
-         * @return RiderDSL instance
          *
          */
         public static void cleanDB() {
@@ -129,7 +129,7 @@ public class RiderDSL {
          * Configures the DSL with provided DBUnit configuration
          *
          * @param dbUnitConfig {@link DBUnitConfig}
-         * @return
+         * @return {@link RiderDSL} instance
          */
         public static RiderDSL withDBUnitConfig(DBUnitConfig dbUnitConfig) {
             RiderDSL riderDSL = getInstance();
@@ -149,6 +149,11 @@ public class RiderDSL {
             getInstance().expectDataSet();
         }
 
+        /**
+         * Compares current database state with expected dataset
+         * @param expectedDataSetConfig expected dataset configuration
+         * @throws DatabaseUnitException exception when comparison fails
+         */
         public static void expectDataSet(ExpectedDataSetConfig expectedDataSetConfig) throws DatabaseUnitException {
             getInstance().expectDataSet(expectedDataSetConfig);
         }
