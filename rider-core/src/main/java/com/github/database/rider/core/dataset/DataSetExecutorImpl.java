@@ -957,9 +957,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             if (expected == null) {
                 throw new RuntimeException("Expected dataset was not provided.");
             }
-            if (!expectedDataSetReplacers.isEmpty()) {
-                expected = performReplacements(expected, expectedDataSetReplacers);
-            }
+            expected = performReplacements(expected, expectedDataSetReplacers);
         } catch (Exception e) {
             throw new RuntimeException("Could not create dataset to compare.", e);
         }

@@ -3,6 +3,7 @@ package com.github.database.rider.core.replacers;
 import com.github.database.rider.core.DBUnitRule;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.dsl.RiderDSL;
@@ -13,6 +14,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
+import static com.github.database.rider.core.util.EntityManagerProvider.em;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DBUnit(replacers = CustomReplacer.class)
@@ -22,49 +24,81 @@ public class CustomReplacementIt {
     public EntityManagerProvider emProvider = EntityManagerProvider.instance("rules-it");
 
     @Rule
-    public DBUnitRule dbUnitRule = DBUnitRule.instance("rules-it", emProvider.connection());
+    public DBUnitRule dbUnitRule = DBUnitRule.instance(emProvider.connection());
 
     @Test
-    @DataSet(value = "datasets/yml/custom-replacements.yml", disableConstraints = true, executorId = "rules-it")
+    @DataSet(value = "datasets/yml/custom-replacements.yml", disableConstraints = true)
     public void shouldReplaceOnlyFoo() {
-        Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
+        Tweet tweet = (Tweet) em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
         assertThat(tweet).isNotNull();
         assertThat(tweet.getContent()).isNotNull().isEqualTo("BAR");
-        tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '2'").getSingleResult();
+        tweet = (Tweet) em().createQuery("select t from Tweet t where t.id = '2'").getSingleResult();
         assertThat(tweet).isNotNull();
         assertThat(tweet.getContent()).isNotNull().isEqualTo("BAR");//was not replaced because CustomReplacerBar is not used
     }
 
     @Test
-    @DataSet(value = "datasets/yml/custom-replacements.yml", disableConstraints = true, executorId = "rules-it", replacers = CustomReplacerBar.class)
+    @DataSet(value = "datasets/yml/custom-replacements.yml", disableConstraints = true, replacers = CustomReplacerBar.class)
     public void shouldReplaceOnlyBar() {
-        Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
+        Tweet tweet = (Tweet) em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
         assertThat(tweet).isNotNull();
         assertThat(tweet.getContent()).isNotNull().isEqualTo("FOO"); //was not replaced because CustomReplacer was not used (overriden @dataset replacer)
-        tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '2'").getSingleResult();
+        tweet = (Tweet) em().createQuery("select t from Tweet t where t.id = '2'").getSingleResult();
         assertThat(tweet).isNotNull();
         assertThat(tweet.getContent()).isNotNull().isEqualTo("BAZ");
     }
 
     @Test
-    @DataSet(value = "datasets/yml/custom-replacements.yml", disableConstraints = true, executorId = "rules-it", replacers = {CustomReplacer.class, CustomReplacerBar.class})
+    @DataSet(value = "datasets/yml/custom-replacements.yml", disableConstraints = true, replacers = {CustomReplacer.class, CustomReplacerBar.class})
     public void shouldReplaceFooAndBar() {
-        Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
+        Tweet tweet = (Tweet) em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
         assertThat(tweet).isNotNull();
         assertThat(tweet.getContent()).isNotNull().isEqualTo("BAR");
-        tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '2'").getSingleResult();
+        tweet = (Tweet) em().createQuery("select t from Tweet t where t.id = '2'").getSingleResult();
         assertThat(tweet).isNotNull();
         assertThat(tweet.getContent()).isNotNull().isEqualTo("BAZ");
+    }
+
+    //expectedDataSetReplacer
+
+    @Test
+    @DataSet(transactional = true, disableConstraints = true, cleanBefore = true)
+    @ExpectedDataSet(value = "datasets/yml/custom-replacements.yml", ignoreCols = {"id", "user_id"})
+    public void shouldReplaceOnlyFooInExpectedDataSet() {
+        Tweet tweet1 = new Tweet().setContent("BAR");
+        Tweet tweet2 = new Tweet().setContent("BAR");
+        em().persist(tweet1);
+        em().persist(tweet2);
+    }
+
+    @Test
+    @DataSet(disableConstraints = true, replacers = CustomReplacerBar.class, cleanBefore = true, transactional = true)
+    @ExpectedDataSet(value = "datasets/yml/custom-replacements.yml", replacers = CustomReplacerBar.class, ignoreCols = {"id", "user_id"})
+    public void shouldReplaceOnlyBarInExpectedDataSet() {
+        Tweet tweet1 = new Tweet().setContent("FOO");
+        Tweet tweet2 = new Tweet().setContent("BAZ");
+        em().persist(tweet1);
+        em().persist(tweet2);
+    }
+
+    @Test
+    @DataSet(disableConstraints = true, replacers = CustomReplacerBar.class, cleanBefore = true, transactional = true)
+    @ExpectedDataSet(value = "datasets/yml/custom-replacements.yml", replacers = {CustomReplacer.class, CustomReplacerBar.class}, ignoreCols = {"id", "user_id"})
+    public void shouldReplaceFooAndBarInExpectedDataSet() {
+        Tweet tweet1 = new Tweet().setContent("BAR");
+        Tweet tweet2 = new Tweet().setContent("BAZ");
+        em().persist(tweet1);
+        em().persist(tweet2);
     }
 
     @Test
     public void shouldReplaceFooUsingRiderDSL() {
         RiderDSL.withConnection(emProvider.connection())
                 .withDataSetConfig(new DataSetConfig("datasets/yml/custom-replacements.yml")
-                         .disableConstraints(true))
+                        .disableConstraints(true))
                 .withDBUnitConfig(new DBUnitConfig().addDBUnitProperty("replacers", Arrays.asList(new CustomReplacer())))
                 .createDataSet();
-        Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
+        Tweet tweet = (Tweet) em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
         assertThat(tweet).isNotNull();
         assertThat(tweet.getContent()).isNotNull().isEqualTo("BAR");
     }
