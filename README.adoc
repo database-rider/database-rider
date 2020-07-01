@@ -1184,7 +1184,6 @@ Since `v1.15.0` you can also assert db state with RiderDSL as in `@ExpectedDataS
 
 [source, java]
 ----
-
     /**
      * same as:
      * @DataSet(cleanBefore = true)
@@ -1202,13 +1201,12 @@ Since `v1.15.0` you can also assert db state with RiderDSL as in `@ExpectedDataS
         em().persist(u);
         em().persist(u2);
         tx().commit();
-
         withConnection(emProvider.connection())
                 .withDataSetConfig(new DataSetConfig("yml/expectedUsers.yml"))
                 .expectDataSet(new ExpectedDataSetConfig().ignoreCols("id"));
     }
 ----
-TIP: See more https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/dsl/RiderDSLIt.java#L24[examples here^].
+TIP: See more https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/dsl/RiderDSLIt.java#L292-L375[examples here^].
 
 
 === Dynamic connection config
