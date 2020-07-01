@@ -9,6 +9,7 @@ import org.dbunit.dataset.stream.IDataSetConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -95,8 +96,6 @@ public class JSONWriter implements IDataSetConsumer {
 			}else {
 				out.write(FOUR_SPACES+"}"+NEW_LINE);
 			}
-
-
 		} catch (Exception e) {
 			logger.warn("Could not write row.", e);
 		}
@@ -116,9 +115,11 @@ public class JSONWriter implements IDataSetConsumer {
 			if (!isNumber) {
 				sb.append('"');
 			}
-
-			sb.append(currentValue.toString().replaceAll(NEW_LINE, "\\\\n"));
-
+            if(values[i] instanceof byte[]){
+                sb.append(DatatypeConverter.printBase64Binary((byte[]) values[i]).replaceAll(NEW_LINE, "\\\\n"));
+            } else {
+                sb.append(currentValue.toString().replaceAll(NEW_LINE, "\\\\n"));
+            }
 			if (!isNumber) {
 				sb.append('"');
 			}

@@ -9,6 +9,7 @@ import org.dbunit.dataset.stream.IDataSetConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -91,7 +92,11 @@ public class YMLWriter implements IDataSetConsumer {
                     out.write("\"");
                 }
                 if(values[i] != null){
-                    out.write(values[i].toString());
+                    if(values[i] instanceof byte[]){
+                        out.write(DatatypeConverter.printBase64Binary((byte[]) values[i]));
+                    } else {
+                        out.write(values[i].toString());
+                    }
                 }
                 if(!isNumber){
                     out.write("\"");
