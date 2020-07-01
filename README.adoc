@@ -1180,6 +1180,37 @@ If you cannot rely on `@DataSet` annotation because your test runner will not re
 
 TIP: See more https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/dsl/RiderDSLIt.java#L24[examples here^].
 
+Since `v1.15.0` you can also assert db state with RiderDSL as in `@ExpectedDataSet`:
+
+[source, java]
+----
+
+    /**
+     * same as:
+     * @DataSet(cleanBefore = true)
+     * @ExpectedDataSet(value = "yml/expectedUsers.yml", ignoreCols = "id")
+     */
+    @Test
+    public void shouldMatchExpectedDataSet() throws DatabaseUnitException {
+        RiderDSL.withConnection(emProvider.connection())
+                .cleanDB();
+        User u = new User();
+        u.setName("expected user1");
+        User u2 = new User();
+        u2.setName("expected user2");
+        tx().begin();
+        em().persist(u);
+        em().persist(u2);
+        tx().commit();
+
+        withConnection(emProvider.connection())
+                .withDataSetConfig(new DataSetConfig("yml/expectedUsers.yml"))
+                .expectDataSet(new ExpectedDataSetConfig().ignoreCols("id"));
+    }
+----
+TIP: See more https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/dsl/RiderDSLIt.java#L24[examples here^].
+
+
 === Dynamic connection config
 
 In order to have dynamic JDBC connection on your tests one can use system properties, see example below:

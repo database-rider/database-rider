@@ -2,8 +2,10 @@ package com.github.database.rider.core.dsl;
 
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
+import com.github.database.rider.core.configuration.ExpectedDataSetConfig;
 import com.github.database.rider.core.connection.ConnectionHolderImpl;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
+import org.dbunit.DatabaseUnitException;
 
 import java.sql.Connection;
 
@@ -25,12 +27,30 @@ public class RiderDSL {
      */
     public void createDataSet() {
         validateConnection();
-        validateDataSetConfig();
         final DataSetExecutorImpl dataSetExecutor = DataSetExecutorImpl.instance(dataSetConfig.getExecutorId(), new ConnectionHolderImpl(connection));
         if (dbUnitConfig != null) {
             dataSetExecutor.setDBUnitConfig(dbUnitConfig);
         }
         dataSetExecutor.createDataSet(dataSetConfig);
+    }
+
+    public void expectDataSet() throws DatabaseUnitException {
+        expectDataSet(new ExpectedDataSetConfig());
+    }
+
+    /**
+     * Compares current database state with an expected dataset. The same way as in @ExpectedDataSet.
+     *
+     * @since 1.15.0
+     */
+    public void expectDataSet(ExpectedDataSetConfig expectedDataSetConfig) throws DatabaseUnitException {
+        validateConnection();
+        final DataSetExecutorImpl dataSetExecutor = DataSetExecutorImpl.instance(dataSetConfig.getExecutorId(), new ConnectionHolderImpl(connection));
+        if (dbUnitConfig != null) {
+            dataSetExecutor.setDBUnitConfig(dbUnitConfig);
+        }
+        dataSetExecutor.compareCurrentDataSetWith(dataSetConfig, expectedDataSetConfig.getIgnoreCols(), expectedDataSetConfig.getReplacers(),
+                expectedDataSetConfig.getOrderBy(), expectedDataSetConfig.getCompareOperation());
     }
 
     /**
@@ -80,7 +100,25 @@ public class RiderDSL {
          * @return A DBUnitConfigDSL to create DBUnit configuration ({@link DBUnitConfig}
          */
         public static DBUnitConfigDSL withDataSetConfig() {
+            if(getInstance().dataSetConfig == null) {
+                getInstance().dataSetConfig = new DataSetConfig();
+            }
             return withDataSetConfig(getInstance().dataSetConfig);
+        }
+
+        /**
+         * A shortcut for <code>RiderDSL.withConnection(emProvider.connection())
+         *                 .withDataSetConfig(new DataSetConfig()
+         *                         .cleanBefore(true))
+         *                 .createDataSet();</code>
+         * @since 1.15.0
+         * @return RiderDSL instance
+         *
+         */
+        public static void cleanDB() {
+            validateConnection();
+            getInstance().dataSetConfig = new DataSetConfig().cleanBefore(true);
+            getInstance().createDataSet();
         }
 
     }
@@ -106,18 +144,19 @@ public class RiderDSL {
         public static void createDataSet() {
             getInstance().createDataSet();
         }
+
+        public static void expectDataSet() throws DatabaseUnitException {
+            getInstance().expectDataSet();
+        }
+
+        public static void expectDataSet(ExpectedDataSetConfig expectedDataSetConfig) throws DatabaseUnitException {
+            getInstance().expectDataSet(expectedDataSetConfig);
+        }
     }
 
     private static void validateConnection() {
         if (getInstance().connection == null) {
             throw new RuntimeException("Invalid jdbc connection.");
-        }
-    }
-
-    private static void validateDataSetConfig() {
-        DataSetConfig dataSetConfig = getInstance().dataSetConfig;
-        if (dataSetConfig == null || (!dataSetConfig.hasDataSets() && !dataSetConfig.hasDataSetProvider())) {
-            throw new RuntimeException("Invalid dataset configuration. You must provide at least one dataset or dataset provider.");
         }
     }
 
