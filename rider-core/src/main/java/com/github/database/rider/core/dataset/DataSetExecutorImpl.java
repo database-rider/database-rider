@@ -181,10 +181,12 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             StringBuilder sb = new StringBuilder(150);
             sb.append("cacheConnection: ").append("" + dbUnitConfig.isCacheConnection()).append("\n")
                     .append("cacheTableNames: ").append(dbUnitConfig.isCacheTableNames()).append("\n")
-                    .append("mergeDataSets: ").append(dbUnitConfig.isMergeDataSets()).append("\n")
                     .append("caseInsensitiveStrategy: ").append(dbUnitConfig.getCaseInsensitiveStrategy()).append("\n")
+                    .append("caseSensitiveTableNames: ").append(dbUnitConfig.isCaseSensitiveTableNames()).append("\n")
+                    .append("columnSensing: ").append("" + dbUnitConfig.isColumnSensing()).append("\n")
                     .append("leakHunter: ").append("" + dbUnitConfig.isLeakHunter()).append("\n")
-                    .append("columnSensing: ").append("" + dbUnitConfig.isColumnSensing()).append("\n");
+                    .append("mergeDataSets: ").append(dbUnitConfig.isMergeDataSets()).append("\n")
+                    .append("schema: ").append("" + dbUnitConfig.getSchema()).append("\n");
 
             for (Entry<String, Object> entry : dbUnitConfig.getProperties().entrySet()) {
                 sb.append(entry.getKey()).append(": ").append(entry.getValue() == null ? "" : entry.getValue()).append("\n");

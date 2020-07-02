@@ -33,13 +33,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(JUnit4.class)
 public class MergeDataSetsTest {
 
-
     @Test
     public void shouldMergeDataSets() {
-
         DataSet classLevel = DataSetImpl.instance().withValue("classDataSet.yml", "classDataSet2.json");
         DataSet methodLevel = DataSetImpl.instance().withValue(new String[]{"methodDataSet.yml", "methodDataSet2.json"});
-
         DataSet mergeDataSets = AnnotationUtils.mergeDataSetAnnotations(classLevel, methodLevel);
 
         assertThat(mergeDataSets).isNotNull();
@@ -50,7 +47,6 @@ public class MergeDataSetsTest {
 
     @Test
     public void shouldMergeScripts() {
-
         DataSet classLevel = DataSetImpl.instance()
                 .withExecuteScriptsBefore("classScriptBefore.sql", "classScriptBefore2.sql")
                 .withExecuteScriptsAfter("classScriptAfter.sql", "classScriptAfter2.sql");
@@ -71,7 +67,6 @@ public class MergeDataSetsTest {
 
     @Test
     public void shouldMergeStatements() {
-
         DataSet classLevel = DataSetImpl.instance()
                 .withExecuteStatementsBefore("classStatementBefore.sql", "classStatementBefore2.sql")
                 .withExecuteStatementsAfter("classStatementAfter.sql", "classStatementAfter2.sql");
@@ -92,10 +87,8 @@ public class MergeDataSetsTest {
 
     @Test
     public void shouldMergeTableOrdering() {
-
         DataSet classLevel = DataSetImpl.instance().withTableOrdering("USER", "FOLLOWER");
         DataSet methodLevel = DataSetImpl.instance().withTableOrdering("TWEET");
-
         DataSet mergeDataSets = AnnotationUtils.mergeDataSetAnnotations(classLevel, methodLevel);
 
         assertThat(mergeDataSets).isNotNull();
@@ -105,10 +98,8 @@ public class MergeDataSetsTest {
 
     @Test
     public void shouldMergeSkipCleaningFor() {
-
         DataSet classLevel = DataSetImpl.instance().withSkipCleaningFor("USER", "FOLLOWER");
         DataSet methodLevel = DataSetImpl.instance().withSkipCleaningFor("TWEET");
-
         DataSet mergeDataSets = AnnotationUtils.mergeDataSetAnnotations(classLevel, methodLevel);
 
         assertThat(mergeDataSets).isNotNull();
@@ -117,11 +108,9 @@ public class MergeDataSetsTest {
     }
 
     @Test
-    public void shouldMergeReplacersr() {
-
+    public void shouldMergeReplacers() {
         DataSet classLevel = DataSetImpl.instance().withReplacers(CustomReplacer.class);
         DataSet methodLevel = DataSetImpl.instance().withReplacers(CustomReplacerBar.class, NullReplacer.class);
-
         DataSet mergeDataSets = AnnotationUtils.mergeDataSetAnnotations(classLevel, methodLevel);
 
         assertThat(mergeDataSets).isNotNull();
