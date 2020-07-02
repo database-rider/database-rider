@@ -583,7 +583,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             try {
                 url = new URL(dataSet);
             } catch (MalformedURLException e) {
-                log.info("The dataSet {} is not a valid URL", dataSet);
             }
         }
         if (url == null) {
