@@ -182,7 +182,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             sb.append("cacheConnection: ").append("" + dbUnitConfig.isCacheConnection()).append("\n")
                     .append("cacheTableNames: ").append(dbUnitConfig.isCacheTableNames()).append("\n")
                     .append("caseInsensitiveStrategy: ").append(dbUnitConfig.getCaseInsensitiveStrategy()).append("\n")
-                    .append("caseSensitiveTableNames: ").append(dbUnitConfig.isCaseSensitiveTableNames()).append("\n")
                     .append("columnSensing: ").append("" + dbUnitConfig.isColumnSensing()).append("\n")
                     .append("leakHunter: ").append("" + dbUnitConfig.isLeakHunter()).append("\n")
                     .append("mergeDataSets: ").append(dbUnitConfig.isMergeDataSets()).append("\n")
