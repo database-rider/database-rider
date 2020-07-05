@@ -6,7 +6,6 @@ import com.github.database.rider.junit5.api.DBRider;
 import com.github.database.rider.springboot.model.user.User;
 import com.github.database.rider.springboot.model.user.UserRepository;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

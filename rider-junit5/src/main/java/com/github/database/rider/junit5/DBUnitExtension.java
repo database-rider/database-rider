@@ -122,7 +122,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     private ConnectionHolder getTestConnection(ExtensionContext extensionContext, String executorId) {
         if (isSpringExtensionEnabled(extensionContext) && isSpringTestContextEnabled(extensionContext)) {
             return getConnectionFromSpringContext(extensionContext, executorId);
-        } else if (getMicronautApplicationContext(extensionContext).isPresent()) {
+        } else if (isMicronautExtensionEnabled(extensionContext) && getMicronautApplicationContext(extensionContext).isPresent()) {
             return getConnectionFromMicronautContext(extensionContext, executorId);
         }
         return getConnectionFromTestClass(extensionContext, executorId);
@@ -253,6 +253,14 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     private boolean isSpringExtensionEnabled(ExtensionContext extensionContext) {
         try {
             return isOnClasspath("org.springframework.test.context.junit.jupiter.SpringExtension") && extensionContext.getRoot().getStore(Namespace.create(SpringExtension.class)) != null;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean isMicronautExtensionEnabled(ExtensionContext extensionContext) {
+        try {
+            return isOnClasspath("io.micronaut.test.extensions.junit5.MicronautJunit5Extension");
         } catch (Exception e) {
             return false;
         }
