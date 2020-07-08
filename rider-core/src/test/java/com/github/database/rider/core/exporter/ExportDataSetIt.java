@@ -288,18 +288,15 @@ public class ExportDataSetIt {
                         "  - ID: 2" + NEW_LINE +
                         "    NAME: \"@dbunit\"");
 
-        //TODO validate generated content
         File xlsDataSetWithAllTables = new File("target/exported/xls/allTables.xls");
         assertThat(xlsDataSetWithAllTables).exists();
 
         File jsonDataSetWithAllTables = new File("target/exported/json/allTables.json");
-        //TODO validate generated content
         assertThat(jsonDataSetWithAllTables).exists();
 
 
         File csvDataSetWithAllTables = new File("target/exported/csv/allTables");
         assertThat(csvDataSetWithAllTables).exists();
-        //TODO validate generated content
         File userCsvDataSet = new File("target/exported/csv/allTables/USER.csv");
         assertThat(userCsvDataSet).exists();
 
