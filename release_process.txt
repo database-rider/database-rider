@@ -15,11 +15,13 @@
 
 5 - upload artifacts to bintray and sync with maven central via bintray web app
 
-6 - mvn release:prepare -Prelease -Darguments="-DskipTests" -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dmaven.jarsigner.skip=true
+6 - return versions in pom to SNAPSHOT
 
-7 - edit created tag with issues fixed in current milestone
+7 - mvn release:prepare -Prelease -Darguments="-DskipTests" -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dmaven.jarsigner.skip=true -Dresume=false
 
-8 - close the milestone
+8 - edit created tag with issues fixed in current milestone
 
+9 - close the milestone
 
+1 - TODO: try to automate this process (although it takes less then 5min to release)
 
