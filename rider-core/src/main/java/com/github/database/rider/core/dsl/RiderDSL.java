@@ -16,7 +16,7 @@ import java.sql.Connection;
  */
 public class RiderDSL {
 
-    private static ThreadLocal<RiderDSL> INSTANCE;
+    private static ThreadLocal<RiderDSL> RIDER_DSL_THREAD_LOCAL = new ThreadLocal<>();
     private Connection connection;
     private DataSetConfig dataSetConfig;
     private DBUnitConfig dbUnitConfig;
@@ -65,12 +65,12 @@ public class RiderDSL {
         return new DataSetConfigDSL();
     }
 
+
     private static RiderDSL getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new ThreadLocal<>();
-            INSTANCE.set(new RiderDSL());
+        if (RIDER_DSL_THREAD_LOCAL.get() == null) {
+            RIDER_DSL_THREAD_LOCAL.set(new RiderDSL());
         }
-        return INSTANCE.get();
+        return RIDER_DSL_THREAD_LOCAL.get();
     }
 
     /**
