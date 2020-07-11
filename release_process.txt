@@ -23,5 +23,5 @@
 
 9 - close the milestone
 
-1 - TODO: try to automate this process (although it takes less then 5min to release)
+10 - TODO: try to automate this process (although it takes less then 5min to release)
 
