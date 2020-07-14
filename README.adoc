@@ -341,6 +341,7 @@ cacheTableNames: true
 leakHunter: false
 mergeDataSets: false
 caseInsensitiveStrategy: !!com.github.database.rider.core.api.configuration.Orthography 'UPPERCASE' <1>
+raiseExceptionOnCleanUp: false <2>
 properties:
   batchedStatements:  false
   qualifiedTableNames: false
@@ -351,7 +352,7 @@ properties:
   allowEmptyFields: false
   escapePattern:
   schema:
-  datatypeFactory: !!com.github.database.rider.core.configuration.DBUnitConfigTest$MockDataTypeFactory {} <2>
+  datatypeFactory: !!com.github.database.rider.core.configuration.DBUnitConfigTest$MockDataTypeFactory {} <3>
 connectionConfig:
   driver: ""
   url: ""
@@ -359,7 +360,8 @@ connectionConfig:
   password: ""
 ----
 <1> Only applied when `caseSensitiveTableNames` is `false`. Valid values are `UPPERCASE` and `LOWERCASE`.
-<2> Make it possible to define a datatype factory, https://github.com/database-rider/database-rider/issues/30[see issue #30^] for details.
+<2> If enabled an exception will be raised when `cleanBefore` or `cleanAfter` fails. If disabled then only a warn message is logged. Default is false.
+<3> Make it possible to define a datatype factory, https://github.com/database-rider/database-rider/issues/30[see issue #30^] for details.
 
 IMPORTANT: `@DBUnit` annotation takes precedence over `dbunit.yml` global configuration which will be used only if the annotation is not present.
 

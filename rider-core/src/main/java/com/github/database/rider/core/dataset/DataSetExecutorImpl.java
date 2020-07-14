@@ -607,48 +607,57 @@ public class DataSetExecutorImpl implements DataSetExecutor {
      */
     @Override
     public void clearDatabase(DataSetConfig config) throws SQLException {
-        disableConstraints();
-        Connection connection = getRiderDataSource().getConnection();
-        if (config != null && config.getTableOrdering() != null && config.getTableOrdering().length > 0) {
-            for (String table : config.getTableOrdering()) {
-                if (table.toUpperCase().contains(SEQUENCE_TABLE_NAME)) {
-                    // tables containing 'SEQ'will NOT be cleared see
-                    // https://github.com/rmpestano/dbunit-rules/issues/26
+        try {
+            disableConstraints();
+            Connection connection = getRiderDataSource().getConnection();
+            if (config != null && config.getTableOrdering() != null && config.getTableOrdering().length > 0) {
+                for (String table : config.getTableOrdering()) {
+                    if (table.toUpperCase().contains(SEQUENCE_TABLE_NAME)) {
+                        // tables containing 'SEQ'will NOT be cleared see
+                        // https://github.com/rmpestano/dbunit-rules/issues/26
+                        continue;
+                    }
+                    final String escapedTableName = applyDBUnitEscapePattern(table);
+                    try (Statement statement = connection.createStatement()) {
+                        statement.executeUpdate("DELETE FROM " + escapedTableName + " where 1=1");
+                        connection.commit();
+                    } catch (Exception e) {
+                        log.warn("Could not clear table " + escapedTableName + ", message:" + e.getMessage() + ", cause: "
+                                + e.getCause());
+                        if (dbUnitConfig.isRaiseExceptionOnCleanUp()) {
+                            throw new RuntimeException("Could not clear table " + escapedTableName, e);
+                        }
+                    }
+                }
+            }
+            // clear remaining tables in any order(if there are any, also no problem clearing again)
+            final List<String> tables = getTableNames(connection);
+            final List<String> tablesToSkipCleaning = getTablesToSkipOnCleaning(config);
+            for (String tableName : tables) {
+                if (shouldSkipFromCleaning(tablesToSkipCleaning, tableName)) {
                     continue;
                 }
-                final String escapedTableName = applyDBUnitEscapePattern(table);
+                if (tableName.toUpperCase().contains(SEQUENCE_TABLE_NAME)) {
+                    // tables containing 'SEQ' will NOT be cleared see https://github.com/rmpestano/dbunit-rules/issues/26
+                    continue;
+                }
                 try (Statement statement = connection.createStatement()) {
-                    statement.executeUpdate("DELETE FROM " + escapedTableName + " where 1=1");
+                    statement.executeUpdate("DELETE FROM " + tableName + " where 1=1");
                     connection.commit();
                 } catch (Exception e) {
-                    log.warn("Could not clear table " + escapedTableName + ", message:" + e.getMessage() + ", cause: "
+                    log.warn("Could not clear table " + tableName + ", message:" + e.getMessage() + ", cause: "
                             + e.getCause());
+                    if (dbUnitConfig.isRaiseExceptionOnCleanUp()) {
+                        throw new RuntimeException("Could not clear table " + tableName, e);
+                    }
                 }
             }
-        }
-        // clear remaining tables in any order(if there are any, also no problem clearing again)
-        final List<String> tables = getTableNames(connection);
-        final List<String> tablesToSkipCleaning = getTablesToSkipOnCleaning(config);
-        for (String tableName : tables) {
-            if (shouldSkipFromCleaning(tablesToSkipCleaning, tableName)) {
-                continue;
-            }
-            if (tableName.toUpperCase().contains(SEQUENCE_TABLE_NAME)) {
-                // tables containing 'SEQ' will NOT be cleared see https://github.com/rmpestano/dbunit-rules/issues/26
-                continue;
-            }
-            try (Statement statement = connection.createStatement()) {
-                statement.executeUpdate("DELETE FROM " + tableName + " where 1=1");
-                connection.commit();
-            } catch (Exception e) {
-                log.warn("Could not clear table " + tableName + ", message:" + e.getMessage() + ", cause: "
-                        + e.getCause());
-            }
-        }
 
-        // enabling constraints only if `disableConstraints == false`
-        if(!config.isDisableConstraints()) {
-            enableConstraints();
+        } finally {
+            // enabling constraints only if `disableConstraints == false`
+            if (!config.isDisableConstraints()) {
+                enableConstraints();
+            }
         }
 
     }

@@ -45,6 +45,7 @@ public class DBUnitConfigTest {
                 .hasFieldOrPropertyWithValue("cacheConnection", true)
                 .hasFieldOrPropertyWithValue("cacheTableNames", true)
                 .hasFieldOrPropertyWithValue("leakHunter", false)
+                .hasFieldOrPropertyWithValue("raiseExceptionOnCleanUp", false)
                 .hasFieldOrPropertyWithValue("caseInsensitiveStrategy", Orthography.UPPERCASE);
 
         assertThat(config.getProperties()).
@@ -82,6 +83,7 @@ public class DBUnitConfigTest {
                 .hasFieldOrPropertyWithValue("cacheConnection", false)
                 .hasFieldOrPropertyWithValue("cacheTableNames", false)
                 .hasFieldOrPropertyWithValue("leakHunter", true)
+                .hasFieldOrPropertyWithValue("raiseExceptionOnCleanUp", true)
                 .hasFieldOrPropertyWithValue("caseInsensitiveStrategy", Orthography.UPPERCASE);
 
         assertThat(config.getProperties()).
@@ -106,6 +108,7 @@ public class DBUnitConfigTest {
                 .hasFieldOrPropertyWithValue("cacheConnection", true)
                 .hasFieldOrPropertyWithValue("cacheTableNames", true)
                 .hasFieldOrPropertyWithValue("leakHunter", true)
+                .hasFieldOrPropertyWithValue("raiseExceptionOnCleanUp", false)
                 .hasFieldOrPropertyWithValue("caseInsensitiveStrategy", Orthography.UPPERCASE);
 
         assertThat(config.getProperties()).

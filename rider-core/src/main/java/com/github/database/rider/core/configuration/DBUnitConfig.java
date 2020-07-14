@@ -28,6 +28,7 @@ public class DBUnitConfig {
     private Boolean leakHunter;
     private Boolean mergeDataSets;
     private Boolean columnSensing;
+    private Boolean raiseExceptionOnCleanUp;
     private Orthography caseInsensitiveStrategy;
     private Map<String, Object> properties;
     private ConnectionConfig connectionConfig;
@@ -52,7 +53,7 @@ public class DBUnitConfig {
         caseInsensitiveStrategy = Orthography.UPPERCASE;
         mergeDataSets = Boolean.FALSE;
         columnSensing = Boolean.FALSE;
-
+        raiseExceptionOnCleanUp = Boolean.FALSE;
         initDefaultProperties();
         initDefaultConnectionConfig();
     }
@@ -61,7 +62,6 @@ public class DBUnitConfig {
         if (properties == null) {
             properties = new HashMap<>();
         }
-
         putIfAbsent(properties, "batchedStatements", false);
         putIfAbsent(properties, "qualifiedTableNames", false);
         putIfAbsent(properties, "schema", null);
@@ -83,19 +83,15 @@ public class DBUnitConfig {
         if (connectionConfig == null) {
             connectionConfig = new ConnectionConfig();
         }
-
         if (connectionConfig.getDriver() == null) {
             connectionConfig.setDriver("");
         }
-
         if (connectionConfig.getUrl() == null) {
             connectionConfig.setUrl("");
         }
-
         if (connectionConfig.getUser() == null) {
             connectionConfig.setUser("");
         }
-
         if (connectionConfig.getPassword() == null) {
             connectionConfig.setPassword("");
         }
@@ -125,6 +121,7 @@ public class DBUnitConfig {
                 .leakHunter(dbUnit.leakHunter())
                 .mergeDataSets(dbUnit.mergeDataSets())
                 .columnSensing(dbUnit.columnSensing())
+                .raiseExceptionOnCleanUp(dbUnit.raiseExceptionOnCleanUp())
                 .addDBUnitProperty("batchedStatements", dbUnit.batchedStatements())
                 .addDBUnitProperty("batchSize", dbUnit.batchSize())
                 .addDBUnitProperty("allowEmptyFields", dbUnit.allowEmptyFields())
@@ -263,6 +260,11 @@ public class DBUnitConfig {
         return this;
     }
 
+    public DBUnitConfig raiseExceptionOnCleanUp(boolean raiseExceptionOnCleanUp) {
+        this.raiseExceptionOnCleanUp = raiseExceptionOnCleanUp;
+        return this;
+    }
+
     public ConnectionConfig getConnectionConfig() {
         return connectionConfig;
     }
@@ -337,4 +339,11 @@ public class DBUnitConfig {
         return (String) properties.get("schema");
     }
 
+    public boolean isRaiseExceptionOnCleanUp() {
+        return raiseExceptionOnCleanUp;
+    }
+
+    public void setRaiseExceptionOnCleanUp(boolean raiseExceptionOnCleanUp) {
+        this.raiseExceptionOnCleanUp = raiseExceptionOnCleanUp;
+    }
 }

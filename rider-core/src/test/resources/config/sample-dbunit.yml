@@ -1,6 +1,7 @@
 cacheConnection: false
 cacheTableNames: false
 leakHunter: true
+raiseExceptionOnCleanUp: true
 properties:
   batchedStatements:  true
   caseSensitiveTableNames: false

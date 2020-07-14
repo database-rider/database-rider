@@ -55,6 +55,15 @@ public @interface DBUnit {
     boolean caseSensitiveTableNames() default false;
 
     /**
+     * If enabled an exception will be raised when <code>cleanBefore</code> or <code>cleanAfter</code> fails.
+     * If disabled then only a warn message is logged. Default is <code>false</code>
+     *
+     * @since 1.16.0
+     * @return boolean value which configures case-sensitive table names (also columns)
+     */
+    boolean raiseExceptionOnCleanUp() default false;
+
+    /**
      * @return value which configures DatabaseConfig.PROPERTY_DATATYPE_FACTORY
      */
     Class<? extends IDataTypeFactory> dataTypeFactoryClass() default IDataTypeFactory.class;
