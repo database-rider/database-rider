@@ -622,11 +622,11 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         statement.executeUpdate("DELETE FROM " + escapedTableName + " where 1=1");
                         connection.commit();
                     } catch (Exception e) {
-                        log.warn("Could not clear table " + escapedTableName + ", message:" + e.getMessage() + ", cause: "
-                                + e.getCause());
                         if (dbUnitConfig.isRaiseExceptionOnCleanUp()) {
                             throw new RuntimeException("Could not clear table " + escapedTableName, e);
                         }
+                        log.warn("Could not clear table " + escapedTableName + ", message:" + e.getMessage() + ", cause: "
+                                + e.getCause());
                     }
                 }
             }
@@ -645,11 +645,11 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     statement.executeUpdate("DELETE FROM " + tableName + " where 1=1");
                     connection.commit();
                 } catch (Exception e) {
-                    log.warn("Could not clear table " + tableName + ", message:" + e.getMessage() + ", cause: "
-                            + e.getCause());
                     if (dbUnitConfig.isRaiseExceptionOnCleanUp()) {
                         throw new RuntimeException("Could not clear table " + tableName, e);
                     }
+                    log.warn("Could not clear table " + tableName + ", message:" + e.getMessage() + ", cause: "
+                            + e.getCause());
                 }
             }
 
