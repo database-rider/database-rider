@@ -19,6 +19,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.connection.RiderDataSource;
 import com.github.database.rider.spring.api.DBRider;
 import com.github.database.rider.spring.config.TestConfig;
 import com.github.database.rider.spring.model.EntityUtils;
@@ -63,5 +64,15 @@ public class MultipleDataSourcesIT {
         assertThat(actual).containsExactlyElementsOf(expected);
     }
 
+    @Test
+    @DataSet(value = "test.yml")
+    @DBRider(dataBaseType = RiderDataSource.DBType.HSQLDB)
+    public void shouldUseDefaultDataSourceAndTypeCheck() {
+        jdbcTemplate = new JdbcTemplate(defaultDataSource);
+        Set<String> expected = new HashSet<>(Arrays.asList("value1", "value2"));
+        Set<String> actual = new HashSet<>(jdbcTemplate.queryForList("SELECT value FROM Entity", String.class));
+
+        assertThat(actual).containsExactlyElementsOf(expected);
+    }
 
 }

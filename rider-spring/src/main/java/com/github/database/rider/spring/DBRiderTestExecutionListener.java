@@ -25,8 +25,11 @@ public class DBRiderTestExecutionListener extends AbstractTestExecutionListener 
         riderRunner.setup(riderTestContext);
         riderRunner.runBeforeTest(riderTestContext);
         DBRider dbRiderAnnotation = testContext.getTestMethod().getAnnotation(DBRider.class);
+        if(dbRiderAnnotation == null) {
+            testContext.getTestClass().getAnnotation(DBRider.class);
+        }
         RiderDataSource.DBType contextDBType = riderTestContext.getDataSetExecutor().getRiderDataSource().getDBType();
-        if (dbRiderAnnotation.dataBaseType() != RiderDataSource.DBType.UNKNOWN && dbRiderAnnotation.dataBaseType() != contextDBType) {
+        if (dbRiderAnnotation != null && dbRiderAnnotation.dataBaseType() != RiderDataSource.DBType.UNKNOWN && dbRiderAnnotation.dataBaseType() != contextDBType) {
             throw new IllegalArgumentException(String.format("Expect %s database instead of %s database.", dbRiderAnnotation.dataBaseType(), contextDBType));
         }
     }
