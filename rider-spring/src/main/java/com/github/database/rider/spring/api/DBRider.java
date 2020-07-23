@@ -30,8 +30,8 @@ public @interface DBRider {
 
   /**
    * @return the expected database type.
-   * If empty then do not validate database type.
+   * If use {@link RiderDataSource.DBType#UNKNOWN}, database type will not be validated.
    * @throws IllegalArgumentException If the expected database type different from that of context.
    */
-  RiderDataSource.DBType dataBaseType() default RiderDataSource.DBType.UNKNOWN;
+  RiderDataSource.DBType databaseType() default RiderDataSource.DBType.UNKNOWN;
 }

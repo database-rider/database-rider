@@ -6,14 +6,15 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import com.github.database.rider.core.api.connection.ConnectionHolder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.test.context.TestContext;
 
 import com.github.database.rider.core.AbstractRiderTestContext;
+import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSetExecutor;
+import com.github.database.rider.core.connection.RiderDataSource;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.spring.api.DBRider;
 
@@ -28,7 +29,8 @@ class SpringRiderTestContext extends AbstractRiderTestContext {
     }
 
     private static DataSetExecutor createDataSetExecutor(TestContext testContext) {
-        String beanName = getConfiguredDataSourceBeanName(testContext);
+        DBRider dbRiderAnnotation = getDbRiderAnnotation(testContext);
+        String beanName = dbRiderAnnotation != null ? dbRiderAnnotation.dataSourceBeanName() : EMPTY_STRING;
         DataSource dataSourceBean = getDataSource(testContext, beanName);
         final DataSource dataSource = wrapInTransactionAwareProxy(dataSourceBean);
         String instanceId = beanName.isEmpty() ? "default" : beanName;
@@ -39,7 +41,14 @@ class SpringRiderTestContext extends AbstractRiderTestContext {
             }
         });
         dataSetExecutor.clearRiderDataSource();
-
+        //validate database type
+        RiderDataSource.DBType actualDbType = dataSetExecutor.getRiderDataSource().getDBType();
+        RiderDataSource.DBType expectedDbType = dbRiderAnnotation != null
+                ? dbRiderAnnotation.databaseType() : RiderDataSource.DBType.UNKNOWN;
+        if (expectedDbType != RiderDataSource.DBType.UNKNOWN && expectedDbType != actualDbType) {
+            throw new IllegalStateException(String.format(
+                    "Expect %s database, but actually %s database.", expectedDbType, actualDbType));
+        }
         return dataSetExecutor;
     }
 
@@ -48,12 +57,12 @@ class SpringRiderTestContext extends AbstractRiderTestContext {
         return beanName.isEmpty() ? context.getBean(DataSource.class) : context.getBean(beanName, DataSource.class);
     }
 
-    private static String getConfiguredDataSourceBeanName(final TestContext testContext) {
+    private static DBRider getDbRiderAnnotation(final TestContext testContext) {
         DBRider dbRiderAnnotation = testContext.getTestMethod().getAnnotation(DBRider.class);
-        if(dbRiderAnnotation == null) {
+        if (dbRiderAnnotation == null) {
             dbRiderAnnotation = testContext.getTestClass().getAnnotation(DBRider.class);
         }
-        return dbRiderAnnotation != null ? dbRiderAnnotation.dataSourceBeanName() : EMPTY_STRING;
+        return dbRiderAnnotation;
     }
 
     private static DataSource wrapInTransactionAwareProxy(DataSource dataSource) {

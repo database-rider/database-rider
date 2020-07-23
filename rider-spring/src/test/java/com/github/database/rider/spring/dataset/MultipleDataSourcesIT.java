@@ -2,14 +2,12 @@ package com.github.database.rider.spring.dataset;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +20,6 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.connection.RiderDataSource;
 import com.github.database.rider.spring.api.DBRider;
 import com.github.database.rider.spring.config.TestConfig;
-import com.github.database.rider.spring.model.EntityUtils;
 
 /**
  * Simple test to verify that DBRider annotation works with custom dataSourceBeanName.
@@ -37,42 +34,40 @@ public class MultipleDataSourcesIT {
     @Autowired
     @Qualifier("data-source-2")
     private DataSource secondaryDataSource;
-
     @Autowired
     private DataSource defaultDataSource;
-
-    private JdbcTemplate jdbcTemplate;
 
     @Test
     @DataSet(value = "ds2-test.yml")
     public void shouldUseSecondaryDataSource() {
-        jdbcTemplate = new JdbcTemplate(secondaryDataSource);
-        Set<String> expected = new HashSet<>(Arrays.asList("value1", "value2"));
-        Set<String> actual = new HashSet<>(jdbcTemplate.queryForList("SELECT value FROM Entity2", String.class));
+        queryAndAssertData(secondaryDataSource, "SELECT value FROM Entity2");
+    }
 
-        assertThat(actual).containsExactlyElementsOf(expected);
+    @Test
+    @DataSet(value = "ds2-test.yml")
+    @DBRider(dataSourceBeanName = "data-source-2", databaseType = RiderDataSource.DBType.HSQLDB)
+    public void shouldUseSecondaryDataSourceAndCheckDatabaseType() {
+        queryAndAssertData(secondaryDataSource, "SELECT value FROM Entity2");
     }
 
     @Test
     @DataSet(value = "test.yml")
     @DBRider
     public void shouldUseDefaultDataSource() {
-        jdbcTemplate = new JdbcTemplate(defaultDataSource);
-        Set<String> expected = new HashSet<>(Arrays.asList("value1", "value2"));
-        Set<String> actual = new HashSet<>(jdbcTemplate.queryForList("SELECT value FROM Entity", String.class));
-
-        assertThat(actual).containsExactlyElementsOf(expected);
+        queryAndAssertData(defaultDataSource, "SELECT value FROM Entity");
     }
 
     @Test
     @DataSet(value = "test.yml")
-    @DBRider(dataBaseType = RiderDataSource.DBType.HSQLDB)
-    public void shouldUseDefaultDataSourceAndTypeCheck() {
-        jdbcTemplate = new JdbcTemplate(defaultDataSource);
+    @DBRider(databaseType = RiderDataSource.DBType.HSQLDB)
+    public void shouldUseDefaultDataSourceAndCheckDatabaseType() {
+        queryAndAssertData(defaultDataSource, "SELECT value FROM Entity");
+    }
+
+    private void queryAndAssertData(DataSource dataSource, String sql) {
         Set<String> expected = new HashSet<>(Arrays.asList("value1", "value2"));
-        Set<String> actual = new HashSet<>(jdbcTemplate.queryForList("SELECT value FROM Entity", String.class));
+        Set<String> actual = new HashSet<>(new JdbcTemplate(dataSource).queryForList(sql, String.class));
 
         assertThat(actual).containsExactlyElementsOf(expected);
     }
-
 }
