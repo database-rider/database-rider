@@ -5,10 +5,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.github.database.rider.core.connection.RiderDataSource;
 import org.springframework.test.context.TestExecutionListeners;
 
 import com.github.database.rider.spring.DBRiderTestExecutionListener;
+import com.github.database.rider.core.connection.RiderDataSource;
 
 /**
  * Shortcut to enable database rider tests.
