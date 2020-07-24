@@ -1,5 +1,6 @@
 package com.github.database.rider.core.api.configuration;
 
+import com.github.database.rider.core.connection.RiderDataSource;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.replacers.Replacer;
 
@@ -62,6 +63,17 @@ public @interface DBUnit {
      * @return boolean value which configures case-sensitive table names (also columns)
      */
     boolean raiseExceptionOnCleanUp() default false;
+
+    /**
+     * In the process of initialization, if the actual database type is different from the expected database type,
+     * exception will be thrown unless the expected database type is {@link RiderDataSource.DBType#UNKNOWN}.
+     * <p>
+     * Default is {@link RiderDataSource.DBType#UNKNOWN}.
+     *
+     * @return the expected database type.
+     * @since 1.16.0
+     */
+    RiderDataSource.DBType expectedDbType() default RiderDataSource.DBType.UNKNOWN;
 
     /**
      * @return value which configures DatabaseConfig.PROPERTY_DATATYPE_FACTORY

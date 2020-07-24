@@ -2,6 +2,7 @@ package com.github.database.rider.core.configuration;
 
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.configuration.Orthography;
+import com.github.database.rider.core.connection.RiderDataSource;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.replacers.DateTimeReplacer;
 import com.github.database.rider.core.replacers.NullReplacer;
@@ -30,6 +31,7 @@ public class DBUnitConfig {
     private Boolean columnSensing;
     private Boolean raiseExceptionOnCleanUp;
     private Orthography caseInsensitiveStrategy;
+    private RiderDataSource.DBType expectedDbType;
     private Map<String, Object> properties;
     private ConnectionConfig connectionConfig;
 
@@ -54,6 +56,7 @@ public class DBUnitConfig {
         mergeDataSets = Boolean.FALSE;
         columnSensing = Boolean.FALSE;
         raiseExceptionOnCleanUp = Boolean.FALSE;
+        expectedDbType = RiderDataSource.DBType.UNKNOWN;
         initDefaultProperties();
         initDefaultConnectionConfig();
     }
@@ -122,13 +125,13 @@ public class DBUnitConfig {
                 .mergeDataSets(dbUnit.mergeDataSets())
                 .columnSensing(dbUnit.columnSensing())
                 .raiseExceptionOnCleanUp(dbUnit.raiseExceptionOnCleanUp())
+                .expectedDbType(dbUnit.expectedDbType())
                 .addDBUnitProperty("batchedStatements", dbUnit.batchedStatements())
                 .addDBUnitProperty("batchSize", dbUnit.batchSize())
                 .addDBUnitProperty("allowEmptyFields", dbUnit.allowEmptyFields())
                 .addDBUnitProperty("fetchSize", dbUnit.fetchSize())
                 .addDBUnitProperty("qualifiedTableNames", dbUnit.qualifiedTableNames())
-                .addDBUnitProperty("schema",
-                        dbUnit.schema() != null && !dbUnit.schema().isEmpty() ? dbUnit.schema() : null)
+                .addDBUnitProperty("schema", !dbUnit.schema().isEmpty() ? dbUnit.schema() : null)
                 .addDBUnitProperty("caseSensitiveTableNames", dbUnit.caseSensitiveTableNames())
                 .caseInsensitiveStrategy(dbUnit.caseInsensitiveStrategy());
 
@@ -265,6 +268,11 @@ public class DBUnitConfig {
         return this;
     }
 
+    public DBUnitConfig expectedDbType(RiderDataSource.DBType expectedDbType) {
+        this.expectedDbType = expectedDbType;
+        return this;
+    }
+
     public ConnectionConfig getConnectionConfig() {
         return connectionConfig;
     }
@@ -345,5 +353,13 @@ public class DBUnitConfig {
 
     public void setRaiseExceptionOnCleanUp(boolean raiseExceptionOnCleanUp) {
         this.raiseExceptionOnCleanUp = raiseExceptionOnCleanUp;
+    }
+
+    public RiderDataSource.DBType getExpectedDbType() {
+        return expectedDbType;
+    }
+
+    public void setExpectedDbType(RiderDataSource.DBType expectedDbType) {
+        this.expectedDbType = expectedDbType;
     }
 }

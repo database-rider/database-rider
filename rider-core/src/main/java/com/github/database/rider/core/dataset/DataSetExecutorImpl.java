@@ -190,8 +190,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             for (Entry<String, Object> entry : dbUnitConfig.getProperties().entrySet()) {
                 sb.append(entry.getKey()).append(": ").append(entry.getValue() == null ? "" : entry.getValue()).append("\n");
             }
-            log.info(String.format("DBUnit configuration for dataset executor '%s':\n" + sb.toString(),
-                    this.executorId));
+            log.info("DBUnit configuration for dataset executor '{}':{}", this.executorId, sb.toString());
         }
     }
 
