@@ -2,6 +2,7 @@ package com.github.database.rider.core.configuration;
 
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.configuration.Orthography;
+import com.github.database.rider.core.connection.RiderDataSource;
 import com.github.database.rider.core.replacers.CustomReplacer;
 import org.dbunit.database.IMetadataHandler;
 import org.dbunit.dataset.datatype.DataType;
@@ -46,6 +47,7 @@ public class DBUnitConfigTest {
                 .hasFieldOrPropertyWithValue("cacheTableNames", true)
                 .hasFieldOrPropertyWithValue("leakHunter", false)
                 .hasFieldOrPropertyWithValue("raiseExceptionOnCleanUp", false)
+                .hasFieldOrPropertyWithValue("expectedDbType", RiderDataSource.DBType.UNKNOWN)
                 .hasFieldOrPropertyWithValue("caseInsensitiveStrategy", Orthography.UPPERCASE);
 
         assertThat(config.getProperties()).
@@ -84,6 +86,7 @@ public class DBUnitConfigTest {
                 .hasFieldOrPropertyWithValue("cacheTableNames", false)
                 .hasFieldOrPropertyWithValue("leakHunter", true)
                 .hasFieldOrPropertyWithValue("raiseExceptionOnCleanUp", true)
+                .hasFieldOrPropertyWithValue("expectedDbType", RiderDataSource.DBType.HSQLDB)
                 .hasFieldOrPropertyWithValue("caseInsensitiveStrategy", Orthography.UPPERCASE);
 
         assertThat(config.getProperties()).
@@ -109,6 +112,7 @@ public class DBUnitConfigTest {
                 .hasFieldOrPropertyWithValue("cacheTableNames", true)
                 .hasFieldOrPropertyWithValue("leakHunter", true)
                 .hasFieldOrPropertyWithValue("raiseExceptionOnCleanUp", false)
+                .hasFieldOrPropertyWithValue("expectedDbType", RiderDataSource.DBType.UNKNOWN)
                 .hasFieldOrPropertyWithValue("caseInsensitiveStrategy", Orthography.UPPERCASE);
 
         assertThat(config.getProperties()).
@@ -122,7 +126,8 @@ public class DBUnitConfigTest {
     }
 
     @Test
-    @DBUnit(cacheTableNames = false, allowEmptyFields = true, batchSize = 50, schema = "public")
+    @DBUnit(cacheTableNames = false, allowEmptyFields = true, batchSize = 50, schema = "public",
+            expectedDbType = RiderDataSource.DBType.HSQLDB)
     public void shouldLoadDBUnitConfigViaAnnotation() throws NoSuchMethodException {
         Method method = getClass().getMethod("shouldLoadDBUnitConfigViaAnnotation");
         DBUnit dbUnit = method.getAnnotation(DBUnit.class);
@@ -130,7 +135,8 @@ public class DBUnitConfigTest {
 
         assertThat(dbUnitConfig).isNotNull()
                 .hasFieldOrPropertyWithValue("cacheConnection", true)
-                .hasFieldOrPropertyWithValue("cacheTableNames", false);
+                .hasFieldOrPropertyWithValue("cacheTableNames", false)
+                .hasFieldOrPropertyWithValue("expectedDbType", RiderDataSource.DBType.HSQLDB);
 
         assertThat(dbUnitConfig.getProperties()).
                 containsEntry("allowEmptyFields", true).

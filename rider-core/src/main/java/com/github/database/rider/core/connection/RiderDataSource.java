@@ -70,6 +70,10 @@ public class RiderDataSource {
         Connection conn = getConnection();
         if (conn != null) {
             dbType = resolveDBType(DriverUtils.getDriverName(conn));
+            if (dbUnitConfig.getExpectedDbType() != DBType.UNKNOWN && dbUnitConfig.getExpectedDbType() != dbType) {
+                throw new SQLException(String.format("Expect %s database, but actually %s database.",
+                        dbUnitConfig.getExpectedDbType(), dbType));
+            }
             initDBUnitConnection();
         }
     }

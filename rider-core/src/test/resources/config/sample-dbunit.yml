@@ -2,6 +2,7 @@ cacheConnection: false
 cacheTableNames: false
 leakHunter: true
 raiseExceptionOnCleanUp: true
+expectedDbType: HSQLDB
 properties:
   batchedStatements:  true
   caseSensitiveTableNames: false
