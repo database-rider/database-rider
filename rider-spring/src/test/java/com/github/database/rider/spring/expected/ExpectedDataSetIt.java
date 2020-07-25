@@ -1,10 +1,7 @@
 package com.github.database.rider.spring.expected;
 
-import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.core.api.dataset.ExpectedDataSet;
-import com.github.database.rider.spring.api.DBRider;
-import com.github.database.rider.spring.config.TestConfig;
-import com.github.database.rider.spring.model.EntityUtils;
+import javax.transaction.Transactional;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +10,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
-import javax.transaction.Transactional;
+import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.ExpectedDataSet;
+import com.github.database.rider.spring.api.DBRider;
+import com.github.database.rider.spring.config.TestConfig;
+import com.github.database.rider.spring.model.EntityUtils;
 
 /**
  * @author Artemy Osipov
@@ -22,7 +23,7 @@ import javax.transaction.Transactional;
 @DBRider
 @ContextConfiguration(classes = TestConfig.class)
 @DataSet(cleanBefore = true)
-public class ExpectedDataSetIT {
+public class ExpectedDataSetIt {
 
     @Autowired
     private EntityUtils entityUtils;

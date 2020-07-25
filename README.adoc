@@ -529,9 +529,9 @@ public class MultipleDataSourcesTest {
     }
 ----
 
-TIP: Full `rider-junit5` example can be found https://github.com/database-rider/database-rider/blob/master/rider-examples/spring-boot-dbunit-sample/src/test/java/com/github/database/rider/springboot/MultipleDataSourcesTest.java#L17[here^] and https://github.com/database-rider/database-rider/blob/master/rider-junit5/src/test/java/com/github/database/rider/junit5/DBRiderSpringDataSourceIT.java#L25[here^].
+TIP: Full `rider-junit5` example can be found https://github.com/database-rider/database-rider/blob/master/rider-examples/spring-boot-dbunit-sample/src/test/java/com/github/database/rider/springboot/MultipleDataSourcesTest.java#L17[here^] and https://github.com/database-rider/database-rider/blob/master/rider-junit5/src/test/java/com/github/database/rider/junit5/DBRiderSpringDataSourceIt.java#L28[here^].
 
-TIP: Full `rider-spring` example can be found https://github.com/database-rider/database-rider/blob/master/rider-spring/src/test/java/com/github/database/rider/spring/dataset/MultipleDataSourcesIT.java#L33[here^].
+TIP: Full `rider-spring` example can be found https://github.com/database-rider/database-rider/blob/master/rider-spring/src/test/java/com/github/database/rider/spring/dataset/MultipleDataSourcesIt.java#L31[here^].
 
 
 ==== Multiple databases in CDI tests
