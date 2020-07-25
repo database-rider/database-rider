@@ -29,7 +29,7 @@ import com.github.database.rider.core.util.EntityManagerProvider;
  * @see RiderDataSource
  */
 @RunWith(JUnit4.class)
-public class RiderDataSourceIT {
+public class RiderDataSourceIt {
 
     @Rule
     public final EntityManagerProvider emProvider = EntityManagerProvider.instance("rules-it");

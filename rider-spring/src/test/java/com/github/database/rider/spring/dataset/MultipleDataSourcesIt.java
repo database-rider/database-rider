@@ -2,14 +2,12 @@ package com.github.database.rider.spring.dataset;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +19,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
 import com.github.database.rider.spring.config.TestConfig;
-import com.github.database.rider.spring.model.EntityUtils;
 
 /**
  * Simple test to verify that DBRider annotation works with custom dataSourceBeanName.
@@ -31,7 +28,7 @@ import com.github.database.rider.spring.model.EntityUtils;
 @RunWith(SpringRunner.class)
 @DBRider(dataSourceBeanName = "data-source-2")
 @ContextConfiguration(classes = TestConfig.class)
-public class MultipleDataSourcesIT {
+public class MultipleDataSourcesIt {
 
     @Autowired
     @Qualifier("data-source-2")

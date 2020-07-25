@@ -24,8 +24,8 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.junit5.api.DBRider;
 
 @SpringBootTest
-@ContextConfiguration(classes = { DBRiderSpringDataSourceIT.TestConfig.class })
-public class DBRiderSpringDataSourceIT {
+@ContextConfiguration(classes = { DBRiderSpringDataSourceIt.TestConfig.class })
+public class DBRiderSpringDataSourceIt {
 
   @Autowired
   @Qualifier("data-source-1")
