@@ -4,8 +4,8 @@
 << /Title (Database Rider Documentation)
 /Creator (Asciidoctor PDF 1.5.0.alpha.16, based on Prawn 2.2.2)
 /Producer (Asciidoctor PDF 1.5.0.alpha.16, based on Prawn 2.2.2)
-/ModDate (D:20200724101246+00'00')
-/CreationDate (D:20200724101252+00'00')
+/ModDate (D:20200726114102+00'00')
+/CreationDate (D:20200726114108+00'00')
 >>
 endobj
 2 0 obj
@@ -28663,7 +28663,7 @@ endobj
 << /Border [0 0 0]
 /A << /Type /Action
 /S /URI
-/URI (https://github.com/database-rider/database-rider/blob/master/rider-spring/src/test/java/com/github/database/rider/spring/dataset/MetaDataSetIT.java)
+/URI (https://github.com/database-rider/database-rider/blob/master/rider-spring/src/test/java/com/github/database/rider/spring/dataset/MetaDataSetIt.java)
 >>
 /Subtype /Link
 /Rect [154.896 581.2114 217.6965 595.4914]
