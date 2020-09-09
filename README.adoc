@@ -354,6 +354,7 @@ properties:
   escapePattern:
   schema:
   datatypeFactory: !!com.github.database.rider.core.configuration.DBUnitConfigTest$MockDataTypeFactory {} <4>
+  tableType: ["TABLE"]
 connectionConfig:
   driver: ""
   url: ""
@@ -366,7 +367,6 @@ connectionConfig:
 <4> Make it possible to define a datatype factory, https://github.com/database-rider/database-rider/issues/30[see issue #30^] for details.
 
 IMPORTANT: `@DBUnit` annotation takes precedence over `dbunit.yml` global configuration which will be used only if the annotation is not present.
-
 
 
 === JDBC Connection
