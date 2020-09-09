@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.sql.DataSource;
@@ -17,7 +15,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 @ApplicationScoped
 public class JTAConnectionHolder {

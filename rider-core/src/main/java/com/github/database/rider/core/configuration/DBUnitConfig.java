@@ -48,7 +48,6 @@ public class DBUnitConfig {
         if ("".equals(executorId)) {
             executorId = DataSetExecutorImpl.DEFAULT_EXECUTOR_ID;
         }
-
         cacheConnection = true;
         cacheTableNames = true;
         leakHunter = false;
@@ -74,6 +73,7 @@ public class DBUnitConfig {
         putIfAbsent(properties, "allowEmptyFields", false);
         putIfAbsent(properties, "replacers", new ArrayList<>(
                 Arrays.asList(new DateTimeReplacer(), new UnixTimestampReplacer(), new NullReplacer())));
+        putIfAbsent(properties, "tableType", Arrays.asList("TABLE"));
     }
 
     private <K, V> void putIfAbsent(Map<K, V> map, K key, V value) {
@@ -106,7 +106,6 @@ public class DBUnitConfig {
                 DBUnitConfig configFromFile = new Yaml().loadAs(customConfiguration, DBUnitConfig.class);
                 configFromFile.initDefaultProperties();
                 configFromFile.initDefaultConnectionConfig();
-
                 return configFromFile;
             }
         } catch (IOException e) {
@@ -133,6 +132,7 @@ public class DBUnitConfig {
                 .addDBUnitProperty("qualifiedTableNames", dbUnit.qualifiedTableNames())
                 .addDBUnitProperty("schema", !dbUnit.schema().isEmpty() ? dbUnit.schema() : null)
                 .addDBUnitProperty("caseSensitiveTableNames", dbUnit.caseSensitiveTableNames())
+                .addDBUnitProperty("tableType", dbUnit.tableType())
                 .caseInsensitiveStrategy(dbUnit.caseInsensitiveStrategy());
 
         if (!"".equals(dbUnit.escapePattern())) {
@@ -176,7 +176,6 @@ public class DBUnitConfig {
         }
 
         dbUnitConfig.addDBUnitProperty("replacers", dbUnitReplacers);
-
 
         // declarative connection config
         dbUnitConfig.driver(dbUnit.driver())

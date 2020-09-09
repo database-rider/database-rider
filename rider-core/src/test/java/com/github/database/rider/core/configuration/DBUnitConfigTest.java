@@ -98,7 +98,8 @@ public class DBUnitConfigTest {
                 containsEntry("fetchSize", 200).
                 containsEntry("escapePattern", "[?]").
                 containsEntry("datatypeFactory", new MockDataTypeFactory()).
-                containsEntry("replacers", new ArrayList<>(Arrays.asList(new CustomReplacer())));
+                containsEntry("replacers", new ArrayList<>(Arrays.asList(new CustomReplacer()))).
+                containsEntry("tableType", Arrays.asList("TABLE","VIEW"));
     }
 
     @Test
@@ -127,7 +128,7 @@ public class DBUnitConfigTest {
 
     @Test
     @DBUnit(cacheTableNames = false, allowEmptyFields = true, batchSize = 50, schema = "public",
-            expectedDbType = RiderDataSource.DBType.HSQLDB)
+            expectedDbType = RiderDataSource.DBType.HSQLDB, tableType = {"TABLE", "VIEW"})
     public void shouldLoadDBUnitConfigViaAnnotation() throws NoSuchMethodException {
         Method method = getClass().getMethod("shouldLoadDBUnitConfigViaAnnotation");
         DBUnit dbUnit = method.getAnnotation(DBUnit.class);
@@ -145,6 +146,7 @@ public class DBUnitConfigTest {
                 containsEntry("schema", "public").
                 containsEntry("batchSize", 50).
                 containsEntry("fetchSize", 100).
+                containsEntry("tableType", new String[]{"TABLE", "VIEW"}).
                 doesNotContainKey("escapePattern").
                 doesNotContainKey("datatypeFactory");
     }

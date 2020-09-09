@@ -21,6 +21,7 @@ import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -92,7 +93,11 @@ public class RiderDataSource {
         for (Map.Entry<String, Object> p : dbUnitConfig.getProperties().entrySet()) {
             ConfigProperty byShortName = DatabaseConfig.findByShortName(p.getKey());
             if (byShortName != null) {
-                config.setProperty(byShortName.getProperty(), p.getValue());
+                Object propertyValue = p.getValue();
+                if(propertyValue instanceof List) {
+                    propertyValue = ((List)propertyValue).toArray(new String[((List) propertyValue).size()]);
+                }
+                config.setProperty(byShortName.getProperty(), propertyValue);
             }
         }
 

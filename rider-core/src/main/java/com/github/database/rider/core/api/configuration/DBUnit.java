@@ -147,6 +147,12 @@ public @interface DBUnit {
     String escapePattern() default "";
 
     /**
+     * @since 1.17.0
+     * @return value which configures DatabaseConfig.PROPERTY_TABLE_TYPE (http://www.dbunit.org/properties/tableType)
+     */
+    String[] tableType() default {"TABLE"};
+
+    /**
      * @since 0.15.0
      * @return driver class name. Used for declarative connections. Don't needed for drivers that implement jdbc 4.
      */
