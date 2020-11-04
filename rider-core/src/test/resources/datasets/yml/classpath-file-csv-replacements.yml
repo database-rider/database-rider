@@ -1,0 +1,5 @@
+TWEET:
+  - ID: "1"
+    CONTENT: "[CLASSPATH_FILE]datasets/csv/FOLLOWER.csv"
+
+
