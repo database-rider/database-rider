@@ -54,7 +54,7 @@ public class ClasspathFileReplacer implements Replacer {
     private String readFile(String filePath) {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(filePath);
         if (inputStream == null) {
-            String fileNotFoundError = String.format("Unable read file [%s] from classpath", filePath);
+            String fileNotFoundError = String.format("Unable to read file [%s] from the classpath", filePath);
             throw new RuntimeException(fileNotFoundError);
         }
 
