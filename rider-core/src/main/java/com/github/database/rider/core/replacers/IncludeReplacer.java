@@ -10,11 +10,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 /**
- * Replacer which replaces "[CLASSPATH_FILE]path/to/the/file" with actual content of the path/to/the/file
+ * Replacer which replaces "[INCLUDE]path/to/the/file" with actual content of the path/to/the/file
  * File should be available in the classpath.
  */
-public class ClasspathFileReplacer implements Replacer {
-    private static final String CLASSPATH_FILE = "[CLASSPATH_FILE]";
+public class IncludeReplacer implements Replacer {
+    private static final String INCLUDE_PREFIX = "[INCLUDE]";
 
     @Override
     public void addReplacements(ReplacementDataSet dataSet) {
@@ -34,8 +34,8 @@ public class ClasspathFileReplacer implements Replacer {
         for (int i = 0; i < table.getRowCount(); i++) {
             for (Column column : columns) {
                 String columnValue = (String) table.getValue(i, column.getColumnName());
-                if (hasClasspathPrefix(columnValue)) {
-                    String filePath = removeClasspathPrefix(columnValue);
+                if (hasIncludePrefix(columnValue)) {
+                    String filePath = removeIncludePrefix(columnValue);
                     String fileContent = readFile(filePath);
                     dataSet.addReplacementSubstring(columnValue, fileContent);
                 }
@@ -43,12 +43,12 @@ public class ClasspathFileReplacer implements Replacer {
         }
     }
 
-    private boolean hasClasspathPrefix(String value) {
-        return value != null && value.startsWith(CLASSPATH_FILE);
+    private boolean hasIncludePrefix(String value) {
+        return value != null && value.startsWith(INCLUDE_PREFIX);
     }
 
-    private String removeClasspathPrefix(String columnValue) {
-        return columnValue.substring(CLASSPATH_FILE.length());
+    private String removeIncludePrefix(String columnValue) {
+        return columnValue.substring(INCLUDE_PREFIX.length());
     }
 
     private String readFile(String filePath) {

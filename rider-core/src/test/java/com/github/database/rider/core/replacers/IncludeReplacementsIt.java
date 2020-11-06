@@ -11,7 +11,7 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DBUnit(cacheConnection = true)
-public class ClasspathFileReplacementsIt {
+public class IncludeReplacementsIt {
     @Rule
     public EntityManagerProvider emProvider = EntityManagerProvider.instance("rules-it");
 
@@ -19,8 +19,7 @@ public class ClasspathFileReplacementsIt {
     public DBUnitRule dbUnitRule = DBUnitRule.instance("rules-it", emProvider.connection());
 
     @Test
-    @DataSet(replacers = ClasspathFileReplacer.class,
-            value = "datasets/yml/classpath-file-xml-replacements.yml")
+    @DataSet(replacers = IncludeReplacer.class, value = "datasets/yml/include-xml-replacements.yml")
     public void shouldReplaceXmlFileContent() {
         Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
 
@@ -29,8 +28,7 @@ public class ClasspathFileReplacementsIt {
     }
 
     @Test
-    @DataSet(replacers = ClasspathFileReplacer.class,
-            value = "datasets/yml/classpath-file-json-replacements.yml")
+    @DataSet(replacers = IncludeReplacer.class, value = "datasets/yml/include-json-replacements.yml")
     public void shouldReplaceJsonFileContent() {
         Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
 
@@ -41,8 +39,7 @@ public class ClasspathFileReplacementsIt {
     }
 
     @Test
-    @DataSet(replacers = ClasspathFileReplacer.class,
-            value = "datasets/yml/classpath-file-csv-replacements.yml")
+    @DataSet(replacers = IncludeReplacer.class, value = "datasets/yml/include-csv-replacements.yml")
     public void shouldReplaceCsvFileContent() {
         Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
 
@@ -52,12 +49,11 @@ public class ClasspathFileReplacementsIt {
     }
 
     @Test
-    @DataSet(replacers = ClasspathFileReplacer.class,
-            value = "datasets/yml/classpath-file-yml-replacements.yml")
+    @DataSet(replacers = IncludeReplacer.class, value = "datasets/yml/include-yml-replacements.yml")
     public void shouldReplaceYmlFileContent() {
         Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
 
         assertThat(tweet).isNotNull();
-        assertThat(tweet.getContent()).contains("CONTENT: \"[CLASSPATH_FILE]datasets/yml/classpath-file-yml-replacements.yml\"");
+        assertThat(tweet.getContent()).contains("CONTENT: \"[INCLUDE]datasets/yml/include-yml-replacements.yml\"");
     }
 }
