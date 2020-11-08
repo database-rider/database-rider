@@ -1,2 +1,4 @@
-<DOC ID="1" CONTENT="XML included content"/>
-Anything in this file will be included into the column with [INCLUDE] replacement!
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+  <DOC ID="1" CONTENT="REJSaWRlciE="/>
+</dataset>

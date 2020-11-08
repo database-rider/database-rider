@@ -1,7 +1,6 @@
 package com.github.database.rider.core.replacers;
 
 import com.github.database.rider.core.DBUnitRule;
-import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.model.Tweet;
 import com.github.database.rider.core.util.EntityManagerProvider;
@@ -10,7 +9,6 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DBUnit(cacheConnection = true)
 public class IncludeReplacementsIt {
     private static final String NEW_LINE = System.getProperty("line.separator");
 
