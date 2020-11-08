@@ -3,10 +3,7 @@ package com.github.database.rider.core.util;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.database.rider.core.replacers.Replacer;
@@ -192,7 +189,7 @@ public final class AnnotationUtils {
     private static String[] joinArray(String[]... arrays) {
         int length = 0;
         for (String[] array : arrays) {
-            if(array != null) {
+            if(isNotEmptyArray(array)) {
                 length += array.length;
             }
         }
@@ -201,13 +198,25 @@ public final class AnnotationUtils {
 
         int offset = 0;
         for (String[] array : arrays) {
-            if(array != null){
+            if(isNotEmptyArray(array)){
                 System.arraycopy(array, 0, result, offset, array.length);
                 offset += array.length;
             }
         }
 
         return result;
+    }
+
+    private static boolean isNotEmptyArray(String[] array) {
+        if (array == null || array.length == 0) {
+            return false;
+        }
+        for (String s : array) {
+            if (s != null && !"".equals(s.trim())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static Class<? extends Replacer>[] joinReplacers(Class<? extends Replacer>[]... arrays) {

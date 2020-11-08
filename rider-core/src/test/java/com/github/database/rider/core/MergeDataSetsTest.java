@@ -46,6 +46,25 @@ public class MergeDataSetsTest {
     }
 
     @Test
+    public void shoudMergeDataSetsWithNoDataSets() {
+        DataSet classLevel = DataSetImpl.instance().withValue("");
+        DataSet methodLevel = DataSetImpl.instance().withValue(new String[]{"methodDataSet.yml", "methodDataSet2.json"});
+
+        DataSet mergeDataSets = AnnotationUtils.mergeDataSetAnnotations(classLevel, methodLevel);
+        assertThat(mergeDataSets).isNotNull();
+        assertThat(mergeDataSets.value())
+                .isEqualTo(new String[]{"methodDataSet.yml", "methodDataSet2.json"});
+
+        classLevel = DataSetImpl.instance().withValue("classDataSet.yml", "classDataSet2.json");
+        methodLevel = DataSetImpl.instance().withValue("");
+
+        mergeDataSets = AnnotationUtils.mergeDataSetAnnotations(classLevel, methodLevel);
+        assertThat(mergeDataSets).isNotNull();
+        assertThat(mergeDataSets.value())
+                .isEqualTo(new String[]{"classDataSet.yml", "classDataSet2.json"});
+    }
+
+    @Test
     public void shouldMergeScripts() {
         DataSet classLevel = DataSetImpl.instance()
                 .withExecuteScriptsBefore("classScriptBefore.sql", "classScriptBefore2.sql")

@@ -950,6 +950,7 @@ Anything in this file will be included into the column with [INCLUDE] replacemen
 
 Now you can include it's content in any dataset using `[INCLUDE]` prefix:
 
+.datasets/yml/include-xml-replacements.yml
 ```
 TWEET:
   - ID: "1"
