@@ -48,7 +48,7 @@ public final class AnnotationUtils {
 
     @SuppressWarnings("unchecked")
     private static <A extends Annotation> A findAnnotation(AnnotatedElement element, Class<A> annotationType,
-            Set<Annotation> visited) {
+                                                           Set<Annotation> visited) {
 
         if (annotationType == null) {
             throw new RuntimeException("annotationType must not be null");
@@ -104,8 +104,8 @@ public final class AnnotationUtils {
     }
 
     private static <A extends Annotation> A getDeclaredAnnotation(AnnotatedElement element, Class<A> annotationType) {
-        for (Annotation annotation: element.getAnnotations()) {
-            if(annotation.annotationType().equals(annotationType)) {
+        for (Annotation annotation : element.getAnnotations()) {
+            if (annotation.annotationType().equals(annotationType)) {
                 return (A) annotation;
             }
         }
@@ -114,7 +114,7 @@ public final class AnnotationUtils {
 
 
     private static <A extends Annotation> A findMetaAnnotation(Class<A> annotationType,
-            Annotation[] candidates, AnnotationCacheKey key, Set<Annotation> visited) {
+                                                               Annotation[] candidates, AnnotationCacheKey key, Set<Annotation> visited) {
 
         for (Annotation candidateAnnotation : candidates) {
             Class<? extends Annotation> candidateAnnotationType = candidateAnnotation.annotationType();
@@ -180,7 +180,7 @@ public final class AnnotationUtils {
         String[] executeScriptsBefore = joinArray(classLevelDataSet.executeScriptsBefore(), methodLevelDataSet.executeScriptsBefore());
         String[] skipCleaningFor = joinArray(classLevelDataSet.skipCleaningFor(), methodLevelDataSet.skipCleaningFor());
         Class<? extends Replacer>[] replacers = joinReplacers(classLevelDataSet.replacers(), methodLevelDataSet.replacers());
-        DataSet mergedDataSet = new DataSetImpl(value, methodLevelDataSet.executorId(), methodLevelDataSet.strategy(), methodLevelDataSet.useSequenceFiltering(), tableOrdering, 
+        DataSet mergedDataSet = new DataSetImpl(value, methodLevelDataSet.executorId(), methodLevelDataSet.strategy(), methodLevelDataSet.useSequenceFiltering(), tableOrdering,
                 methodLevelDataSet.disableConstraints(), methodLevelDataSet.fillIdentityColumns(), executeStatementsBefore, executeScriptsAfter, executeScriptsBefore, executeStatementsAfter,
                 methodLevelDataSet.cleanBefore(), methodLevelDataSet.cleanAfter(), methodLevelDataSet.transactional(), skipCleaningFor, replacers);
         return mergedDataSet;
@@ -189,7 +189,7 @@ public final class AnnotationUtils {
     private static String[] joinArray(String[]... arrays) {
         int length = 0;
         for (String[] array : arrays) {
-            if(isNotEmptyArray(array)) {
+            if (isNotEmptyArray(array)) {
                 length += array.length;
             }
         }
@@ -198,7 +198,7 @@ public final class AnnotationUtils {
 
         int offset = 0;
         for (String[] array : arrays) {
-            if(isNotEmptyArray(array)){
+            if (isNotEmptyArray(array)) {
                 System.arraycopy(array, 0, result, offset, array.length);
                 offset += array.length;
             }
@@ -222,7 +222,7 @@ public final class AnnotationUtils {
     private static Class<? extends Replacer>[] joinReplacers(Class<? extends Replacer>[]... arrays) {
         int length = 0;
         for (Class<? extends Replacer>[] array : arrays) {
-            if(array != null) {
+            if (array != null) {
                 length += array.length;
             }
         }
@@ -231,7 +231,7 @@ public final class AnnotationUtils {
 
         int offset = 0;
         for (Class<? extends Replacer>[] array : arrays) {
-            if(array != null){
+            if (array != null) {
                 System.arraycopy(array, 0, result, offset, array.length);
                 offset += array.length;
             }
@@ -239,7 +239,4 @@ public final class AnnotationUtils {
 
         return result;
     }
-
-
-
 }
