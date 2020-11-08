@@ -873,9 +873,9 @@ TIP: Junit5 example can be https://github.com/database-rider/database-rider/blob
 
 A DataSet replacer is a `placeholder` used in a dataset file which will be replaced during test execution. 
 
-DBRider comes with a `Date Replacer`, `Null replacer` and a `Custom replacer`.
+DBRider comes with a `Date Replacer`, `Null replacer`, `Include replacer` and a `Custom replacer`.
 
-TIP: For complete source code of replacers examples https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/replacers/[Look here^].
+TIP: For complete source code of replacers examples, https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/replacers/[see here^].
 
 ==== Date replacer
 
@@ -938,6 +938,56 @@ TWEET:
         assertThat(tweet2.getContent()).isNotNull().isEqualTo("null");
     }
 ----
+
+==== Include replacer
+
+This replacer let you include the content of a file inside a dataset column. For example, imagine `doc.xml` file is located at `resources/datasets/xml/doc.xml` with following content:
+
+```
+<DOC ID="1" CONTENT="XML included content"/>
+Anything in this file will be included into the column with [INCLUDE] replacement!
+```
+
+Now you can include it's content in any dataset using `[INCLUDE]` prefix:
+
+```
+TWEET:
+  - ID: "1"
+    CONTENT: "[INCLUDE]datasets/xml/doc.xml"
+```
+
+You just have to enable the include replacer:
+
+```
+    @Test
+    @DataSet(replacers = IncludeReplacer.class, value = "datasets/yml/include-xml-replacements.yml")
+    public void shouldReplaceXmlFileContent() {
+        Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
+
+        assertThat(tweet).isNotNull();
+        assertThat(tweet.getContent()).contains("<DOC ID=\"1\" CONTENT=\"XML included content\"/>" + NEW_LINE +
+                "Anything in this file will be included into the column with [INCLUDE] replacement!");
+    }
+
+```
+
+[TIP]
+====
+You can also enable include replacer for all tests via https://github.com/database-rider/database-rider#332-dbunit-configuration[dbunit-config.yml] global config:
+
+.src/test/resources/dbunit.yml:
+----
+cacheConnection: false
+cacheTableNames: false
+leakHunter: true
+properties:
+  batchedStatements:  true
+  qualifiedTableNames: true
+  schema:
+  replacers: [!!com.github.database.rider.core.replacers.IncludeReplacer {}]
+----
+
+====
 
 ==== Custom replacer
 
@@ -1007,9 +1057,9 @@ public class CustomReplacementIt {
 
 [TIP]
 ====
-You can also register a custom replacer in `dbunit-config.yml`:
+You can also register a custom replacer for all tests via https://github.com/database-rider/database-rider#332-dbunit-configuration[dbunit-config.yml] global config:
 
-.src/test/resources/config/sample-dbunit.yml:
+.src/test/resources/dbunit.yml:
 ----
 cacheConnection: false
 cacheTableNames: false

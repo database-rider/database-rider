@@ -12,6 +12,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DBUnit(cacheConnection = true)
 public class IncludeReplacementsIt {
+    private static final String NEW_LINE = System.getProperty("line.separator");
+
     @Rule
     public EntityManagerProvider emProvider = EntityManagerProvider.instance("rules-it");
 
@@ -24,7 +26,8 @@ public class IncludeReplacementsIt {
         Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
 
         assertThat(tweet).isNotNull();
-        assertThat(tweet.getContent()).contains("<DOC ID=\"1\" CONTENT=\"REJSaWRlciE=\"/>");
+        assertThat(tweet.getContent()).contains("<DOC ID=\"1\" CONTENT=\"XML included content\"/>" + NEW_LINE +
+                "Anything in this file will be included into the column with [INCLUDE] replacement!");
     }
 
     @Test
@@ -54,6 +57,8 @@ public class IncludeReplacementsIt {
         Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
 
         assertThat(tweet).isNotNull();
-        assertThat(tweet.getContent()).contains("CONTENT: \"[INCLUDE]datasets/yml/include-yml-replacements.yml\"");
+        assertThat(tweet.getContent()).isEqualTo("DOC:" + NEW_LINE +
+                "  - ID: 1" + NEW_LINE +
+                "    CONTENT: \"Yaml included content\"");
     }
 }
