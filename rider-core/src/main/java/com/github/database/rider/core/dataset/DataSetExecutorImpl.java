@@ -287,7 +287,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             if (target != null) {
                 dataSets.add(target);
             }
-            if(datasetStream != null) {
+            if (datasetStream != null) {
                 datasetStream.close();
             }
         }
@@ -307,11 +307,29 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         return new CompositeDataSet(dataSetList.toArray(new IDataSet[dataSetList.size()]));
     }
 
-    private IDataSet performTableOrdering(DataSetConfig dataSet, IDataSet target) throws AmbiguousTableNameException {
+    private IDataSet performTableOrdering(DataSetConfig dataSet, IDataSet target) throws DataSetException {
         if (dataSet.getTableOrdering().length > 0) {
-            target = new FilteredDataSet(new SequenceTableFilter(dataSet.getTableOrdering(), dbUnitConfig.isCaseSensitiveTableNames()), target);
+            if (target.getTableNames().length > dataSet.getTableOrdering().length) {
+                final List<String> tablesNotDeclaredInOrdering = getTablesNotPresentInOrdering(target, dataSet);
+                final IDataSet unorderedDataSet = new FilteredDataSet(new SequenceTableFilter(tablesNotDeclaredInOrdering.toArray(new String[tablesNotDeclaredInOrdering.size()]), dbUnitConfig.isCaseSensitiveTableNames()), target);
+                final IDataSet tableOrderingDataset = new FilteredDataSet(new SequenceTableFilter(dataSet.getTableOrdering(), dbUnitConfig.isCaseSensitiveTableNames()), target);
+                target = new CompositeDataSet(unorderedDataSet,tableOrderingDataset);
+            } else {
+                target = new FilteredDataSet(new SequenceTableFilter(dataSet.getTableOrdering(), dbUnitConfig.isCaseSensitiveTableNames()), target);
+            }
         }
         return target;
+    }
+
+    private List<String> getTablesNotPresentInOrdering(IDataSet target, DataSetConfig dataSetConfig) throws DataSetException {
+        List<String> tablesNotPresentInOrdering = new ArrayList<>();
+        List<String> tableOrderingList = Arrays.asList(dataSetConfig.getTableOrdering());
+        for (String table : target.getTableNames()) {
+            if (!tableOrderingList.contains(table)) {
+                tablesNotPresentInOrdering.add(table);
+            }
+        }
+        return tablesNotPresentInOrdering;
     }
 
     private IDataSet performSequenceFiltering(DataSetConfig dataSet, IDataSet target)
@@ -663,7 +681,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private List<String> getTablesToSkipOnCleaning(DataSetConfig config) {
         List<String> tablesToSkipOnCleaning = config.getSkipCleaningFor() != null ? Arrays.asList(config.getSkipCleaningFor()) : Collections.<String>emptyList();
-        if(!tablesToSkipOnCleaning.isEmpty()) {
+        if (!tablesToSkipOnCleaning.isEmpty()) {
             for (Iterator<String> it = tablesToSkipOnCleaning.iterator(); it.hasNext(); ) {
                 String tableName = it.next();
                 if (RESERVED_TABLE_NAMES.contains(tableName.toLowerCase())) {
