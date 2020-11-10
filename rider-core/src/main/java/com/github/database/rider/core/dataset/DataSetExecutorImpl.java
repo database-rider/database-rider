@@ -309,11 +309,15 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private IDataSet performTableOrdering(DataSetConfig dataSet, IDataSet target) throws DataSetException {
         if (dataSet.getTableOrdering().length > 0) {
-            if (target.getTableNames().length > dataSet.getTableOrdering().length) {
-                final List<String> tablesNotDeclaredInOrdering = getTablesNotPresentInOrdering(target, dataSet);
-                final IDataSet unorderedDataSet = new FilteredDataSet(new SequenceTableFilter(tablesNotDeclaredInOrdering.toArray(new String[tablesNotDeclaredInOrdering.size()]), dbUnitConfig.isCaseSensitiveTableNames()), target);
-                final IDataSet tableOrderingDataset = new FilteredDataSet(new SequenceTableFilter(dataSet.getTableOrdering(), dbUnitConfig.isCaseSensitiveTableNames()), target);
-                target = new CompositeDataSet(unorderedDataSet,tableOrderingDataset);
+            final List<String> tablesNotDeclaredInOrdering = getTablesNotPresentInOrdering(target, dataSet);
+            IDataSet unorderedDataSet = null;
+            final boolean thereAreTablesNotPresentInOrderingDataSet = !tablesNotDeclaredInOrdering.isEmpty();
+            if (thereAreTablesNotPresentInOrderingDataSet) {
+                unorderedDataSet = new FilteredDataSet(new SequenceTableFilter(tablesNotDeclaredInOrdering.toArray(new String[tablesNotDeclaredInOrdering.size()]), dbUnitConfig.isCaseSensitiveTableNames()), target);
+            }
+            final IDataSet tableOrderingDataset = new FilteredDataSet(new SequenceTableFilter(dataSet.getTableOrdering(), dbUnitConfig.isCaseSensitiveTableNames()), target);
+            if (thereAreTablesNotPresentInOrderingDataSet) {
+                target = new CompositeDataSet(unorderedDataSet, tableOrderingDataset);
             } else {
                 target = new FilteredDataSet(new SequenceTableFilter(dataSet.getTableOrdering(), dbUnitConfig.isCaseSensitiveTableNames()), target);
             }
