@@ -50,7 +50,7 @@ public class DBUnitConfigTest {
                 .hasFieldOrPropertyWithValue("raiseExceptionOnCleanUp", false)
                 .hasFieldOrPropertyWithValue("expectedDbType", RiderDataSource.DBType.UNKNOWN)
                 .hasFieldOrPropertyWithValue("caseInsensitiveStrategy", Orthography.UPPERCASE)
-                .hasFieldOrPropertyWithValue("dataSetMergingStrategy", DataSetMergingStrategy.METHOD);
+                .hasFieldOrPropertyWithValue("mergingStrategy", DataSetMergingStrategy.METHOD);
 
         assertThat(config.getProperties()).
                 containsEntry("batchedStatements", false).
@@ -90,7 +90,7 @@ public class DBUnitConfigTest {
                 .hasFieldOrPropertyWithValue("raiseExceptionOnCleanUp", true)
                 .hasFieldOrPropertyWithValue("expectedDbType", RiderDataSource.DBType.HSQLDB)
                 .hasFieldOrPropertyWithValue("caseInsensitiveStrategy", Orthography.LOWERCASE)
-                .hasFieldOrPropertyWithValue("dataSetMergingStrategy", DataSetMergingStrategy.CLASS);
+                .hasFieldOrPropertyWithValue("mergingStrategy", DataSetMergingStrategy.CLASS);
 
         assertThat(config.getProperties()).
                 containsEntry("allowEmptyFields", true).
