@@ -110,6 +110,12 @@ public @interface DBUnit {
     boolean mergeDataSets() default false;
 
     /**
+     * When dataset merging strategy is set to CLASS then we first load class level datasets and later method level datasets
+     * Default is method
+     */
+    DataSetMergingStrategy mergingStrategy() default DataSetMergingStrategy.METHOD;
+
+    /**
      * If enabled, when loading datasets, reads in the whole XML into a buffer and dynamically adds new columns as they appear.
      * This way, it's not necessary to define all possible columns on the first line.
      *

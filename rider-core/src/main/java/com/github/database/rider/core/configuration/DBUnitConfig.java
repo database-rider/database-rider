@@ -1,6 +1,7 @@
 package com.github.database.rider.core.configuration;
 
 import com.github.database.rider.core.api.configuration.DBUnit;
+import com.github.database.rider.core.api.configuration.DataSetMergingStrategy;
 import com.github.database.rider.core.api.configuration.Orthography;
 import com.github.database.rider.core.connection.RiderDataSource;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
@@ -31,6 +32,7 @@ public class DBUnitConfig {
     private Boolean columnSensing;
     private Boolean raiseExceptionOnCleanUp;
     private Orthography caseInsensitiveStrategy;
+    private DataSetMergingStrategy dataSetMergingStrategy;
     private RiderDataSource.DBType expectedDbType;
     private Map<String, Object> properties;
     private ConnectionConfig connectionConfig;
@@ -52,6 +54,7 @@ public class DBUnitConfig {
         cacheTableNames = true;
         leakHunter = false;
         caseInsensitiveStrategy = Orthography.UPPERCASE;
+        dataSetMergingStrategy = DataSetMergingStrategy.METHOD;
         mergeDataSets = Boolean.FALSE;
         columnSensing = Boolean.FALSE;
         raiseExceptionOnCleanUp = Boolean.FALSE;
@@ -125,6 +128,8 @@ public class DBUnitConfig {
                 .columnSensing(dbUnit.columnSensing())
                 .raiseExceptionOnCleanUp(dbUnit.raiseExceptionOnCleanUp())
                 .expectedDbType(dbUnit.expectedDbType())
+                .caseInsensitiveStrategy(dbUnit.caseInsensitiveStrategy())
+                .dataSetMergingStrategy(dbUnit.mergingStrategy())
                 .addDBUnitProperty("batchedStatements", dbUnit.batchedStatements())
                 .addDBUnitProperty("batchSize", dbUnit.batchSize())
                 .addDBUnitProperty("allowEmptyFields", dbUnit.allowEmptyFields())
@@ -132,8 +137,8 @@ public class DBUnitConfig {
                 .addDBUnitProperty("qualifiedTableNames", dbUnit.qualifiedTableNames())
                 .addDBUnitProperty("schema", !dbUnit.schema().isEmpty() ? dbUnit.schema() : null)
                 .addDBUnitProperty("caseSensitiveTableNames", dbUnit.caseSensitiveTableNames())
-                .addDBUnitProperty("tableType", dbUnit.tableType())
-                .caseInsensitiveStrategy(dbUnit.caseInsensitiveStrategy());
+                .addDBUnitProperty("tableType", dbUnit.tableType());
+
 
         if (!"".equals(dbUnit.escapePattern())) {
             dbUnitConfig.addDBUnitProperty("escapePattern", dbUnit.escapePattern());
@@ -237,6 +242,11 @@ public class DBUnitConfig {
         return this;
     }
 
+    public DBUnitConfig dataSetMergingStrategy(DataSetMergingStrategy dataSetMergingStrategy) {
+        this.dataSetMergingStrategy = dataSetMergingStrategy;
+        return this;
+    }
+
     public DBUnitConfig addDBUnitProperty(String name, Object value) {
         properties.put(name, value);
         return this;
@@ -320,6 +330,14 @@ public class DBUnitConfig {
 
     public void setCaseInsensitiveStrategy(Orthography caseInsensitiveStrategy) {
         this.caseInsensitiveStrategy = caseInsensitiveStrategy;
+    }
+
+    public DataSetMergingStrategy getDataSetMergingStrategy() {
+        return dataSetMergingStrategy;
+    }
+
+    public void setDataSetMergingStrategy(DataSetMergingStrategy dataSetMergingStrategy) {
+        this.dataSetMergingStrategy = dataSetMergingStrategy;
     }
 
     public Map<String, Object> getProperties() {

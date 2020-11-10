@@ -3,6 +3,7 @@ package com.github.database.rider.junit5;
 import com.github.database.rider.core.RiderRunner;
 import com.github.database.rider.core.RiderTestContext;
 import com.github.database.rider.core.api.configuration.DBUnit;
+import com.github.database.rider.core.api.configuration.DataSetMergingStrategy;
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetExecutor;
@@ -368,7 +369,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
             DataSet dataSet;
             if (dbUnitConfig.isMergeDataSets()) {
                 Optional<DataSet> classLevelDataSetAnnotation = AnnotationUtils.findAnnotation(testClass, DataSet.class);
-                dataSet = resolveDataSet(dataSetAnnotation, classLevelDataSetAnnotation);
+                dataSet = resolveDataSet(dataSetAnnotation, classLevelDataSetAnnotation, dbUnitConfig);
             } else {
                 dataSet = dataSetAnnotation.get();
             }
@@ -427,9 +428,13 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
 
     // Resolve dataSet annotation, merging class and method annotations if needed
     private DataSet resolveDataSet(Optional<DataSet> methodLevelDataSet,
-                                   Optional<DataSet> classLevelDataSet) {
+                                   Optional<DataSet> classLevelDataSet, DBUnitConfig config) {
         if (classLevelDataSet.isPresent()) {
-            return com.github.database.rider.core.util.AnnotationUtils.mergeDataSetAnnotations(classLevelDataSet.get(), methodLevelDataSet.get());
+            if (DataSetMergingStrategy.METHOD.equals(config.getDataSetMergingStrategy())) {
+                return com.github.database.rider.core.util.AnnotationUtils.mergeDataSetAnnotations(classLevelDataSet.get(), methodLevelDataSet.get());
+            } else {
+                return com.github.database.rider.core.util.AnnotationUtils.mergeDataSetAnnotations(methodLevelDataSet.get(), classLevelDataSet.get());
+            }
         } else {
             return methodLevelDataSet.get();
         }

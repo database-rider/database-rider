@@ -11,6 +11,7 @@ import javax.interceptor.InvocationContext;
 import javax.transaction.UserTransaction;
 
 import com.github.database.rider.cdi.api.DBRider;
+import com.github.database.rider.core.api.configuration.DataSetMergingStrategy;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -170,7 +171,11 @@ public class DBUnitInterceptorImpl implements Serializable {
                 DataSet.class);
 
         if (config.isMergeDataSets() && (classAnnotation != null && methodAnnotation != null)) {
-            return AnnotationUtils.mergeDataSetAnnotations(classAnnotation, methodAnnotation);
+            if(DataSetMergingStrategy.METHOD.equals(config.getDataSetMergingStrategy())) {
+                return AnnotationUtils.mergeDataSetAnnotations(classAnnotation, methodAnnotation);
+            } else {
+                return AnnotationUtils.mergeDataSetAnnotations(methodAnnotation, classAnnotation);
+            }
         }
 
         if (methodAnnotation != null) {

@@ -323,9 +323,10 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private List<String> getTablesNotPresentInOrdering(IDataSet target, DataSetConfig dataSetConfig) throws DataSetException {
         List<String> tablesNotPresentInOrdering = new ArrayList<>();
-        List<String> tableOrderingList = Arrays.asList(dataSetConfig.getTableOrdering());
+        final List<String> tableOrderingList = Arrays.asList(dataSetConfig.getTableOrdering());
         for (String table : target.getTableNames()) {
-            if (!tableOrderingList.contains(table)) {
+            if (!tableOrderingList.contains(table) && !tableOrderingList.contains(table.toLowerCase())
+                    && !tableOrderingList.contains(table.toUpperCase())) {
                 tablesNotPresentInOrdering.add(table);
             }
         }

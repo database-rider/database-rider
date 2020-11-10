@@ -1,6 +1,7 @@
 package com.github.database.rider.core.configuration;
 
 import com.github.database.rider.core.api.configuration.DBUnit;
+import com.github.database.rider.core.api.configuration.DataSetMergingStrategy;
 import com.github.database.rider.core.api.configuration.Orthography;
 import com.github.database.rider.core.connection.RiderDataSource;
 import com.github.database.rider.core.replacers.CustomReplacer;
@@ -48,7 +49,8 @@ public class DBUnitConfigTest {
                 .hasFieldOrPropertyWithValue("leakHunter", false)
                 .hasFieldOrPropertyWithValue("raiseExceptionOnCleanUp", false)
                 .hasFieldOrPropertyWithValue("expectedDbType", RiderDataSource.DBType.UNKNOWN)
-                .hasFieldOrPropertyWithValue("caseInsensitiveStrategy", Orthography.UPPERCASE);
+                .hasFieldOrPropertyWithValue("caseInsensitiveStrategy", Orthography.UPPERCASE)
+                .hasFieldOrPropertyWithValue("dataSetMergingStrategy", DataSetMergingStrategy.METHOD);
 
         assertThat(config.getProperties()).
                 containsEntry("batchedStatements", false).
@@ -87,7 +89,8 @@ public class DBUnitConfigTest {
                 .hasFieldOrPropertyWithValue("leakHunter", true)
                 .hasFieldOrPropertyWithValue("raiseExceptionOnCleanUp", true)
                 .hasFieldOrPropertyWithValue("expectedDbType", RiderDataSource.DBType.HSQLDB)
-                .hasFieldOrPropertyWithValue("caseInsensitiveStrategy", Orthography.UPPERCASE);
+                .hasFieldOrPropertyWithValue("caseInsensitiveStrategy", Orthography.LOWERCASE)
+                .hasFieldOrPropertyWithValue("dataSetMergingStrategy", DataSetMergingStrategy.CLASS);
 
         assertThat(config.getProperties()).
                 containsEntry("allowEmptyFields", true).
