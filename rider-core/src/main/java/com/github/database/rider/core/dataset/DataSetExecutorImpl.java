@@ -185,6 +185,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     .append("columnSensing: ").append("" + dbUnitConfig.isColumnSensing()).append("\n")
                     .append("leakHunter: ").append("" + dbUnitConfig.isLeakHunter()).append("\n")
                     .append("mergeDataSets: ").append(dbUnitConfig.isMergeDataSets()).append("\n")
+                    .append("mergingStrategy: ").append(dbUnitConfig.getMergingStrategy()).append("\n")
                     .append("schema: ").append("" + dbUnitConfig.getSchema()).append("\n");
 
             for (Entry<String, Object> entry : dbUnitConfig.getProperties().entrySet()) {

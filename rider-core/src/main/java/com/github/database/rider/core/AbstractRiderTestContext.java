@@ -29,7 +29,7 @@ public abstract class AbstractRiderTestContext implements RiderTestContext {
 
         final DBUnitConfig config = executor.getDBUnitConfig();
         if (executor.getDBUnitConfig().isMergeDataSets() && clazz.isAssignableFrom(DataSet.class) && (classAnnotation != null && methodAnnotation != null)) {
-            if(DataSetMergingStrategy.METHOD.equals(config.getDataSetMergingStrategy())) {
+            if(DataSetMergingStrategy.METHOD.equals(config.getMergingStrategy())) {
                 return (T) AnnotationUtils.mergeDataSetAnnotations((DataSet) classAnnotation, (DataSet) methodAnnotation);
             } else {
                 return (T) AnnotationUtils.mergeDataSetAnnotations((DataSet) methodAnnotation, (DataSet) classAnnotation);

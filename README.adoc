@@ -340,9 +340,10 @@ cacheConnection: true
 cacheTableNames: true
 leakHunter: false
 mergeDataSets: false
-caseInsensitiveStrategy: !!com.github.database.rider.core.api.configuration.Orthography 'UPPERCASE' <1>
-raiseExceptionOnCleanUp: false <2>
-expectedDbType: UNKNOWN <3>
+mergingStrategy: METHOD <1>
+caseInsensitiveStrategy: UPPERCASE <2>
+raiseExceptionOnCleanUp: false <3>
+expectedDbType: UNKNOWN <4>
 properties:
   batchedStatements:  false
   qualifiedTableNames: false
@@ -353,7 +354,7 @@ properties:
   allowEmptyFields: false
   escapePattern:
   schema:
-  datatypeFactory: !!com.github.database.rider.core.configuration.DBUnitConfigTest$MockDataTypeFactory {} <4>
+  datatypeFactory: !!com.github.database.rider.core.configuration.DBUnitConfigTest$MockDataTypeFactory {} <5>
   tableType: ["TABLE"]
 connectionConfig:
   driver: ""
@@ -361,10 +362,11 @@ connectionConfig:
   user: ""
   password: ""
 ----
-<1> Only applied when `caseSensitiveTableNames` is `false`. Valid values are `UPPERCASE` and `LOWERCASE`.
-<2> If enabled an exception will be raised when `cleanBefore` or `cleanAfter` fails. If disabled then only a warn message is logged. Default is false.
-<3> In the process of initialization, if the actual database type is different from the expected database type, exception will be thrown unless the expected database type is UNKNOWN. Default is UNKNOWN.
-<4> Make it possible to define a datatype factory, https://github.com/database-rider/database-rider/issues/30[see issue #30^] for details.
+<1> Strategy for merging datasets, if `METHOD` then the method level dataset will be loaded first but if `CLASS` then the class level dataset will be loaded first.
+<2> Only applied when `caseSensitiveTableNames` is `false`. Valid values are `UPPERCASE` and `LOWERCASE`.
+<3> If enabled an exception will be raised when `cleanBefore` or `cleanAfter` fails. If disabled then only a warn message is logged. Default is false.
+<4> In the process of initialization, if the actual database type is different from the expected database type, exception will be thrown unless the expected database type is UNKNOWN. Default is UNKNOWN.
+<5> Make it possible to define a datatype factory, https://github.com/database-rider/database-rider/issues/30[see issue #30^] for details.
 
 IMPORTANT: `@DBUnit` annotation takes precedence over `dbunit.yml` global configuration which will be used only if the annotation is not present.
 

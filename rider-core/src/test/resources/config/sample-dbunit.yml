@@ -3,7 +3,7 @@ cacheTableNames: false
 leakHunter: true
 raiseExceptionOnCleanUp: true
 expectedDbType: HSQLDB
-dataSetMergingStrategy: CLASS
+mergingStrategy: CLASS
 caseInsensitiveStrategy: LOWERCASE
 properties:
   batchedStatements:  true

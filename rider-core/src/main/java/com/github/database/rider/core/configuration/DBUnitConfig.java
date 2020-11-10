@@ -32,7 +32,7 @@ public class DBUnitConfig {
     private Boolean columnSensing;
     private Boolean raiseExceptionOnCleanUp;
     private Orthography caseInsensitiveStrategy;
-    private DataSetMergingStrategy dataSetMergingStrategy;
+    private DataSetMergingStrategy mergingStrategy;
     private RiderDataSource.DBType expectedDbType;
     private Map<String, Object> properties;
     private ConnectionConfig connectionConfig;
@@ -54,7 +54,7 @@ public class DBUnitConfig {
         cacheTableNames = true;
         leakHunter = false;
         caseInsensitiveStrategy = Orthography.UPPERCASE;
-        dataSetMergingStrategy = DataSetMergingStrategy.METHOD;
+        mergingStrategy = DataSetMergingStrategy.METHOD;
         mergeDataSets = Boolean.FALSE;
         columnSensing = Boolean.FALSE;
         raiseExceptionOnCleanUp = Boolean.FALSE;
@@ -129,7 +129,7 @@ public class DBUnitConfig {
                 .raiseExceptionOnCleanUp(dbUnit.raiseExceptionOnCleanUp())
                 .expectedDbType(dbUnit.expectedDbType())
                 .caseInsensitiveStrategy(dbUnit.caseInsensitiveStrategy())
-                .dataSetMergingStrategy(dbUnit.mergingStrategy())
+                .mergingStrategy(dbUnit.mergingStrategy())
                 .addDBUnitProperty("batchedStatements", dbUnit.batchedStatements())
                 .addDBUnitProperty("batchSize", dbUnit.batchSize())
                 .addDBUnitProperty("allowEmptyFields", dbUnit.allowEmptyFields())
@@ -242,8 +242,8 @@ public class DBUnitConfig {
         return this;
     }
 
-    public DBUnitConfig dataSetMergingStrategy(DataSetMergingStrategy dataSetMergingStrategy) {
-        this.dataSetMergingStrategy = dataSetMergingStrategy;
+    public DBUnitConfig mergingStrategy(DataSetMergingStrategy dataSetMergingStrategy) {
+        this.mergingStrategy = dataSetMergingStrategy;
         return this;
     }
 
@@ -332,12 +332,12 @@ public class DBUnitConfig {
         this.caseInsensitiveStrategy = caseInsensitiveStrategy;
     }
 
-    public DataSetMergingStrategy getDataSetMergingStrategy() {
-        return dataSetMergingStrategy;
+    public DataSetMergingStrategy getMergingStrategy() {
+        return mergingStrategy;
     }
 
-    public void setDataSetMergingStrategy(DataSetMergingStrategy dataSetMergingStrategy) {
-        this.dataSetMergingStrategy = dataSetMergingStrategy;
+    public void setMergingStrategy(DataSetMergingStrategy mergingStrategy) {
+        this.mergingStrategy = mergingStrategy;
     }
 
     public Map<String, Object> getProperties() {

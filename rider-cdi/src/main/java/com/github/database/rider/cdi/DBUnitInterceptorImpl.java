@@ -171,7 +171,7 @@ public class DBUnitInterceptorImpl implements Serializable {
                 DataSet.class);
 
         if (config.isMergeDataSets() && (classAnnotation != null && methodAnnotation != null)) {
-            if(DataSetMergingStrategy.METHOD.equals(config.getDataSetMergingStrategy())) {
+            if(DataSetMergingStrategy.METHOD.equals(config.getMergingStrategy())) {
                 return AnnotationUtils.mergeDataSetAnnotations(classAnnotation, methodAnnotation);
             } else {
                 return AnnotationUtils.mergeDataSetAnnotations(methodAnnotation, classAnnotation);

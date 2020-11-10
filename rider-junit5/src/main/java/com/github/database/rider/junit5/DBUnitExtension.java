@@ -430,7 +430,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     private DataSet resolveDataSet(Optional<DataSet> methodLevelDataSet,
                                    Optional<DataSet> classLevelDataSet, DBUnitConfig config) {
         if (classLevelDataSet.isPresent()) {
-            if (DataSetMergingStrategy.METHOD.equals(config.getDataSetMergingStrategy())) {
+            if (DataSetMergingStrategy.METHOD.equals(config.getMergingStrategy())) {
                 return com.github.database.rider.core.util.AnnotationUtils.mergeDataSetAnnotations(classLevelDataSet.get(), methodLevelDataSet.get());
             } else {
                 return com.github.database.rider.core.util.AnnotationUtils.mergeDataSetAnnotations(methodLevelDataSet.get(), classLevelDataSet.get());
