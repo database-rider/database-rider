@@ -311,8 +311,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         if (dataSet.getTableOrdering().length > 0) {
             final IDataSet tableOrderingDataset = new FilteredDataSet(new SequenceTableFilter(dataSet.getTableOrdering(), dbUnitConfig.isCaseSensitiveTableNames()), target);
             final List<String> tablesNotDeclaredInOrdering = getTablesNotPresentInOrdering(target, dataSet);
-            final boolean thereAreTablesNotPresentInOrderingDataSet = !tablesNotDeclaredInOrdering.isEmpty();
-            if (thereAreTablesNotPresentInOrderingDataSet) {
+            if (!tablesNotDeclaredInOrdering.isEmpty()) {
                 final IDataSet unorderedDataSet = new FilteredDataSet(new SequenceTableFilter(tablesNotDeclaredInOrdering.toArray(new String[tablesNotDeclaredInOrdering.size()]), dbUnitConfig.isCaseSensitiveTableNames()), target);
                 target = new CompositeDataSet(unorderedDataSet, tableOrderingDataset);
             } else {
