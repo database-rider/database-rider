@@ -44,6 +44,13 @@
             <version>${version.junit-jupiter}</version>
         </dependency>
         <dependency>
+            <!-- contains the engine that actually runs the Jupiter-tests -->
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${version.junit-jupiter}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <!-- contains the runner that adapts Jupiter-tests for a v4-run -->
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-runner</artifactId>

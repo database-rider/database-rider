@@ -1,16 +1,20 @@
 package com.github.database.rider.core.util;
 
+import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.DataSetImpl;
+import com.github.database.rider.core.replacers.Replacer;
+import org.junit.runner.Description;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import com.github.database.rider.core.replacers.Replacer;
-import org.junit.runner.Description;
-
-import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.core.api.dataset.DataSetImpl;
 
 /**
  * Adpated from JUnit5 AnnotationUtils:
@@ -165,7 +169,11 @@ public final class AnnotationUtils {
             Method method = description.getTestClass().getMethod(description.getMethodName());
             return findAnnotation(method, class1);
         } catch (NoSuchMethodException | SecurityException e) {
-            throw new RuntimeException(String.format("Could not find method %s on test class %s ", description.getMethodName(), description.getTestClass().getName()));
+            A annotation = description.getAnnotation(class1);  //related to #104
+            if(annotation == null) {
+                annotation = description.getTestClass().getAnnotation(class1);
+            }
+            return annotation;
         }
     }
 
