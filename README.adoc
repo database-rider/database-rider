@@ -1090,7 +1090,7 @@ Scriptable datasets allows the use of `Javascript` and `Groovy` scripting inside
 USER:
   - ID: groovy:new Random().nextInt()
     NAME: "@realpestano"
-  - ID: groovy:new Random().nextInt()
+  - ID: js:Math.floor(Math.random() * 999999)
     NAME: "@dbunit"
 ----
 
@@ -1098,7 +1098,7 @@ USER:
 ----
     @Test
     @DataSet(value = "datasets/yml/userWithRandomId.yml")
-    public void shouldSeedDataSet() {
+    public void shouldReplaceUserIdUsingScriptInDataset() {
         User user = (User) EntityManagerProvider.em().createQuery("select u from User u where u.name = '@dbunit'").getSingleResult();
         assertThat(user).isNotNull();
         assertThat(user.getId()).isNotNull();

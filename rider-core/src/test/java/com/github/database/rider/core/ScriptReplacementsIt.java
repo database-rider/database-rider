@@ -70,7 +70,7 @@ public class ScriptReplacementsIt {
 
     @Test
     @DataSet(value = "datasets/yml/userWithRandomId.yml",cleanBefore = true, disableConstraints = true, executorId = "rider-it")
-    public void shouldReplaceUserIdUsingGroovyInDataset() {
+    public void shouldReplaceUserIdUsingScriptInDataset() {
         User user = (User) emProvider.em().createQuery("select u from User u where u.name = '@dbunit'").getSingleResult();
         assertThat(user).isNotNull();
         assertThat(user.getId()).isNotNull();
