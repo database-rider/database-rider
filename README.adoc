@@ -1081,6 +1081,45 @@ properties:
 
 ====
 
+=== Scriptable DataSets
+
+Scriptable datasets allows the use of `Javascript` and `Groovy` scripting inside datasets, for that you need to prefix the column content with `groovy:` or `js:`:
+
+.userWithRandomId.yml
+----
+USER:
+  - ID: groovy:new Random().nextInt()
+    NAME: "@realpestano"
+  - ID: groovy:new Random().nextInt()
+    NAME: "@dbunit"
+----
+
+[source, java]
+----
+    @Test
+    @DataSet(value = "datasets/yml/userWithRandomId.yml")
+    public void shouldSeedDataSet() {
+        User user = (User) EntityManagerProvider.em().createQuery("select u from User u where u.name = '@dbunit'").getSingleResult();
+        assertThat(user).isNotNull();
+        assertThat(user.getId()).isNotNull();
+    }
+----
+
+[IMPORTANT]
+====
+For Groovy you need following dependency in classpath:
+
+----
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>2.4.6</version>
+            <scope>test</scope>
+        </dependency>
+----
+====
+TIP: For complete source code of scriptable datasets examples, https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java#L19[see here^].
+
 === DataSet providers
 
 A dataset provider is a *Java class responsible for defining a dataset* instead of having `yml`, `json`, `xml` files representing your datasets. Following are the steps for creating and using a dataset provider:

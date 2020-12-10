@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Calendar;
 import java.util.List;
 
+import com.github.database.rider.core.model.User;
 import com.github.database.rider.core.util.EntityManagerProvider;
 import com.github.database.rider.core.api.dataset.DataSet;
 import org.junit.Before;
@@ -67,6 +68,13 @@ public class ScriptReplacementsIt {
     }
 // end::groovy[]
 
+    @Test
+    @DataSet(value = "datasets/yml/userWithRandomId.yml",cleanBefore = true, disableConstraints = true, executorId = "rider-it")
+    public void shouldReplaceUserIdUsingGroovyInDataset() {
+        User user = (User) emProvider.em().createQuery("select u from User u where u.name = '@dbunit'").getSingleResult();
+        assertThat(user).isNotNull();
+        assertThat(user.getId()).isNotNull();
+    }
 
     @Test
     @DataSet(value = "datasets/yml/random-replacements.yml",cleanBefore = true, disableConstraints = true, executorId = "rider-it")

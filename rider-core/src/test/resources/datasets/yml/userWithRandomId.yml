@@ -1,0 +1,5 @@
+USER:
+  - ID: groovy:new Random().nextInt()
+    NAME: "@realpestano"
+  - ID: groovy:new Random().nextInt()
+    NAME: "@dbunit"
