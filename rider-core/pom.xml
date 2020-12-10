@@ -138,11 +138,10 @@
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M3</version>
+                <version>3.0.0-M5</version>
                 <configuration>
-                    <parallel>classes</parallel>
-                    <useUnlimitedThreads>true</useUnlimitedThreads>
                     <reuseForks>false</reuseForks>
+                    <threadCount>2</threadCount>
                     <includes>
                         <include>**/*It.java</include>
                         <include>**/*Test.java</include>

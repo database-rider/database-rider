@@ -1,6 +1,7 @@
 package com.github.database.rider.core;
 
 import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.github.database.rider.core.model.User;
 import com.github.database.rider.core.util.EntityManagerProvider;
 import org.junit.Rule;
@@ -14,17 +15,16 @@ import java.util.Collection;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
-@DataSet(value = "datasets/yml/users.yml", cleanBefore = true)
+@DataSet(value = "datasets/yml/users.yml", strategy = SeedStrategy.REFRESH)
 public class ParameterizedClassLevelIt {
 
     @Rule
-    public EntityManagerProvider emProvider = EntityManagerProvider.instance("rules-it");
+    public EntityManagerProvider emProvider = EntityManagerProvider.instance("param-it");
 
     @Rule
     public DBUnitRule dbUnitRule = DBUnitRule.instance(emProvider.connection());
 
     Integer id;
-
     String name;
 
     public ParameterizedClassLevelIt(Integer id, String name) {
