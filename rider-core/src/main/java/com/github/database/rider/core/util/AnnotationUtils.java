@@ -168,7 +168,7 @@ public final class AnnotationUtils {
         try {
             Method method = description.getTestClass().getMethod(description.getMethodName());
             return findAnnotation(method, class1);
-        } catch (NoSuchMethodException | SecurityException e) {
+        } catch (NoSuchMethodException | SecurityException | NullPointerException e) {
             A annotation = description.getAnnotation(class1);  //related to #104
             if(annotation == null) {
                 annotation = description.getTestClass().getAnnotation(class1);
