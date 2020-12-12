@@ -12,7 +12,6 @@ import com.github.database.rider.core.exception.DataBaseSeedingException;
 import com.github.database.rider.core.replacers.Replacer;
 import com.github.database.rider.core.util.ContainsFilterTable;
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.AmbiguousTableNameException;
 import org.dbunit.dataset.*;
 import org.dbunit.dataset.csv.CsvDataSet;
 import org.dbunit.dataset.excel.XlsDataSet;
@@ -1089,6 +1088,5 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     public void clearRiderDataSource() {
         this.riderDataSource = null;
     }
-
 
 }

@@ -3,12 +3,14 @@ package com.github.database.rider.core.assertion;
 import org.dbunit.assertion.DbUnitAssert;
 import org.dbunit.assertion.Difference;
 import org.dbunit.assertion.FailureHandler;
+import org.dbunit.assertion.comparer.value.ValueComparer;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.datatype.DataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -28,6 +30,8 @@ public class DataSetAssert extends DbUnitAssert {
      * @param failureHandler handler
      * @throws DataSetException if datasets does not match
      */
+
+
     @Override
     protected void compareData(ITable expectedTable, ITable actualTable, ComparisonColumn[] comparisonCols, FailureHandler failureHandler) throws DataSetException {
         logger.debug("compareData(expectedTable={}, actualTable={}, "
@@ -96,6 +100,14 @@ public class DataSetAssert extends DbUnitAssert {
             }
         }
     }
+
+    @Override
+    protected void compareData(ITable expectedTable, ITable actualTable, ComparisonColumn[] comparisonCols, FailureHandler failureHandler, ValueComparer defaultValueComparer,
+                               final Map<String, ValueComparer> columnValueComparers,
+                               final int rowNum, final int columnNum) throws DataSetException {
+        this.compareData(expectedTable,actualTable, comparisonCols, failureHandler);
+    }
+
 
     private boolean regexMatches(String expectedValue, Object actualValue) {
         if (actualValue == null) {
