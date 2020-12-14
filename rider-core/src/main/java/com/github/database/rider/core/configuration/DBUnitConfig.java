@@ -31,6 +31,7 @@ public class DBUnitConfig {
     private Boolean mergeDataSets;
     private Boolean columnSensing;
     private Boolean raiseExceptionOnCleanUp;
+    private Boolean disableSequenceFiltering;
     private Orthography caseInsensitiveStrategy;
     private DataSetMergingStrategy mergingStrategy;
     private RiderDataSource.DBType expectedDbType;
@@ -58,6 +59,7 @@ public class DBUnitConfig {
         mergeDataSets = Boolean.FALSE;
         columnSensing = Boolean.FALSE;
         raiseExceptionOnCleanUp = Boolean.FALSE;
+        disableSequenceFiltering = Boolean.FALSE;
         expectedDbType = RiderDataSource.DBType.UNKNOWN;
         initDefaultProperties();
         initDefaultConnectionConfig();
@@ -127,6 +129,7 @@ public class DBUnitConfig {
                 .mergeDataSets(dbUnit.mergeDataSets())
                 .columnSensing(dbUnit.columnSensing())
                 .raiseExceptionOnCleanUp(dbUnit.raiseExceptionOnCleanUp())
+                .disableSequenceFiltering(dbUnit.disableSequenceFiltering())
                 .expectedDbType(dbUnit.expectedDbType())
                 .caseInsensitiveStrategy(dbUnit.caseInsensitiveStrategy())
                 .mergingStrategy(dbUnit.mergingStrategy())
@@ -148,8 +151,7 @@ public class DBUnitConfig {
             try {
                 IDataTypeFactory factory = dbUnit.dataTypeFactoryClass().newInstance();
                 dbUnitConfig.addDBUnitProperty("datatypeFactory", factory);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeException("failed to instantiate datatypeFactory", e);
             }
         }
@@ -158,13 +160,11 @@ public class DBUnitConfig {
             try {
                 IMetadataHandler factory = dbUnit.metaDataHandler().newInstance();
                 dbUnitConfig.addDBUnitProperty("metadataHandler", factory);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeException("failed to instantiate metadataHandler", e);
             }
         }
-        
-        
+
         List<Replacer> dbUnitReplacers = new ArrayList<>();
         for (Class<? extends Replacer> replacerClass : dbUnit.replacers()) {
             try {
@@ -226,9 +226,14 @@ public class DBUnitConfig {
         this.cacheTableNames = cacheTables;
         return this;
     }
-    
+
     public DBUnitConfig mergeDataSets(boolean mergeDataSets) {
         this.mergeDataSets = mergeDataSets;
+        return this;
+    }
+
+    private DBUnitConfig disableSequenceFiltering(boolean disableSequenceFiltering) {
+        this.disableSequenceFiltering = disableSequenceFiltering;
         return this;
     }
 
@@ -370,6 +375,14 @@ public class DBUnitConfig {
 
     public void setRaiseExceptionOnCleanUp(boolean raiseExceptionOnCleanUp) {
         this.raiseExceptionOnCleanUp = raiseExceptionOnCleanUp;
+    }
+
+    public Boolean isDisableSequenceFiltering() {
+        return disableSequenceFiltering;
+    }
+
+    public void setDisableSequenceFiltering(Boolean disableSequenceFiltering) {
+        this.disableSequenceFiltering = disableSequenceFiltering;
     }
 
     public RiderDataSource.DBType getExpectedDbType() {

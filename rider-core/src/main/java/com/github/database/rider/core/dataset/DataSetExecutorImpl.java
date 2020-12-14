@@ -175,6 +175,13 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         }
     }
 
+    private boolean isSequenceFilteringEnabled(DBUnitConfig dbUnitConfig, DataSetConfig dataSetConfig) {
+        if (dbUnitConfig.isDisableSequenceFiltering()) {
+            return false;
+        }
+        return dataSetConfig.isUseSequenceFiltering();
+    }
+
     private void printDBUnitConfiguration() {
         if (printDBUnitConfig.compareAndSet(true, false)) {
             StringBuilder sb = new StringBuilder(150);
@@ -185,6 +192,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     .append("leakHunter: ").append("" + dbUnitConfig.isLeakHunter()).append("\n")
                     .append("mergeDataSets: ").append(dbUnitConfig.isMergeDataSets()).append("\n")
                     .append("mergingStrategy: ").append(dbUnitConfig.getMergingStrategy()).append("\n")
+                    .append("disableSequenceFiltering: ").append(dbUnitConfig.isDisableSequenceFiltering()).append("\n")
+                    .append("raiseExceptionOnCleanUp: ").append(dbUnitConfig.isRaiseExceptionOnCleanUp()).append("\n")
                     .append("schema: ").append("" + dbUnitConfig.getSchema()).append("\n");
 
             for (Entry<String, Object> entry : dbUnitConfig.getProperties().entrySet()) {
@@ -335,7 +344,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private IDataSet performSequenceFiltering(DataSetConfig dataSet, IDataSet target)
             throws DatabaseUnitException, SQLException {
-        if (dataSet.isUseSequenceFiltering()) {
+        boolean sequenceFilteringEnabled = isSequenceFilteringEnabled(dbUnitConfig, dataSet);
+        if (sequenceFilteringEnabled) {
             ITableFilter filteredTable = new RiderSequenceFilter(getRiderDataSource().getDBUnitConnection(),
                     target.getTableNames(), dbUnitConfig);
             target = new FilteredDataSet(filteredTable, target);

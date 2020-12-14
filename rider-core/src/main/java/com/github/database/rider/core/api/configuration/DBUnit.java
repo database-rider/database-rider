@@ -65,6 +65,13 @@ public @interface DBUnit {
     boolean raiseExceptionOnCleanUp() default false;
 
     /**
+     * If enabled then the sequenceFiltering will be disabled even if it is enabled at <code>@DataSet</code> level
+     * @since 1.20.0
+     * @return boolean indicating the sequence filtering should be disabled or not.
+     */
+    boolean disableSequenceFiltering() default false;
+
+    /**
      * In the process of initialization, if the actual database type is different from the expected database type,
      * exception will be thrown unless the expected database type is {@link RiderDataSource.DBType#UNKNOWN}.
      * <p>
