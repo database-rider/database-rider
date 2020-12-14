@@ -88,6 +88,7 @@ public class DBUnitConfigTest {
                 .hasFieldOrPropertyWithValue("cacheTableNames", false)
                 .hasFieldOrPropertyWithValue("leakHunter", true)
                 .hasFieldOrPropertyWithValue("raiseExceptionOnCleanUp", true)
+                .hasFieldOrPropertyWithValue("disableSequenceFiltering", true)
                 .hasFieldOrPropertyWithValue("expectedDbType", RiderDataSource.DBType.HSQLDB)
                 .hasFieldOrPropertyWithValue("caseInsensitiveStrategy", Orthography.LOWERCASE)
                 .hasFieldOrPropertyWithValue("mergingStrategy", DataSetMergingStrategy.CLASS);
