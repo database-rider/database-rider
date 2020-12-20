@@ -166,6 +166,12 @@ public @interface DBUnit {
     String[] tableType() default {"TABLE"};
 
     /**
+     * @since 1.21.0
+     * @return list of table names to disable primary key check while creating the dataset.
+     */
+    String[] disablePKCheckFor() default {};
+
+    /**
      * @since 0.15.0
      * @return driver class name. Used for declarative connections. Don't needed for drivers that implement jdbc 4.
      */

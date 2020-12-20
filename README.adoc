@@ -345,6 +345,7 @@ caseInsensitiveStrategy: UPPERCASE <2>
 raiseExceptionOnCleanUp: false <3>
 expectedDbType: UNKNOWN <4>
 disableSequenceFiltering: false <5>
+disablePKCheckFor: [""] <6>
 properties:
   batchedStatements:  false
   qualifiedTableNames: false
@@ -355,7 +356,7 @@ properties:
   allowEmptyFields: false
   escapePattern:
   schema:
-  datatypeFactory: !!com.github.database.rider.core.configuration.DBUnitConfigTest$MockDataTypeFactory {} <6>
+  datatypeFactory: !!com.github.database.rider.core.configuration.DBUnitConfigTest$MockDataTypeFactory {} <7>
   tableType: ["TABLE"]
 connectionConfig:
   driver: ""
@@ -368,8 +369,8 @@ connectionConfig:
 <3> If enabled an exception will be raised when `cleanBefore` or `cleanAfter` fails. If disabled then only a warn message is logged. Default is false.
 <4> In the process of initialization, if the actual database type is different from the expected database type, exception will be thrown unless the expected database type is UNKNOWN. Default is UNKNOWN.
 <5> Disables sequenceFiltering at dbunit level, overriding the default behavior of `@DataSet(useSequenceFiltering)` which is true.
-<6> Make it possible to define a datatype factory, https://github.com/database-rider/database-rider/issues/30[see issue #30^] for details.
-
+<6> List of table names to disable primary key checking while seeding the database.
+<7> Make it possible to define a datatype factory, https://github.com/database-rider/database-rider/issues/30[see issue #30^] for details.
 
 IMPORTANT: `@DBUnit` annotation takes precedence over `dbunit.yml` global configuration which will be used only if the annotation is not present.
 

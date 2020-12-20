@@ -2,6 +2,7 @@ package com.github.database.rider.core.connection;
 
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.configuration.DBUnitConfig;
+import com.github.database.rider.core.filter.RiderPrimaryKeyFilter;
 import com.github.database.rider.core.util.DriverUtils;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
@@ -21,6 +22,7 @@ import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -45,8 +47,8 @@ public class RiderDataSource {
         try {
             init();
         } catch (SQLException e) {
-		    throw new RuntimeException("Could not initialize database rider datasource.", e);
-		}
+            throw new RuntimeException("Could not initialize database rider datasource.", e);
+        }
     }
 
     public Connection getConnection() throws SQLException {
@@ -94,8 +96,8 @@ public class RiderDataSource {
             ConfigProperty byShortName = DatabaseConfig.findByShortName(p.getKey());
             if (byShortName != null) {
                 Object propertyValue = p.getValue();
-                if(propertyValue instanceof List) {
-                    propertyValue = ((List)propertyValue).toArray(new String[((List) propertyValue).size()]);
+                if (propertyValue instanceof List) {
+                    propertyValue = ((List) propertyValue).toArray(new String[((List) propertyValue).size()]);
                 }
                 config.setProperty(byShortName.getProperty(), propertyValue);
             }
@@ -112,6 +114,9 @@ public class RiderDataSource {
             if (metadataHandler != null) {
                 config.setProperty(DatabaseConfig.PROPERTY_METADATA_HANDLER, metadataHandler);
             }
+        }
+        if (dbUnitConfig.getDisablePKCheckFor() != null && dbUnitConfig.getDisablePKCheckFor().length > 0) {
+            config.setProperty(DatabaseConfig.PROPERTY_PRIMARY_KEY_FILTER, new RiderPrimaryKeyFilter(Arrays.asList(dbUnitConfig.getDisablePKCheckFor())));
         }
 
     }
@@ -131,7 +136,7 @@ public class RiderDataSource {
             case MSSQL:
                 return new MsSqlDataTypeFactory();
             case DB2:
-            	return new Db2DataTypeFactory();
+                return new Db2DataTypeFactory();
             default:
                 return null;
         }

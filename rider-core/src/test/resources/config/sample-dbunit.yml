@@ -6,6 +6,7 @@ disableSequenceFiltering: true
 expectedDbType: HSQLDB
 mergingStrategy: CLASS
 caseInsensitiveStrategy: LOWERCASE
+disablePKCheckFor: ["NoPKTable"]
 properties:
   batchedStatements:  true
   caseSensitiveTableNames: false

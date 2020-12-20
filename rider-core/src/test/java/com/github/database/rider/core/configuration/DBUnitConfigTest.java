@@ -50,7 +50,8 @@ public class DBUnitConfigTest {
                 .hasFieldOrPropertyWithValue("raiseExceptionOnCleanUp", false)
                 .hasFieldOrPropertyWithValue("expectedDbType", RiderDataSource.DBType.UNKNOWN)
                 .hasFieldOrPropertyWithValue("caseInsensitiveStrategy", Orthography.UPPERCASE)
-                .hasFieldOrPropertyWithValue("mergingStrategy", DataSetMergingStrategy.METHOD);
+                .hasFieldOrPropertyWithValue("mergingStrategy", DataSetMergingStrategy.METHOD)
+                .hasFieldOrPropertyWithValue("disablePKCheckFor", null);
 
         assertThat(config.getProperties()).
                 containsEntry("batchedStatements", false).
@@ -91,7 +92,8 @@ public class DBUnitConfigTest {
                 .hasFieldOrPropertyWithValue("disableSequenceFiltering", true)
                 .hasFieldOrPropertyWithValue("expectedDbType", RiderDataSource.DBType.HSQLDB)
                 .hasFieldOrPropertyWithValue("caseInsensitiveStrategy", Orthography.LOWERCASE)
-                .hasFieldOrPropertyWithValue("mergingStrategy", DataSetMergingStrategy.CLASS);
+                .hasFieldOrPropertyWithValue("mergingStrategy", DataSetMergingStrategy.CLASS)
+                .hasFieldOrPropertyWithValue("disablePKCheckFor", new String[]{"NoPKTable"});
 
         assertThat(config.getProperties()).
                 containsEntry("allowEmptyFields", true).
@@ -103,7 +105,7 @@ public class DBUnitConfigTest {
                 containsEntry("escapePattern", "[?]").
                 containsEntry("datatypeFactory", new MockDataTypeFactory()).
                 containsEntry("replacers", new ArrayList<>(Arrays.asList(new CustomReplacer()))).
-                containsEntry("tableType", Arrays.asList("TABLE","VIEW"));
+                containsEntry("tableType", Arrays.asList("TABLE", "VIEW"));
     }
 
     @Test
@@ -176,11 +178,11 @@ public class DBUnitConfigTest {
         assertThat(dbUnitConfig.getProperties()).
                 containsEntry("datatypeFactory", new MockDataTypeFactory());
     }
-    
+
     @Test
     @DBUnit(metaDataHandler = MockMetadataHandler.class)
     public void shouldInstantiateMetadataHandlerFromAnnotationIfSpecified() throws NoSuchMethodException, SecurityException {
-    	Method method = getClass().getMethod("shouldInstantiateMetadataHandlerFromAnnotationIfSpecified");
+        Method method = getClass().getMethod("shouldInstantiateMetadataHandlerFromAnnotationIfSpecified");
         DBUnit dbUnit = method.getAnnotation(DBUnit.class);
         DBUnitConfig dbUnitConfig = DBUnitConfig.from(dbUnit);
 
@@ -210,51 +212,52 @@ public class DBUnitConfigTest {
             return Objects.hash(getClass());
         }
     }
-    
+
     public static class MockMetadataHandler implements IMetadataHandler {
 
-		@Override
-		public ResultSet getColumns(DatabaseMetaData databaseMetaData, String schemaName, String tableName)
-				throws SQLException {
-			throw new UnsupportedOperationException("only for configuration tests");
-		}
+        @Override
+        public ResultSet getColumns(DatabaseMetaData databaseMetaData, String schemaName, String tableName)
+                throws SQLException {
+            throw new UnsupportedOperationException("only for configuration tests");
+        }
 
-		@Override
-		public boolean matches(ResultSet resultSet, String schema, String table, boolean caseSensitive)
-				throws SQLException {
-			throw new UnsupportedOperationException("only for configuration tests");		}
+        @Override
+        public boolean matches(ResultSet resultSet, String schema, String table, boolean caseSensitive)
+                throws SQLException {
+            throw new UnsupportedOperationException("only for configuration tests");
+        }
 
-		@Override
-		public boolean matches(ResultSet resultSet, String catalog, String schema, String table, String column,
-				boolean caseSensitive) throws SQLException {
-			throw new UnsupportedOperationException("only for configuration tests");
-		}
+        @Override
+        public boolean matches(ResultSet resultSet, String catalog, String schema, String table, String column,
+                               boolean caseSensitive) throws SQLException {
+            throw new UnsupportedOperationException("only for configuration tests");
+        }
 
-		@Override
-		public String getSchema(ResultSet resultSet) throws SQLException {
-			throw new UnsupportedOperationException("only for configuration tests");
-		}
+        @Override
+        public String getSchema(ResultSet resultSet) throws SQLException {
+            throw new UnsupportedOperationException("only for configuration tests");
+        }
 
-		@Override
-		public boolean tableExists(DatabaseMetaData databaseMetaData, String schemaName, String tableName)
-				throws SQLException {
-			throw new UnsupportedOperationException("only for configuration tests");
-		}
+        @Override
+        public boolean tableExists(DatabaseMetaData databaseMetaData, String schemaName, String tableName)
+                throws SQLException {
+            throw new UnsupportedOperationException("only for configuration tests");
+        }
 
-		@Override
-		public ResultSet getTables(DatabaseMetaData databaseMetaData, String schemaName, String[] tableTypes)
-				throws SQLException {
-			throw new UnsupportedOperationException("only for configuration tests");
-		}
+        @Override
+        public ResultSet getTables(DatabaseMetaData databaseMetaData, String schemaName, String[] tableTypes)
+                throws SQLException {
+            throw new UnsupportedOperationException("only for configuration tests");
+        }
 
-		@Override
-		public ResultSet getPrimaryKeys(DatabaseMetaData databaseMetaData, String schemaName, String tableName)
-				throws SQLException {
-			// TODO Auto-generated method stub
-			throw new UnsupportedOperationException("only for configuration tests");
-		}
-		
-       @Override
+        @Override
+        public ResultSet getPrimaryKeys(DatabaseMetaData databaseMetaData, String schemaName, String tableName)
+                throws SQLException {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("only for configuration tests");
+        }
+
+        @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             return o != null && getClass() == o.getClass();
@@ -263,9 +266,9 @@ public class DBUnitConfigTest {
         @Override
         public int hashCode() {
             return Objects.hash(getClass());
-        }		
-    	
+        }
+
     }
-    
+
 
 }

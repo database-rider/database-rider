@@ -33,6 +33,7 @@ public class DBUnitConfig {
     private Boolean raiseExceptionOnCleanUp;
     private Boolean disableSequenceFiltering;
     private Orthography caseInsensitiveStrategy;
+    private String[] disablePKCheckFor;
     private DataSetMergingStrategy mergingStrategy;
     private RiderDataSource.DBType expectedDbType;
     private Map<String, Object> properties;
@@ -133,6 +134,7 @@ public class DBUnitConfig {
                 .expectedDbType(dbUnit.expectedDbType())
                 .caseInsensitiveStrategy(dbUnit.caseInsensitiveStrategy())
                 .mergingStrategy(dbUnit.mergingStrategy())
+                .disablePKCheckFor(dbUnit.disablePKCheckFor())
                 .addDBUnitProperty("batchedStatements", dbUnit.batchedStatements())
                 .addDBUnitProperty("batchSize", dbUnit.batchSize())
                 .addDBUnitProperty("allowEmptyFields", dbUnit.allowEmptyFields())
@@ -282,6 +284,11 @@ public class DBUnitConfig {
         return this;
     }
 
+    public DBUnitConfig disablePKCheckFor(String... tables) {
+        disablePKCheckFor = tables;
+        return this;
+    }
+
     public DBUnitConfig expectedDbType(RiderDataSource.DBType expectedDbType) {
         this.expectedDbType = expectedDbType;
         return this;
@@ -291,7 +298,7 @@ public class DBUnitConfig {
         return connectionConfig;
     }
 
-    // methods above are for snakeyml library
+    // methods below are for snakeyml library
 
     public void setCacheConnection(boolean cacheConnection) {
         this.cacheConnection = cacheConnection;
@@ -363,6 +370,14 @@ public class DBUnitConfig {
 
     public boolean isCaseSensitiveTableNames() {
         return properties.containsKey("caseSensitiveTableNames") && Boolean.parseBoolean(properties.get("caseSensitiveTableNames").toString());
+    }
+
+    public String[] getDisablePKCheckFor() {
+        return disablePKCheckFor;
+    }
+
+    public void setDisablePKCheckFor(String[] disablePKCheckFor) {
+        this.disablePKCheckFor = disablePKCheckFor;
     }
 
     public String getSchema() {

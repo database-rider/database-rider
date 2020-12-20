@@ -194,7 +194,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     .append("mergingStrategy: ").append(dbUnitConfig.getMergingStrategy()).append("\n")
                     .append("disableSequenceFiltering: ").append(dbUnitConfig.isDisableSequenceFiltering()).append("\n")
                     .append("raiseExceptionOnCleanUp: ").append(dbUnitConfig.isRaiseExceptionOnCleanUp()).append("\n")
-                    .append("schema: ").append("" + dbUnitConfig.getSchema()).append("\n");
+                    .append("disablePKCheck: ").append("" + dbUnitConfig.disablePKCheckFor()).append("\n");
 
             for (Entry<String, Object> entry : dbUnitConfig.getProperties().entrySet()) {
                 sb.append(entry.getKey()).append(": ").append(entry.getValue() == null ? "" : entry.getValue()).append("\n");
