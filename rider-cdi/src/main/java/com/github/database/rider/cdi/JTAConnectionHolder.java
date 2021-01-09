@@ -46,11 +46,11 @@ public class JTAConnectionHolder {
         }
     }
 
-    public Connection getConnection(String datasourceBeanName) {
+    public Connection getConnection(String datasourceBeanName) throws SQLException {
         if (!isCachedConnection()) {
             this.init(datasourceBeanName);
         }
-        return connections.get(datasourceBeanName);
+        return connections.get(datasourceBeanName).unwrap(Connection.class);
     }
 
     public void tearDown(String dataSource) {
