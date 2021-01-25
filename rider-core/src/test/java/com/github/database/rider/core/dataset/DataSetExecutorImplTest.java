@@ -84,26 +84,23 @@ public class DataSetExecutorImplTest {
         URL resourceXls = getClass().getResource("/datasets/xls/users.xls");
         IDataSet iDataSetFromXls = dse.loadDataSet(resourceXls.toString());
         String[] tableNamesXls = iDataSetFromXls.getTableNames();
-        assertEquals("FOLLOWER", tableNamesXls[0]);
-        assertEquals("SEQUENCE", tableNamesXls[1]);
-        assertEquals("TWEET", tableNamesXls[2]);
+        assertEquals("USER", tableNamesXls[0]);
+        assertEquals("TWEET", tableNamesXls[1]);
+        assertEquals("FOLLOWER", tableNamesXls[2]);
 
         URL resourceYML = getClass().getResource("/datasets/yml/users.yml");
         IDataSet iDataSetFromYml = dse.loadDataSet(resourceYML.toString());
         String[] tableNamesYml = iDataSetFromYml.getTableNames();
-        assertEquals("TWEET", tableNamesYml[0]);
-        assertEquals("USER", tableNamesYml[1]);
+        assertEquals("USER", tableNamesYml[0]);
+        assertEquals("TWEET", tableNamesYml[1]);
         assertEquals("FOLLOWER", tableNamesYml[2]);
-
 
         URL resourceCvs = getClass().getResource("/datasets/csv/USER.csv");
         IDataSet iDataSetFromCsv = dse.loadDataSet(resourceCvs.toString());
         String[] tableNamesCsv = iDataSetFromCsv.getTableNames();
-        assertEquals("FOLLOWER", tableNamesCsv[0]);
+        assertEquals("USER", tableNamesCsv[0]);
         assertEquals("TWEET", tableNamesCsv[1]);
-        assertEquals("USER", tableNamesCsv[2]);
-
-
+        assertEquals("FOLLOWER", tableNamesCsv[2]);
     }
 
     @Test
@@ -126,9 +123,9 @@ public class DataSetExecutorImplTest {
 
         IDataSet iDataSetFromCsv = dse.loadDataSet("/datasets/csv/USER.csv");
         String[] tableNamesCsv = iDataSetFromCsv.getTableNames();
-        assertEquals("FOLLOWER", tableNamesCsv[0]);
+        assertEquals("USER", tableNamesCsv[0]);
         assertEquals("TWEET", tableNamesCsv[1]);
-        assertEquals("USER", tableNamesCsv[2]);
+        assertEquals("FOLLOWER", tableNamesCsv[2]);
     }
 
     @Test(expected = RuntimeException.class)

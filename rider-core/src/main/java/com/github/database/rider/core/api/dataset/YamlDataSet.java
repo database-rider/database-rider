@@ -15,7 +15,7 @@ import java.util.*;
 
 public class YamlDataSet implements IDataSet {
 
-    private Map<String, MyTable> tables = new HashMap<String, MyTable>();
+    private Map<String, MyTable> tables = new LinkedHashMap<>();
 
     private DBUnitConfig dbUnitConfig;
 
