@@ -1,22 +1,8 @@
 package com.github.database.rider.cdi;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
-
-import javax.enterprise.inject.spi.CDI;
-import javax.inject.Inject;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
-import javax.interceptor.InvocationContext;
-import javax.transaction.UserTransaction;
-
 import com.github.database.rider.cdi.api.DBRider;
-import com.github.database.rider.core.api.configuration.DataSetMergingStrategy;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.AfterClass;
 import com.github.database.rider.cdi.api.DBUnitInterceptor;
+import com.github.database.rider.core.api.configuration.DataSetMergingStrategy;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.api.leak.LeakHunter;
@@ -25,6 +11,18 @@ import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.leak.LeakHunterFactory;
 import com.github.database.rider.core.util.AnnotationUtils;
 
+import javax.enterprise.inject.spi.CDI;
+import javax.inject.Inject;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.Interceptor;
+import javax.interceptor.InvocationContext;
+import javax.transaction.UserTransaction;
+import java.io.Serializable;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by pestano on 26/07/15.
  */
@@ -32,21 +30,25 @@ import com.github.database.rider.core.util.AnnotationUtils;
 @DBUnitInterceptor
 public class DBUnitInterceptorImpl implements Serializable {
 
+    private static final List<String> TEST_ANNOTATION_NAMES = Arrays.asList("Test", "Given", "When", "Then");
     @Inject
     DataSetProcessor dataSetProcessor;
 
     @AroundInvoke
     public Object intercept(InvocationContext invocationContext) throws Exception {
 
-        Method method = invocationContext.getMethod();
-        if (method.isAnnotationPresent(Before.class) || method.isAnnotationPresent(BeforeClass.class) || method.isAnnotationPresent(After.class) || method.isAnnotationPresent(AfterClass.class)) {
+        if(shouldIgnoreInterceptedMethod(invocationContext.getMethod())) {
             return invocationContext.proceed();
         }
-        Object proceed = null;
         DBUnitConfig dbUnitConfig = DBUnitConfig.from(invocationContext.getMethod());
 
         DataSet usingDataSet = resolveDataSet(invocationContext, dbUnitConfig);
+        ExpectedDataSet expectedDataSet = invocationContext.getMethod().getAnnotation(ExpectedDataSet.class);
 
+        if(usingDataSet == null && expectedDataSet == null) {
+            return invocationContext.proceed();
+        }
+        Object proceed;
         String entityManagerName = resolveEntityManagerName(invocationContext);
         dataSetProcessor.init(entityManagerName);
         if (usingDataSet != null) {
@@ -86,7 +88,6 @@ public class DBUnitInterceptorImpl implements Serializable {
                         dataSetProcessor.getEntityManager().getTransaction().commit();
                     }
                 }
-                ExpectedDataSet expectedDataSet = invocationContext.getMethod().getAnnotation(ExpectedDataSet.class);
                 if (expectedDataSet != null) {
                     dataSetProcessor.compareCurrentDataSetWith(
                             new DataSetConfig(expectedDataSet.value())
@@ -131,7 +132,6 @@ public class DBUnitInterceptorImpl implements Serializable {
         } else {// no dataset provided, just proceed and check expectedDataSet
             try {
                 proceed = invocationContext.proceed();
-                ExpectedDataSet expectedDataSet = invocationContext.getMethod().getAnnotation(ExpectedDataSet.class);
                 if (expectedDataSet != null) {
                     dataSetProcessor.compareCurrentDataSetWith(
                             new DataSetConfig(expectedDataSet.value()).disableConstraints(true),
@@ -145,6 +145,22 @@ public class DBUnitInterceptorImpl implements Serializable {
         }
 
         return proceed;
+    }
+
+    private boolean shouldIgnoreInterceptedMethod(Method method) {
+        boolean hasDataSetAnnotation = method.getAnnotation(DataSet.class) != null;
+        boolean hasTestAnnotation = hasTestAnnotation(method);
+        return !hasDataSetAnnotation && !hasTestAnnotation;
+    }
+
+    private boolean hasTestAnnotation(Method method) {
+        List<Annotation> annotations = Arrays.asList(method.getDeclaredAnnotations());
+        for (Annotation annotation : annotations) {
+            if(TEST_ANNOTATION_NAMES.contains(annotation.annotationType().getSimpleName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String resolveEntityManagerName(InvocationContext invocationContext) {
