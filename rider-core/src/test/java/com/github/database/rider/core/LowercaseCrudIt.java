@@ -33,6 +33,20 @@ public class LowercaseCrudIt {
 		assertThat(users).isNotNull().isNotEmpty().hasSize(2);
 	}
 
+    @Test
+    @DataSet("xml/lowercaseUsers.xml")
+    public void shouldListUsersUsingXmlDataSet() {
+        List<User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
+        assertThat(users).isNotNull().isNotEmpty().hasSize(2);
+    }
+
+    @Test
+    @DataSet("json/lowercaseUsers.json")
+    public void shouldListUsersUsingJsonDataSet() {
+        List<User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
+        assertThat(users).isNotNull().isNotEmpty().hasSize(2);
+    }
+
 	@Test
 	@DataSet(cleanBefore=true) //avoid conflict with other tests
 	public void shouldInsertUser() {
@@ -63,7 +77,8 @@ public class LowercaseCrudIt {
 	}
 
 	@Test
-	@DataSet(value = "yml/lowercaseUsers.yml", disableConstraints=true)//disable constraints because User 1 has one tweet and a follower
+	@DataSet(value = "yml/lowercaseUsers.yml", disableConstraints=true)
+    //disable constraints because User 1 has one tweet and a follower so with constraints we would not be able to remove it
 	public void shouldDeleteUser() {
 		User user = (User) EntityManagerProvider.em().createQuery("select u from User u  where u.id = 1").getSingleResult();
 		assertThat(user).isNotNull();

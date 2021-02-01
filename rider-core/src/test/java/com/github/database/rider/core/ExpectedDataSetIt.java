@@ -51,20 +51,6 @@ public class ExpectedDataSetIt {
     }
     // end::expected[]
 
-    @Test
-    @DataSet(cleanBefore = true)
-    @ExpectedDataSet(value = "yml/expectedUsers.yml", ignoreCols = "id")
-    public void shouldMatchExpectedDataSetClearingDataBaseBefore() {
-        EntityManagerProvider instance = EntityManagerProvider.newInstance("rules-it");
-        User u = new User();
-        u.setName("expected user1");
-        User u2 = new User();
-        u2.setName("expected user2");
-        instance.tx().begin();
-        instance.em().persist(u);
-        instance.em().persist(u2);
-        instance.tx().commit();
-    }
 
     @Ignore(value = "How to test failled comparisons?")
     // tag::faillingExpected[]

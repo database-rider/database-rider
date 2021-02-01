@@ -18,10 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DBRider
 public class JUnit5LifecycleHooksInSuperclassIt extends BaseLifecycleHooks {
 
-    private ConnectionHolder connectionHolder = () ->
+    private static ConnectionHolder connectionHolder = () ->
             EntityManagerProvider.instance("junit5-pu").connection();
-
-
 
     @Test
     @DataSet("users.yml")
@@ -36,16 +34,9 @@ public class JUnit5LifecycleHooksInSuperclassIt extends BaseLifecycleHooks {
                 .contains("tweet before each!");
     }
 
-
     @AfterEach
+    @ExpectedDataSet(value = "expectedTweetsAfterEach.yml", orderBy = "CONTENT")
     public void afterEach() {
-        List<Tweet> tweets =  EntityManagerProvider.em().createQuery("select t from Tweet t").getResultList();
-        assertThat(tweets).isNotNull()
-                .hasSize(1)
-                .extracting("content")
-                .contains("tweet after each!")
-                .doesNotContain("tweet before each!");//CLEAN_INSERT seed strategy removes this record
     }
-
 
 }

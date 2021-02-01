@@ -132,9 +132,4 @@ public class DBUnitCDIIt {
 
 
 
-
-    //TODO replacer test
-    //TODO execute scripts after test
-    //TODO disable constraints
-
 }

@@ -31,41 +31,45 @@ public class Tweet {
         return content;
     }
 
-    public void setContent(String content) {
+    public Tweet setContent(String content) {
         this.content = content;
+        return this;
     }
 
     public Integer getLikes() {
         return likes;
     }
 
-    public void setLikes(Integer likes) {
+    public Tweet setLikes(Integer likes) {
         this.likes = likes;
+        return this;
     }
-
 
     public Calendar getDate() {
         return date;
     }
 
-    public void setDate(Calendar date) {
+    public Tweet setDate(Calendar date) {
         this.date = date;
+        return this;
     }
 
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public Tweet setId(String id) {
         this.id = id;
+        return this;
     }
 
     public User getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public Tweet setUser(User user) {
         this.user = user;
+        return this;
     }
 
     public Long getTimestamp() {

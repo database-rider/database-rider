@@ -31,7 +31,7 @@ target/
 #Gradle
 
 .gradle
-
+build/
 
 
 # TestNG
@@ -45,3 +45,6 @@ test-output/
 
 #linux te files
 *~
+
+#macos
+.DS_Store

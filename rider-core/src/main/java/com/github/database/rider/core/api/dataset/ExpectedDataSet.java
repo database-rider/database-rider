@@ -14,7 +14,9 @@ import com.github.database.rider.core.replacers.Replacer;
 public @interface ExpectedDataSet {
 
   /**
-   * @return dataset file name using resources folder as root directory
+   * @return list of dataset file names using 'resources' or 'resources/datasets' folder as root directory.
+   * Single dataset with multiple comma separated dataset file names can also be provided.
+   * Also URL-Notation is supported, e.g: 'file:///C:/dir/users.xml' OR 'http://...'
    */
   String[] value() default "";
 
@@ -25,7 +27,8 @@ public @interface ExpectedDataSet {
   String[] ignoreCols() default "";
   
   /**
-   * @return implementations of {@link Replacer} called during reading expected dataset before comparison
+   * @return implementations of {@link Replacer} called during reading expected dataset before comparison.
+   * Note that DataSet level replacer will <b>override</b> global level replacers.
    */
   Class<? extends Replacer>[] replacers() default {};
 

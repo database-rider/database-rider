@@ -5,6 +5,8 @@ import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.junit5.api.DBRider;
 import com.github.database.rider.springboot.model.user.User;
 import com.github.database.rider.springboot.model.user.UserRepository;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,8 +23,17 @@ public class SpringBootDBUnitTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Test
+    @AfterAll
+    @DataSet("emptyUsers.yml")
+    public static void cleanUp() {
+    }
+
+    @BeforeEach
     @DataSet("users.yml")
+    public void setUpUsers() {
+    }
+
+    @Test
     public void shouldListUsers() {
         assertThat(userRepository).isNotNull();
         assertThat(userRepository.count()).isEqualTo(3);
@@ -30,7 +41,6 @@ public class SpringBootDBUnitTest {
     }
 
     @Test
-    @DataSet("users.yml")
     @ExpectedDataSet("expectedUsers.yml")
     public void shouldDeleteUser() {
         assertThat(userRepository).isNotNull();

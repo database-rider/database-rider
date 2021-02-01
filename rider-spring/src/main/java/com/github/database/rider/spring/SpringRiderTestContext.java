@@ -1,10 +1,12 @@
 package com.github.database.rider.spring;
 
 import java.lang.annotation.Annotation;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import com.github.database.rider.core.api.connection.ConnectionHolder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
@@ -28,9 +30,14 @@ class SpringRiderTestContext extends AbstractRiderTestContext {
     private static DataSetExecutor createDataSetExecutor(TestContext testContext) {
         String beanName = getConfiguredDataSourceBeanName(testContext);
         DataSource dataSourceBean = getDataSource(testContext, beanName);
-        DataSource dataSource = wrapInTransactionAwareProxy(dataSourceBean);
+        final DataSource dataSource = wrapInTransactionAwareProxy(dataSourceBean);
         String instanceId = beanName.isEmpty() ? "default" : beanName;
-        DataSetExecutorImpl dataSetExecutor = DataSetExecutorImpl.instance(instanceId, dataSource::getConnection);
+        DataSetExecutorImpl dataSetExecutor = DataSetExecutorImpl.instance(instanceId, new ConnectionHolder() {
+            @Override
+            public Connection getConnection() throws SQLException {
+                return dataSource.getConnection();
+            }
+        });
         dataSetExecutor.clearRiderDataSource();
 
         return dataSetExecutor;

@@ -1,7 +1,9 @@
 package com.github.database.rider.core.configuration;
 
 import com.github.database.rider.core.api.configuration.DBUnit;
+import com.github.database.rider.core.api.configuration.DataSetMergingStrategy;
 import com.github.database.rider.core.api.configuration.Orthography;
+import com.github.database.rider.core.connection.RiderDataSource;
 import com.github.database.rider.core.replacers.CustomReplacer;
 import org.dbunit.database.IMetadataHandler;
 import org.dbunit.dataset.datatype.DataType;
@@ -45,11 +47,16 @@ public class DBUnitConfigTest {
                 .hasFieldOrPropertyWithValue("cacheConnection", true)
                 .hasFieldOrPropertyWithValue("cacheTableNames", true)
                 .hasFieldOrPropertyWithValue("leakHunter", false)
-                .hasFieldOrPropertyWithValue("caseInsensitiveStrategy", Orthography.UPPERCASE);
+                .hasFieldOrPropertyWithValue("raiseExceptionOnCleanUp", false)
+                .hasFieldOrPropertyWithValue("expectedDbType", RiderDataSource.DBType.UNKNOWN)
+                .hasFieldOrPropertyWithValue("caseInsensitiveStrategy", Orthography.UPPERCASE)
+                .hasFieldOrPropertyWithValue("mergingStrategy", DataSetMergingStrategy.METHOD)
+                .hasFieldOrPropertyWithValue("disablePKCheckFor", null);
 
         assertThat(config.getProperties()).
                 containsEntry("batchedStatements", false).
                 containsEntry("qualifiedTableNames", false).
+                containsEntry("schema", null).
                 containsEntry("caseSensitiveTableNames", false).
                 containsEntry("batchSize", 100).
                 containsEntry("fetchSize", 100).
@@ -81,17 +88,24 @@ public class DBUnitConfigTest {
                 .hasFieldOrPropertyWithValue("cacheConnection", false)
                 .hasFieldOrPropertyWithValue("cacheTableNames", false)
                 .hasFieldOrPropertyWithValue("leakHunter", true)
-                .hasFieldOrPropertyWithValue("caseInsensitiveStrategy", Orthography.UPPERCASE);
+                .hasFieldOrPropertyWithValue("raiseExceptionOnCleanUp", true)
+                .hasFieldOrPropertyWithValue("disableSequenceFiltering", true)
+                .hasFieldOrPropertyWithValue("expectedDbType", RiderDataSource.DBType.HSQLDB)
+                .hasFieldOrPropertyWithValue("caseInsensitiveStrategy", Orthography.LOWERCASE)
+                .hasFieldOrPropertyWithValue("mergingStrategy", DataSetMergingStrategy.CLASS)
+                .hasFieldOrPropertyWithValue("disablePKCheckFor", new String[]{"NoPKTable"});
 
         assertThat(config.getProperties()).
                 containsEntry("allowEmptyFields", true).
                 containsEntry("batchedStatements", true).
                 containsEntry("qualifiedTableNames", true).
+                containsEntry("schema", "public").
                 containsEntry("batchSize", 200).
                 containsEntry("fetchSize", 200).
                 containsEntry("escapePattern", "[?]").
                 containsEntry("datatypeFactory", new MockDataTypeFactory()).
-                containsEntry("replacers", new ArrayList<>(Arrays.asList(new CustomReplacer())));
+                containsEntry("replacers", new ArrayList<>(Arrays.asList(new CustomReplacer()))).
+                containsEntry("tableType", Arrays.asList("TABLE", "VIEW"));
     }
 
     @Test
@@ -104,6 +118,8 @@ public class DBUnitConfigTest {
                 .hasFieldOrPropertyWithValue("cacheConnection", true)
                 .hasFieldOrPropertyWithValue("cacheTableNames", true)
                 .hasFieldOrPropertyWithValue("leakHunter", true)
+                .hasFieldOrPropertyWithValue("raiseExceptionOnCleanUp", false)
+                .hasFieldOrPropertyWithValue("expectedDbType", RiderDataSource.DBType.UNKNOWN)
                 .hasFieldOrPropertyWithValue("caseInsensitiveStrategy", Orthography.UPPERCASE);
 
         assertThat(config.getProperties()).
@@ -117,7 +133,8 @@ public class DBUnitConfigTest {
     }
 
     @Test
-    @DBUnit(cacheTableNames = false, allowEmptyFields = true, batchSize = 50)
+    @DBUnit(cacheTableNames = false, allowEmptyFields = true, batchSize = 50, schema = "public",
+            expectedDbType = RiderDataSource.DBType.HSQLDB, tableType = {"TABLE", "VIEW"})
     public void shouldLoadDBUnitConfigViaAnnotation() throws NoSuchMethodException {
         Method method = getClass().getMethod("shouldLoadDBUnitConfigViaAnnotation");
         DBUnit dbUnit = method.getAnnotation(DBUnit.class);
@@ -125,16 +142,30 @@ public class DBUnitConfigTest {
 
         assertThat(dbUnitConfig).isNotNull()
                 .hasFieldOrPropertyWithValue("cacheConnection", true)
-                .hasFieldOrPropertyWithValue("cacheTableNames", false);
+                .hasFieldOrPropertyWithValue("cacheTableNames", false)
+                .hasFieldOrPropertyWithValue("expectedDbType", RiderDataSource.DBType.HSQLDB);
 
         assertThat(dbUnitConfig.getProperties()).
                 containsEntry("allowEmptyFields", true).
                 containsEntry("batchedStatements", false).
                 containsEntry("qualifiedTableNames", false).
+                containsEntry("schema", "public").
                 containsEntry("batchSize", 50).
                 containsEntry("fetchSize", 100).
+                containsEntry("tableType", new String[]{"TABLE", "VIEW"}).
                 doesNotContainKey("escapePattern").
                 doesNotContainKey("datatypeFactory");
+    }
+
+    @Test
+    @DBUnit()
+    public void shouldTreatAnnotationWithNonExistingSchemaAsNull() throws NoSuchMethodException {
+        Method method = getClass().getMethod("shouldTreatAnnotationWithNonExistingSchemaAsNull");
+        DBUnit dbUnit = method.getAnnotation(DBUnit.class);
+        DBUnitConfig dbUnitConfig = DBUnitConfig.from(dbUnit);
+
+        assertThat(dbUnitConfig.getProperties()).
+                containsEntry("schema", null);
     }
 
     @Test
@@ -147,11 +178,11 @@ public class DBUnitConfigTest {
         assertThat(dbUnitConfig.getProperties()).
                 containsEntry("datatypeFactory", new MockDataTypeFactory());
     }
-    
+
     @Test
     @DBUnit(metaDataHandler = MockMetadataHandler.class)
     public void shouldInstantiateMetadataHandlerFromAnnotationIfSpecified() throws NoSuchMethodException, SecurityException {
-    	Method method = getClass().getMethod("shouldInstantiateMetadataHandlerFromAnnotationIfSpecified");
+        Method method = getClass().getMethod("shouldInstantiateMetadataHandlerFromAnnotationIfSpecified");
         DBUnit dbUnit = method.getAnnotation(DBUnit.class);
         DBUnitConfig dbUnitConfig = DBUnitConfig.from(dbUnit);
 
@@ -181,51 +212,52 @@ public class DBUnitConfigTest {
             return Objects.hash(getClass());
         }
     }
-    
+
     public static class MockMetadataHandler implements IMetadataHandler {
 
-		@Override
-		public ResultSet getColumns(DatabaseMetaData databaseMetaData, String schemaName, String tableName)
-				throws SQLException {
-			throw new UnsupportedOperationException("only for configuration tests");
-		}
+        @Override
+        public ResultSet getColumns(DatabaseMetaData databaseMetaData, String schemaName, String tableName)
+                throws SQLException {
+            throw new UnsupportedOperationException("only for configuration tests");
+        }
 
-		@Override
-		public boolean matches(ResultSet resultSet, String schema, String table, boolean caseSensitive)
-				throws SQLException {
-			throw new UnsupportedOperationException("only for configuration tests");		}
+        @Override
+        public boolean matches(ResultSet resultSet, String schema, String table, boolean caseSensitive)
+                throws SQLException {
+            throw new UnsupportedOperationException("only for configuration tests");
+        }
 
-		@Override
-		public boolean matches(ResultSet resultSet, String catalog, String schema, String table, String column,
-				boolean caseSensitive) throws SQLException {
-			throw new UnsupportedOperationException("only for configuration tests");
-		}
+        @Override
+        public boolean matches(ResultSet resultSet, String catalog, String schema, String table, String column,
+                               boolean caseSensitive) throws SQLException {
+            throw new UnsupportedOperationException("only for configuration tests");
+        }
 
-		@Override
-		public String getSchema(ResultSet resultSet) throws SQLException {
-			throw new UnsupportedOperationException("only for configuration tests");
-		}
+        @Override
+        public String getSchema(ResultSet resultSet) throws SQLException {
+            throw new UnsupportedOperationException("only for configuration tests");
+        }
 
-		@Override
-		public boolean tableExists(DatabaseMetaData databaseMetaData, String schemaName, String tableName)
-				throws SQLException {
-			throw new UnsupportedOperationException("only for configuration tests");
-		}
+        @Override
+        public boolean tableExists(DatabaseMetaData databaseMetaData, String schemaName, String tableName)
+                throws SQLException {
+            throw new UnsupportedOperationException("only for configuration tests");
+        }
 
-		@Override
-		public ResultSet getTables(DatabaseMetaData databaseMetaData, String schemaName, String[] tableTypes)
-				throws SQLException {
-			throw new UnsupportedOperationException("only for configuration tests");
-		}
+        @Override
+        public ResultSet getTables(DatabaseMetaData databaseMetaData, String schemaName, String[] tableTypes)
+                throws SQLException {
+            throw new UnsupportedOperationException("only for configuration tests");
+        }
 
-		@Override
-		public ResultSet getPrimaryKeys(DatabaseMetaData databaseMetaData, String schemaName, String tableName)
-				throws SQLException {
-			// TODO Auto-generated method stub
-			throw new UnsupportedOperationException("only for configuration tests");
-		}
-		
-       @Override
+        @Override
+        public ResultSet getPrimaryKeys(DatabaseMetaData databaseMetaData, String schemaName, String tableName)
+                throws SQLException {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("only for configuration tests");
+        }
+
+        @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             return o != null && getClass() == o.getClass();
@@ -234,9 +266,9 @@ public class DBUnitConfigTest {
         @Override
         public int hashCode() {
             return Objects.hash(getClass());
-        }		
-    	
+        }
+
     }
-    
+
 
 }

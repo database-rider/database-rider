@@ -1,0 +1,6 @@
+USER:
+
+TWEET:
+  - ID: "before-all"
+    CONTENT: "tweet before all!"
+    likes: 10

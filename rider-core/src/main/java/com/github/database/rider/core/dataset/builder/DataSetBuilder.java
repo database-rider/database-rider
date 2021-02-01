@@ -26,16 +26,18 @@ import org.dbunit.dataset.stream.BufferedConsumer;
 import org.dbunit.dataset.stream.IDataSetConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import static com.github.database.rider.core.dataset.builder.BuilderUtil.convertCase;
 import java.util.Map.Entry;
+
+import static com.github.database.rider.core.dataset.builder.BuilderUtil.convertCase;
 
 public class DataSetBuilder {
 
-    private CachedDataSet dataSet = new CachedDataSet();
-    private IDataSetConsumer consumer = new BufferedConsumer(dataSet);
+    private CachedDataSet dataSet;
+    private IDataSetConsumer consumer;
     private final Map<String, TableMetaDataBuilder> tableNameToMetaData = new HashMap<>();
     private final Logger LOGGER = LoggerFactory.getLogger(getClass().getName());
     private final DBUnitConfig config;
@@ -46,6 +48,8 @@ public class DataSetBuilder {
 
     public DataSetBuilder() {
         try {
+            dataSet = new CachedDataSet();
+            consumer = new BufferedConsumer(dataSet);
             consumer.startDataSet();
             config = DBUnitConfig.fromGlobalConfig();
         } catch (DataSetException e) {
@@ -56,6 +60,8 @@ public class DataSetBuilder {
 
     public DataSetBuilder(DBUnitConfig config) {
         try {
+            dataSet = new CachedDataSet();
+            consumer = new BufferedConsumer(dataSet);
             this.config = config;
             consumer.startDataSet();
         } catch (DataSetException e) {

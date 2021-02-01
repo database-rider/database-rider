@@ -18,7 +18,6 @@ package com.github.quarkus.sample;
 
 
 import com.github.database.rider.cdi.api.DBRider;
-import com.github.database.rider.cdi.api.DBUnitInterceptor;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetProvider;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;

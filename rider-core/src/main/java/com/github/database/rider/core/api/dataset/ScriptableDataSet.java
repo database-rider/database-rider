@@ -9,7 +9,8 @@ public class ScriptableDataSet extends AbstractDataSet {
 
     private IDataSet delegate;
 
-    public ScriptableDataSet(IDataSet delegate) {
+    public ScriptableDataSet(boolean caseSensitiveTableNames, IDataSet delegate) {
+        super(caseSensitiveTableNames);
         this.delegate = delegate;
     }
 

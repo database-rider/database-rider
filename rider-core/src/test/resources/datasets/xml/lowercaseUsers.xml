@@ -1,0 +1,6 @@
+<dataset>
+    <user id="1" name="@realpestano" />
+    <user id="2" name="@dbunit" />
+    <tweet id="abcdef12345" content="dbunit rules!" user_id="1" date="[DAY,NOW]"/>
+    <follower id="1" user_id="1" follower_id="2"/>
+</dataset>

@@ -70,6 +70,17 @@ public class DatabaseIt {
         assertThat(users).hasSize(2);
     }
 
+    @Test
+    @DataSet(value = "datasets/yml/users.yml",
+            useSequenceFiltering = false,
+            tableOrdering = {"TWEET", "FOLLOWER"},
+            executeStatementsBefore = {"DELETE FROM FOLLOWER", "DELETE FROM TWEET", "DELETE FROM USER"}//needed because other tests created user dataset
+    )
+    public void shouldSeedDataSetUsingPartialTableOrdering() {
+        List<User> users = EntityManagerProvider.em().createQuery("select u from User u left join fetch u.tweets left join fetch u.followers").getResultList();
+        assertThat(users).hasSize(2);
+    }
+
 
     // tag::seedDatabase[]
     @Test

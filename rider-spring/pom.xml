@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.github.database-rider</groupId>
         <artifactId>rider-parent</artifactId>
-        <version>1.10.1-SNAPSHOT</version>
+        <version>1.22.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>rider-spring</artifactId>
@@ -46,6 +46,7 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.12</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -56,8 +57,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.5.1</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
@@ -73,7 +74,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <source>8</source>
+                    <source>7</source>
                 </configuration>
             </plugin>
 
@@ -82,7 +83,7 @@
                 <version>2.19.1</version>
                 <configuration>
                     <includes>
-                        <include>**/*IT.java</include>
+                        <include>**/*It.java</include>
                         <include>**/*Test.java</include>
                     </includes>
                     <systemPropertyVariables>

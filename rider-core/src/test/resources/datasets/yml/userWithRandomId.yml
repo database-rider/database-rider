@@ -1,0 +1,5 @@
+USER:
+  - ID: groovy:new Random().nextInt()
+    NAME: "@realpestano"
+  - ID: js:Math.floor(Math.random() * 999999)
+    NAME: "@dbunit"

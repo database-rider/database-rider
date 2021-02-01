@@ -90,12 +90,30 @@ public class ExportDataSetIt {
         assertThat(ymlDataSet).exists();
         assertThat(contentOf(ymlDataSet)).
                 contains("USER:" + NEW_LINE +
-                                "  - ID: 1" + NEW_LINE +
+                                "  - ID: " + u1.getId() + NEW_LINE +
                                 "    NAME: \"u1\"" + NEW_LINE
                 );
     }
 
-//end::export-programmatically[]
+    @Test
+    @DataSet(cleanBefore = true)
+    public void shouldExportYMLDataSetWithExplicitSchemaProgrammatically() throws SQLException, DatabaseUnitException {
+        tx().begin();
+        User u1 = new User();
+        u1.setName("u1");
+        EntityManagerProvider.em().persist(u1);
+        tx().commit();
+        DataSetExporter.getInstance().export(emProvider.connection(),
+                new DataSetExportConfig().outputFileName("target/user.yml"), "public");
+        File ymlDataSet = new File("target/user.yml");
+        assertThat(ymlDataSet).exists();
+        assertThat(contentOf(ymlDataSet)).
+                contains("USER:" + NEW_LINE +
+                                "  - ID: " + u1.getId() + NEW_LINE +
+                                "    NAME: \"u1\"" + NEW_LINE
+                );
+    }
+    //end::export-programmatically[]
 
     @Test
     @DataSet(cleanBefore = true)
@@ -270,18 +288,15 @@ public class ExportDataSetIt {
                         "  - ID: 2" + NEW_LINE +
                         "    NAME: \"@dbunit\"");
 
-        //TODO validate generated content
         File xlsDataSetWithAllTables = new File("target/exported/xls/allTables.xls");
         assertThat(xlsDataSetWithAllTables).exists();
 
         File jsonDataSetWithAllTables = new File("target/exported/json/allTables.json");
-        //TODO validate generated content
         assertThat(jsonDataSetWithAllTables).exists();
 
 
         File csvDataSetWithAllTables = new File("target/exported/csv/allTables");
         assertThat(csvDataSetWithAllTables).exists();
-        //TODO validate generated content
         File userCsvDataSet = new File("target/exported/csv/allTables/USER.csv");
         assertThat(userCsvDataSet).exists();
 

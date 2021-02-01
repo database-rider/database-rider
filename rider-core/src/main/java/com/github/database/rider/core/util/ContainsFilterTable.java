@@ -43,6 +43,7 @@ public class ContainsFilterTable implements ITable {
      * Creates a new {@link ITable} where some rows can be filtered out from the original table
      * @param actualTable The table to be wrapped
      * @param expectedTable actualTable will be filtered by this table
+     * @param ignoredCols columns to ignore in comparison
      * @throws DataSetException throws DataSetException
      */
     public ContainsFilterTable(ITable actualTable, ITable expectedTable, List<String> ignoredCols) throws DataSetException {

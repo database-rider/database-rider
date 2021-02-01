@@ -1,13 +1,21 @@
 cacheConnection: false
 cacheTableNames: false
 leakHunter: true
+raiseExceptionOnCleanUp: true
+disableSequenceFiltering: true
+expectedDbType: HSQLDB
+mergingStrategy: CLASS
+caseInsensitiveStrategy: LOWERCASE
+disablePKCheckFor: ["NoPKTable"]
 properties:
   batchedStatements:  true
   caseSensitiveTableNames: false
   qualifiedTableNames: true
+  schema: public
   batchSize: 200
   fetchSize: 200
   allowEmptyFields: true
   escapePattern: "[?]"
   datatypeFactory: !!com.github.database.rider.core.configuration.DBUnitConfigTest$MockDataTypeFactory {}
   replacers: [!!com.github.database.rider.core.replacers.CustomReplacer {}]
+  tableType: ["TABLE","VIEW"]

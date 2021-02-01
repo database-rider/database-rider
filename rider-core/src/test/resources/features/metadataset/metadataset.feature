@@ -11,7 +11,7 @@ ____
 
 TIP: Complete source code of examples below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/MetaDataSetIt.java#L21[found here^].
 
-TIP: See https://github.com/database-rider/database-rider/blob/master/rider-spring/src/test/java/com/github/database/rider/spring/dataset/MetaDataSetIT.java[Rider Spring^], https://github.com/database-rider/database-rider/blob/master/rider-junit5/src/test/java/com/github/database/rider/junit5/MetaDataSetIt.java[JUnit5^] and https://github.com/database-rider/database-rider/blob/master/rider-cdi/src/test/java/com/github/database/rider/cdi/MetaDataSetIt.java[CDI^] examples. 
+TIP: See https://github.com/database-rider/database-rider/blob/master/rider-spring/src/test/java/com/github/database/rider/spring/dataset/MetaDataSetIt.java[Rider Spring^], https://github.com/database-rider/database-rider/blob/master/rider-junit5/src/test/java/com/github/database/rider/junit5/MetaDataSetIt.java[JUnit5^] and https://github.com/database-rider/database-rider/blob/master/rider-cdi/src/test/java/com/github/database/rider/cdi/MetaDataSetIt.java[CDI^] examples.
 
   Scenario: Class level metadataset
 

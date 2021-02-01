@@ -1,5 +1,10 @@
 package com.github.database.rider.core.util;
 
+import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.DataSetImpl;
+import com.github.database.rider.core.replacers.Replacer;
+import org.junit.runner.Description;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
@@ -8,11 +13,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.junit.runner.Description;
-
-import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.core.api.dataset.DataSetImpl;
 
 /**
  * Adpated from JUnit5 AnnotationUtils:
@@ -50,7 +50,7 @@ public final class AnnotationUtils {
 
     @SuppressWarnings("unchecked")
     private static <A extends Annotation> A findAnnotation(AnnotatedElement element, Class<A> annotationType,
-            Set<Annotation> visited) {
+                                                           Set<Annotation> visited) {
 
         if (annotationType == null) {
             throw new RuntimeException("annotationType must not be null");
@@ -106,8 +106,8 @@ public final class AnnotationUtils {
     }
 
     private static <A extends Annotation> A getDeclaredAnnotation(AnnotatedElement element, Class<A> annotationType) {
-        for (Annotation annotation: element.getAnnotations()) {
-            if(annotation.annotationType().equals(annotationType)) {
+        for (Annotation annotation : element.getAnnotations()) {
+            if (annotation.annotationType().equals(annotationType)) {
                 return (A) annotation;
             }
         }
@@ -116,7 +116,7 @@ public final class AnnotationUtils {
 
 
     private static <A extends Annotation> A findMetaAnnotation(Class<A> annotationType,
-            Annotation[] candidates, AnnotationCacheKey key, Set<Annotation> visited) {
+                                                               Annotation[] candidates, AnnotationCacheKey key, Set<Annotation> visited) {
 
         for (Annotation candidateAnnotation : candidates) {
             Class<? extends Annotation> candidateAnnotationType = candidateAnnotation.annotationType();
@@ -166,8 +166,12 @@ public final class AnnotationUtils {
         try {
             Method method = description.getTestClass().getMethod(description.getMethodName());
             return findAnnotation(method, class1);
-        } catch (NoSuchMethodException | SecurityException e) {
-            throw new RuntimeException(String.format("Could not find method %s on test class %s ", description.getMethodName(), description.getTestClass().getName()));
+        } catch (NoSuchMethodException | SecurityException | NullPointerException e) {
+            A annotation = description.getAnnotation(class1);  //related to #104
+            if(annotation == null) {
+                annotation = description.getTestClass().getAnnotation(class1);
+            }
+            return annotation;
         }
     }
 
@@ -180,17 +184,18 @@ public final class AnnotationUtils {
         String[] executeStatementsAfter = joinArray(classLevelDataSet.executeStatementsAfter(), methodLevelDataSet.executeStatementsAfter());
         String[] executeScriptsAfter = joinArray(classLevelDataSet.executeScriptsAfter(), methodLevelDataSet.executeScriptsAfter());
         String[] executeScriptsBefore = joinArray(classLevelDataSet.executeScriptsBefore(), methodLevelDataSet.executeScriptsBefore());
-
-        DataSet mergedDataSet = new DataSetImpl(value, methodLevelDataSet.executorId(), methodLevelDataSet.strategy(), methodLevelDataSet.useSequenceFiltering(), tableOrdering, 
+        String[] skipCleaningFor = joinArray(classLevelDataSet.skipCleaningFor(), methodLevelDataSet.skipCleaningFor());
+        Class<? extends Replacer>[] replacers = joinReplacers(classLevelDataSet.replacers(), methodLevelDataSet.replacers());
+        DataSet mergedDataSet = new DataSetImpl(value, methodLevelDataSet.executorId(), methodLevelDataSet.strategy(), methodLevelDataSet.useSequenceFiltering(), tableOrdering,
                 methodLevelDataSet.disableConstraints(), methodLevelDataSet.fillIdentityColumns(), executeStatementsBefore, executeScriptsAfter, executeScriptsBefore, executeStatementsAfter,
-                methodLevelDataSet.cleanBefore(), methodLevelDataSet.cleanAfter(), methodLevelDataSet.transactional(), methodLevelDataSet.skipCleaningFor());
+                methodLevelDataSet.cleanBefore(), methodLevelDataSet.cleanAfter(), methodLevelDataSet.transactional(), skipCleaningFor, replacers);
         return mergedDataSet;
     }
 
     private static String[] joinArray(String[]... arrays) {
         int length = 0;
         for (String[] array : arrays) {
-            if(array != null) {
+            if (isNotEmptyArray(array)) {
                 length += array.length;
             }
         }
@@ -199,7 +204,7 @@ public final class AnnotationUtils {
 
         int offset = 0;
         for (String[] array : arrays) {
-            if(array != null){
+            if (isNotEmptyArray(array)) {
                 System.arraycopy(array, 0, result, offset, array.length);
                 offset += array.length;
             }
@@ -208,4 +213,36 @@ public final class AnnotationUtils {
         return result;
     }
 
+    private static boolean isNotEmptyArray(String[] array) {
+        if (array == null || array.length == 0) {
+            return false;
+        }
+        for (String s : array) {
+            if (s != null && !"".equals(s.trim())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static Class<? extends Replacer>[] joinReplacers(Class<? extends Replacer>[]... arrays) {
+        int length = 0;
+        for (Class<? extends Replacer>[] array : arrays) {
+            if (array != null) {
+                length += array.length;
+            }
+        }
+
+        final Class<? extends Replacer>[] result = new Class[length];
+
+        int offset = 0;
+        for (Class<? extends Replacer>[] array : arrays) {
+            if (array != null) {
+                System.arraycopy(array, 0, result, offset, array.length);
+                offset += array.length;
+            }
+        }
+
+        return result;
+    }
 }

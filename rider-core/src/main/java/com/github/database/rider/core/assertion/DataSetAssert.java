@@ -3,12 +3,14 @@ package com.github.database.rider.core.assertion;
 import org.dbunit.assertion.DbUnitAssert;
 import org.dbunit.assertion.Difference;
 import org.dbunit.assertion.FailureHandler;
+import org.dbunit.assertion.comparer.value.ValueComparer;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.datatype.DataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -21,12 +23,15 @@ public class DataSetAssert extends DbUnitAssert {
 
     /**
      * Same as DBUnitAssert with support for regex in row values
-     * @param expectedTable expected table
-     * @param actualTable current table
+     *
+     * @param expectedTable  expected table
+     * @param actualTable    current table
      * @param comparisonCols columnName
      * @param failureHandler handler
      * @throws DataSetException if datasets does not match
      */
+
+
     @Override
     protected void compareData(ITable expectedTable, ITable actualTable, ComparisonColumn[] comparisonCols, FailureHandler failureHandler) throws DataSetException {
         logger.debug("compareData(expectedTable={}, actualTable={}, "
@@ -72,8 +77,8 @@ public class DataSetAssert extends DbUnitAssert {
                     continue;
                 }
 
-                if(expectedValue != null && expectedValue.toString().startsWith("regex:")){
-                    if(!regexMatches(expectedValue.toString(),actualValue.toString())){
+                if (expectedValue != null && expectedValue.toString().startsWith("regex:")) {
+                    if (!regexMatches(expectedValue.toString(), actualValue)) {
                         Difference diff = new Difference(
                                 expectedTable, actualTable,
                                 i, columnName,
@@ -82,8 +87,7 @@ public class DataSetAssert extends DbUnitAssert {
                         // Handle the difference (throw error immediately or something else)
                         failureHandler.handle(diff);
                     }
-                }
-                else if (dataType.compare(expectedValue, actualValue) != 0) {
+                } else if (dataType.compare(expectedValue, actualValue) != 0) {
 
                     Difference diff = new Difference(
                             expectedTable, actualTable,
@@ -97,8 +101,19 @@ public class DataSetAssert extends DbUnitAssert {
         }
     }
 
-    private boolean regexMatches(String expectedValue, String actualValue) {
-        Pattern pattern = Pattern.compile(expectedValue.substring(expectedValue.indexOf(':')+1).trim());
-        return pattern.matcher(actualValue).matches();
+    @Override
+    protected void compareData(ITable expectedTable, ITable actualTable, ComparisonColumn[] comparisonCols, FailureHandler failureHandler, ValueComparer defaultValueComparer,
+                               final Map<String, ValueComparer> columnValueComparers,
+                               final int rowNum, final int columnNum) throws DataSetException {
+        this.compareData(expectedTable,actualTable, comparisonCols, failureHandler);
+    }
+
+
+    private boolean regexMatches(String expectedValue, Object actualValue) {
+        if (actualValue == null) {
+            return false;
+        }
+        Pattern pattern = Pattern.compile(expectedValue.substring(expectedValue.indexOf(':') + 1).trim());
+        return pattern.matcher(actualValue.toString()).matches();
     }
 }

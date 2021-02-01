@@ -22,7 +22,6 @@ import com.github.database.rider.core.model.User;
 /**
  * Created by pestano on 23/07/15.
  */
-
 @RunWith(JUnit4.class)
 public class DataSetExecutorIt {
 

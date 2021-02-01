@@ -1,5 +1,6 @@
 package com.github.database.rider.core.api.configuration;
 
+import com.github.database.rider.core.connection.RiderDataSource;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.replacers.Replacer;
 
@@ -55,6 +56,33 @@ public @interface DBUnit {
     boolean caseSensitiveTableNames() default false;
 
     /**
+     * If enabled an exception will be raised when <code>cleanBefore</code> or <code>cleanAfter</code> fails.
+     * If disabled then only a warn message is logged. Default is <code>false</code>
+     *
+     * @since 1.16.0
+     * @return boolean value which configures case-sensitive table names (also columns)
+     */
+    boolean raiseExceptionOnCleanUp() default false;
+
+    /**
+     * If enabled then the sequenceFiltering will be disabled even if it is enabled at <code>@DataSet</code> level
+     * @since 1.20.0
+     * @return boolean indicating the sequence filtering should be disabled or not.
+     */
+    boolean disableSequenceFiltering() default false;
+
+    /**
+     * In the process of initialization, if the actual database type is different from the expected database type,
+     * exception will be thrown unless the expected database type is {@link RiderDataSource.DBType#UNKNOWN}.
+     * <p>
+     * Default is {@link RiderDataSource.DBType#UNKNOWN}.
+     *
+     * @return the expected database type.
+     * @since 1.16.0
+     */
+    RiderDataSource.DBType expectedDbType() default RiderDataSource.DBType.UNKNOWN;
+
+    /**
      * @return value which configures DatabaseConfig.PROPERTY_DATATYPE_FACTORY
      */
     Class<? extends IDataTypeFactory> dataTypeFactoryClass() default IDataTypeFactory.class;
@@ -89,6 +117,20 @@ public @interface DBUnit {
     boolean mergeDataSets() default false;
 
     /**
+     * When dataset merging strategy is set to CLASS then we first load class level datasets and later method level datasets
+     * Default is method
+     */
+    DataSetMergingStrategy mergingStrategy() default DataSetMergingStrategy.METHOD;
+
+    /**
+     * If enabled, when loading datasets, reads in the whole XML into a buffer and dynamically adds new columns as they appear.
+     * This way, it's not necessary to define all possible columns on the first line.
+     *
+     * @return Enables or disables column sensing. Defaults to false.
+     */
+    boolean columnSensing() default false;
+
+    /**
      * Allow to call INSERT/UPDATE with empty strings ('').
      * 
      * @return value which configures DatabaseConfig.FEATURE_ALLOW_EMPTY_FIELDS. Defaults to false.
@@ -118,6 +160,18 @@ public @interface DBUnit {
     String escapePattern() default "";
 
     /**
+     * @since 1.17.0
+     * @return value which configures DatabaseConfig.PROPERTY_TABLE_TYPE (http://www.dbunit.org/properties/tableType)
+     */
+    String[] tableType() default {"TABLE"};
+
+    /**
+     * @since 1.21.0
+     * @return list of table names to disable primary key check while creating the dataset.
+     */
+    String[] disablePKCheckFor() default {};
+
+    /**
      * @since 0.15.0
      * @return driver class name. Used for declarative connections. Don't needed for drivers that implement jdbc 4.
      */
@@ -140,5 +194,11 @@ public @interface DBUnit {
      * @return Password of owner of database connection. Used for declarative connection.
      */
     String password() default "";
+
+    /**
+     * @since 1.11.0
+     * @return Schema for the database connection.
+     */
+    String schema() default "";
 
 }

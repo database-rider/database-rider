@@ -1,7 +1,9 @@
 package com.github.database.rider.core.configuration;
 
 import com.github.database.rider.core.api.configuration.DBUnit;
+import com.github.database.rider.core.api.configuration.DataSetMergingStrategy;
 import com.github.database.rider.core.api.configuration.Orthography;
+import com.github.database.rider.core.connection.RiderDataSource;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.replacers.DateTimeReplacer;
 import com.github.database.rider.core.replacers.NullReplacer;
@@ -27,7 +29,13 @@ public class DBUnitConfig {
     private Boolean cacheTableNames;
     private Boolean leakHunter;
     private Boolean mergeDataSets;
+    private Boolean columnSensing;
+    private Boolean raiseExceptionOnCleanUp;
+    private Boolean disableSequenceFiltering;
     private Orthography caseInsensitiveStrategy;
+    private String[] disablePKCheckFor;
+    private DataSetMergingStrategy mergingStrategy;
+    private RiderDataSource.DBType expectedDbType;
     private Map<String, Object> properties;
     private ConnectionConfig connectionConfig;
 
@@ -44,13 +52,16 @@ public class DBUnitConfig {
         if ("".equals(executorId)) {
             executorId = DataSetExecutorImpl.DEFAULT_EXECUTOR_ID;
         }
-
         cacheConnection = true;
         cacheTableNames = true;
         leakHunter = false;
         caseInsensitiveStrategy = Orthography.UPPERCASE;
+        mergingStrategy = DataSetMergingStrategy.METHOD;
         mergeDataSets = Boolean.FALSE;
-
+        columnSensing = Boolean.FALSE;
+        raiseExceptionOnCleanUp = Boolean.FALSE;
+        disableSequenceFiltering = Boolean.FALSE;
+        expectedDbType = RiderDataSource.DBType.UNKNOWN;
         initDefaultProperties();
         initDefaultConnectionConfig();
     }
@@ -59,15 +70,16 @@ public class DBUnitConfig {
         if (properties == null) {
             properties = new HashMap<>();
         }
-
         putIfAbsent(properties, "batchedStatements", false);
         putIfAbsent(properties, "qualifiedTableNames", false);
+        putIfAbsent(properties, "schema", null);
         putIfAbsent(properties, "caseSensitiveTableNames", false);
         putIfAbsent(properties, "batchSize", 100);
         putIfAbsent(properties, "fetchSize", 100);
         putIfAbsent(properties, "allowEmptyFields", false);
         putIfAbsent(properties, "replacers", new ArrayList<>(
                 Arrays.asList(new DateTimeReplacer(), new UnixTimestampReplacer(), new NullReplacer())));
+        putIfAbsent(properties, "tableType", Arrays.asList("TABLE"));
     }
 
     private <K, V> void putIfAbsent(Map<K, V> map, K key, V value) {
@@ -80,19 +92,15 @@ public class DBUnitConfig {
         if (connectionConfig == null) {
             connectionConfig = new ConnectionConfig();
         }
-
         if (connectionConfig.getDriver() == null) {
             connectionConfig.setDriver("");
         }
-
         if (connectionConfig.getUrl() == null) {
             connectionConfig.setUrl("");
         }
-
         if (connectionConfig.getUser() == null) {
             connectionConfig.setUser("");
         }
-
         if (connectionConfig.getPassword() == null) {
             connectionConfig.setPassword("");
         }
@@ -104,7 +112,6 @@ public class DBUnitConfig {
                 DBUnitConfig configFromFile = new Yaml().loadAs(customConfiguration, DBUnitConfig.class);
                 configFromFile.initDefaultProperties();
                 configFromFile.initDefaultConnectionConfig();
-
                 return configFromFile;
             }
         } catch (IOException e) {
@@ -121,13 +128,22 @@ public class DBUnitConfig {
                 .cacheTableNames(dbUnit.cacheTableNames())
                 .leakHunter(dbUnit.leakHunter())
                 .mergeDataSets(dbUnit.mergeDataSets())
+                .columnSensing(dbUnit.columnSensing())
+                .raiseExceptionOnCleanUp(dbUnit.raiseExceptionOnCleanUp())
+                .disableSequenceFiltering(dbUnit.disableSequenceFiltering())
+                .expectedDbType(dbUnit.expectedDbType())
+                .caseInsensitiveStrategy(dbUnit.caseInsensitiveStrategy())
+                .mergingStrategy(dbUnit.mergingStrategy())
+                .disablePKCheckFor(dbUnit.disablePKCheckFor())
                 .addDBUnitProperty("batchedStatements", dbUnit.batchedStatements())
                 .addDBUnitProperty("batchSize", dbUnit.batchSize())
                 .addDBUnitProperty("allowEmptyFields", dbUnit.allowEmptyFields())
                 .addDBUnitProperty("fetchSize", dbUnit.fetchSize())
                 .addDBUnitProperty("qualifiedTableNames", dbUnit.qualifiedTableNames())
+                .addDBUnitProperty("schema", !dbUnit.schema().isEmpty() ? dbUnit.schema() : null)
                 .addDBUnitProperty("caseSensitiveTableNames", dbUnit.caseSensitiveTableNames())
-                .caseInsensitiveStrategy(dbUnit.caseInsensitiveStrategy());
+                .addDBUnitProperty("tableType", dbUnit.tableType());
+
 
         if (!"".equals(dbUnit.escapePattern())) {
             dbUnitConfig.addDBUnitProperty("escapePattern", dbUnit.escapePattern());
@@ -137,8 +153,7 @@ public class DBUnitConfig {
             try {
                 IDataTypeFactory factory = dbUnit.dataTypeFactoryClass().newInstance();
                 dbUnitConfig.addDBUnitProperty("datatypeFactory", factory);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeException("failed to instantiate datatypeFactory", e);
             }
         }
@@ -147,13 +162,11 @@ public class DBUnitConfig {
             try {
                 IMetadataHandler factory = dbUnit.metaDataHandler().newInstance();
                 dbUnitConfig.addDBUnitProperty("metadataHandler", factory);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeException("failed to instantiate metadataHandler", e);
             }
         }
-        
-        
+
         List<Replacer> dbUnitReplacers = new ArrayList<>();
         for (Class<? extends Replacer> replacerClass : dbUnit.replacers()) {
             try {
@@ -170,7 +183,6 @@ public class DBUnitConfig {
         }
 
         dbUnitConfig.addDBUnitProperty("replacers", dbUnitReplacers);
-
 
         // declarative connection config
         dbUnitConfig.driver(dbUnit.driver())
@@ -216,14 +228,29 @@ public class DBUnitConfig {
         this.cacheTableNames = cacheTables;
         return this;
     }
-    
+
     public DBUnitConfig mergeDataSets(boolean mergeDataSets) {
         this.mergeDataSets = mergeDataSets;
         return this;
     }
 
+    private DBUnitConfig disableSequenceFiltering(boolean disableSequenceFiltering) {
+        this.disableSequenceFiltering = disableSequenceFiltering;
+        return this;
+    }
+
+    public DBUnitConfig columnSensing(boolean columnSensing) {
+        this.columnSensing = columnSensing;
+        return this;
+    }
+
     public DBUnitConfig caseInsensitiveStrategy(Orthography orthography) {
         this.caseInsensitiveStrategy = orthography;
+        return this;
+    }
+
+    public DBUnitConfig mergingStrategy(DataSetMergingStrategy dataSetMergingStrategy) {
+        this.mergingStrategy = dataSetMergingStrategy;
         return this;
     }
 
@@ -252,11 +279,26 @@ public class DBUnitConfig {
         return this;
     }
 
+    public DBUnitConfig raiseExceptionOnCleanUp(boolean raiseExceptionOnCleanUp) {
+        this.raiseExceptionOnCleanUp = raiseExceptionOnCleanUp;
+        return this;
+    }
+
+    public DBUnitConfig disablePKCheckFor(String... tables) {
+        disablePKCheckFor = tables;
+        return this;
+    }
+
+    public DBUnitConfig expectedDbType(RiderDataSource.DBType expectedDbType) {
+        this.expectedDbType = expectedDbType;
+        return this;
+    }
+
     public ConnectionConfig getConnectionConfig() {
         return connectionConfig;
     }
 
-    // methods above are for snakeyml library
+    // methods below are for snakeyml library
 
     public void setCacheConnection(boolean cacheConnection) {
         this.cacheConnection = cacheConnection;
@@ -281,7 +323,10 @@ public class DBUnitConfig {
     public Boolean isMergeDataSets() {
         return mergeDataSets;
     }
-    
+
+    public Boolean isColumnSensing() {
+        return columnSensing;
+    }
 
     public Boolean isLeakHunter() {
         return leakHunter;
@@ -297,6 +342,14 @@ public class DBUnitConfig {
 
     public void setCaseInsensitiveStrategy(Orthography caseInsensitiveStrategy) {
         this.caseInsensitiveStrategy = caseInsensitiveStrategy;
+    }
+
+    public DataSetMergingStrategy getMergingStrategy() {
+        return mergingStrategy;
+    }
+
+    public void setMergingStrategy(DataSetMergingStrategy mergingStrategy) {
+        this.mergingStrategy = mergingStrategy;
     }
 
     public Map<String, Object> getProperties() {
@@ -319,5 +372,39 @@ public class DBUnitConfig {
         return properties.containsKey("caseSensitiveTableNames") && Boolean.parseBoolean(properties.get("caseSensitiveTableNames").toString());
     }
 
+    public String[] getDisablePKCheckFor() {
+        return disablePKCheckFor;
+    }
 
+    public void setDisablePKCheckFor(String[] disablePKCheckFor) {
+        this.disablePKCheckFor = disablePKCheckFor;
+    }
+
+    public String getSchema() {
+        return (String) properties.get("schema");
+    }
+
+    public boolean isRaiseExceptionOnCleanUp() {
+        return raiseExceptionOnCleanUp;
+    }
+
+    public void setRaiseExceptionOnCleanUp(boolean raiseExceptionOnCleanUp) {
+        this.raiseExceptionOnCleanUp = raiseExceptionOnCleanUp;
+    }
+
+    public Boolean isDisableSequenceFiltering() {
+        return disableSequenceFiltering;
+    }
+
+    public void setDisableSequenceFiltering(Boolean disableSequenceFiltering) {
+        this.disableSequenceFiltering = disableSequenceFiltering;
+    }
+
+    public RiderDataSource.DBType getExpectedDbType() {
+        return expectedDbType;
+    }
+
+    public void setExpectedDbType(RiderDataSource.DBType expectedDbType) {
+        this.expectedDbType = expectedDbType;
+    }
 }
