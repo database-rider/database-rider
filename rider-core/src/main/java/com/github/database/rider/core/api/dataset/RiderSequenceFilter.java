@@ -2,6 +2,7 @@ package com.github.database.rider.core.api.dataset;
 
 import com.github.database.rider.core.api.configuration.Orthography;
 import com.github.database.rider.core.configuration.DBUnitConfig;
+import java.util.concurrent.ConcurrentHashMap;
 import org.dbunit.database.CyclicTablesDependencyException;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.database.search.TablesDependencyHelper;
@@ -21,6 +22,7 @@ public class RiderSequenceFilter extends SequenceTableFilter {
      * Logger for this class
      */
     private static final Logger logger = LoggerFactory.getLogger(RiderSequenceFilter.class);
+    private static final Map<String, RiderSequenceFilter.DependencyInfo> DEPENDENCY_INFO_CACHE = new ConcurrentHashMap<>();
 
 
     /**
@@ -164,25 +166,32 @@ public class RiderSequenceFilter extends SequenceTableFilter {
         if(!dbUnitConfig.isCaseSensitiveTableNames() && tableName != null) {
             tableName = applyCaseInSensitiveStrategy(tableName, dbUnitConfig);
         }
-        // The tables dependency helpers makes a depth search for dependencies and returns the whole
-        // tree of dependent objects, not only the direct FK-PK related tables.
-        String[] allDependentTables = TablesDependencyHelper.getDependentTables(connection, tableName);
-        String[] allDependsOnTables = TablesDependencyHelper.getDependsOnTables(connection, tableName);
-        Set allDependentTablesSet = new HashSet(Arrays.asList(allDependentTables));
-        Set allDependsOnTablesSet = new HashSet(Arrays.asList(allDependsOnTables));
-        // Remove the table itself which is automatically included by the TablesDependencyHelper
-        allDependentTablesSet.remove(tableName);
-        allDependsOnTablesSet.remove(tableName);
 
-        Set directDependsOnTablesSet = TablesDependencyHelper.getDirectDependsOnTables(connection, tableName);
-        Set directDependentTablesSet = TablesDependencyHelper.getDirectDependentTables(connection, tableName);
-        directDependsOnTablesSet.remove(tableName);
-        directDependentTablesSet.remove(tableName);
+        if (DEPENDENCY_INFO_CACHE.containsKey(tableName)){
+            return DEPENDENCY_INFO_CACHE.get(tableName);
+        } else {
+            // The tables dependency helpers makes a depth search for dependencies and returns the whole
+            // tree of dependent objects, not only the direct FK-PK related tables.
+            String[] allDependentTables = TablesDependencyHelper.getDependentTables(connection, tableName);
+            String[] allDependsOnTables = TablesDependencyHelper.getDependsOnTables(connection, tableName);
+            Set allDependentTablesSet = new HashSet(Arrays.asList(allDependentTables));
+            Set allDependsOnTablesSet = new HashSet(Arrays.asList(allDependsOnTables));
+            // Remove the table itself which is automatically included by the TablesDependencyHelper
+            allDependentTablesSet.remove(tableName);
+            allDependsOnTablesSet.remove(tableName);
 
-        RiderSequenceFilter.DependencyInfo info = new RiderSequenceFilter.DependencyInfo(tableName,
+            Set directDependsOnTablesSet = TablesDependencyHelper.getDirectDependsOnTables(connection, tableName);
+            Set directDependentTablesSet = TablesDependencyHelper.getDirectDependentTables(connection, tableName);
+            directDependsOnTablesSet.remove(tableName);
+            directDependentTablesSet.remove(tableName);
+
+            RiderSequenceFilter.DependencyInfo info = new RiderSequenceFilter.DependencyInfo(tableName,
                 directDependsOnTablesSet, directDependentTablesSet,
                 allDependsOnTablesSet, allDependentTablesSet);
-        return info;
+            DEPENDENCY_INFO_CACHE.put(tableName, info);
+            logger.debug("New DependencyInfo for {} created}", tableName);
+            return info;
+        }
     }
 
     private static String applyCaseInSensitiveStrategy(String tableName, DBUnitConfig dbUnitConfig) {
