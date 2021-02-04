@@ -22,7 +22,7 @@ script:
   && python html2text.py target/site/surefire-report.html
 - if [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_BRANCH == "master" ]]; then
   mvn sonar:sonar -Psonar -Dsonar.organization=database-rider -Dsonar.host.url=https://sonarcloud.io
-  -Dsonar.login=${SONAR_TOKEN} ; fi ;
+  -Dsonar.login=${SONAR_TOKEN} -Dsonar.scanner.force-deprecated-java-version-grace-period=true ; fi ;
 - if [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_BRANCH == "master" ]]; then
   cd rider-core && mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs ; fi ;
 - if [[ $TRAVIS_COMMIT_MESSAGE == *"prepare release"* ]]; then
