@@ -118,6 +118,12 @@
             <artifactId>mssql-jdbc</artifactId>
             <version>6.1.0.jre8</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- mysql test -->
