@@ -126,7 +126,6 @@
                 <artifactId>snakeyaml</artifactId>
                 <version>1.16</version>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
@@ -213,10 +212,20 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <version>3.0.0-M1</version>
             </plugin>
         </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
+
     <profiles>
 
         <profile>
