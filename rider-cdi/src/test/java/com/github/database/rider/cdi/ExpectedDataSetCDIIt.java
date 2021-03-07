@@ -1,13 +1,12 @@
 package com.github.database.rider.cdi;
 
+import com.github.database.rider.cdi.api.DBUnitInterceptor;
 import com.github.database.rider.cdi.model.Tweet;
+import com.github.database.rider.cdi.model.User;
 import com.github.database.rider.core.api.dataset.CompareOperation;
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.cdi.api.DBUnitInterceptor;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
-import com.github.database.rider.cdi.model.User;
 import com.github.database.rider.core.replacers.NullReplacer;
-import com.github.database.rider.core.util.EntityManagerProvider;
 import org.apache.deltaspike.testcontrol.api.junit.CdiTestRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -148,7 +147,6 @@ public class ExpectedDataSetCDIIt {
         em.persist(t);
     }
 
-
     @Test
     @DataSet(value = "datasets/csv/USER.csv", cleanBefore = true, transactional = true)
     @ExpectedDataSet(value = "datasets/csv/expected/USER.csv")
@@ -162,7 +160,7 @@ public class ExpectedDataSetCDIIt {
     }
 
     @Test
-    @DataSet(value = "yml/user.yml", transactional = true)
+    @DataSet(value = "yml/user.yml", transactional = true, cleanBefore = true)
     @ExpectedDataSet(value = "yml/expectedUsersContains.yml", compareOperation = CompareOperation.CONTAINS)
     public void shouldMatchExpectedDataSetContains() {
         User u = new User();
@@ -172,7 +170,7 @@ public class ExpectedDataSetCDIIt {
     }
 
     @Test
-    @DataSet(value = "yml/user.yml", transactional = true)
+    @DataSet(value = "yml/user.yml", transactional = true, cleanBefore = true)
     @ExpectedDataSet(value = "yml/expectedUsersContainsColumns.yml", compareOperation = CompareOperation.CONTAINS)
     public void shouldMatchExpectedDataSetContainsColumns() {
         User u = new User();
