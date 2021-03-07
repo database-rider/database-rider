@@ -3,6 +3,8 @@ package com.github.database.rider.junit5;
 import com.github.database.rider.core.AbstractRiderTestContext;
 import com.github.database.rider.core.api.dataset.DataSetExecutor;
 import com.github.database.rider.junit5.util.EntityManagerProvider;
+import java.util.Optional;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.util.AnnotationUtils;
 
@@ -37,7 +39,15 @@ public class JUnit5RiderTestContext extends AbstractRiderTestContext {
 
     @Override
     public <T extends Annotation> T getClassAnnotation(Class<T> clazz) {
-        return AnnotationUtils.findAnnotation(extensionContext.getTestClass(), clazz).orElse(null);
+        return getClassAnnotation(extensionContext.getTestClass(), clazz);
+    }
+
+    private  <T extends Annotation> T getClassAnnotation(Optional<Class<?>> testClass, Class<T> clazz) {
+        return AnnotationUtils.findAnnotation(testClass, clazz)
+            .orElseGet(() -> AnnotationUtils.findAnnotation(testClass.filter(Class::isMemberClass), Nested.class)
+                .map(nested -> getClassAnnotation(testClass.map(Class::getEnclosingClass), clazz))
+                .orElse(null)
+            );
     }
 
     @Override

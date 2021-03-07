@@ -83,7 +83,6 @@ public class DBUnitJUnit5It {
         EntityManagerProvider.em().remove(user);
     }
 
-
     @Test
     public void shouldNotSeedDatabaseListUsers() {
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
