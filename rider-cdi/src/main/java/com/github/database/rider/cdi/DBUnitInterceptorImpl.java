@@ -37,7 +37,7 @@ public class DBUnitInterceptorImpl implements Serializable {
     @AroundInvoke
     public Object intercept(InvocationContext invocationContext) throws Exception {
 
-        if(shouldIgnoreInterceptedMethod(invocationContext.getMethod())) {
+        if (shouldIgnoreInterceptedMethod(invocationContext.getMethod())) {
             return invocationContext.proceed();
         }
         DBUnitConfig dbUnitConfig = DBUnitConfig.from(invocationContext.getMethod());
@@ -45,7 +45,7 @@ public class DBUnitInterceptorImpl implements Serializable {
         DataSet usingDataSet = resolveDataSet(invocationContext, dbUnitConfig);
         ExpectedDataSet expectedDataSet = invocationContext.getMethod().getAnnotation(ExpectedDataSet.class);
 
-        if(usingDataSet == null && expectedDataSet == null) {
+        if (usingDataSet == null && expectedDataSet == null) {
             return invocationContext.proceed();
         }
         Object proceed;
@@ -93,7 +93,11 @@ public class DBUnitInterceptorImpl implements Serializable {
                             new DataSetConfig(expectedDataSet.value())
                                     .datasetProvider(expectedDataSet.provider())
                                     .disableConstraints(true),
-                            expectedDataSet.ignoreCols());
+                            expectedDataSet.ignoreCols(),
+                            expectedDataSet.replacers(),
+                            expectedDataSet.orderBy(),
+                            expectedDataSet.compareOperation()
+                    );
                 }
             } finally {
                 if (isTransactionalTest) {
@@ -135,7 +139,7 @@ public class DBUnitInterceptorImpl implements Serializable {
                 if (expectedDataSet != null) {
                     dataSetProcessor.compareCurrentDataSetWith(
                             new DataSetConfig(expectedDataSet.value()).disableConstraints(true),
-                            expectedDataSet.ignoreCols());
+                            expectedDataSet.ignoreCols(), expectedDataSet.replacers(), expectedDataSet.ignoreCols(), expectedDataSet.compareOperation());
                 }
             } finally {
                 dataSetProcessor.exportDataSet(invocationContext.getMethod());
@@ -156,7 +160,7 @@ public class DBUnitInterceptorImpl implements Serializable {
     private boolean hasTestAnnotation(Method method) {
         List<Annotation> annotations = Arrays.asList(method.getDeclaredAnnotations());
         for (Annotation annotation : annotations) {
-            if(TEST_ANNOTATION_NAMES.contains(annotation.annotationType().getSimpleName())) {
+            if (TEST_ANNOTATION_NAMES.contains(annotation.annotationType().getSimpleName())) {
                 return true;
             }
         }
@@ -187,7 +191,7 @@ public class DBUnitInterceptorImpl implements Serializable {
                 DataSet.class);
 
         if (config.isMergeDataSets() && (classAnnotation != null && methodAnnotation != null)) {
-            if(DataSetMergingStrategy.METHOD.equals(config.getMergingStrategy())) {
+            if (DataSetMergingStrategy.METHOD.equals(config.getMergingStrategy())) {
                 return AnnotationUtils.mergeDataSetAnnotations(classAnnotation, methodAnnotation);
             } else {
                 return AnnotationUtils.mergeDataSetAnnotations(methodAnnotation, classAnnotation);

@@ -2,6 +2,7 @@ package com.github.database.rider.cdi;
 
 import com.github.database.rider.cdi.api.DefaultAnnotation;
 import com.github.database.rider.cdi.api.RiderPUAnnotation;
+import com.github.database.rider.core.api.dataset.CompareOperation;
 import com.github.database.rider.core.api.dataset.DataSetExecutor;
 import com.github.database.rider.core.api.exporter.DataSetExportConfig;
 import com.github.database.rider.core.api.exporter.ExportDataSet;
@@ -10,6 +11,7 @@ import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.connection.ConnectionHolderImpl;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.exporter.DataSetExporter;
+import com.github.database.rider.core.replacers.Replacer;
 import org.dbunit.DatabaseUnitException;
 import org.hibernate.Session;
 import org.hibernate.internal.SessionImpl;
@@ -19,8 +21,6 @@ import org.slf4j.LoggerFactory;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -151,8 +151,8 @@ public class DataSetProcessor {
         dataSetExecutor.executeScript(script);
     }
 
-    public void compareCurrentDataSetWith(DataSetConfig expected, String[] excludeCols) throws DatabaseUnitException {
-        dataSetExecutor.compareCurrentDataSetWith(expected, excludeCols);
+    public void compareCurrentDataSetWith(DataSetConfig expected, String[] excludeCols, Class<? extends Replacer>[] replacers, String[] orderBy, CompareOperation compareOperation) throws DatabaseUnitException {
+        dataSetExecutor.compareCurrentDataSetWith(expected, excludeCols, replacers, orderBy, compareOperation);
     }
 
     public Connection getConnection() {

@@ -1,0 +1,10 @@
+USER:
+  - NAME: "@realpestano"
+  - NAME: "@arhohuttunen"
+  - NAME: "@dbunit"
+TWEET:
+  - CONTENT: tweet1
+  - CONTENT: tweet2
+  - CONTENT: tweet3
+
+

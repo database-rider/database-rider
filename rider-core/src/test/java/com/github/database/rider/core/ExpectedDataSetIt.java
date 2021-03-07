@@ -5,6 +5,7 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.model.Tweet;
 import com.github.database.rider.core.model.User;
+import com.github.database.rider.core.replacers.NullReplacer;
 import com.github.database.rider.core.util.EntityManagerProvider;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -228,6 +229,26 @@ public class ExpectedDataSetIt {
         u.setId(new Random(System.currentTimeMillis()).nextInt());
         u.setName("@dbrider");
         em().persist(u);
+    }
+
+    @Test
+    @DataSet(cleanBefore = true)//<1>
+    @ExpectedDataSet(value = "yml/null-replacements.yml", ignoreCols = "id", replacers= NullReplacer.class)
+    public void shouldMatchExpectedDataSetNullReplaced() {
+        User u = new User(1);
+        Tweet t = new Tweet();
+        t.setId("1");
+        t.setContent(null);
+        t.setUser(u);
+        Tweet t2 = new Tweet();
+        t2.setId("2");
+        t2.setContent("null");
+        t2.setUser(u);
+        tx().begin();
+        em().persist(u);
+        em().persist(t);
+        em().persist(t2);
+        tx().commit();
     }
 
 }
