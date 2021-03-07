@@ -1,7 +1,6 @@
 package com.github.database.rider.junit5;
 
 import com.github.database.rider.core.api.connection.ConnectionHolder;
-import com.github.database.rider.core.api.dataset.CompareOperation;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.junit5.model.User;
@@ -60,7 +59,7 @@ public class DBUnitJUnit5NestedIt {
             User user = (User) EntityManagerProvider.em().createQuery("select u from User u  where u.id = 1").getSingleResult();
             assertThat(user).isNotNull();
             assertThat(user.getName()).isEqualTo("@realpestano");
-           EntityManagerProvider.em().remove(user.getTweets().get(0));
+            EntityManagerProvider.em().remove(user.getTweets().get(0));
             EntityManagerProvider.em().remove(user);
         }
     }

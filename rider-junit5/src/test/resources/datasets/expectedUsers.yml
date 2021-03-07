@@ -1,0 +1,5 @@
+USER:
+  - ID: 1
+    NAME: "expected user1"
+  - ID: 2
+    NAME: "expected user2"
