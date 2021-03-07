@@ -1,7 +1,7 @@
 dist: trusty
 sudo: required
 language: java
-jdk: oraclejdk8
+jdk: openjdk11
 cache:
   directories:
   - "$HOME/.m2/repository"
