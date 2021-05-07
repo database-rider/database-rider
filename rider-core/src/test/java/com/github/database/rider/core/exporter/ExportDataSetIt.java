@@ -8,6 +8,7 @@ import com.github.database.rider.core.api.exporter.DataSetExportConfig;
 import com.github.database.rider.core.api.exporter.ExportDataSet;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
+import com.github.database.rider.core.model.Tweet;
 import com.github.database.rider.core.model.User;
 import com.github.database.rider.core.util.EntityManagerProvider;
 import org.dbunit.DatabaseUnitException;
@@ -117,6 +118,24 @@ public class ExportDataSetIt {
 
     @Test
     @DataSet(cleanBefore = true)
+    public void shouldExportYMLDataSetWithEscapedQuotes() throws SQLException, DatabaseUnitException {
+        tx().begin();
+        Tweet t1 = new Tweet();
+        t1.setContent("Content with \"quotes\" and \\backslash\\");
+        EntityManagerProvider.em().persist(t1);
+        tx().commit();
+        DataSetExporter.getInstance().export(emProvider.connection(), new DataSetExportConfig().outputFileName("target/tweet.yml"));
+        File ymlDataSet = new File("target/tweet.yml");
+        assertThat(ymlDataSet).exists();
+        assertThat(contentOf(ymlDataSet)).
+                contains("TWEET:" + NEW_LINE +
+                        "  - ID: \"" + t1.getId() + "\"" + NEW_LINE +
+                        "    CONTENT: \"Content with \\\"quotes\\\" and \\\\backslash\\\\\"" + NEW_LINE
+                );
+    }
+
+    @Test
+    @DataSet(cleanBefore = true)
     public void shouldExportJSONDataSetProgrammatically() throws SQLException, DatabaseUnitException, FileNotFoundException {
         tx().begin();
         User u1 = new User();
@@ -134,6 +153,25 @@ public class ExportDataSetIt {
                 "      \"NAME\": \"u1\"" + NEW_LINE +
                 "    }" + NEW_LINE +
                 "  ]");
+    }
+
+    @Test
+    @DataSet(cleanBefore = true)
+    public void shouldExportJSONDataSetWithEscapedQuotes() throws SQLException, DatabaseUnitException, FileNotFoundException {
+        tx().begin();
+        Tweet t1 = new Tweet();
+        t1.setContent("Content with \"quotes\" and \\backslash\\");
+        EntityManagerProvider.em().persist(t1);
+        tx().commit();
+        DataSetExporter.getInstance().export(emProvider.connection(), new DataSetExportConfig().
+                outputFileName("target/tweet.json").dataSetFormat(DataSetFormat.JSON));
+        File jsonDataSet = new File("target/tweet.json");
+        assertThat(jsonDataSet).exists();
+        assertThat(contentOf(jsonDataSet)).contains("\"TWEET\": [" + NEW_LINE +
+                "    {" + NEW_LINE +
+                "      \"ID\": \"" + t1.getId() + "\"" +
+                "," + NEW_LINE +
+                "      \"CONTENT\": \"Content with \\\"quotes\\\" and \\\\backslash\\\\\"" + NEW_LINE);
     }
 
     @Test
