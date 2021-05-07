@@ -116,9 +116,13 @@ public class JSONWriter implements IDataSetConsumer {
 				sb.append('"');
 			}
             if(values[i] instanceof byte[]){
-                sb.append(DatatypeConverter.printBase64Binary((byte[]) values[i]).replaceAll(NEW_LINE, "\\\\n"));
+                sb.append(DatatypeConverter.printBase64Binary((byte[]) values[i]).replace(NEW_LINE, "\\n"));
             } else {
-                sb.append(currentValue.toString().replaceAll(NEW_LINE, "\\\\n"));
+                sb.append(currentValue.toString()
+						.replace("\\", "\\\\")
+						.replace("\"", "\\\"")
+						.replace(NEW_LINE, "\\n")
+				);
             }
 			if (!isNumber) {
 				sb.append('"');
