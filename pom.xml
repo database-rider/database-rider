@@ -61,7 +61,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jacoco.version>0.7.7.201606060606</jacoco.version>
+        <jacoco.version>0.8.3</jacoco.version>
         <ds.version>1.6.0</ds.version>
     </properties>
 
