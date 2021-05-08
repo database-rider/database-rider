@@ -4,11 +4,10 @@
 :doctype: book
 :icons: font
 :numbered:
-:!linkcss:
 :sectanchors:
 :sectlink:
 :docinfo:
-:source-highlighter: highlightjs
+:source-highlighter: coderay
 :toclevels: 3
 :revnumber: 1.23.1-SNAPSHOT
 :hardbreaks:
