@@ -34,6 +34,9 @@ public class DBUnitJUnit5NestedIt {
     @Nested
     class NestedTest {
 
+        private ConnectionHolder connectionHolder = () -> //<3>
+                EntityManagerProvider.instance("junit5-pu").clear().connection();//<4>
+
         @Test
         @DataSet(cleanBefore = true)
         public void shouldInsertUser() {
@@ -51,6 +54,9 @@ public class DBUnitJUnit5NestedIt {
 
     @Nested
     class NestedExpectedDataSetTest {
+
+        private ConnectionHolder connectionHolder = () -> //<3>
+                EntityManagerProvider.instance("junit5-pu").clear().connection();//<4>
 
         @Test
         @DataSet(value = "usersWithTweet.yml", transactional = true, cleanBefore = true)

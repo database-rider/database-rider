@@ -61,7 +61,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jacoco.version>0.7.7.201606060606</jacoco.version>
+        <jacoco.version>0.8.3</jacoco.version>
         <ds.version>1.6.0</ds.version>
     </properties>
 
@@ -100,7 +100,6 @@
             <version>7.0</version>
             <scope>provided</scope>
         </dependency>
-
     </dependencies>
 
     <dependencyManagement>
@@ -286,8 +285,15 @@
                         <artifactId>coveralls-maven-plugin</artifactId>
                         <version>4.1.0</version>
                         <configuration>
-                            <repoToken>GSuxXhAxdIzxXZOUi0tMw2ORBdMcdORG2</repoToken>
+                            <repoToken>${COVERAGE_TOKEN}</repoToken>
                         </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>javax.xml.bind</groupId>
+                                <artifactId>jaxb-api</artifactId>
+                                <version>1.0.6</version>
+                            </dependency>
+                        </dependencies>
                     </plugin>
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>

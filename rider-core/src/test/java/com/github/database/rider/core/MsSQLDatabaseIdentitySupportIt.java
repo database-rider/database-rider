@@ -18,7 +18,7 @@ import java.sql.SQLException;
 @RunWith(JUnit4.class)
 @DBUnit(caseSensitiveTableNames = true, escapePattern = "\"?\"")
 public class MsSQLDatabaseIdentitySupportIt {
-    private static final MSSQLServerContainer<?> mssqlserver = new MSSQLServerContainer<>();
+    private static MSSQLServerContainer<?> mssqlserver;
 
     @Rule
     public DBUnitRule dbUnitRule = DBUnitRule.instance(getConnection());
@@ -29,6 +29,7 @@ public class MsSQLDatabaseIdentitySupportIt {
 
     @BeforeClass
     public static void setupContainer() {
+        mssqlserver = new MSSQLServerContainer <>();
         mssqlserver.start();
     }
 

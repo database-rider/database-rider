@@ -1,0 +1,61 @@
+name: DBRider Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: DBRider Build
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        # test against latest update of each major Java version, as well as specific updates of LTS versions:
+        java: [8, 11.0.4]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Build
+        run: mvn install -DskipTests
+  test:
+    name: DBRider Test, Coverage & Docs
+    runs-on: ubuntu-18.04
+    needs: build
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11.0.4
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Test
+        run: mvn verify jacoco:report coveralls:report -Pcoverage -DCOVERAGE_TOKEN=${{ secrets.COVERAGE_TOKEN }}
+      - name: sonar
+        run: mvn sonar:sonar -Psonar -Dsonar.organization=database-rider -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.scanner.force-deprecated-java-version-grace-period=true ; fi ;
+        if: steps.extract_branch.outputs.branch == 'master'
+      - name: Configure Git user
+        run: |
+          git config user.email "${{ secrets.GIT_EMAIL }}"
+          git config user.name "rmpestano"
+      - name: Docs snapshot
+        run: cd rider-core && mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs -DGH_TOKEN=${{ secrets.GH_TOKEN }}
+        if: "steps.extract_branch.outputs.branch == 'master' && !contains(github.event.head_commit.message, 'prepare release')"
+      - name: Docs release
+        run: cd rider-core && mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs -Prelease -DGH_TOKEN=${{ secrets.GH_TOKEN }}
+        if: "steps.extract_branch.outputs.branch == 'master' && contains(github.event.head_commit.message, 'prepare release')"

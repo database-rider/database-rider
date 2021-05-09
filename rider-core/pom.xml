@@ -94,7 +94,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>1.11.1</version>
+            <version>1.15.3</version>
             <scope>test</scope>
         </dependency>
 
@@ -109,7 +109,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>mssqlserver</artifactId>
-            <version>1.11.1</version>
+            <version>1.15.3</version>
             <scope>test</scope>
         </dependency>
 
@@ -130,7 +130,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>mysql</artifactId>
-            <version>1.11.1</version>
+            <version>1.15.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -146,6 +146,7 @@
             <version>1.11.3</version>
             <scope>provided</scope>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -174,7 +175,7 @@
                     <plugin>
                         <groupId>com.github.cukedoctor</groupId>
                         <artifactId>cukedoctor-maven-plugin</artifactId>
-                        <version>1.2.1</version>
+                        <version>3.6.0</version>
                         <configuration>
                             <outputFileName>documentation</outputFileName>
                             <!-- by default it resolves to 'latest' and is overriden by release profile -->
