@@ -21,7 +21,7 @@
         <maven.compiler.parameters>true</maven.compiler.parameters>
         <quarkus-plugin.version>1.10.5.Final</quarkus-plugin.version>
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
-        <testcontainers.version>1.15.0</testcontainers.version>
+        <testcontainers.version>1.15.3</testcontainers.version>
         <lombok.version>1.18.16</lombok.version>
         <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
     </properties>
