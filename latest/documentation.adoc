@@ -16,7 +16,7 @@
 
 = *Database Rider Documentation*
 
-include::/home/travis/build/database-rider/database-rider/rider-core/target/test-classes/cukedoctor-intro.adoc[leveloffset=+1]
+include::/home/runner/work/database-rider/database-rider/rider-core/target/test-classes/cukedoctor-intro.adoc[leveloffset=+1]
 
 
 [[Seeding-database, Seeding database]]
