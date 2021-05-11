@@ -55,7 +55,7 @@ jobs:
           git config user.name "rmpestano"
       - name: Docs snapshot
         run: cd rider-core && mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs -DGH_TOKEN=${{ secrets.GH_TOKEN }}
-        if: "steps.extract_branch.outputs.branch == 'master' && !contains(github.event.head_commit.message, 'prepare release')"
+        if: "contains(github.ref, 'master') && !contains(github.event.head_commit.message, 'prepare release')"
       - name: Docs release
         run: cd rider-core && mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs -Prelease -DGH_TOKEN=${{ secrets.GH_TOKEN }}
-        if: "steps.extract_branch.outputs.branch == 'master' && contains(github.event.head_commit.message, 'prepare release')"
+        if: "contains(github.ref, 'master') && contains(github.event.head_commit.message, 'prepare release')"
