@@ -51,8 +51,8 @@ jobs:
         if: steps.extract_branch.outputs.branch == 'master'
       - name: Configure Git user
         run: |
-          git config user.email "${{ secrets.GIT_EMAIL }}"
-          git config user.name "rmpestano"
+          git config --globa user.email "${{ secrets.GIT_EMAIL }}"
+          git config --globa user.name "rmpestano"
       - name: Docs snapshot
         run: cd rider-core && mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs -DGH_TOKEN=${{ secrets.GH_TOKEN }}
         if: "contains(github.ref, 'master') && !contains(github.event.head_commit.message, 'prepare release')"
