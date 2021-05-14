@@ -47,8 +47,10 @@ jobs:
       - name: Test
         run: mvn verify jacoco:report coveralls:report -Pcoverage -DCOVERAGE_TOKEN=${{ secrets.COVERAGE_TOKEN }}
       - name: sonar
-        run: mvn sonar:sonar -Psonar -Dsonar.organization=database-rider -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.scanner.force-deprecated-java-version-grace-period=true ; fi ;
-        if: steps.extract_branch.outputs.branch == 'master'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: mvn sonar:sonar -Psonar -Dsonar.organization=database-rider -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.scanner.force-deprecated-java-version-grace-period=true
+        if: "contains(github.ref, 'master')"
       - name: Configure Git user
         run: |
           git config --globa user.email "${{ secrets.GIT_EMAIL }}"
