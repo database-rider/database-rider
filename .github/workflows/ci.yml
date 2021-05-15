@@ -61,3 +61,29 @@ jobs:
       - name: Docs release
         run: cd rider-core && mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs -Prelease -DGH_TOKEN=${{ secrets.GH_TOKEN }}
         if: "contains(github.ref, 'master') && contains(github.event.head_commit.message, 'prepare release')"
+  release:
+    name: Release DBRider to maven central
+    runs-on: ubuntu-18.04
+    needs: test
+    env:
+      MAVEN_USER: ${{ secrets.MAVEN_USER }}
+      MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
+      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11.0.4
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Deploy snapshots
+        run: mvn deploy --settings settings.xml -DskipTests=true -Darguments="-DskipTests -Dmaven.test.skip=true"
+        if: "contains(github.ref, 'master') && !contains(github.event.head_commit.message, 'prepare release')"
+      - name: Release
+        run: mvn -B deploy --settings settings.xml -Prelease -DskipTests -Darguments="-DskipTests -Dmaven.test.skip=true"
+        if: "contains(github.ref, 'master') && contains(github.event.head_commit.message, 'prepare release')"
