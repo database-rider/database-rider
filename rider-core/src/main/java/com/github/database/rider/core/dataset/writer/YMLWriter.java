@@ -95,7 +95,10 @@ public class YMLWriter implements IDataSetConsumer {
                     if(values[i] instanceof byte[]){
                         out.write(DatatypeConverter.printBase64Binary((byte[]) values[i]));
                     } else {
-                        out.write(values[i].toString());
+                        out.write(values[i].toString()
+                                .replace("\\", "\\\\")
+                                .replace("\"", "\\\"")
+                        );
                     }
                 }
                 if(!isNumber){
