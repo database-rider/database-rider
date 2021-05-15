@@ -61,7 +61,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jacoco.version>0.8.3</jacoco.version>
+        <jacoco.version>0.8.6</jacoco.version>
         <ds.version>1.6.0</ds.version>
         <testcontainers.version>1.15.3</testcontainers.version>
     </properties>
@@ -340,18 +340,22 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
+                        <version>3.2.1</version>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
                                 <goals>
-                                    <goal>jar</goal>
+                                    <goal>jar-no-fork</goal>
                                 </goals>
                             </execution>
                         </executions>
                     </plugin>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.2.0</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
@@ -362,30 +366,35 @@
                         </executions>
                     </plugin>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <!-- Prevent gpg from using pinentry programs -->
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
+                    </plugin>
+                    <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>2.19.1</version>
                         <configuration>
                             <skipTests>true</skipTests>
                         </configuration>
                     </plugin>
-					
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jarsigner-plugin</artifactId>
-                        <version>1.4</version>
-                        <configuration>
-                            <skip>true</skip>
-                        </configuration>
-                    </plugin>
                 </plugins>
             </build>
-
-            <distributionManagement>
-                <repository>
-                    <id>bintray</id>
-                    <url>https://api.bintray.com/maven/rmpestano/database-rider/database-rider</url>
-                </repository>
-            </distributionManagement>
         </profile>
         
         <profile>
@@ -416,7 +425,10 @@
             <id>snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
+        <repository>
+            <id>releases</id>
+            <url>https://oss.sonatype.org/content/repositories/releases</url>
+        </repository>
     </distributionManagement>
-
 
 </project>

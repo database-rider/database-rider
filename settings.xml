@@ -11,8 +11,17 @@
     <servers>
         <server>
             <id>snapshots</id>
-            <username>${env.USER}</username>
-            <password>${env.CENTRAL_PASS}</password>
+            <username>${MAVEN_USER}</username>
+            <password>${MAVEN_PASS}</password>
+        </server>
+        <server>
+            <id>releases</id>
+            <username>${MAVEN_USER}</username>
+            <password>${MAVEN_PASS}</password>
+        </server>
+        <server>
+            <id>gpg.passphrase</id>
+            <passphrase>${GPG_PASSPHRASE}</passphrase>
         </server>
     </servers>
     <mirrors/>
