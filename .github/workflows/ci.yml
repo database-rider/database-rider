@@ -94,5 +94,9 @@ jobs:
         run: mvn deploy --settings settings.xml -DskipTests=true -Darguments="-DskipTests -Dmaven.test.skip=true"
         if: "contains(github.ref, 'master') && !contains(github.event.head_commit.message, 'prepare release')"
       - name: Release
-        run: mvn deploy -Prelease -DskipTests -Darguments="-DskipTests -Dmaven.test.skip=true"
+        run: mvn deploy -Prelease
         if: "contains(github.ref, 'master') && contains(github.event.head_commit.message, 'prepare release')"
+        env:
+          MAVEN_USER: ${{ secrets.MAVEN_USER }}
+          MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}

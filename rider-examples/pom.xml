@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.github.database-rider</groupId>
         <artifactId>rider-parent</artifactId>
-        <version>1.23.2-SNAPSHOT</version>
+        <version>1.23.1</version>
     </parent>
 
     <artifactId>rider-examples</artifactId>
@@ -25,6 +25,21 @@
 
     <build>
         <plugins>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>8</source>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>

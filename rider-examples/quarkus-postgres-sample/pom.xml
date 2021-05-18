@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.github.database-rider</groupId>
         <artifactId>rider-examples</artifactId>
-        <version>1.23.2-SNAPSHOT</version>
+        <version>1.23.1</version>
     </parent>
     <artifactId>quarkus-postgres-sample</artifactId>
     <description>This sample project was created by Alexei Bratuhin(@coiouhkc github user) as a reproducer for issue #253 </description>
@@ -112,9 +112,11 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire.version}</version>
                 <configuration>
-                    <systemProperties>
+                    <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                    </systemProperties>
+                        <maven.home>${maven.home}</maven.home>
+                        <maven.settings>${session.request.userSettingsFile.path}</maven.settings>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>
