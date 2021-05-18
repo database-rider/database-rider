@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.github.database-rider</groupId>
         <artifactId>rider-examples</artifactId>
-        <version>1.23.1</version>
+        <version>1.23.2-SNAPSHOT</version>
     </parent>
     <artifactId>quarkus-postgres-sample</artifactId>
     <description>This sample project was created by Alexei Bratuhin(@coiouhkc github user) as a reproducer for issue #253 </description>
@@ -13,8 +13,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <surefire.version>2.22.1</surefire.version>
-        <quarkus.version>1.10.5.Final</quarkus.version>
+        <quarkus.version>1.13.3.Final</quarkus.version>
         <testcontainers.version>1.15.3</testcontainers.version>
         <lombok.version>1.18.16</lombok.version>
     </properties>
@@ -109,23 +108,14 @@
                 <version>${quarkus.version}</version>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire.version}</version>
                 <configuration>
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                         <maven.home>${maven.home}</maven.home>
                         <maven.settings>${session.request.userSettingsFile.path}</maven.settings>
                     </systemPropertyVariables>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
