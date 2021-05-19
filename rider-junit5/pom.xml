@@ -9,7 +9,7 @@
     <artifactId>rider-junit5</artifactId>
 
     <properties>
-        <version.junit-platform>1.6.3</version.junit-platform>
+        <version.junit-platform>1.7.2</version.junit-platform>
         <version.junit-jupiter>5.6.2</version.junit-jupiter>
     </properties>
     <dependencies>
