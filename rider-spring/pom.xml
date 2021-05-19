@@ -9,7 +9,7 @@
     <artifactId>rider-spring</artifactId>
 
     <properties>
-        <version.spring>4.3.0.RELEASE</version.spring>
+        <version.spring>5.3.7</version.spring>
     </properties>
     <dependencies>
         <dependency>
