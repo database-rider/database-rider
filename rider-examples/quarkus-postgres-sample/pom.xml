@@ -4,33 +4,25 @@
     <parent>
         <groupId>com.github.database-rider</groupId>
         <artifactId>rider-examples</artifactId>
-        <version>1.23.1-SNAPSHOT</version>
+        <version>1.23.2-SNAPSHOT</version>
     </parent>
     <artifactId>quarkus-postgres-sample</artifactId>
-    <version>1.23.1-SNAPSHOT</version>
     <description>This sample project was created by Alexei Bratuhin(@coiouhkc github user) as a reproducer for issue #253 </description>
 
     <properties>
-        <surefire-plugin.version>2.22.1</surefire-plugin.version>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <quarkus.platform.version>1.10.5.Final</quarkus.platform.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <quarkus.platform.artifact-id>quarkus-universe-bom</quarkus.platform.artifact-id>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.parameters>true</maven.compiler.parameters>
-        <quarkus-plugin.version>1.10.5.Final</quarkus-plugin.version>
-        <compiler-plugin.version>3.8.1</compiler-plugin.version>
+        <quarkus.version>1.13.3.Final</quarkus.version>
         <testcontainers.version>1.15.3</testcontainers.version>
         <lombok.version>1.18.16</lombok.version>
-        <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
     </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>${quarkus.platform.group-id}</groupId>
-                <artifactId>${quarkus.platform.artifact-id}</artifactId>
-                <version>${quarkus.platform.version}</version>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-bom</artifactId>
+                <version>${quarkus.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -77,7 +69,7 @@
         <dependency>
             <groupId>com.github.database-rider</groupId>
             <artifactId>rider-cdi</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -101,30 +93,52 @@
             <plugin>
                 <groupId>io.quarkus</groupId>
                 <artifactId>quarkus-maven-plugin</artifactId>
-                <version>${quarkus-plugin.version}</version>
-                <extensions>true</extensions>
+                <version>${quarkus.version}</version>
                 <executions>
                     <execution>
                         <goals>
                             <goal>build</goal>
-                            <goal>generate-code</goal>
-                            <goal>generate-code-tests</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${compiler-plugin.version}</version>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-bootstrap-maven-plugin</artifactId>
+                <version>${quarkus.version}</version>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire-plugin.version}</version>
                 <configuration>
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                         <maven.home>${maven.home}</maven.home>
+                        <maven.settings>${session.request.userSettingsFile.path}</maven.settings>
                     </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>8</source>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>

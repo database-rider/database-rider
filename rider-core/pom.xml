@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.github.database-rider</groupId>
         <artifactId>rider-parent</artifactId>
-        <version>1.23.1-SNAPSHOT</version>
+        <version>1.23.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -152,8 +152,8 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
                 <configuration>
                     <reuseForks>false</reuseForks>
                     <threadCount>2</threadCount>

@@ -13,7 +13,7 @@
     <artifactId>rider-parent</artifactId>
     <packaging>pom</packaging>
     <!-- tag::version[] -->
-    <version>1.23.1-SNAPSHOT</version>
+    <version>1.23.2-SNAPSHOT</version>
     <!-- end::version[] -->
 
     <modules>
@@ -62,19 +62,18 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jacoco.version>0.8.6</jacoco.version>
-        <ds.version>1.6.0</ds.version>
+        <ds.version>1.9.5</ds.version>
+        <surefire.version>3.0.0-M5</surefire.version>
         <testcontainers.version>1.15.3</testcontainers.version>
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.13.1</version>
             <scope>provided</scope>
         </dependency>
-
         <!-- test -->
         <dependency>
             <groupId>org.hsqldb</groupId>
@@ -142,8 +141,8 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
                 <configuration>
                     <includes>
                         <include>**/*It.java</include>
@@ -156,48 +155,6 @@
                             src/test/resources/logging.properties
                         </java.util.logging.config.file>
                     </systemPropertyVariables>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.19.1</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                    <includes>
-                        <include>**/*It.java</include>
-                        <include>**/*Test.java</include>
-                        <include>**/*Feature.java</include>
-                        <include>**/*Bdd.java</include>
-                    </includes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.4</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.1.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <source>7</source>
                 </configuration>
             </plugin>
             <plugin>
@@ -221,6 +178,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>2.8.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${surefire.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -298,7 +260,6 @@
                     </plugin>
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.19.1</version>
                         <configuration>
                             <includes>
                                 <include>**/*It.java</include>
@@ -340,6 +301,17 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.8</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>releases</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
                         <version>3.2.1</version>
@@ -347,7 +319,7 @@
                             <execution>
                                 <id>attach-sources</id>
                                 <goals>
-                                    <goal>jar-no-fork</goal>
+                                    <goal>jar</goal>
                                 </goals>
                             </execution>
                         </executions>
@@ -387,8 +359,8 @@
                         </configuration>
                     </plugin>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.19.1</version>
                         <configuration>
                             <skipTests>true</skipTests>
                         </configuration>
@@ -425,10 +397,6 @@
             <id>snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
-        <repository>
-            <id>releases</id>
-            <url>https://oss.sonatype.org/content/repositories/releases</url>
-        </repository>
     </distributionManagement>
 
 </project>

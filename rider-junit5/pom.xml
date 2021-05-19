@@ -3,14 +3,14 @@
     <parent>
         <artifactId>rider-parent</artifactId>
         <groupId>com.github.database-rider</groupId>
-        <version>1.23.1-SNAPSHOT</version>
+        <version>1.23.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>rider-junit5</artifactId>
 
     <properties>
-        <version.junit-platform>1.2.0</version.junit-platform>
-        <version.junit-jupiter>5.3.2</version.junit-jupiter>
+        <version.junit-platform>1.6.3</version.junit-platform>
+        <version.junit-jupiter>5.6.2</version.junit-jupiter>
     </properties>
     <dependencies>
         <dependency>
@@ -78,13 +78,13 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
-            <version>5.2.0.RELEASE</version>
+            <version>5.3.7</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>5.2.0.RELEASE</version>
+            <version>5.3.7</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -126,27 +126,11 @@
                 </configuration>
             </plugin>
             <plugin>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.1.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <source>8</source>
-                </configuration>
-            </plugin>
-            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
                 <configuration>
-                    <parallel>classes</parallel>
-                    <useUnlimitedThreads>true</useUnlimitedThreads>
                     <reuseForks>false</reuseForks>
+                    <threadCount>2</threadCount>
                     <includes>
                         <include>**/Test*.java</include>
                         <include>**/*It.java</include>
