@@ -9,8 +9,8 @@
     <artifactId>rider-junit5</artifactId>
 
     <properties>
-        <version.junit-platform>1.2.0</version.junit-platform>
-        <version.junit-jupiter>5.3.2</version.junit-jupiter>
+        <version.junit-platform>1.6.3</version.junit-platform>
+        <version.junit-jupiter>5.6.2</version.junit-jupiter>
     </properties>
     <dependencies>
         <dependency>
@@ -78,13 +78,13 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
-            <version>5.2.0.RELEASE</version>
+            <version>5.3.7</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>5.2.0.RELEASE</version>
+            <version>5.3.7</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
