@@ -186,7 +186,7 @@
                     <dependency>
                         <groupId>org.hibernate</groupId>
                         <artifactId>hibernate-jpamodelgen</artifactId>
-                        <version>4.3.8.Final</version>
+                        <version>5.4.31.Final</version>
                     </dependency>
                     <dependency>
                         <groupId>com.mysema.querydsl</groupId>
