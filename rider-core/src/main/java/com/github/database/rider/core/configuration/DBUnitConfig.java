@@ -407,4 +407,22 @@ public class DBUnitConfig {
     public void setExpectedDbType(RiderDataSource.DBType expectedDbType) {
         this.expectedDbType = expectedDbType;
     }
+
+    public static class Constants {
+        public static final String SEQUENCE_TABLE_NAME;
+        public static final EnumMap<RiderDataSource.DBType, Set<String>> SYSTEM_SCHEMAS = new EnumMap<>(RiderDataSource.DBType.class);
+        public static final List<String> RESERVED_TABLE_NAMES;
+        public static final String DATASETS_FOLDER = "datasets/";
+
+        static {
+            SEQUENCE_TABLE_NAME = System.getProperty("SEQUENCE_TABLE_NAME") == null ? "SEQ"
+                    : System.getProperty("SEQUENCE_TABLE_NAME");
+            SYSTEM_SCHEMAS.put(RiderDataSource.DBType.MSSQL, Collections.singleton("SYS"));
+            if (System.getProperty("RESERVED_TABLE_NAMES") != null) {
+                RESERVED_TABLE_NAMES = Arrays.asList(System.getProperty("RESERVED_TABLE_NAMES").split(","));
+            } else {
+                RESERVED_TABLE_NAMES = Arrays.asList("user", "password", "value");
+            }
+        }
+    }
 }
