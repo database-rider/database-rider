@@ -14,8 +14,11 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
 @DBUnit(mergeDataSets = true)
+@RunWith(JUnitPlatform.class)
 @DataSet(value = "tweet.yml", executeScriptsAfter = "addUser.sql", executeStatementsBefore = "INSERT INTO USER VALUES (8,'user8')")
 public class MergeDataSetsJUnit5It {
 

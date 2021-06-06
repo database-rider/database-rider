@@ -7,3 +7,7 @@ TWEET:
   - ID: "before-each"
     CONTENT: "tweet before each!"
     likes: 10
+  - ID: "before-each-superclass"
+    CONTENT: "tweet before each on superclass!"
+    likes: 19
+

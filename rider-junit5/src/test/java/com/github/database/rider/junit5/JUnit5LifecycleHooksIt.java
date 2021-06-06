@@ -9,12 +9,15 @@ import com.github.database.rider.junit5.model.Tweet;
 import com.github.database.rider.junit5.model.User;
 import com.github.database.rider.junit5.util.EntityManagerProvider;
 import org.junit.jupiter.api.*;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DBRider
+@RunWith(JUnitPlatform.class)
 @DBUnit(url = "jdbc:hsqldb:mem:junit5;DB_CLOSE_DELAY=-1", driver = "org.hsqldb.jdbcDriver", user = "sa")
 public class JUnit5LifecycleHooksIt {
 

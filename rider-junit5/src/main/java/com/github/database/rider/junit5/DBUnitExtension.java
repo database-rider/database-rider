@@ -14,6 +14,7 @@ import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.leak.LeakHunterFactory;
 import com.github.database.rider.junit5.util.EntityManagerProvider;
+import org.apache.commons.collections.CollectionUtils;
 import org.dbunit.DatabaseUnitException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -27,7 +28,9 @@ import org.junit.platform.commons.util.StringUtils;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.lang.reflect.Method;
-import java.util.Optional;
+import java.util.*;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
@@ -40,6 +43,8 @@ import static com.github.database.rider.junit5.util.Constants.*;
  */
 public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestExecutionCallback,
         BeforeEachCallback, AfterEachCallback, BeforeAllCallback, AfterAllCallback {
+
+    private static final Logger LOG = Logger.getLogger(DBUnitExtension.class.getName());
 
     @Override
     public void beforeTestExecution(ExtensionContext extensionContext) throws Exception {
@@ -66,10 +71,8 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     public void afterTestExecution(ExtensionContext extensionContext) throws Exception {
         DBUnitTestContext dbUnitTestContext = getTestContext(extensionContext);
         DBUnitConfig dbUnitConfig = dbUnitTestContext.getExecutor().getDBUnitConfig();
-
         RiderTestContext riderTestContext = new JUnit5RiderTestContext(dbUnitTestContext.getExecutor(), extensionContext);
         RiderRunner riderRunner = new RiderRunner();
-
         try {
             if (dbUnitConfig != null && dbUnitConfig.isLeakHunter()) {
                 LeakHunter leakHunter = dbUnitTestContext.getLeakHunter();
@@ -80,7 +83,6 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
             riderRunner.teardown(riderTestContext);
         }
     }
-
 
     /**
      * one test context (datasetExecutor, dbunitConfig etc..) per test
@@ -99,39 +101,23 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         }
     }
 
-
-
-    private boolean isSpringTestContextEnabled(ExtensionContext extensionContext) {
-        if (!extensionContext.getTestClass().isPresent()) {
-            return false;
-        }
-        Store springStore = extensionContext.getRoot().getStore(Namespace.create(SpringExtension.class));
-        return springStore != null && springStore.get(extensionContext.getTestClass().get()) != null;
-    }
-
-    private Optional<Method> findCallbackMethod(Class testClass, Class callback) {
-
-        return Stream.of(testClass
-                .getMethods())
+    private Set<Method> findCallbackMethods(Class testClass, Class callback) {
+        return Stream.of(testClass.getSuperclass()
+                .getMethods(), testClass.getMethods())
+                .flatMap(Stream::of)
                 .filter(m -> m.getAnnotation(callback) != null)
-                .findFirst();
-    }
-
-    private Optional<Method> findSuperclassCallbackMethod(Class testClass, Class callback) {
-        Class<?> testSuperclass = testClass.getSuperclass();
-        if (testSuperclass != null) {
-            return findCallbackMethod(testSuperclass, callback);
-        }
-        return Optional.empty();
+                .collect(Collectors.toSet());
     }
 
     @Override
     public void beforeEach(ExtensionContext extensionContext) throws Exception {
         if (extensionContext.getTestClass().isPresent()) {
-            Optional<Method> callbackMethod = findCallbackMethod(extensionContext.getTestClass().get(), BeforeEach.class);
-            if (callbackMethod.isPresent()) {
-                executeDataSetForCallback(extensionContext, BeforeEach.class, callbackMethod.get());
-                executeExpectedDataSetForCallback(extensionContext, BeforeEach.class, callbackMethod.get());
+            Set<Method> callbackMethods = findCallbackMethods(extensionContext.getTestClass().get(), BeforeEach.class);
+            if (CollectionUtils.isNotEmpty(callbackMethods)) {
+                for (Method callbackMethod : callbackMethods) {
+                    executeDataSetForCallback(extensionContext, BeforeEach.class, callbackMethod);
+                    executeExpectedDataSetForCallback(extensionContext, BeforeEach.class, callbackMethod);
+                }
             }
         }
     }
@@ -139,10 +125,12 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     @Override
     public void afterEach(ExtensionContext extensionContext) throws Exception {
         if (extensionContext.getTestClass().isPresent()) {
-            Optional<Method> callbackMethod = findCallbackMethod(extensionContext.getTestClass().get(), AfterEach.class);
-            if (callbackMethod.isPresent()) {
-                executeDataSetForCallback(extensionContext, AfterEach.class, callbackMethod.get());
-                executeExpectedDataSetForCallback(extensionContext, AfterEach.class, callbackMethod.get());
+            Set<Method> callbackMethods = findCallbackMethods(extensionContext.getTestClass().get(), AfterEach.class);
+            if (CollectionUtils.isNotEmpty(callbackMethods)) {
+                for (Method callbackMethod : callbackMethods) {
+                    executeDataSetForCallback(extensionContext, AfterEach.class, callbackMethod);
+                    executeExpectedDataSetForCallback(extensionContext, AfterEach.class, callbackMethod);
+                }
             }
         }
     }
@@ -150,10 +138,12 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     @Override
     public void beforeAll(ExtensionContext extensionContext) throws Exception {
         if (extensionContext.getTestClass().isPresent()) {
-            Optional<Method> callbackMethod = findCallbackMethod(extensionContext.getTestClass().get(), BeforeAll.class);
-            if (callbackMethod.isPresent()) {
-                executeDataSetForCallback(extensionContext, BeforeAll.class, callbackMethod.get());
-                executeExpectedDataSetForCallback(extensionContext, BeforeAll.class, callbackMethod.get());
+            Set<Method> callbackMethods = findCallbackMethods(extensionContext.getTestClass().get(), BeforeAll.class);
+            if (CollectionUtils.isNotEmpty(callbackMethods)) {
+                for (Method callbackMethod : callbackMethods) {
+                    executeDataSetForCallback(extensionContext, BeforeAll.class, callbackMethod);
+                    executeExpectedDataSetForCallback(extensionContext, BeforeAll.class, callbackMethod);
+                }
             }
         }
     }
@@ -161,10 +151,12 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     @Override
     public void afterAll(ExtensionContext extensionContext) throws Exception {
         if (extensionContext.getTestClass().isPresent()) {
-            Optional<Method> callbackMethod = findCallbackMethod(extensionContext.getTestClass().get(), AfterAll.class);
-            if (callbackMethod.isPresent()) {
-                executeDataSetForCallback(extensionContext, AfterAll.class, callbackMethod.get());
-                executeExpectedDataSetForCallback(extensionContext, AfterAll.class, callbackMethod.get());
+            Set<Method> callbackMethods = findCallbackMethods(extensionContext.getTestClass().get(), AfterAll.class);
+            if (CollectionUtils.isNotEmpty(callbackMethods)) {
+                for (Method callbackMethod : callbackMethods) {
+                    executeDataSetForCallback(extensionContext, AfterAll.class, callbackMethod);
+                    executeExpectedDataSetForCallback(extensionContext, AfterAll.class, callbackMethod);
+                }
             }
         }
     }
@@ -174,27 +166,23 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         // get DataSet annotation, if any
         Optional<DataSet> dataSetAnnotation = AnnotationUtils.findAnnotation(callbackMethod, DataSet.class);
         if (!dataSetAnnotation.isPresent()) {
-            Optional<Method> superclassCallbackMethod = findSuperclassCallbackMethod(testClass, callbackAnnotation);
-            if (superclassCallbackMethod.isPresent()) {
-                dataSetAnnotation = AnnotationUtils.findAnnotation(superclassCallbackMethod.get(), DataSet.class);
-            }
+            LOG.warning("Could not find dataset annotation from callback method: "+callbackMethod);
+            return;
         }
-        if (dataSetAnnotation.isPresent()) {
-            EntityManagerProvider.clear();
-            DBUnitConfig dbUnitConfig = resolveDbUnitConfig(callbackAnnotation, callbackMethod, testClass);
-            DataSet dataSet;
-            if (dbUnitConfig.isMergeDataSets()) {
-                Optional<DataSet> classLevelDataSetAnnotation = AnnotationUtils.findAnnotation(testClass, DataSet.class);
-                dataSet = resolveDataSet(dataSetAnnotation, classLevelDataSetAnnotation, dbUnitConfig);
-            } else {
-                dataSet = dataSetAnnotation.get();
-            }
-            // Execute dataset
-            final String executorId = getExecutorId(extensionContext, dataSet);
-            ConnectionHolder connectionHolder = getTestConnection(extensionContext, executorId);
-            DataSetExecutor dataSetExecutor = DataSetExecutorImpl.instance(executorId, connectionHolder, dbUnitConfig);
-            dataSetExecutor.createDataSet(new DataSetConfig().from(dataSet));
+        EntityManagerProvider.clear();
+        DBUnitConfig dbUnitConfig = resolveDbUnitConfig(callbackAnnotation, callbackMethod, testClass);
+        DataSet dataSet;
+        if (dbUnitConfig.isMergeDataSets()) {
+            Optional<DataSet> classLevelDataSetAnnotation = AnnotationUtils.findAnnotation(testClass, DataSet.class);
+            dataSet = resolveDataSet(dataSetAnnotation, classLevelDataSetAnnotation, dbUnitConfig);
+        } else {
+            dataSet = dataSetAnnotation.get();
         }
+        // Execute dataset
+        final String executorId = getExecutorId(extensionContext, dataSet);
+        ConnectionHolder connectionHolder = getTestConnection(extensionContext, executorId);
+        DataSetExecutor dataSetExecutor = DataSetExecutorImpl.instance(executorId, connectionHolder, dbUnitConfig);
+        dataSetExecutor.createDataSet(new DataSetConfig().from(dataSet));
     }
 
     private void executeExpectedDataSetForCallback(ExtensionContext extensionContext, Class callbackAnnotation, Method callbackMethod) throws DatabaseUnitException {
@@ -202,26 +190,22 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         // get ExpectedDataSet annotation, if any
         Optional<ExpectedDataSet> expectedDataSetAnnotation = AnnotationUtils.findAnnotation(callbackMethod, ExpectedDataSet.class);
         if (!expectedDataSetAnnotation.isPresent()) {
-            Optional<Method> superclassCallbackMethod = findSuperclassCallbackMethod(testClass, callbackAnnotation);
-            if (superclassCallbackMethod.isPresent()) {
-                expectedDataSetAnnotation = AnnotationUtils.findAnnotation(superclassCallbackMethod.get(), ExpectedDataSet.class);
-            }
+            LOG.warning("Could not find expectedDataSet annotation annotation from callback method: "+callbackMethod);
+            return;
         }
-        if (expectedDataSetAnnotation.isPresent()) {
-            ExpectedDataSet expectedDataSet = expectedDataSetAnnotation.get();
-            // Resolve DBUnit config from annotation or file
-            DBUnitConfig dbUnitConfig = resolveDbUnitConfig(callbackAnnotation, callbackMethod, testClass);
-            // Verify expected dataset
-            final String executorId = getExecutorId(extensionContext, null);
-            ConnectionHolder connectionHolder = getTestConnection(extensionContext, executorId);
-            DataSetExecutor dataSetExecutor = DataSetExecutorImpl.instance(executorId, connectionHolder, dbUnitConfig);
-            dataSetExecutor.compareCurrentDataSetWith(
-                    new DataSetConfig(expectedDataSet.value()).disableConstraints(true).datasetProvider(expectedDataSet.provider()),
-                    expectedDataSet.ignoreCols(),
-                    expectedDataSet.replacers(),
-                    expectedDataSet.orderBy(),
-                    expectedDataSet.compareOperation());
-        }
+        ExpectedDataSet expectedDataSet = expectedDataSetAnnotation.get();
+        // Resolve DBUnit config from annotation or file
+        DBUnitConfig dbUnitConfig = resolveDbUnitConfig(callbackAnnotation, callbackMethod, testClass);
+        // Verify expected dataset
+        final String executorId = getExecutorId(extensionContext, null);
+        ConnectionHolder connectionHolder = getTestConnection(extensionContext, executorId);
+        DataSetExecutor dataSetExecutor = DataSetExecutorImpl.instance(executorId, connectionHolder, dbUnitConfig);
+        dataSetExecutor.compareCurrentDataSetWith(
+                new DataSetConfig(expectedDataSet.value()).disableConstraints(true).datasetProvider(expectedDataSet.provider()),
+                expectedDataSet.ignoreCols(),
+                expectedDataSet.replacers(),
+                expectedDataSet.orderBy(),
+                expectedDataSet.compareOperation());
     }
 
     // Resolve DBUnit config from annotation or file
@@ -231,9 +215,9 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
             dbUnitAnnotation = AnnotationUtils.findAnnotation(testClass, DBUnit.class);
         }
         if (!dbUnitAnnotation.isPresent()) {
-            Optional<Method> superclassCallbackMethod = findSuperclassCallbackMethod(testClass, callbackAnnotation);
-            if (superclassCallbackMethod.isPresent()) {
-                dbUnitAnnotation = AnnotationUtils.findAnnotation(superclassCallbackMethod.get(), DBUnit.class);
+            Set<Method> callbackMethods = findCallbackMethods(testClass, callbackAnnotation);
+            if (CollectionUtils.isNotEmpty(callbackMethods)) {
+                dbUnitAnnotation = AnnotationUtils.findAnnotation(callbackMethods.iterator().next(), DBUnit.class);
             }
         }
         if (!dbUnitAnnotation.isPresent() && testClass.getSuperclass() != null) {
@@ -284,6 +268,4 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
             return Optional.empty();
         }
     }
-
-
 }

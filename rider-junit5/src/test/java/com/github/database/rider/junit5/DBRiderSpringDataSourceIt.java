@@ -9,6 +9,8 @@ import java.util.Set;
 import javax.sql.DataSource;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +25,7 @@ import org.springframework.test.context.ContextConfiguration;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.junit5.api.DBRider;
 
+@RunWith(JUnitPlatform.class)
 @SpringBootTest
 @ContextConfiguration(classes = { DBRiderSpringDataSourceIt.TestConfig.class })
 public class DBRiderSpringDataSourceIt {
