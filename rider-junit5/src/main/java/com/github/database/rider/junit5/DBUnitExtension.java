@@ -11,13 +11,9 @@ import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.api.leak.LeakHunter;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
-import com.github.database.rider.core.connection.ConnectionHolderImpl;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.leak.LeakHunterFactory;
-import com.github.database.rider.junit5.api.DBRider;
 import com.github.database.rider.junit5.util.EntityManagerProvider;
-import io.micronaut.inject.qualifiers.Qualifiers;
-import io.micronaut.test.extensions.junit5.MicronautJunit5Extension;
 import org.dbunit.DatabaseUnitException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -28,19 +24,16 @@ import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 import org.junit.jupiter.api.extension.ExtensionContext.Store;
 import org.junit.platform.commons.util.AnnotationUtils;
 import org.junit.platform.commons.util.StringUtils;
-import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.sql.DataSource;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
+import static com.github.database.rider.junit5.jdbc.ConnectionManager.getConfiguredDataSourceBeanName;
+import static com.github.database.rider.junit5.jdbc.ConnectionManager.getTestConnection;
+import static com.github.database.rider.junit5.util.Constants.*;
 
 /**
  * Created by pestano on 27/08/16.
@@ -48,13 +41,9 @@ import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
 public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestExecutionCallback,
         BeforeEachCallback, AfterEachCallback, BeforeAllCallback, AfterAllCallback {
 
-    private static final Namespace NAMESPACE = Namespace.create(DBUnitExtension.class);
-    private static final String JUNIT5_EXECUTOR = "junit5";
-    private static final String EMPTY_STRING = "";
-
     @Override
     public void beforeTestExecution(ExtensionContext extensionContext) throws Exception {
-        clearEntityManager();
+        EntityManagerProvider.clear();
         final String executorId = getExecutorId(extensionContext, null);
         ConnectionHolder connectionHolder = getTestConnection(extensionContext, executorId);
         DataSetExecutor dataSetExecutor = DataSetExecutorImpl.instance(executorId, connectionHolder);
@@ -72,34 +61,6 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         }
     }
 
-    private String getExecutorId(final ExtensionContext extensionContext, DataSet dataSet) {
-        Optional<DataSet> annDataSet;
-        if (dataSet != null) {
-            annDataSet = Optional.of(dataSet);
-        } else {
-            annDataSet = findDataSetAnnotation(extensionContext);
-        }
-        String dataSourceBeanName = getConfiguredDataSourceBeanName(extensionContext);
-        String executionIdSuffix = dataSourceBeanName.isEmpty() ? EMPTY_STRING : "-" + dataSourceBeanName;
-        return annDataSet
-                .map(DataSet::executorId)
-                .filter(StringUtils::isNotBlank)
-                .map(id -> id + executionIdSuffix)
-                .orElseGet(() -> JUNIT5_EXECUTOR + executionIdSuffix);
-    }
-
-    private Optional<DataSet> findDataSetAnnotation(ExtensionContext extensionContext) {
-        Optional<Method> testMethod = extensionContext.getTestMethod();
-        if (testMethod.isPresent()) {
-            Optional<DataSet> annDataSet = AnnotationUtils.findAnnotation(testMethod.get(), DataSet.class);
-            if (!annDataSet.isPresent()) {
-                annDataSet = AnnotationUtils.findAnnotation(extensionContext.getRequiredTestClass(), DataSet.class);
-            }
-            return annDataSet;
-        } else {
-            return Optional.empty();
-        }
-    }
 
     @Override
     public void afterTestExecution(ExtensionContext extensionContext) throws Exception {
@@ -120,127 +81,6 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         }
     }
 
-    private ConnectionHolder getTestConnection(ExtensionContext extensionContext, String executorId) {
-        if (isSpringExtensionEnabled(extensionContext) && isSpringTestContextEnabled(extensionContext)) {
-            return getConnectionFromSpringContext(extensionContext, executorId);
-        } else if (isMicronautExtensionEnabled(extensionContext) && getMicronautApplicationContext(extensionContext).isPresent()) {
-            return getConnectionFromMicronautContext(extensionContext, executorId);
-        }
-        return getConnectionFromTestClass(extensionContext, executorId);
-    }
-
-    private ConnectionHolder getConnectionFromSpringContext(ExtensionContext extensionContext, String executorId) {
-        String configuredDataSourceBeanName = getConfiguredDataSourceBeanName(extensionContext);
-        DataSource dataSource = getDataSourceFromSpringContext(extensionContext, configuredDataSourceBeanName);
-        return getConnectionHolder(executorId, dataSource);
-    }
-
-    private ConnectionHolder getConnectionFromMicronautContext(ExtensionContext extensionContext, String executorId) {
-        String configuredDataSourceBeanName = getConfiguredDataSourceBeanName(extensionContext);
-        DataSource dataSource = getDataSourceFromMicronautContext(extensionContext, configuredDataSourceBeanName);
-        return getConnectionHolder(executorId, dataSource);
-    }
-
-    private ConnectionHolder getConnectionHolder(String executorId, DataSource dataSource) {
-        try {
-            DataSetExecutor dataSetExecutor = DataSetExecutorImpl.getExecutorById(executorId);
-            if (isCachedConnection(dataSetExecutor)) {
-                return new ConnectionHolderImpl(dataSetExecutor.getRiderDataSource().getConnection());
-            } else {
-                return new ConnectionHolderImpl(dataSource.getConnection());
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Could not get connection from DataSource.");
-        }
-    }
-
-    private static DataSource getDataSourceFromSpringContext(ExtensionContext extensionContext, String beanName) {
-        ApplicationContext context = SpringExtension.getApplicationContext(extensionContext);
-        return beanName.isEmpty() ? context.getBean(DataSource.class) : context.getBean(beanName, DataSource.class);
-    }
-
-    private static DataSource getDataSourceFromMicronautContext(ExtensionContext extensionContext, String beanName) {
-        Optional<io.micronaut.context.ApplicationContext> context = getMicronautApplicationContext(extensionContext);
-        if (context.isPresent()) {
-            return beanName.isEmpty() ? context.get().getBean(DataSource.class) : context.get().getBean(DataSource.class, Qualifiers.byName(beanName));
-        }
-        throw new RuntimeException("Micronaut context is not available for test: " + extensionContext.getTestClass().get().getName());
-    }
-
-    private static String getConfiguredDataSourceBeanName(ExtensionContext extensionContext) {
-        Optional<Method> testMethod = extensionContext.getTestMethod();
-        if (testMethod.isPresent()) {
-            Optional<DBRider> annotation = AnnotationUtils.findAnnotation(testMethod.get(), DBRider.class);
-            if (!annotation.isPresent()) {
-                annotation = AnnotationUtils.findAnnotation(extensionContext.getRequiredTestClass(), DBRider.class);
-            }
-            return annotation.map(DBRider::dataSourceBeanName).orElse(EMPTY_STRING);
-        } else {
-            return EMPTY_STRING;
-        }
-    }
-
-    private ConnectionHolder getConnectionFromTestClass(ExtensionContext extensionContext, String executorId) {
-        DataSetExecutor dataSetExecutor = DataSetExecutorImpl.getExecutorById(executorId);
-        if (isCachedConnection(dataSetExecutor)) {
-            try {
-                return new ConnectionHolderImpl(dataSetExecutor.getRiderDataSource().getConnection());
-            } catch (SQLException e) {
-                //intentional, if cached connection is invalid we can get a new one from test class method
-            }
-        }
-        Class<?> testClass = extensionContext.getRequiredTestClass();
-        ConnectionHolder conn = findConnectionFromTestClass(extensionContext, testClass);
-        return conn;
-    }
-
-    private ConnectionHolder findConnectionFromTestClass(ExtensionContext extensionContext, Class<?> testClass) {
-        try {
-            Optional<Field> fieldFound = Arrays.stream(testClass.getDeclaredFields()).
-                    filter(f -> f.getType() == ConnectionHolder.class).
-                    findFirst();
-
-            if (fieldFound.isPresent()) {
-                Field field = fieldFound.get();
-                if (!field.isAccessible()) {
-                    field.setAccessible(true);
-                }
-                Object testInstance = Modifier.isStatic(field.getModifiers()) ? null : extensionContext.getRequiredTestInstance();
-                ConnectionHolder connectionHolder = (ConnectionHolder) field.get(testInstance);
-                if (connectionHolder == null) {
-                    throw new RuntimeException("ConnectionHolder not initialized correctly");
-                }
-                return connectionHolder;
-            }
-
-            //try to get connection from method
-
-            Optional<Method> methodFound = Arrays.stream(testClass.getDeclaredMethods()).
-                    filter(m -> m.getReturnType() == ConnectionHolder.class).
-                    findFirst();
-
-            if (methodFound.isPresent()) {
-                Method method = methodFound.get();
-                if (!method.isAccessible()) {
-                    method.setAccessible(true);
-                }
-                ConnectionHolder connectionHolder = (ConnectionHolder) method.invoke(extensionContext.getRequiredTestInstance());
-                if (connectionHolder == null) {
-                    throw new RuntimeException("ConnectionHolder not initialized correctly");
-                }
-                return connectionHolder;
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Could not get database connection for test " + testClass, e);
-        }
-
-        if (testClass.getSuperclass() != null) {
-            return findConnectionFromTestClass(extensionContext, testClass.getSuperclass());
-        }
-
-        return null;
-    }
 
     /**
      * one test context (datasetExecutor, dbunitConfig etc..) per test
@@ -259,13 +99,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         }
     }
 
-    private boolean isMicronautExtensionEnabled(ExtensionContext extensionContext) {
-        try {
-            return isOnClasspath("io.micronaut.test.extensions.junit5.MicronautJunit5Extension");
-        } catch (Exception e) {
-            return false;
-        }
-    }
+
 
     private boolean isSpringTestContextEnabled(ExtensionContext extensionContext) {
         if (!extensionContext.getTestClass().isPresent()) {
@@ -273,24 +107,6 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         }
         Store springStore = extensionContext.getRoot().getStore(Namespace.create(SpringExtension.class));
         return springStore != null && springStore.get(extensionContext.getTestClass().get()) != null;
-    }
-
-    private static Optional<io.micronaut.context.ApplicationContext> getMicronautApplicationContext(ExtensionContext extensionContext) {
-        Store micronautStore = extensionContext.getRoot().getStore(Namespace.create(MicronautJunit5Extension.class));
-        if (micronautStore != null) {
-            try {
-                io.micronaut.context.ApplicationContext appContext = (io.micronaut.context.ApplicationContext) micronautStore.get(io.micronaut.context.ApplicationContext.class);
-                if (appContext != null) {
-                    return Optional.of(appContext);
-                }
-            } catch (ClassCastException ex) {
-            }
-        }
-        return Optional.empty();
-    }
-
-    private boolean isCachedConnection(DataSetExecutor executor) {
-        return executor != null && executor.getDBUnitConfig().isCacheConnection();
     }
 
     private Optional<Method> findCallbackMethod(Class testClass, Class callback) {
@@ -364,7 +180,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
             }
         }
         if (dataSetAnnotation.isPresent()) {
-            clearEntityManager();
+            EntityManagerProvider.clear();
             DBUnitConfig dbUnitConfig = resolveDbUnitConfig(callbackAnnotation, callbackMethod, testClass);
             DataSet dataSet;
             if (dbUnitConfig.isMergeDataSets()) {
@@ -440,9 +256,34 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         }
     }
 
-    private void clearEntityManager() {
-        if (EntityManagerProvider.isEntityManagerActive()) {
-            EntityManagerProvider.em().clear();
+    private String getExecutorId(final ExtensionContext extensionContext, DataSet dataSet) {
+        Optional<DataSet> annDataSet;
+        if (dataSet != null) {
+            annDataSet = Optional.of(dataSet);
+        } else {
+            annDataSet = findDataSetAnnotation(extensionContext);
+        }
+        String dataSourceBeanName = getConfiguredDataSourceBeanName(extensionContext);
+        String executionIdSuffix = dataSourceBeanName.isEmpty() ? EMPTY_STRING : "-" + dataSourceBeanName;
+        return annDataSet
+                .map(DataSet::executorId)
+                .filter(StringUtils::isNotBlank)
+                .map(id -> id + executionIdSuffix)
+                .orElseGet(() -> JUNIT5_EXECUTOR + executionIdSuffix);
+    }
+
+    private Optional<DataSet> findDataSetAnnotation(ExtensionContext extensionContext) {
+        Optional<Method> testMethod = extensionContext.getTestMethod();
+        if (testMethod.isPresent()) {
+            Optional<DataSet> annDataSet = AnnotationUtils.findAnnotation(testMethod.get(), DataSet.class);
+            if (!annDataSet.isPresent()) {
+                annDataSet = AnnotationUtils.findAnnotation(extensionContext.getRequiredTestClass(), DataSet.class);
+            }
+            return annDataSet;
+        } else {
+            return Optional.empty();
         }
     }
+
+
 }
