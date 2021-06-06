@@ -102,11 +102,13 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     }
 
     private Set<Method> findCallbackMethods(Class testClass, Class callback) {
-        return Stream.of(testClass.getSuperclass()
+        final Set<Method> methods = new HashSet<>();
+        Stream.of(testClass.getSuperclass()
                 .getMethods(), testClass.getMethods())
                 .flatMap(Stream::of)
                 .filter(m -> m.getAnnotation(callback) != null)
-                .collect(Collectors.toSet());
+                .forEach(m -> methods.add((Method)m)); //do not use Collectors.toSet here: stream incompatible types
+        return methods;
     }
 
     @Override
