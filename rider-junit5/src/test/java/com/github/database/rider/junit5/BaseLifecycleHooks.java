@@ -24,12 +24,12 @@ public abstract class BaseLifecycleHooks {
     }
 
     @BeforeEach
-    @DataSet(value = "tweetBeforeEach.yml", disableConstraints = true)
+    @DataSet(value = "tweetBeforeEachOnSuperClass.yml", disableConstraints = true)
     public void loadDataSetBeforeEach() {
     }
 
     @AfterEach
-    @ExpectedDataSet(value = "expectedTweetsAfterEach.yml", orderBy = "CONTENT")
+    @ExpectedDataSet(value = "expectedTweetsAfterEachSuperclass.yml", orderBy = "CONTENT")
     public void verifyInvariantsAfterEach() {
     }
 

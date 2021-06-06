@@ -7,10 +7,13 @@ import com.github.database.rider.junit5.model.User;
 import com.github.database.rider.junit5.util.EntityManagerProvider;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
 @DBRider
+@RunWith(JUnitPlatform.class)
 public class ParameterizedIt {
 
     private ConnectionHolder connectionHolder = () ->

@@ -10,6 +10,8 @@ import com.github.database.rider.junit5.model.Tweet;
 import com.github.database.rider.junit5.model.User;
 import com.github.database.rider.junit5.util.EntityManagerProvider;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
 import java.util.List;
 
@@ -18,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataSet(value = "empty.yml")
 @DBUnit(mergeDataSets = true, mergingStrategy = DataSetMergingStrategy.CLASS)
+@RunWith(JUnitPlatform.class)
 public class MergeDataSetsClassLevelFirstJUnit5It {
 
     private ConnectionHolder connectionHolder = ()

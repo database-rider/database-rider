@@ -8,6 +8,8 @@ import com.github.database.rider.junit5.model.User;
 import com.github.database.rider.junit5.util.EntityManagerProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
 import java.util.List;
 
@@ -17,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DBRider
 @DBUnit(url = "jdbc:hsqldb:mem:junit5;DB_CLOSE_DELAY=-1", driver = "org.hsqldb.jdbcDriver", user = "sa", mergeDataSets = true)
 @DataSet(value = "tweet.yml")
+@RunWith(JUnitPlatform.class)
 public class JUnit5LifecycleHooksMergeDataSetsIt {
 
     private static ConnectionHolder connectionHolder = () ->

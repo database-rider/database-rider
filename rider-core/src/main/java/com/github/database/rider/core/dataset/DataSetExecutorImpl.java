@@ -38,6 +38,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.github.database.rider.core.configuration.DBUnitConfig.Constants.*;
+
 /**
  * Created by pestano on 26/07/15.
  */
@@ -48,12 +50,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     private static final Logger log = LoggerFactory.getLogger(DataSetExecutorImpl.class);
 
     private static final Map<String, DataSetExecutorImpl> executors = new ConcurrentHashMap<>();
-
-    private static final String SEQUENCE_TABLE_NAME;
-
-    private static final EnumMap<DBType, Set<String>> SYSTEM_SCHEMAS = new EnumMap<>(DBType.class);
-
-    private static final List<String> RESERVED_TABLE_NAMES;
 
     private final AtomicBoolean printDBUnitConfig = new AtomicBoolean(true);
 
@@ -68,17 +64,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     private List<String> tableNames;
 
     private boolean isConstraintsDisabled = false;
-
-    static {
-        SEQUENCE_TABLE_NAME = System.getProperty("SEQUENCE_TABLE_NAME") == null ? "SEQ"
-                : System.getProperty("SEQUENCE_TABLE_NAME");
-        SYSTEM_SCHEMAS.put(DBType.MSSQL, Collections.singleton("SYS"));
-        if (System.getProperty("RESERVED_TABLE_NAMES") != null) {
-            RESERVED_TABLE_NAMES = Arrays.asList(System.getProperty("RESERVED_TABLE_NAMES").split(","));
-        } else {
-            RESERVED_TABLE_NAMES = Arrays.asList("user", "password", "value");
-        }
-    }
 
     public static DataSetExecutorImpl instance(ConnectionHolder connectionHolder) {
         // if no executor name is provided use default
@@ -126,12 +111,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     disableConstraints();
                 }
                 if (dataSetConfig.isCleanBefore()) {
-                    try {
-                        clearDatabase(dataSetConfig);
-                    } catch (SQLException e) {
-                        LoggerFactory.getLogger(DataSetExecutorImpl.class.getName())
-                                .warn("Could not clean database before test.", e);
-                    }
+                    clearDatabase(dataSetConfig);
                 }
                 if (dataSetConfig.getExecuteStatementsBefore() != null
                         && dataSetConfig.getExecuteStatementsBefore().length > 0) {
@@ -153,13 +133,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         }
                     }
                     resultingDataSet = performSequenceFiltering(dataSetConfig, resultingDataSet);
-
                     resultingDataSet = performTableOrdering(dataSetConfig, resultingDataSet);
-
                     resultingDataSet = performReplacements(resultingDataSet, getReplacerInstances(dataSetConfig.getReplacers()));
-
                     DatabaseOperation operation = getOperation(dataSetConfig);
-
                     operation.execute(getRiderDataSource().getDBUnitConnection(), resultingDataSet);
                 } else {
                     log.warn("Database will not be populated because no dataset has been provided.");
@@ -249,7 +225,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
      */
     @Override
     public IDataSet loadDataSet(String name) throws DataSetException, IOException {
-        String[] dataSetNames = name.trim().split(",");
+        final String[] dataSetNames = name.trim().split(",");
         List<IDataSet> dataSets = new ArrayList<>();
         final boolean sensitiveTableNames = dbUnitConfig.isCaseSensitiveTableNames();
         for (String dataSet : dataSetNames) {
@@ -556,12 +532,11 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     private URL getDataSetUrl(String dataSet) {
-        URL url = null;
-        String dataSetLeadingSlash = dataSet.startsWith("/") ? dataSet : "/" + dataSet;
-        url = getClass().getResource(dataSetLeadingSlash);
-
+        URL url;
+        final String dataSetWithoutLeadingSlash = dataSet.startsWith("/") ? dataSet.substring(1) : dataSet;
+        url = Thread.currentThread().getContextClassLoader().getResource(dataSetWithoutLeadingSlash);
         if (url == null) {
-            url = getClass().getResource("/datasets" + dataSetLeadingSlash);
+            url = Thread.currentThread().getContextClassLoader().getResource(DATASETS_FOLDER + dataSetWithoutLeadingSlash);
         }
         if (url == null) {
             try {
@@ -570,7 +545,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             }
         }
         if (url == null) {
-            throw new RuntimeException(String.format("The dataset '%s' is neither a valid URL nor could be found under 'resources' or 'resources/datasets' directory.", dataSet));
+            throw new RuntimeException(String.format("The dataset '%s' is neither a valid URL nor could be found under 'resources' or 'resources/%s' directory.", dataSet, DATASETS_FOLDER));
         }
         return url;
     }
@@ -585,7 +560,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         return inputStream;
     }
 
-
     /**
      * @throws SQLException if clean up cannot be performed
      */
@@ -593,7 +567,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     public void clearDatabase(DataSetConfig config) throws SQLException {
         try {
             disableConstraints();
-            Connection connection = getRiderDataSource().getConnection();
+            final Connection connection = getRiderDataSource().getConnection();
             if (config != null && config.getTableOrdering() != null && config.getTableOrdering().length > 0) {
                 for (String table : config.getTableOrdering()) {
                     if (table.toUpperCase().contains(SEQUENCE_TABLE_NAME)) {
@@ -637,6 +611,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 }
             }
 
+        } catch (Exception e)  {
+            LoggerFactory.getLogger(DataSetExecutorImpl.class.getName())
+                    .warn("Could not clean database before test.", e);
         } finally {
             // enabling constraints only if `disableConstraints == false`
             if (!config.isDisableConstraints()) {
@@ -768,19 +745,15 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     @Override
     public void executeScript(String scriptPath) {
         if (scriptPath != null && !"".equals(scriptPath)) {
-            if (!scriptPath.startsWith("/")) {
-                scriptPath = "/" + scriptPath;
-            }
-            URL resource = getClass().getResource(scriptPath.trim());
+            final String scriptPathWithoutLeadingSlash = scriptPath.startsWith("/") ? scriptPath.substring(1) : scriptPath;
+            URL resource = Thread.currentThread().getContextClassLoader().getResource(scriptPathWithoutLeadingSlash.trim());
             if (resource == null) {
-                resource = getClass().getResource("/scripts" + scriptPath.trim());
+                resource = Thread.currentThread().getContextClassLoader().getResource("scripts/" + scriptPathWithoutLeadingSlash.trim());
             }
             if (resource == null) {
                 throw new RuntimeException(String.format("Could not find script %s in classpath", scriptPath));
             }
-
-            String[] scriptsStatements = readScriptStatements(resource);
-
+            final String[] scriptsStatements = readScriptStatements(resource);
             if (scriptsStatements != null && scriptsStatements.length > 0) {
                 executeStatements(scriptsStatements);
             }
