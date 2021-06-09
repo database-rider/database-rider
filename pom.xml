@@ -61,7 +61,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jacoco.version>0.8.6</jacoco.version>
+        <jacoco.version>0.8.7</jacoco.version>
         <ds.version>1.9.5</ds.version>
         <surefire.version>3.0.0-M5</surefire.version>
         <testcontainers.version>1.15.3</testcontainers.version>
