@@ -8,7 +8,6 @@ import com.github.database.rider.junit5.api.DBRider;
 import com.github.database.rider.junit5.model.Tweet;
 import com.github.database.rider.junit5.model.User;
 import com.github.database.rider.junit5.util.EntityManagerProvider;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
