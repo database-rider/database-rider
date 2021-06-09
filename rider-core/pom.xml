@@ -51,7 +51,7 @@
         <dependency> <!--1-->
             <groupId>info.cukes</groupId>
             <artifactId>cucumber-junit</artifactId>
-            <version>1.2.4</version>
+            <version>1.2.5</version>
             <scope>test</scope>
         </dependency>
         <dependency> <!--1-->
