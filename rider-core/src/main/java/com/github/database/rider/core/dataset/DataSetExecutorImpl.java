@@ -235,6 +235,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             URL dataSetUrl = getDataSetUrl(dataSetName);
             InputStream datasetStream = null;
             switch (extension) {
+                case "yaml":
                 case "yml": {
                     datasetStream = getDataSetStream(dataSetUrl);
                     target = new ScriptableDataSet(sensitiveTableNames, new YamlDataSet(datasetStream, dbUnitConfig));

@@ -374,4 +374,17 @@ public class RiderDSLIt {
                 .expectDataSet(new ExpectedDataSetConfig().compareOperation(CompareOperation.CONTAINS));
     }
 
+    @Test
+    public void shouldCreateDataSetUsingDSLAndYamlDataSet() {
+        withConnection(emProvider.connection())
+                .withDataSetConfig(new DataSetConfig("datasets/yml/users.yaml"))
+                .createDataSet();
+
+        List<User> users = em().createQuery("select u from User u").getResultList();
+        assertThat(users).hasSize(2)
+                .extracting("name")
+                .contains("@realpestano", "@dbunit");
+
+    }
+
 }

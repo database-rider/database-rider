@@ -64,7 +64,6 @@ public class DatabaseRiderIt {
     }
 
 
-
     @Test
     @DataSet(value = "datasets/yml/users.yml",
             useSequenceFiltering = false,
@@ -212,6 +211,22 @@ public class DatabaseRiderIt {
         User user = (User) EntityManagerProvider.em().createQuery("select u from User u join u.tweets t where t.content = 'dbunit rules!'").getSingleResult();
         assertThat(user).isNotNull();
         assertThat(user.getName()).isEqualTo("@realpestano");
+    }
+
+    @Test
+    @DataSet(value = "datasets/yml/users.yaml")
+    public void shouldSeedYamlDataSet() {
+        User user = (User) EntityManagerProvider.em().
+                createQuery("select u from User u join fetch u.tweets join fetch u.followers where u.id = 1").getSingleResult();
+        assertThat(user).isNotNull();
+        assertThat(user.getId()).isEqualTo(1);
+        assertThat(user.getTweets()).isNotNull().hasSize(1);
+        Tweet tweet = user.getTweets().get(0);
+        assertThat(tweet).isNotNull();
+        Calendar date = tweet.getDate();
+        Calendar now = Calendar.getInstance();
+        assertThat(date.get(Calendar.DAY_OF_MONTH)).
+                isEqualTo(now.get(Calendar.DAY_OF_MONTH));
     }
 
     @AfterClass//optional
