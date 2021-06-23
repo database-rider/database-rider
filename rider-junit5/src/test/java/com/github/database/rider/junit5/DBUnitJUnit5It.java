@@ -32,7 +32,6 @@ public class DBUnitJUnit5It {
 
 //end::connectionField[]
 
- 
 
 //tag::test[]
     @Test
@@ -89,7 +88,6 @@ public class DBUnitJUnit5It {
         assertThat(users).isEmpty();
     }
 
-
     public User getUser(Long id){
         return (User) EntityManagerProvider.em().createQuery("select u from User u where u.id = :id").
                 setParameter("id", id).getSingleResult();
@@ -104,8 +102,6 @@ public class DBUnitJUnit5It {
         assertThat(user.getTweets()).hasSize(1);
     }
 
-
-
     @Test
     @DataSet(value = "usersWithTweet.yml",
             useSequenceFiltering = false,
@@ -115,5 +111,12 @@ public class DBUnitJUnit5It {
     public void shouldSeedDataSetUsingTableCreationOrder() {
         List<User> users =  EntityManagerProvider.em().createQuery("select u from User u left join fetch u.tweets").getResultList();
         assertThat(users).hasSize(2);
+    }
+
+    @Test
+    @DataSet(value = "usersWithTweet.yaml")
+    public void shouldListUsersUsingYamlDataSet() {
+        List<User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
+        assertThat(users).isNotNull().isNotEmpty().hasSize(2);
     }
 }
