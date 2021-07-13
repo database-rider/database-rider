@@ -129,8 +129,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <reuseForks>false</reuseForks>
-                    <threadCount>2</threadCount>
                     <includes>
                         <include>**/Test*.java</include>
                         <include>**/*It.java</include>
