@@ -43,8 +43,8 @@ public class QuarkusDBUnitParameterizedTest {
         Book book = repository.findById(Long.parseLong(id));
         assertThat(book)
                 .isNotNull()
-                .extracting(Book::getTitle)
-                .isNotEqualTo(title);
+                .extracting(Book::getAuthor)
+                .isEqualTo(title);
     }
 
     @ParameterizedTest
@@ -54,8 +54,8 @@ public class QuarkusDBUnitParameterizedTest {
         Book book = repository.findById(Long.parseLong(id));
         assertThat(book)
                 .isNotNull()
-                .extracting(Book::getTitle)
-                .isNotEqualTo(title);
+                .extracting(Book::getAuthor)
+                .isEqualTo(title);
     }
 
     @ParameterizedTest
@@ -64,7 +64,7 @@ public class QuarkusDBUnitParameterizedTest {
         Book book = repository.findById(id);
         assertThat(book)
                 .isNotNull()
-                .extracting(Book::getTitle)
-                .isNotEqualTo("J. R. R. Tolkien");
+                .extracting(Book::getAuthor)
+                .isEqualTo("J. R. R. Tolkien");
     }
 }
