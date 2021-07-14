@@ -16,12 +16,16 @@
  */
 package com.github.quarkus.sample.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class Book {
+@JsonIgnoreProperties("entityManager")
+public class Book extends PanacheEntityBase {
 
     // ======================================
     // =             Attributes             =
@@ -118,4 +122,6 @@ public class Book {
             ", isbn='" + isbn + '\'' +
             '}';
     }
+
+
 }

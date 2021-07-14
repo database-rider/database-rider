@@ -18,6 +18,7 @@ package com.github.quarkus.sample;
 
 
 import com.github.database.rider.cdi.api.DBRider;
+import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetProvider;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
@@ -25,7 +26,6 @@ import com.github.database.rider.core.dataset.builder.DataSetBuilder;
 import com.github.quarkus.sample.domain.Book;
 import io.quarkus.test.junit.QuarkusTest;
 import org.dbunit.dataset.IDataSet;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
@@ -44,10 +44,8 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 
 @QuarkusTest
 @DBRider
-@Disabled("We need to find a way to create the secondary database in order " +
-        "to make this test work because `quarkus.hibernate-orm.database.generation` doesnt work for all dbs." +
-        "We also need to configure which DS the repository will use, somehow.")
-public class QuarkusMultipleDataSourceTest {
+@DBUnit(cacheConnection = false)
+public class QuarkusConnectionLeakTest {
 
     @Inject
     BookRepository repository;
@@ -65,14 +63,9 @@ public class QuarkusMultipleDataSourceTest {
 
     @Test
     @DataSet(value = "books.yml")
-    @DBRider(entityManagerName = "secondary")
-    public void shouldFindAllBooksInSecondDataSource() {
-        List<Book> books = repository.findAll().list();
-        assertThat(books)
-                .isNotNull()
-                .hasSize(4)
-                .extracting("title")
-                .contains("H2G2","Dune", "Nineteen Eighty-Four", "The Silmarillion");
+    public void shouldCountAllSciFiBooks() {
+        long books = repository.count("genre","sci-fi");
+        assertThat(books).isEqualTo(3);
     }
 
     @Test
@@ -86,33 +79,10 @@ public class QuarkusMultipleDataSourceTest {
              .body("title", hasItem("The Silmarillion"));
     }
 
-    @Test
-    @DataSet(value = "books.yml")
-    @DBRider(entityManagerName = "secondary")
-    public void shouldFindAllBooksViaRestApiUsingSecondaryDataSource() {
-        given()
-                .when().get("/api/books")
-                .then()
-                .statusCode(OK.getStatusCode())
-                .body("", hasSize(4))
-                .body("title", hasItem("The Silmarillion"));
-    }
-
 
     @Test
     @DataSet(provider = BookDataSetProvider.class)
     public void shouldFindBookById() {
-        Book book = repository.findById(1L);
-        assertThat(book)
-                .isNotNull()
-                .extracting("title")
-                .isEqualTo("DBrider loves Quarkus!");
-    }
-
-    @Test
-    @DataSet(provider = BookDataSetProvider.class)
-    @DBRider(entityManagerName = "secondary")
-    public void shouldFindBookByIdInSecondaryDataSource() {
         Book book = repository.findById(1L);
         assertThat(book)
                 .isNotNull()
@@ -147,19 +117,6 @@ public class QuarkusMultipleDataSourceTest {
 
     @Test
     @DataSet("book-empty.yml")
-    @DBRider(entityManagerName = "secondary")
-    public void shouldCreateBookInSecondaryDB() {
-        final Book book = new Book("Joshua Bloch", "Effective Java (2nd Edition)", 2001, "Tech", "978-0-3213-5668-0");
-
-        Book bookeCreated = repository.create(book);
-        assertThat(bookeCreated.getId())
-                .isNotNull();
-        assertThat(bookeCreated)
-                .extracting("isbn","title")//isbn is changed with prefix only on rest api
-                .contains("978-0-3213-5668-0","Effective Java (2nd Edition)");
-    }
-    @Test
-    @DataSet("book-empty.yml")
     @ExpectedDataSet("book-expected.yml")
     public void shouldCreateBookViaRestApi() {
         final Book book = new Book("Joshua Bloch", "Effective Java (2nd Edition)", 2001, "Tech", " 978-0-3213-5668-0");
@@ -173,21 +130,6 @@ public class QuarkusMultipleDataSourceTest {
                 .statusCode(CREATED.getStatusCode());
     }
 
-    @Test
-    @DataSet("book-empty.yml")
-    @ExpectedDataSet("book-expected.yml")
-    @DBRider(entityManagerName = "secondary")
-    public void shouldCreateBookViaRestApiInSecondaryDB() {
-        final Book book = new Book("Joshua Bloch", "Effective Java (2nd Edition)", 2001, "Tech", " 978-0-3213-5668-0");
-
-        given()
-                .body(book)
-                .contentType(MediaType.APPLICATION_JSON)
-                .when()
-                .post("/api/books")
-                .then()
-                .statusCode(CREATED.getStatusCode());
-    }
 
     public static class BookDataSetProvider implements DataSetProvider {
 
