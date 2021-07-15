@@ -1,9 +1,5 @@
 package com.github.database.rider.core.util;
 
-/**
- * COPIED from JPA module because of maven cyclic dependencies (even with test scope)
- */
-
 import org.hibernate.Session;
 import org.hibernate.internal.SessionImpl;
 import org.junit.rules.TestRule;
@@ -17,6 +13,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -98,31 +95,35 @@ public class EntityManagerProvider implements TestRule {
             log.debug("using dbConfig '{}' to create emf", dbConfig);
             emf = dbConfig == null ? Persistence.createEntityManagerFactory(unitName) : Persistence.createEntityManagerFactory(unitName, dbConfig);
             em =  emf.createEntityManager();
+            conn = createConnection(em);
             tx = em.getTransaction();
-            if (isHibernateOnClasspath() && em.getDelegate() instanceof Session) {
-                conn = ((SessionImpl) em.unwrap(Session.class)).connection();
-            } else{
-                /**
-                 * see here:http://wiki.eclipse.org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager
-                 */
-                tx.begin();
-                conn = em.unwrap(Connection.class);
-                tx.commit();
-            }
-
         }
         emf.getCache().evictAll();
     }
-    
+
+    private Connection createConnection(EntityManager em) {
+        Connection connection;
+        final EntityTransaction tx = em.getTransaction();
+        if (isHibernateOnClasspath() && em.getDelegate() instanceof Session) {
+            connection = ((SessionImpl) em.unwrap(Session.class)).connection();
+        } else{
+            /**
+             * see here:http://wiki.eclipse.org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager
+             */
+            tx.begin();
+            connection = em.unwrap(Connection.class);
+            tx.commit();
+        }
+        return connection;
+    }
+
     private Map<String, String> getDbPropertyConfig() {
         if(overridingProperties == null) {
             return propertyResolutionUtil.getSystemJavaxPersistenceOverrides();
         }
-        
         return propertyResolutionUtil.persistencePropertiesOverrides(overridingProperties);
     }
-    
-    
+
     /**
      *
      * @param puName unit name
@@ -134,10 +135,17 @@ public class EntityManagerProvider implements TestRule {
 
     /**
      *
-     * @return jdbc conection of current provider instance
+     * @return jdbc connection of current provider instance
      */
     public Connection connection() {
         checkInstance();
+        try {
+            if(instance.conn == null || instance.conn.isClosed()) {
+                instance.conn = createConnection(instance.em);
+            }
+        } catch (SQLException e) {
+           log.error("Could not create new jdbc connection.", e);
+        }
         return instance.conn;
     }
 
@@ -219,6 +227,9 @@ public class EntityManagerProvider implements TestRule {
      */
     public static EntityTransaction tx() {
         checkInstance();
+        if(instance.tx == null) {
+            instance.tx = instance.em.getTransaction();
+        }
         return instance.tx;
     }
 

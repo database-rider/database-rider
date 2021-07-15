@@ -29,7 +29,6 @@ public class DBUnitRule implements TestRule {
     public static DBUnitRule instance() {
         DBUnitRule instance = new DBUnitRule();
         instance.executor = DataSetExecutorImpl.instance(DataSetExecutorImpl.DEFAULT_EXECUTOR_ID, null);
-
         return instance;
     }
 
@@ -69,20 +68,15 @@ public class DBUnitRule implements TestRule {
                 RiderTestContext riderTestContext = new JUnit4RiderTestContext(executor, description);
                 RiderRunner riderRunner = new RiderRunner();
                 riderRunner.setup(riderTestContext);
-
                 DBUnitConfig dbUnitConfig = riderTestContext.getDataSetExecutor().getDBUnitConfig();
-
                 try {
                     riderRunner.runBeforeTest(riderTestContext);
-
                     LeakHunter leakHunter = null;
                     if (dbUnitConfig.isLeakHunter()) {
                         leakHunter = LeakHunterFactory.from(riderTestContext.getDataSetExecutor().getRiderDataSource(), riderTestContext.getMethodName());
                         leakHunter.measureConnectionsBeforeExecution();
                     }
-
                     statement.evaluate();
-
                     if (dbUnitConfig.isLeakHunter() && leakHunter != null) {
                         leakHunter.checkConnectionsAfterExecution();
                     }

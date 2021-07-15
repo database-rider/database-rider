@@ -5,10 +5,7 @@ import com.github.database.rider.cdi.api.RiderPU;
 import com.github.database.rider.core.util.EntityManagerProvider;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.Typed;
 import javax.persistence.EntityManager;
 
 /**

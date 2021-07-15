@@ -71,11 +71,9 @@ public class RiderRunner {
         DataSet dataSet = riderTestContext.getAnnotation(DataSet.class);
         if (dataSet != null) {
             DataSetConfig dataSetConfig = new DataSetConfig().from(dataSet);
-
             if (dataSetConfig.isTransactional()) {
                 riderTestContext.rollback();
             }
-
             if (dataSetConfig.getExecuteStatementsAfter() != null && dataSetConfig.getExecuteStatementsAfter().length > 0) {
                 try {
                     executor.executeStatements(dataSetConfig.getExecuteStatementsAfter());

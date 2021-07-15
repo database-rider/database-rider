@@ -26,7 +26,7 @@ public @interface DBUnit {
     String executor() default DataSetExecutorImpl.DEFAULT_EXECUTOR_ID;
 
     /**
-     * @return if true database connection will be reused among tests
+     * @return if true database connection will be reused among tests otherwise the connection will be closed after each test
      */
     boolean cacheConnection() default true;
 

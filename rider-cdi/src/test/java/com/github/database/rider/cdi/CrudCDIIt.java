@@ -1,18 +1,10 @@
 package com.github.database.rider.cdi;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.persistence.EntityManager;
-
 import com.github.database.rider.cdi.api.DBRider;
 import com.github.database.rider.cdi.api.RiderPU;
-import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.cdi.api.DBUnitInterceptor;
 import com.github.database.rider.cdi.model.User;
+import com.github.database.rider.core.api.configuration.DBUnit;
+import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetProvider;
 import com.github.database.rider.core.dataset.builder.DataSetBuilder;
 import org.apache.deltaspike.testcontrol.api.junit.CdiTestRunner;
@@ -21,12 +13,19 @@ import org.dbunit.dataset.IDataSet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * Created by pestano on 23/07/15.
  */
 
 @RunWith(CdiTestRunner.class)
 @DBRider(entityManagerName = "cdipu2")
+@DBUnit(cacheConnection = false)
 public class CrudCDIIt {
 
     @Inject
