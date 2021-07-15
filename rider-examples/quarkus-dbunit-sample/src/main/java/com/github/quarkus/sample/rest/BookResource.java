@@ -82,7 +82,7 @@ public class BookResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll() {
         log.debug("Getting all the books");
-        return ok(bookRepository.findAll()).build();
+        return ok(bookRepository.findAll().list()).build();
     }
 
     /**
@@ -100,9 +100,9 @@ public class BookResource {
         String isbn = isbnPrefix + "-" + (int) (Math.random() * 1000) + "-" + isbnSuffix;
         book.setIsbn(isbn);
 
-        final Book created = bookRepository.create(book);
+        bookRepository.persist(book);
 
-        URI createdURI = uriInfo.getAbsolutePathBuilder().path(String.valueOf(created.getId())).build();
+        URI createdURI = uriInfo.getAbsolutePathBuilder().path(String.valueOf(book.getId())).build();
         log.info("Created book URI " + createdURI);
         return Response.created(createdURI).build();
     }

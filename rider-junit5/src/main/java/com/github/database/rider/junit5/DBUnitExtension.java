@@ -28,9 +28,10 @@ import org.junit.platform.commons.util.StringUtils;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;

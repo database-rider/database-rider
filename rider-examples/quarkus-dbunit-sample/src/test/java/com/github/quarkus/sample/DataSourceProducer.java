@@ -12,6 +12,7 @@ public class DataSourceProducer {
     @Inject
     AgroalDataSource defaultDataSource;//doesnt need to be produced
 
+    /* TODO in issue #329: setup multiple PU tests
     @Inject
     @DataSource("secondary")
     AgroalDataSource secondaryDataSource;
@@ -22,7 +23,7 @@ public class DataSourceProducer {
     @RiderPU("secondary")
     public javax.sql.DataSource produceSecondary() {
         return secondaryDataSource;
-    }
+    }*/
 
 
 }

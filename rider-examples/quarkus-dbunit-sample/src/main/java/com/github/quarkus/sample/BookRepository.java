@@ -17,6 +17,7 @@
 package com.github.quarkus.sample;
 
 import com.github.quarkus.sample.domain.Book;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -28,22 +29,12 @@ import java.util.Optional;
 import static javax.transaction.Transactional.TxType.SUPPORTS;
 
 @ApplicationScoped
-public class BookRepository {
+public class BookRepository implements PanacheRepository<Book> {
 
 
     @Inject
     EntityManager entityManager;
 
- 
-    @Transactional(SUPPORTS)
-    public Book findById(final Long id) {
-        return entityManager.find(Book.class, id);
-    }
-
-    @Transactional(SUPPORTS)
-    public List<Book> findAll() {
-        return entityManager.createQuery("SELECT m FROM Book m", Book.class).getResultList();
-    }
 
     @Transactional
     public Book create(final Book book) {
@@ -56,8 +47,4 @@ public class BookRepository {
         return entityManager.merge(book);
     }
 
-    @Transactional
-    public void deleteById(final Long id) {
-        Optional.ofNullable(entityManager.getReference(Book.class, id)).ifPresent(entityManager::remove);
-    }
 }

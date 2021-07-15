@@ -45,7 +45,7 @@ public class QuarkusSuperclassDataSetTest extends BaseQuarkusTest {
 
     @Test
     public void shouldFindAllBooks() {
-        List<Book> books = repository.findAll();
+        List<Book> books = repository.findAll().list();
         assertThat(books)
                 .isNotNull()
                 .hasSize(4)
