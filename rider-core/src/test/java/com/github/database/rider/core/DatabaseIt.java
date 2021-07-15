@@ -1,5 +1,6 @@
 package com.github.database.rider.core;
 
+import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.model.Follower;
 import com.github.database.rider.core.model.Tweet;
@@ -25,11 +26,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Created by pestano on 23/07/15.
  */
 @RunWith(JUnit4.class)
+@DBUnit(cacheConnection = false)
 public class DatabaseIt {
 
     @Rule
     public DBUnitRule dbUnitRule = DBUnitRule.instance(JDBCConnection());
-
 
     @Test
     @DataSet(value = "datasets/yml/user.yml", cleanBefore = true)

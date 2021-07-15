@@ -1,12 +1,7 @@
 package com.github.database.rider.junit5.util;
 
-/**
- * COPIED from core module to not depend on JUnit4
- */
 import org.hibernate.Session;
 import org.hibernate.internal.SessionImpl;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +10,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -49,7 +45,6 @@ public class EntityManagerProvider {
             instance = new EntityManagerProvider();
             providers.put(unitName, instance);
         }
-
         try {
             instance.init(unitName);
         } catch (Exception e) {
@@ -95,20 +90,26 @@ public class EntityManagerProvider {
             log.debug("using dbConfig '{}' to create emf", dbConfig);
             emf = dbConfig == null ? Persistence.createEntityManagerFactory(unitName) : Persistence.createEntityManagerFactory(unitName, dbConfig);
             em = emf.createEntityManager();
+            conn = createConnection(em);
             tx = em.getTransaction();
-            if (isHibernateOnClasspath() && em.getDelegate() instanceof Session) {
-                conn = ((SessionImpl) em.unwrap(Session.class)).connection();
-            } else {
-                /**
-                 * see here:http://wiki.eclipse.org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager
-                 */
-                tx.begin();
-                conn = em.unwrap(Connection.class);
-                tx.commit();
-            }
-
         }
         emf.getCache().evictAll();
+    }
+
+    private Connection createConnection(EntityManager em) {
+        Connection connection;
+        final EntityTransaction tx = em.getTransaction();
+        if (isHibernateOnClasspath() && em.getDelegate() instanceof Session) {
+            connection = ((SessionImpl) em.unwrap(Session.class)).connection();
+        } else {
+            /**
+             * see here:http://wiki.eclipse.org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager
+             */
+            tx.begin();
+            connection = em.unwrap(Connection.class);
+            tx.commit();
+        }
+        return connection;
     }
 
     private Map<String, String> getDbPropertyConfig() {
@@ -118,7 +119,6 @@ public class EntityManagerProvider {
 
         return propertyResolutionUtil.persistencePropertiesOverrides(overridingProperties);
     }
-
 
     /**
      * @param puName unit name
@@ -133,6 +133,13 @@ public class EntityManagerProvider {
      */
     public Connection connection() {
         checkInstance();
+        try {
+            if (instance.conn == null || instance.conn.isClosed()) {
+                instance.conn = createConnection(instance.em);
+            }
+        } catch (SQLException e) {
+            log.error("Could not create new jdbc connection.", e);
+        }
         return instance.conn;
     }
 
@@ -216,7 +223,6 @@ public class EntityManagerProvider {
         checkInstance();
         return instance.tx;
     }
-
 
     private boolean isHibernateOnClasspath() {
         return isOnClasspath("org.hibernate.Session");
