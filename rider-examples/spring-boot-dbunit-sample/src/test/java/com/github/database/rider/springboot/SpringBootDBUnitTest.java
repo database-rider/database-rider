@@ -1,5 +1,6 @@
 package com.github.database.rider.springboot;
 
+import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.junit5.api.DBRider;
@@ -18,15 +19,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @DBRider
 @SpringBootTest
+@DBUnit(cacheConnection = false)
 public class SpringBootDBUnitTest {
 
     @Autowired
     private UserRepository userRepository;
-
-    @AfterAll
-    @DataSet("emptyUsers.yml")
-    public static void cleanUp() {
-    }
 
     @BeforeEach
     @DataSet("users.yml")

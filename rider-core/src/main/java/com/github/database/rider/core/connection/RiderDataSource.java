@@ -58,10 +58,7 @@ public class RiderDataSource {
         return connection;
     }
 
-    public DatabaseConnection getDBUnitConnection() throws SQLException {
-        if (!dbUnitConfig.isCacheConnection()) {
-            initDBUnitConnection();
-        }
+    public DatabaseConnection getDBUnitConnection() {
         return dbUnitConnection;
     }
 
@@ -77,13 +74,13 @@ public class RiderDataSource {
                 throw new SQLException(String.format("Expect %s database, but actually %s database.",
                         dbUnitConfig.getExpectedDbType(), dbType));
             }
-            initDBUnitConnection();
+            initDBUnitConnection(conn);
         }
     }
 
-    private void initDBUnitConnection() throws SQLException {
+    private void initDBUnitConnection(final Connection connection) throws SQLException {
         try {
-            dbUnitConnection = new DatabaseConnection(getConnection(), dbUnitConfig.getSchema());
+            dbUnitConnection = new DatabaseConnection(connection, dbUnitConfig.getSchema());
             configDatabaseProperties();
         } catch (DatabaseUnitException e) {
             throw new SQLException(e);

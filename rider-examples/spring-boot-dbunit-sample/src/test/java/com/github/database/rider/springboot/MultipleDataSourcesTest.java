@@ -1,5 +1,6 @@
 package com.github.database.rider.springboot;
 
+import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.CompareOperation;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
@@ -16,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DBRider //default datasource is used
 @SpringBootTest
+@DBUnit(cacheConnection = false)
 public class MultipleDataSourcesTest {
 
     @Autowired

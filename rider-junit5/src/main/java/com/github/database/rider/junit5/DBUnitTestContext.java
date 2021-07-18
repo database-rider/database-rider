@@ -8,21 +8,17 @@ public class DBUnitTestContext {
 	private DataSetExecutor executor;
 	private LeakHunter leakHunter;
 
-	public DataSetExecutor getExecutor() {
-		return executor;
-	}
+    public DBUnitTestContext(DataSetExecutor executor, LeakHunter leakHunter) {
+        this.executor = executor;
+        this.leakHunter = leakHunter;
+    }
 
-	public DBUnitTestContext setExecutor(DataSetExecutor executor) {
-		this.executor = executor;
-		return this;
+    public DataSetExecutor getExecutor() {
+		return executor;
 	}
 
 	public LeakHunter getLeakHunter() {
 		return leakHunter;
 	}
 
-	public DBUnitTestContext setLeakHunter(LeakHunter leakHunter) {
-		this.leakHunter = leakHunter;
-		return this;
-	}
 }
