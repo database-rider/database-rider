@@ -69,7 +69,6 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         riderRunner.runBeforeTest(riderTestContext);
     }
 
-
     @Override
     public void afterTestExecution(ExtensionContext extensionContext) throws Exception {
         final DBUnitTestContext dbUnitTestContext = getTestContext(extensionContext);
