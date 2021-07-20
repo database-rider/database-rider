@@ -48,17 +48,6 @@ public class QuarkusDBUnitParameterizedTest {
     }
 
     @ParameterizedTest
-    @DataSet(value = "books.yml")
-    @CsvSource({"2001,Douglas Adams", "2002,Frank Herbert"})
-    public void shouldFindBookByTitleUsingMethodLevelDataSet(String id, String title) {
-        Book book = repository.findById(Long.parseLong(id));
-        assertThat(book)
-                .isNotNull()
-                .extracting(Book::getAuthor)
-                .isEqualTo(title);
-    }
-
-    @ParameterizedTest
     @ValueSource(longs = {4004})
     public void shouldFindBookById(Long id) {
         Book book = repository.findById(id);

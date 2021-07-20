@@ -30,7 +30,7 @@ import java.util.List;
 @DBUnitInterceptor
 public class DBUnitInterceptorImpl implements Serializable {
 
-    private static final List<String> TEST_ANNOTATION_NAMES = Arrays.asList("Test", "Given", "When", "Then");
+    private static final List<String> TEST_ANNOTATION_NAMES = Arrays.asList("Test", "Given", "When", "Then", "ParameterizedTest");
     @Inject
     DataSetProcessor dataSetProcessor;
 

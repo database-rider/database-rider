@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DBRider //default datasource is used
 @SpringBootTest
-@DBUnit(cacheConnection = false)
+@DBUnit(cacheConnection = false, leakHunter = true)
 public class MultipleDataSourcesTest {
 
     @Autowired

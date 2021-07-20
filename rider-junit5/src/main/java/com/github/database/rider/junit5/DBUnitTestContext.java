@@ -5,20 +5,22 @@ import com.github.database.rider.core.api.leak.LeakHunter;
 
 public class DBUnitTestContext {
 
-	private DataSetExecutor executor;
-	private LeakHunter leakHunter;
+    private final DataSetExecutor executor;
+    private LeakHunter leakHunter;
 
-    public DBUnitTestContext(DataSetExecutor executor, LeakHunter leakHunter) {
+    public DBUnitTestContext(DataSetExecutor executor) {
         this.executor = executor;
-        this.leakHunter = leakHunter;
     }
 
     public DataSetExecutor getExecutor() {
-		return executor;
-	}
+        return executor;
+    }
 
-	public LeakHunter getLeakHunter() {
-		return leakHunter;
-	}
+    public void setLeakHunter(LeakHunter leakHunter) {
+        this.leakHunter = leakHunter;
+    }
 
+    public LeakHunter getLeakHunter() {
+        return leakHunter;
+    }
 }
