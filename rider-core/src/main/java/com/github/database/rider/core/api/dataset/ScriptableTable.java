@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 /**
  * Adds support for script language (JSR 223) in table values.
@@ -20,17 +19,13 @@ import java.util.regex.Pattern;
  */
 public class ScriptableTable implements ITable {
 
-    //any non digit char (except 'regex') followed by ':' followed by 1 or more chars e.g: js: new Date().toString()
-    private static final Pattern scriptEnginePattern = Pattern.compile("^(?!regex)[a-zA-Z]+:.+");
+    private static final Logger log = Logger.getLogger(ScriptableTable.class.getName());
 
-    static Logger log = Logger.getLogger(ScriptableTable.class.getName());
+    private final ScriptEngineManager manager;
 
-    ScriptEngineManager manager;
-    
-    private Map<String, ScriptEngine> engines;
+    private final Map<String, ScriptEngine> engines;
 
-    private ITable delegate;
-
+    private final ITable delegate;
 
     public ScriptableTable(ITable delegate) {
         this.delegate = delegate;
@@ -50,20 +45,27 @@ public class ScriptableTable implements ITable {
 
     @Override
     public Object getValue(int row, String column) throws DataSetException {
-        Object value = delegate.getValue(row, column);
-        if (value != null && scriptEnginePattern.matcher(value.toString()).matches()) {
+        final Object value = delegate.getValue(row, column);
+        if (rowValueContainsScriptEngine(value)) {
             ScriptEngine engine = getScriptEngine(value.toString().trim());
             if (engine != null) {
                 try {
                     return getScriptResult(value.toString(), engine);
                 } catch (Exception e) {
-                    log.log(Level.WARNING,String.format("Could not evaluate script expression for table '%s', column '%s'. The original value will be used.", getTableMetaData().getTableName(), column),e);
+                    log.log(Level.WARNING, String.format("Could not evaluate script expression for table '%s', column '%s'. The original value will be used.", getTableMetaData().getTableName(), column), e);
                 }
             }
         }
         return value;
     }
 
+    private boolean rowValueContainsScriptEngine(Object value) {
+        if (value == null || value.toString().length() == 0) {
+            return false;
+        }
+        final String rowValueLowerCase = value.toString().toLowerCase();
+        return rowValueLowerCase.startsWith("js:") || rowValueLowerCase.startsWith("groovy:");
+    }
 
     /**
      * Parses table cell to get script engine
