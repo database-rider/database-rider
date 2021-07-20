@@ -7,9 +7,8 @@ import org.dbunit.dataset.ITableMetaData;
 
 /**
  * @author <a href="mailto:rmpestano@gmail.com">Rafael Pestano</a>
- *
  */
-public class ScriptableDataSetIterator implements ITableIterator{
+public class ScriptableDataSetIterator implements ITableIterator {
 
     private ITableIterator delegate;
 
@@ -31,7 +30,6 @@ public class ScriptableDataSetIterator implements ITableIterator{
     public ITable getTable() throws DataSetException {
         return new ScriptableTable(delegate.getTable());
     }
-
 
 
 }
