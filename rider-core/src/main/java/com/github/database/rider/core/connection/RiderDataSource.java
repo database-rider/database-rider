@@ -41,6 +41,10 @@ public class RiderDataSource {
     private DatabaseConnection dbUnitConnection;
     private DBType dbType;
 
+    public RiderDataSource(ConnectionHolder connectionHolder) {
+        this(connectionHolder, DBUnitConfig.fromGlobalConfig());
+    }
+
     public RiderDataSource(ConnectionHolder connectionHolder, DBUnitConfig dbUnitConfig) {
         this.connectionHolder = connectionHolder;
         this.dbUnitConfig = dbUnitConfig;
