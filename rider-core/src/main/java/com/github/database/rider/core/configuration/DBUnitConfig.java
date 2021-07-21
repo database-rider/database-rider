@@ -425,4 +425,32 @@ public class DBUnitConfig {
             }
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DBUnitConfig that = (DBUnitConfig) o;
+        return Objects.equals(executorId, that.executorId) &&
+                Objects.equals(cacheConnection, that.cacheConnection) &&
+                Objects.equals(cacheTableNames, that.cacheTableNames) &&
+                Objects.equals(leakHunter, that.leakHunter) &&
+                Objects.equals(mergeDataSets, that.mergeDataSets) &&
+                Objects.equals(columnSensing, that.columnSensing) &&
+                Objects.equals(raiseExceptionOnCleanUp, that.raiseExceptionOnCleanUp) &&
+                Objects.equals(disableSequenceFiltering, that.disableSequenceFiltering) &&
+                caseInsensitiveStrategy == that.caseInsensitiveStrategy &&
+                Arrays.equals(disablePKCheckFor, that.disablePKCheckFor) &&
+                mergingStrategy == that.mergingStrategy &&
+                expectedDbType == that.expectedDbType &&
+                Objects.equals(properties, that.properties) &&
+                Objects.equals(connectionConfig, that.connectionConfig);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(executorId, properties);
+        result = 31 * result;
+        return result;
+    }
 }
