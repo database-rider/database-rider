@@ -45,7 +45,7 @@ public class MultipleDataSourcesTest {
 
     @Test
     @DBRider(dataSourceBeanName = "companyDataSource")
-    @DataSet(value = "companies.yml",cleanBefore = true)
+    @DataSet(value = "companies.yml", cleanBefore = true)
     @ExpectedDataSet("expectedCompany.yml")
     public void shouldDeleteCompany() {
         companyRepository.deleteById(1L);
