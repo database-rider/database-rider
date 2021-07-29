@@ -18,7 +18,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DBRider
 @RunWith(JUnitPlatform.class)
-@DBUnit(url = "jdbc:hsqldb:mem:junit5;DB_CLOSE_DELAY=-1", driver = "org.hsqldb.jdbcDriver", user = "sa")
 public class JUnit5LifecycleHooksIt {
 
     private static ConnectionHolder connectionHolder = () ->

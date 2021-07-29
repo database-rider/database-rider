@@ -50,7 +50,7 @@ public final class TableNameResolver {
             return tableNamesCache;
         }
         final Set<String> tables = new HashSet<>();
-        try (ResultSet result = getTablesFromMetadata(riderDataSource.getConnection())) {
+        try (ResultSet result = getTablesFromMetadata(riderDataSource.getDBUnitConnection().getConnection())) {
             while (result.next()) {
                 String schema = resolveSchema(result);
                 if (!isSystemSchema(schema, riderDataSource)) {

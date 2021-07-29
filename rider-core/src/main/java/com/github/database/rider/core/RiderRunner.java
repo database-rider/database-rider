@@ -16,7 +16,6 @@ import org.dbunit.assertion.DbUnitAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 
@@ -28,7 +27,7 @@ public class RiderRunner {
         DBUnitConfig dbUnitConfig = resolveDBUnitConfig(riderTestContext);
         DataSetExecutor executor = riderTestContext.getDataSetExecutor();
         executor.setDBUnitConfig(dbUnitConfig);
-        if (executor.getRiderDataSource().getConnection() == null) {
+        if (executor.getRiderDataSource().getDBUnitConnection().getConnection() == null) {
             ConnectionConfig connectionConfig = executor.getDBUnitConfig().getConnectionConfig();
             executor.initConnectionFromConfig(connectionConfig);
         }
@@ -104,8 +103,8 @@ public class RiderRunner {
             riderTestContext.clearEntityManager();
         }
 
-        if (!executor.getDBUnitConfig().isCacheConnection() && !executor.getRiderDataSource().getConnection().isClosed()) {
-            executor.getRiderDataSource().getConnection().close();
+        if (!executor.getDBUnitConfig().isCacheConnection() && !executor.getRiderDataSource().getDBUnitConnection().getConnection().isClosed()) {
+            executor.getRiderDataSource().getDBUnitConnection().getConnection().close();
             ((DataSetExecutorImpl) executor).clearRiderDataSource();
         }
     }

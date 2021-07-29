@@ -48,7 +48,7 @@ public final class ConnectionManager {
         try {
             DataSetExecutor dataSetExecutor = DataSetExecutorImpl.getExecutorById(executorId);
             if (isCachedConnection(dataSetExecutor)) {
-                return new ConnectionHolderImpl(dataSetExecutor.getRiderDataSource().getConnection());
+                return new ConnectionHolderImpl(dataSetExecutor.getRiderDataSource().getDBUnitConnection().getConnection());
             } else {
                 return new ConnectionHolderImpl(dataSource.getConnection());
             }
@@ -61,7 +61,7 @@ public final class ConnectionManager {
         DataSetExecutor dataSetExecutor = DataSetExecutorImpl.getExecutorById(executorId);
         if (isCachedConnection(dataSetExecutor)) {
             try {
-                return new ConnectionHolderImpl(dataSetExecutor.getRiderDataSource().getConnection());
+                return new ConnectionHolderImpl(dataSetExecutor.getRiderDataSource().getDBUnitConnection().getConnection());
             } catch (SQLException e) {
                 //intentional, if cached connection is invalid we can get a new one from test class method
             }
