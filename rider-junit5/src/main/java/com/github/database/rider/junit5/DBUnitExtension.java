@@ -164,7 +164,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         }
     }
 
-    private void executeDataSetForCallback(ExtensionContext extensionContext, Class callbackAnnotation, Method callbackMethod) {
+    private void executeDataSetForCallback(ExtensionContext extensionContext, Class callbackAnnotation, Method callbackMethod) throws SQLException {
         Class testClass = extensionContext.getTestClass().get();
         // get DataSet annotation, if any
         Optional<DataSet> dataSetAnnotation = AnnotationUtils.findAnnotation(callbackMethod, DataSet.class);
@@ -184,7 +184,15 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         }
         DataSetExecutor dataSetExecutor = dbUnitTestContext.getExecutor();
         dataSetExecutor.setDBUnitConfig(dbUnitConfig);
+        if(!dbUnitConfig.isCacheConnection() && isAfterTestCallback(callbackAnnotation)) { //we close the connection after test execution when cache is disabled so we need a new one for the callback
+            final ConnectionHolder connectionHolder = getTestConnection(extensionContext, dataSetExecutor.getExecutorId());
+            dataSetExecutor = DataSetExecutorImpl.instance(dataSetExecutor.getExecutorId(), connectionHolder, dbUnitConfig);
+        }
         dataSetExecutor.createDataSet(new DataSetConfig().from(dataSet));
+    }
+
+    private boolean isAfterTestCallback(Class callbackAnnotation) {
+        return callbackAnnotation.equals(AfterEach.class) || callbackAnnotation.equals(AfterAll.class);
     }
 
     private void executeExpectedDataSetForCallback(ExtensionContext extensionContext, Class callbackAnnotation, Method callbackMethod) throws DatabaseUnitException {
