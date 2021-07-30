@@ -348,19 +348,19 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             switch (getRiderDataSource().getDBType()) {
                 case HSQLDB:
                     String hsqlDBFlag = enable ? "TRUE" : "FALSE";
-                    statement.execute("SET DATABASE REFERENTIAL INTEGRITY " + hsqlDBFlag + ";");
+                    executeStatements("SET DATABASE REFERENTIAL INTEGRITY " + hsqlDBFlag + ";");
                     break;
                 case H2:
                     String h2DBFlag = enable ? "1" : "0";
-                    statement.execute("SET foreign_key_checks = " + h2DBFlag + ";");
+                    executeStatements("SET foreign_key_checks = " + h2DBFlag + ";");
                     break;
                 case MYSQL:
                     String mySqlDBFlag = enable ? "1" : "0";
-                    statement.execute(" SET FOREIGN_KEY_CHECKS=" + mySqlDBFlag + ";");
+                    executeStatements(" SET FOREIGN_KEY_CHECKS=" + mySqlDBFlag + ";");
                     break;
                 case POSTGRESQL:
                     String postgreSqlDBFlag = enable ? "DEFAULT" : "replica";
-                    statement.execute("SET session_replication_role = " + postgreSqlDBFlag + ";");
+                    executeStatements("SET session_replication_role = " + postgreSqlDBFlag + ";");
                     break;
                 case ORACLE:
                     // adapted from Unitils:
@@ -401,7 +401,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     String msSqlDBFlag = enable ? "with check check" : "nocheck";
                     Set<String> tables = tableNameResolver.getTableNames(getRiderDataSource());
                     for (String tableName : tables) {
-                        statement.execute("alter table " + tableName + " " + msSqlDBFlag + " constraint all");
+                        executeStatements("alter table " + tableName + " " + msSqlDBFlag + " constraint all");
                     }
                     break;
             }
@@ -413,12 +413,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     public void executeStatements(String... statements) {
         if (statements != null && statements.length > 0 && !"".equals(statements[0].trim())) {
             java.sql.Statement statement = null;
-            Connection connection = null;
-            Boolean autoCommit = null;
             try {
-                connection = getRiderDataSource().getDBUnitConnection().getConnection();
-                autoCommit = connection.getAutoCommit();
-                connection.setAutoCommit(false);
+                final Connection connection = getRiderDataSource().getDBUnitConnection().getConnection();
+                getRiderDataSource().setConnectionAutoCommit(false);
                 statement = connection.createStatement(
                         ResultSet.TYPE_SCROLL_SENSITIVE,
                         ResultSet.CONCUR_UPDATABLE);
@@ -427,16 +424,13 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 }
                 statement.executeBatch();
                 connection.commit();
-                connection.setAutoCommit(autoCommit);
             } catch (Exception e) {
                 throw new RuntimeException("Could execute statements:" + e.getMessage(), e);
             } finally {
-                if (autoCommit != null) {
-                    try {
-                        connection.setAutoCommit(autoCommit);
-                    } catch (SQLException e) {
-                        log.error("Could not reset connection auto commit", e);
-                    }
+                try {
+                    getRiderDataSource().resetConnectionAutoCommit();
+                } catch (SQLException e) {
+                    log.error("Could not reset connection auto commit", e);
                 }
                 if (statement != null) {
                     try {
@@ -583,7 +577,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     public void clearDatabase(DataSetConfig config) throws SQLException {
         try {
             disableConstraints();
-            final Connection connection = getRiderDataSource().getDBUnitConnection().getConnection();
+            Set<String> cleanupStatements = new HashSet<>();
             if (config != null && config.getTableOrdering() != null && config.getTableOrdering().length > 0) {
                 for (String table : config.getTableOrdering()) {
                     if (table.toUpperCase().contains(SEQUENCE_TABLE_NAME)) {
@@ -592,16 +586,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         continue;
                     }
                     final String escapedTableName = tableNameResolver.resolveTableName(table, getRiderDataSource().getDBType());
-                    try (Statement statement = connection.createStatement()) {
-                        statement.executeUpdate("DELETE FROM " + escapedTableName + " where 1=1");
-                        connection.commit();
-                    } catch (Exception e) {
-                        if (dbUnitConfig.isRaiseExceptionOnCleanUp()) {
-                            throw new RuntimeException("Could not clear table " + escapedTableName, e);
-                        }
-                        log.warn("Could not clear table " + escapedTableName + ", message:" + e.getMessage() + ", cause: "
-                                + e.getCause());
-                    }
+                    cleanupStatements.add("DELETE FROM " + escapedTableName + " where 1=1");
                 }
             }
             // clear remaining tables in any order(if there are any, also no problem clearing again)
@@ -615,28 +600,22 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     // tables containing 'SEQ' will NOT be cleared see https://github.com/rmpestano/dbunit-rules/issues/26
                     continue;
                 }
-                try (Statement statement = connection.createStatement()) {
-                    statement.executeUpdate("DELETE FROM " + tableName + " where 1=1");
-                    connection.commit();
-                } catch (Exception e) {
-                    if (dbUnitConfig.isRaiseExceptionOnCleanUp()) {
-                        throw new RuntimeException("Could not clear table " + tableName, e);
-                    }
-                    log.warn("Could not clear table " + tableName + ", message:" + e.getMessage() + ", cause: "
-                            + e.getCause());
-                }
+                cleanupStatements.add("DELETE FROM " + tableName + " where 1=1");
             }
-
+            if (!cleanupStatements.isEmpty()) {
+                executeStatements(cleanupStatements.toArray(new String[cleanupStatements.size()]));
+            }
         } catch (Exception e) {
-            LoggerFactory.getLogger(DataSetExecutorImpl.class.getName())
-                    .warn("Could not clean database before test.", e);
+            if (dbUnitConfig.isRaiseExceptionOnCleanUp()) {
+                throw new RuntimeException("Could not clean database before test.", e);
+            }
+            log.warn("Could not clean database before test.", e);
         } finally {
             // enabling constraints only if `disableConstraints == false`
             if (!config.isDisableConstraints()) {
                 enableConstraints();
             }
         }
-
     }
 
     private List<String> getTablesToSkipOnCleaning(DataSetConfig config) {
