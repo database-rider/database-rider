@@ -1,6 +1,5 @@
 package com.github.database.rider.junit5;
 
-import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
@@ -25,7 +24,7 @@ public class JUnit5LifecycleHooksIt {
 
     @BeforeAll
     @DataSet(value = "usersAndTweetsBeforeAll.yml", disableConstraints = true)
-    public static void loadDataSetBeforeAll() {
+    static void loadDataSetBeforeAll() {
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
         assertThat(users).isNotNull().isEmpty();
         List<Tweet> tweets =  EntityManagerProvider.em().createQuery("select t from Tweet t").getResultList();
@@ -37,7 +36,7 @@ public class JUnit5LifecycleHooksIt {
 
     @BeforeEach
     @DataSet(value = "tweetBeforeEach.yml", disableConstraints = true)
-    public void loadDataSetBeforeEach() {
+    void loadDataSetBeforeEach() {
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
         assertThat(users).isNotNull().isEmpty();
         List<Tweet> tweets =  EntityManagerProvider.em().createQuery("select t from Tweet t").getResultList();
@@ -68,7 +67,7 @@ public class JUnit5LifecycleHooksIt {
 
     @AfterAll
     @DataSet(value = "usersAndTweetsAfterAll.yml", disableConstraints = true)
-    public static void loadDataSetAfterAll() {
+    static void loadDataSetAfterAll() {
     }
 
 }

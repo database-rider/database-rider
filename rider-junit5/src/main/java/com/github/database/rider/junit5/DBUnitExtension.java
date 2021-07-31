@@ -184,15 +184,8 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         }
         DataSetExecutor dataSetExecutor = dbUnitTestContext.getExecutor();
         dataSetExecutor.setDBUnitConfig(dbUnitConfig);
-        if(!dbUnitConfig.isCacheConnection() && isAfterTestCallback(callbackAnnotation)) { //we close the connection after test execution when cache is disabled so we need a new one for the callback
-            final ConnectionHolder connectionHolder = getTestConnection(extensionContext, dataSetExecutor.getExecutorId());
-            dataSetExecutor = DataSetExecutorImpl.instance(dataSetExecutor.getExecutorId(), connectionHolder, dbUnitConfig);
-        }
+        dataSetExecutor = resetExecutorConnectionIfNeeded(extensionContext, callbackAnnotation, dbUnitConfig, dataSetExecutor);
         dataSetExecutor.createDataSet(new DataSetConfig().from(dataSet));
-    }
-
-    private boolean isAfterTestCallback(Class callbackAnnotation) {
-        return callbackAnnotation.equals(AfterEach.class) || callbackAnnotation.equals(AfterAll.class);
     }
 
     private void executeExpectedDataSetForCallback(ExtensionContext extensionContext, Class callbackAnnotation, Method callbackMethod) throws DatabaseUnitException {
@@ -209,12 +202,25 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         DBUnitConfig dbUnitConfig = resolveDbUnitConfig(Optional.of(callbackAnnotation), Optional.of(callbackMethod), testClass);
         DataSetExecutor dataSetExecutor = getTestContext(extensionContext).getExecutor();
         dataSetExecutor.setDBUnitConfig(dbUnitConfig);
+        dataSetExecutor = resetExecutorConnectionIfNeeded(extensionContext, callbackAnnotation, dbUnitConfig, dataSetExecutor);
         dataSetExecutor.compareCurrentDataSetWith(
                 new DataSetConfig(expectedDataSet.value()).disableConstraints(true).datasetProvider(expectedDataSet.provider()),
                 expectedDataSet.ignoreCols(),
                 expectedDataSet.replacers(),
                 expectedDataSet.orderBy(),
                 expectedDataSet.compareOperation());
+    }
+
+    private DataSetExecutor resetExecutorConnectionIfNeeded(ExtensionContext extensionContext, Class callbackAnnotation, DBUnitConfig dbUnitConfig, DataSetExecutor dataSetExecutor) {
+        if(!dbUnitConfig.isCacheConnection() && isAfterTestCallback(callbackAnnotation)) { //we close the connection after test execution when cache is disabled so we need a new one for the callback
+            final ConnectionHolder connectionHolder = getTestConnection(extensionContext, dataSetExecutor.getExecutorId());
+            dataSetExecutor = DataSetExecutorImpl.instance(dataSetExecutor.getExecutorId(), connectionHolder, dbUnitConfig);
+        }
+        return dataSetExecutor;
+    }
+
+    private boolean isAfterTestCallback(Class callbackAnnotation) {
+        return callbackAnnotation.equals(AfterEach.class) || callbackAnnotation.equals(AfterAll.class);
     }
 
     // Resolve DBUnit config from annotation or file
