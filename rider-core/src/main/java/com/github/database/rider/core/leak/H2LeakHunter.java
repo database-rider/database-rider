@@ -11,21 +11,14 @@ class H2LeakHunter extends AbstractLeakHunter {
 
     private final String sql = "select count(*) from information_schema.sessions;";
 
-    private Connection connection;
-
-    public H2LeakHunter(Connection connection, String methodName) {
-        super(methodName);
-        this.connection = connection;
+    public H2LeakHunter(Connection connection, String methodName, boolean cacheConnection) {
+        super(connection, methodName, cacheConnection);
     }
-
 
     @Override
     protected String leakCountSql() {
         return sql;
     }
 
-    @Override
-    public Connection getConnection() {
-        return connection;
-    }
+
 }

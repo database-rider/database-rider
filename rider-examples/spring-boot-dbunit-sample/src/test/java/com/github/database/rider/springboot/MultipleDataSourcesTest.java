@@ -26,7 +26,6 @@ public class MultipleDataSourcesTest {
     @Autowired
     private CompanyRepository companyRepository; //from company datasource
 
-
     @Test
     @DataSet("users.yml")
     public void shouldListUsers() {

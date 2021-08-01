@@ -12,6 +12,7 @@ import com.github.database.rider.core.api.leak.LeakHunter;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
+import com.github.database.rider.core.leak.LeakHunterException;
 import com.github.database.rider.core.leak.LeakHunterFactory;
 import com.github.database.rider.junit5.util.EntityManagerProvider;
 import org.apache.commons.collections.CollectionUtils;
@@ -56,7 +57,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         dataSetExecutor.setDBUnitConfig(dbUnitConfig);
         if (dbUnitConfig.isLeakHunter()) {
             try {
-                LeakHunter leakHunter = LeakHunterFactory.from(dataSetExecutor.getRiderDataSource(), extensionContext.getRequiredTestMethod().getName());
+                LeakHunter leakHunter = LeakHunterFactory.from(dataSetExecutor.getRiderDataSource(), extensionContext.getRequiredTestMethod().getName(), dbUnitConfig.isCacheConnection());
                 leakHunter.measureConnectionsBeforeExecution();
                 dbUnitTestContext.setLeakHunter(leakHunter);
             } catch (SQLException e) {
@@ -186,9 +187,27 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         dataSetExecutor.setDBUnitConfig(dbUnitConfig);
         dataSetExecutor = resetExecutorConnectionIfNeeded(extensionContext, callbackAnnotation, dbUnitConfig, dataSetExecutor);
         dataSetExecutor.createDataSet(new DataSetConfig().from(dataSet));
+        closeConnectionForAfterCallback(dataSetExecutor, callbackAnnotation);
     }
 
-    private void executeExpectedDataSetForCallback(ExtensionContext extensionContext, Class callbackAnnotation, Method callbackMethod) throws DatabaseUnitException {
+    /**
+     * We only need to close the connection in afterCallback because the connection opened in before callback is closed after test execution ({@link RiderRunner#teardown(RiderTestContext)})
+     *
+     * @param dataSetExecutor
+     * @param callbackAnnotation
+     * @throws SQLException
+     */
+    private void closeConnectionForAfterCallback(DataSetExecutor dataSetExecutor, Class callbackAnnotation) throws SQLException {
+        if (!isAfterTestCallback(callbackAnnotation)) {
+            return;
+        }
+        if (!dataSetExecutor.getDBUnitConfig().isCacheConnection() && !dataSetExecutor.getRiderDataSource().getDBUnitConnection().getConnection().isClosed()) {
+            dataSetExecutor.getRiderDataSource().getDBUnitConnection().getConnection().close();
+            ((DataSetExecutorImpl) dataSetExecutor).clearRiderDataSource();
+        }
+    }
+
+    private void executeExpectedDataSetForCallback(ExtensionContext extensionContext, Class callbackAnnotation, Method callbackMethod) throws DatabaseUnitException, SQLException {
         Class testClass = extensionContext.getTestClass().get();
         // get ExpectedDataSet annotation, if any
         Optional<ExpectedDataSet> expectedDataSetAnnotation = AnnotationUtils.findAnnotation(callbackMethod, ExpectedDataSet.class);
@@ -209,10 +228,11 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
                 expectedDataSet.replacers(),
                 expectedDataSet.orderBy(),
                 expectedDataSet.compareOperation());
+        closeConnectionForAfterCallback(dataSetExecutor, callbackAnnotation);
     }
 
     private DataSetExecutor resetExecutorConnectionIfNeeded(ExtensionContext extensionContext, Class callbackAnnotation, DBUnitConfig dbUnitConfig, DataSetExecutor dataSetExecutor) {
-        if(!dbUnitConfig.isCacheConnection() && isAfterTestCallback(callbackAnnotation)) { //we close the connection after test execution when cache is disabled so we need a new one for the callback
+        if (!dbUnitConfig.isCacheConnection() && isAfterTestCallback(callbackAnnotation)) { //we close the connection after test execution when cache is disabled so we need a new one for the callback
             final ConnectionHolder connectionHolder = getTestConnection(extensionContext, dataSetExecutor.getExecutorId());
             dataSetExecutor = DataSetExecutorImpl.instance(dataSetExecutor.getExecutorId(), connectionHolder, dbUnitConfig);
         }

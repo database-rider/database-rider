@@ -10,11 +10,8 @@ class OracleLeakHunter extends AbstractLeakHunter {
 
     private final String sql = "SELECT COUNT(*) FROM v$session WHERE status = 'INACTIVE'";
 
-    Connection connection;
-
-    public OracleLeakHunter(Connection connection, String methodName) {
-        super(methodName);
-        this.connection = connection;
+    public OracleLeakHunter(Connection connection, String methodName, boolean cacheConnection) {
+        super(connection, methodName, cacheConnection);
     }
 
     @Override
@@ -22,8 +19,4 @@ class OracleLeakHunter extends AbstractLeakHunter {
         return sql;
     }
 
-    @Override
-    protected Connection getConnection() {
-        return connection;
-    }
 }

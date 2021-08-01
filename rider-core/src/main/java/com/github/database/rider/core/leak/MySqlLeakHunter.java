@@ -12,11 +12,8 @@ class MySqlLeakHunter extends AbstractLeakHunter {
 
     private final String sql = "SELECT COUNT(*) FROM v$session WHERE status = 'INACTIVE'";
 
-    Connection connection;
-
-    public MySqlLeakHunter(Connection connection, String methodName) {
-        super(methodName);
-        this.connection = connection;
+    public MySqlLeakHunter(Connection connection, String methodName, boolean cacheConnection) {
+        super(connection, methodName, cacheConnection);
     }
 
     @Override
@@ -43,8 +40,4 @@ class MySqlLeakHunter extends AbstractLeakHunter {
         return sql;
     }
 
-    @Override
-    protected Connection getConnection() {
-        return connection;
-    }
 }

@@ -11,11 +11,8 @@ class HsqlDBLeakHunter extends AbstractLeakHunter {
 
     private final String sql = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SYSTEM_SESSIONS";
 
-    private Connection connection;
-
-    public HsqlDBLeakHunter(Connection connection, String methodName) {
-        super(methodName);
-        this.connection = connection;
+    public HsqlDBLeakHunter(Connection connection, String methodName, boolean cacheConnection) {
+        super(connection, methodName, cacheConnection);
     }
 
     @Override
@@ -23,8 +20,5 @@ class HsqlDBLeakHunter extends AbstractLeakHunter {
         return sql;
     }
 
-    @Override
-    public Connection getConnection() {
-        return connection;
-    }
+
 }
