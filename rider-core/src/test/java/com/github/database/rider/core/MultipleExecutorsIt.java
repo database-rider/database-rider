@@ -1,19 +1,12 @@
 package com.github.database.rider.core;
 
-import static com.github.database.rider.core.util.EntityManagerProvider.instance;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.github.database.rider.core.api.dataset.DataSetExecutor;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.connection.ConnectionHolderImpl;
+import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.exception.DataBaseSeedingException;
 import com.github.database.rider.core.model.Follower;
-import com.github.database.rider.core.util.EntityManagerProvider;
+import com.github.database.rider.core.model.User;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -21,10 +14,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.github.database.rider.core.dataset.DataSetExecutorImpl;
-import com.github.database.rider.core.model.User;
-
 import javax.persistence.EntityManager;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.github.database.rider.core.util.EntityManagerProvider.instance;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by pestano on 23/07/15.
@@ -34,7 +31,7 @@ import javax.persistence.EntityManager;
 public class MultipleExecutorsIt {
 
 
-    private static List<DataSetExecutorImpl> executors = new ArrayList<>(3);
+    private static List<DataSetExecutor> executors = new ArrayList<>(3);
 
     @BeforeClass
     public static void setup() {
@@ -45,8 +42,8 @@ public class MultipleExecutorsIt {
 
     @AfterClass
     public static void tearDown() throws SQLException {
-        for (DataSetExecutorImpl executor : executors) {
-            Connection connection = executor.getConnection();
+        for (DataSetExecutor executor : executors) {
+            Connection connection = executor.getRiderDataSource().getDBUnitConnection().getConnection();
             if (connection != null && !connection.isClosed()) {
                 connection.close();
             }
@@ -55,8 +52,8 @@ public class MultipleExecutorsIt {
     }
 
     @Test
-    public void shouldSeedDataSetDisablingContraints() {
-        for (DataSetExecutorImpl executor : executors) {
+    public void shouldSeedDataSetDisablingConstraints() {
+        for (DataSetExecutor executor : executors) {
             DataSetConfig DataSetConfig = new DataSetConfig("datasets/yml/users.yml").disableConstraints(true);
             executor.createDataSet(DataSetConfig);
             User user = (User) instance(executor.getExecutorId() + "-pu").em().createQuery("select u from User u where u.id = 1").getSingleResult();
@@ -68,7 +65,7 @@ public class MultipleExecutorsIt {
 
     @Test
     public void shouldSeedDataSetDisablingContraintsViaStatement() {
-        for (DataSetExecutorImpl executor : executors) {
+        for (DataSetExecutor executor : executors) {
             DataSetConfig DataSetConfig = new DataSetConfig("datasets/yml/users.yml").executeStatementsAfter(new String[]{"SET DATABASE REFERENTIAL INTEGRITY FALSE;"});
             executor.createDataSet(DataSetConfig);
             User user = (User) instance(executor.getExecutorId() + "-pu").em().createQuery("select u from User u where u.id = 1").getSingleResult();
@@ -81,7 +78,7 @@ public class MultipleExecutorsIt {
 
     @Test
     public void shouldNotSeedDataSetWithoutSequenceFilter() {
-        for (DataSetExecutorImpl executor : executors) {
+        for (DataSetExecutor executor : executors) {
             DataSetConfig DataSetConfig = new DataSetConfig("datasets/yml/users.yml").
                 useSequenceFiltering(false).
                 executeStatementsAfter(new String[] { "DELETE FROM User" });//needed because other tests creates users and as the dataset is not created in this test the CLEAN is not performed
@@ -96,7 +93,7 @@ public class MultipleExecutorsIt {
 
     @Test
     public void shouldSeedDataSetUsingTableCreationOrder() {
-        for (DataSetExecutorImpl executor : executors) {
+        for (DataSetExecutor executor : executors) {
             DataSetConfig DataSetConfig = new DataSetConfig("datasets/yml/users.yml").
                 tableOrdering(new String[]{"USER","TWEET","FOLLOWER"}).
                 executeStatementsBefore(new String[]{"DELETE FROM FOLLOWER","DELETE FROM TWEET","DELETE FROM USER"}).//needed because other tests created user dataset
@@ -110,7 +107,7 @@ public class MultipleExecutorsIt {
 
     @Test
     public void shouldSeedUserDataSet() {
-        for (DataSetExecutorImpl executor : executors) {
+        for (DataSetExecutor executor : executors) {
             DataSetConfig DataSetConfig = new DataSetConfig("datasets/yml/users.yml").
                 useSequenceFiltering(true);
             executor.createDataSet(DataSetConfig);
@@ -125,7 +122,7 @@ public class MultipleExecutorsIt {
 
     @Test
     public void shouldLoadUserFollowers() {
-        for (DataSetExecutorImpl executor : executors) {
+        for (DataSetExecutor executor : executors) {
             DataSetConfig DataSetConfig = new DataSetConfig("datasets/yml/users.yml");
             executor.createDataSet(DataSetConfig);
             EntityManager em = instance(executor.getExecutorId() + "-pu").em();
@@ -144,7 +141,7 @@ public class MultipleExecutorsIt {
 
     @Test
     public void shouldLoadUsersFromJsonDataset() {
-        for (DataSetExecutorImpl executor : executors) {
+        for (DataSetExecutor executor : executors) {
             DataSetConfig DataSetConfig = new DataSetConfig("datasets/json/users.json");
             executor.createDataSet(DataSetConfig);
             EntityManager em = instance(executor.getExecutorId() + "-pu").em();
@@ -163,7 +160,7 @@ public class MultipleExecutorsIt {
 
     @Test
     public void shouldLoadUsersFromXmlDataset() {
-        for (DataSetExecutorImpl executor : executors) {
+        for (DataSetExecutor executor : executors) {
             DataSetConfig DataSetConfig = new DataSetConfig("datasets/xml/users.xml");
             executor.createDataSet(DataSetConfig);
             EntityManager em = instance(executor.getExecutorId() + "-pu").em();

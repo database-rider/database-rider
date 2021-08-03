@@ -37,9 +37,14 @@ public class RiderDataSource {
 
     private final ConnectionHolder connectionHolder;
     private final DBUnitConfig dbUnitConfig;
-    private Connection connection;
-    private DatabaseConnection dbUnitConnection;
+    private Connection connection; //the original test connection, it is created (or cached) on every test, internal usage only
+    private DatabaseConnection dbUnitConnection;//connection used for dataset creation, db assertion, disabling constraints and cleaning db
     private DBType dbType;
+    private Boolean autoCommit;
+
+    public RiderDataSource(ConnectionHolder connectionHolder) {
+        this(connectionHolder, DBUnitConfig.fromGlobalConfig());
+    }
 
     public RiderDataSource(ConnectionHolder connectionHolder, DBUnitConfig dbUnitConfig) {
         this.connectionHolder = connectionHolder;
@@ -51,13 +56,6 @@ public class RiderDataSource {
         }
     }
 
-    public Connection getConnection() throws SQLException {
-        if (!dbUnitConfig.isCacheConnection() || connection == null || connection.isClosed()) {
-            connection = connectionHolder.getConnection();
-        }
-        return connection;
-    }
-
     public DatabaseConnection getDBUnitConnection() {
         return dbUnitConnection;
     }
@@ -66,14 +64,36 @@ public class RiderDataSource {
         return dbType;
     }
 
+    /**
+     * Changes dbunit connection autoCommit
+     *
+     * @param autoCommit
+     * @throws SQLException
+     */
+    public void setConnectionAutoCommit(Boolean autoCommit) throws SQLException {
+        this.getDBUnitConnection().getConnection().setAutoCommit(autoCommit);
+    }
+
+    /**
+     * Reset dbunit connection autoCommit
+     *
+     * @throws SQLException
+     */
+    public void resetConnectionAutoCommit() throws SQLException {
+        this.getDBUnitConnection().getConnection().setAutoCommit(this.autoCommit);
+    }
+
+    private Connection getConnection() throws SQLException {
+        if (!dbUnitConfig.isCacheConnection() || connection == null || connection.isClosed()) {
+            connection = connectionHolder.getConnection();
+        }
+        return connection;
+    }
+
     private void init() throws SQLException {
-        Connection conn = getConnection();
+        final Connection conn = getConnection();
         if (conn != null) {
-            dbType = resolveDBType(DriverUtils.getDriverName(conn));
-            if (dbUnitConfig.getExpectedDbType() != DBType.UNKNOWN && dbUnitConfig.getExpectedDbType() != dbType) {
-                throw new SQLException(String.format("Expect %s database, but actually %s database.",
-                        dbUnitConfig.getExpectedDbType(), dbType));
-            }
+            checkDbType(conn);
             initDBUnitConnection(conn);
         }
     }
@@ -81,6 +101,7 @@ public class RiderDataSource {
     private void initDBUnitConnection(final Connection connection) throws SQLException {
         try {
             dbUnitConnection = new DatabaseConnection(connection, dbUnitConfig.getSchema());
+            autoCommit = connection.getAutoCommit();
             configDatabaseProperties();
         } catch (DatabaseUnitException e) {
             throw new SQLException(e);
@@ -147,6 +168,14 @@ public class RiderDataSource {
                 return new Db2MetadataHandler();
             default:
                 return null;
+        }
+    }
+
+    private void checkDbType(Connection conn) throws SQLException {
+        dbType = resolveDBType(DriverUtils.getDriverName(conn));
+        if (dbUnitConfig.getExpectedDbType() != DBType.UNKNOWN && dbUnitConfig.getExpectedDbType() != dbType) {
+            throw new SQLException(String.format("Expect %s database, but actually %s database.",
+                    dbUnitConfig.getExpectedDbType(), dbType));
         }
     }
 

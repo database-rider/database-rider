@@ -197,8 +197,8 @@ public class MultipleDataBasesIt {
 
     @AfterClass//optional
     public static void close() throws SQLException {
-        DataSetExecutorImpl.getExecutorById("exec1").getConnection().close();
-        DataSetExecutorImpl.getExecutorById("exec2").getConnection().close();
+        DataSetExecutorImpl.getExecutorById("exec1").getRiderDataSource().getDBUnitConnection().close();
+        DataSetExecutorImpl.getExecutorById("exec2").getRiderDataSource().getDBUnitConnection().close();
     }
 
 }

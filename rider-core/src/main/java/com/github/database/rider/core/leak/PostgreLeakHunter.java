@@ -9,11 +9,8 @@ class PostgreLeakHunter extends AbstractLeakHunter {
 
     private final String sql = "SELECT COUNT(*) FROM pg_stat_activity WHERE state ILIKE '%idle%'";
 
-    Connection connection;
-
-    public PostgreLeakHunter(Connection connection, String methodName) {
-        super(methodName);
-        this.connection = connection;
+    public PostgreLeakHunter(Connection connection, String methodName, boolean cacheConnection) {
+        super(connection, methodName, cacheConnection);
     }
 
     @Override
@@ -21,8 +18,4 @@ class PostgreLeakHunter extends AbstractLeakHunter {
         return sql;
     }
 
-    @Override
-    protected Connection getConnection() {
-        return connection;
-    }
 }

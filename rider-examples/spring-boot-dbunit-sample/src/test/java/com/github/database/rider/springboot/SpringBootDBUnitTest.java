@@ -6,7 +6,6 @@ import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.junit5.api.DBRider;
 import com.github.database.rider.springboot.model.user.User;
 import com.github.database.rider.springboot.model.user.UserRepository;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @DBRider
 @SpringBootTest
-@DBUnit(cacheConnection = false)
+@DBUnit(cacheConnection = false, leakHunter = true)
 public class SpringBootDBUnitTest {
 
     @Autowired

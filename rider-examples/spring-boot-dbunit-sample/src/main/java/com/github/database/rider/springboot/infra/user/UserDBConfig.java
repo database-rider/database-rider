@@ -34,8 +34,6 @@ public class UserDBConfig {
     @Autowired
     private Environment env;
 
-
-
     @Primary
     @Bean(name = "userDataSourceProperties")
     @ConfigurationProperties("user.datasource")

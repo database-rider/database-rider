@@ -44,7 +44,7 @@ public class JUnit4RiderTestContext extends AbstractRiderTestContext {
         if (isEntityManagerActive() && em().getTransaction().isActive()) {
             em().getTransaction().commit();
         } else {
-            Connection connection = executor.getRiderDataSource().getConnection();
+            Connection connection = executor.getRiderDataSource().getDBUnitConnection().getConnection();
             connection.commit();
             connection.setAutoCommit(false);
         }
@@ -55,7 +55,7 @@ public class JUnit4RiderTestContext extends AbstractRiderTestContext {
         if (isEntityManagerActive()) {
             em().getTransaction().begin();
         } else {
-            Connection connection = executor.getRiderDataSource().getConnection();
+            Connection connection = executor.getRiderDataSource().getDBUnitConnection().getConnection();
             connection.setAutoCommit(false);
         }
     }
@@ -65,7 +65,7 @@ public class JUnit4RiderTestContext extends AbstractRiderTestContext {
         if (isEntityManagerActive() && em().getTransaction().isActive()) {
             em().getTransaction().rollback();
         } else {
-            Connection connection = executor.getRiderDataSource().getConnection();
+            Connection connection = executor.getRiderDataSource().getDBUnitConnection().getConnection();
             connection.rollback();
         }
     }

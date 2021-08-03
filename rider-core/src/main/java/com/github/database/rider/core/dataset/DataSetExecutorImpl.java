@@ -7,10 +7,10 @@ import com.github.database.rider.core.configuration.ConnectionConfig;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.connection.RiderDataSource;
-import com.github.database.rider.core.connection.RiderDataSource.DBType;
 import com.github.database.rider.core.exception.DataBaseSeedingException;
 import com.github.database.rider.core.replacers.Replacer;
 import com.github.database.rider.core.util.ContainsFilterTable;
+import com.github.database.rider.core.util.TableNameResolver;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.dataset.*;
 import org.dbunit.dataset.csv.CsvDataSet;
@@ -39,6 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.github.database.rider.core.configuration.DBUnitConfig.Constants.*;
+import static com.github.database.rider.core.connection.RiderDataSource.DBType.ORACLE;
 
 /**
  * Created by pestano on 26/07/15.
@@ -61,9 +62,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     private final String executorId;
 
-    private List<String> tableNames;
-
     private boolean isConstraintsDisabled = false;
+
+    private TableNameResolver tableNameResolver;
 
     public static DataSetExecutorImpl instance(ConnectionHolder connectionHolder) {
         // if no executor name is provided use default
@@ -71,16 +72,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     public static DataSetExecutorImpl instance(String executorId, ConnectionHolder connectionHolder) {
-        DataSetExecutorImpl instance = executors.get(executorId);
-        if (instance == null) {
-            instance = new DataSetExecutorImpl(executorId, connectionHolder,
-                    DBUnitConfig.fromGlobalConfig().executorId(executorId));
-            log.debug("creating executor instance " + executorId);
-            executors.put(executorId, instance);
-        } else if (!instance.dbUnitConfig.isCacheConnection()) {
-            instance.setConnectionHolder(connectionHolder);
-        }
-        return instance;
+        return instance(executorId, connectionHolder, DBUnitConfig.fromGlobalConfig().executorId(executorId));
     }
 
     public static DataSetExecutorImpl instance(String executorId, ConnectionHolder connectionHolder, DBUnitConfig dbUnitConfig) {
@@ -99,6 +91,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         this.connectionHolder = connectionHolder;
         this.executorId = executorId;
         this.dbUnitConfig = dbUnitConfig;
+        this.tableNameResolver = new TableNameResolver(dbUnitConfig);
     }
 
     @Override
@@ -107,6 +100,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         if (dataSetConfig != null) {
             IDataSet resultingDataSet = null;
             try {
+                getRiderDataSource().setConnectionAutoCommit(true);
                 if (dataSetConfig.isDisableConstraints()) {
                     disableConstraints();
                 }
@@ -146,9 +140,15 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     logDataSet(resultingDataSet, e);
                 }
                 throw new DataBaseSeedingException("Could not initialize dataset: " + dataSetConfig, e);
+            } finally {
+                try {
+                    getRiderDataSource().resetConnectionAutoCommit();
+                } catch (SQLException e) {
+                    log.error("Could not reset connection auto commit", e);
+                }
             }
-
         }
+
     }
 
     private boolean isSequenceFilteringEnabled(DBUnitConfig dbUnitConfig, DataSetConfig dataSetConfig) {
@@ -344,89 +344,94 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     }
 
     public void handleConstraints(boolean enable) throws SQLException {
-        try (Statement statement = getRiderDataSource().getConnection().createStatement()) {
+        try (Statement statement = getRiderDataSource().getDBUnitConnection().getConnection().createStatement()) {
             switch (getRiderDataSource().getDBType()) {
-            case HSQLDB:
-                String hsqlDBFlag = enable ? "TRUE" : "FALSE";
-                statement.execute("SET DATABASE REFERENTIAL INTEGRITY " + hsqlDBFlag + ";");
-                break;
-            case H2:
-                String h2DBFlag = enable ? "1" : "0";
-                statement.execute("SET foreign_key_checks = " + h2DBFlag + ";");
-                break;
-            case MYSQL:
-                String mySqlDBFlag = enable ? "1" : "0";
-                statement.execute(" SET FOREIGN_KEY_CHECKS=" + mySqlDBFlag + ";");
-                break;
-            case POSTGRESQL:
-                String postgreSqlDBFlag = enable ? "DEFAULT" : "replica";
-                statement.execute("SET session_replication_role = " + postgreSqlDBFlag + ";");
-                break;
-            case ORACLE:
-                // adapted from Unitils:
-                // https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core
-                // /dbsupport/OracleDbSupport.java#L190
-                ResultSet resultSet = null;
-                final String schemaName = resolveSchema();// default schema
-                String enableDisable = enable ? "enable" : "disable";
-                try {
-                    boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
-                    // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
-                    // filtered out.
-                    String oracleSqlQueryCondition = enable ? "=" : "<>";
-                    resultSet = statement.executeQuery(
-                            "select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' " + (
-                                    hasSchema ?
-                                            "and OWNER = '" + schemaName + "'" :
-                                            "") + " and CONSTRAINT_NAME not like 'BIN$%' and STATUS "
-                                    + oracleSqlQueryCondition + " 'DISABLED'");
-                    while (resultSet.next()) {
-                        String tableName = resultSet.getString("TABLE_NAME");
-                        String constraintName = resultSet.getString("CONSTRAINT_NAME");
-                        String qualifiedTableName = hasSchema ? schemaName + "." + tableName : tableName;
+                case HSQLDB:
+                    String hsqlDBFlag = enable ? "TRUE" : "FALSE";
+                    executeStatements("SET DATABASE REFERENTIAL INTEGRITY " + hsqlDBFlag + ";");
+                    break;
+                case H2:
+                    String h2DBFlag = enable ? "1" : "0";
+                    executeStatements("SET foreign_key_checks = " + h2DBFlag + ";");
+                    break;
+                case MYSQL:
+                    String mySqlDBFlag = enable ? "1" : "0";
+                    executeStatements(" SET FOREIGN_KEY_CHECKS=" + mySqlDBFlag + ";");
+                    break;
+                case POSTGRESQL:
+                    String postgreSqlDBFlag = enable ? "DEFAULT" : "replica";
+                    executeStatements("SET session_replication_role = " + postgreSqlDBFlag + ";");
+                    break;
+                case ORACLE:
+                    // adapted from Unitils:
+                    // https://github.com/arteam/unitils/blob/master/unitils-core/src/main/java/org/unitils/core/dbsupport/OracleDbSupport.java#L190
+                    ResultSet resultSet = null;
+                    final String schemaName = tableNameResolver.resolveSchema(getRiderDataSource().getDBUnitConnection().getConnection());// default schema
+                    String enableDisable = enable ? "enable" : "disable";
+                    try {
+                        boolean hasSchema = schemaName != null && !"".equals(schemaName.trim());
+                        // to be sure no recycled items are handled, all items with a name that starts with BIN$ will be
+                        // filtered out.
+                        String oracleSqlQueryCondition = enable ? "=" : "<>";
+                        resultSet = statement.executeQuery(
+                                "select TABLE_NAME, CONSTRAINT_NAME from ALL_CONSTRAINTS where CONSTRAINT_TYPE = 'R' " + (
+                                        hasSchema ?
+                                                "and OWNER = '" + schemaName + "'" :
+                                                "") + " and CONSTRAINT_NAME not like 'BIN$%' and STATUS "
+                                        + oracleSqlQueryCondition + " 'DISABLED'");
+                        while (resultSet.next()) {
+                            String tableName = resultSet.getString("TABLE_NAME");
+                            String escapedTableName = tableNameResolver.resolveTableName(tableName, ORACLE);
+                            String constraintName = resultSet.getString("CONSTRAINT_NAME");
+                            String qualifiedTableName = hasSchema ? schemaName + "." + escapedTableName : escapedTableName;
 
-                        executeStatements("alter table " + qualifiedTableName + " " + enableDisable + " constraint "
-                                + constraintName);
+                            executeStatements("alter table " + qualifiedTableName + " " + enableDisable + " constraint "
+                                    + constraintName);
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException(
+                                "Error while " + enableDisable + " referential constraints on schema " + schemaName, e);
+                    } finally {
+                        if (resultSet != null) {
+                            resultSet.close();
+                        }
                     }
-                } catch (Exception e) {
-                    throw new RuntimeException(
-                            "Error while " + enableDisable + " referential constraints on schema " + schemaName, e);
-                } finally {
-                    if (resultSet != null) {
-                        resultSet.close();
+                    break;
+                case MSSQL:
+                    String msSqlDBFlag = enable ? "with check check" : "nocheck";
+                    Set<String> tables = tableNameResolver.getTableNames(getRiderDataSource());
+                    for (String tableName : tables) {
+                        executeStatements("alter table " + tableName + " " + msSqlDBFlag + " constraint all");
                     }
-                }
-                break;
-            case MSSQL:
-                String msSqlDBFlag = enable ? "with check check" : "nocheck";
-                List<String> tables = getTableNames(getRiderDataSource().getConnection());
-                for (String tableName : tables) {
-                    statement.execute("alter table " + tableName + " " + msSqlDBFlag + " constraint all");
-                }
-                break;
+                    break;
             }
             isConstraintsDisabled = !isConstraintsDisabled;
         }
     }
+
     @Override
     public void executeStatements(String... statements) {
         if (statements != null && statements.length > 0 && !"".equals(statements[0].trim())) {
             java.sql.Statement statement = null;
             try {
-                boolean autoCommit = getRiderDataSource().getConnection().getAutoCommit();
-                getRiderDataSource().getConnection().setAutoCommit(false);
-                statement = getRiderDataSource().getConnection().createStatement(
+                final Connection connection = getRiderDataSource().getDBUnitConnection().getConnection();
+                getRiderDataSource().setConnectionAutoCommit(false);
+                statement = connection.createStatement(
                         ResultSet.TYPE_SCROLL_SENSITIVE,
                         ResultSet.CONCUR_UPDATABLE);
                 for (String stm : statements) {
                     statement.addBatch(stm);
                 }
                 statement.executeBatch();
-                getRiderDataSource().getConnection().commit();
-                getRiderDataSource().getConnection().setAutoCommit(autoCommit);
+                connection.commit();
             } catch (Exception e) {
                 throw new RuntimeException("Could execute statements:" + e.getMessage(), e);
             } finally {
+                try {
+                    getRiderDataSource().resetConnectionAutoCommit();
+                } catch (SQLException e) {
+                    log.error("Could not reset connection auto commit", e);
+                }
                 if (statement != null) {
                     try {
                         statement.close();
@@ -498,9 +503,13 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         }
     }
 
+    /**
+     * @deprecated Use <code>getRiderDataSource().getDBUnitConnection().getConnection()</code>
+     */
+    @Deprecated
     public Connection getConnection() {
         try {
-            return getRiderDataSource().getConnection();
+            return getRiderDataSource().getDBUnitConnection().getConnection();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -568,7 +577,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     public void clearDatabase(DataSetConfig config) throws SQLException {
         try {
             disableConstraints();
-            final Connection connection = getRiderDataSource().getConnection();
+            Set<String> cleanupStatements = new HashSet<>();
             if (config != null && config.getTableOrdering() != null && config.getTableOrdering().length > 0) {
                 for (String table : config.getTableOrdering()) {
                     if (table.toUpperCase().contains(SEQUENCE_TABLE_NAME)) {
@@ -576,21 +585,12 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         // https://github.com/rmpestano/dbunit-rules/issues/26
                         continue;
                     }
-                    final String escapedTableName = applyDBUnitEscapePattern(table);
-                    try (Statement statement = connection.createStatement()) {
-                        statement.executeUpdate("DELETE FROM " + escapedTableName + " where 1=1");
-                        connection.commit();
-                    } catch (Exception e) {
-                        if (dbUnitConfig.isRaiseExceptionOnCleanUp()) {
-                            throw new RuntimeException("Could not clear table " + escapedTableName, e);
-                        }
-                        log.warn("Could not clear table " + escapedTableName + ", message:" + e.getMessage() + ", cause: "
-                                + e.getCause());
-                    }
+                    final String escapedTableName = tableNameResolver.resolveTableName(table, getRiderDataSource().getDBType());
+                    cleanupStatements.add("DELETE FROM " + escapedTableName + " where 1=1");
                 }
             }
             // clear remaining tables in any order(if there are any, also no problem clearing again)
-            final List<String> tables = getTableNames(connection);
+            final Set<String> tables = tableNameResolver.getTableNames(getRiderDataSource());
             final List<String> tablesToSkipCleaning = getTablesToSkipOnCleaning(config);
             for (String tableName : tables) {
                 if (shouldSkipFromCleaning(tablesToSkipCleaning, tableName)) {
@@ -600,28 +600,22 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     // tables containing 'SEQ' will NOT be cleared see https://github.com/rmpestano/dbunit-rules/issues/26
                     continue;
                 }
-                try (Statement statement = connection.createStatement()) {
-                    statement.executeUpdate("DELETE FROM " + tableName + " where 1=1");
-                    connection.commit();
-                } catch (Exception e) {
-                    if (dbUnitConfig.isRaiseExceptionOnCleanUp()) {
-                        throw new RuntimeException("Could not clear table " + tableName, e);
-                    }
-                    log.warn("Could not clear table " + tableName + ", message:" + e.getMessage() + ", cause: "
-                            + e.getCause());
-                }
+                cleanupStatements.add("DELETE FROM " + tableName + " where 1=1");
             }
-
-        } catch (Exception e)  {
-            LoggerFactory.getLogger(DataSetExecutorImpl.class.getName())
-                    .warn("Could not clean database before test.", e);
+            if (!cleanupStatements.isEmpty()) {
+                executeStatements(cleanupStatements.toArray(new String[cleanupStatements.size()]));
+            }
+        } catch (Exception e) {
+            if (dbUnitConfig.isRaiseExceptionOnCleanUp()) {
+                throw new RuntimeException("Could not clean database before test.", e);
+            }
+            log.warn("Could not clean database before test.", e);
         } finally {
             // enabling constraints only if `disableConstraints == false`
             if (!config.isDisableConstraints()) {
                 enableConstraints();
             }
         }
-
     }
 
     private List<String> getTablesToSkipOnCleaning(DataSetConfig config) {
@@ -629,9 +623,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         if (!tablesToSkipOnCleaning.isEmpty()) {
             for (Iterator<String> it = tablesToSkipOnCleaning.iterator(); it.hasNext(); ) {
                 String tableName = it.next();
-                if (RESERVED_TABLE_NAMES.contains(tableName.toLowerCase())) {
-                    tablesToSkipOnCleaning.set(tablesToSkipOnCleaning.indexOf(tableName), escapeTableName(tableName));
-                }
+                tablesToSkipOnCleaning.set(tablesToSkipOnCleaning.indexOf(tableName), tableNameResolver.resolveTableName(tableName, getRiderDataSource().getDBType()));
             }
         }
         return tablesToSkipOnCleaning;
@@ -643,104 +635,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             skip = tablesToSkipCleaning.contains(tableName.substring(tableName.indexOf(".") + 1));
         }
         return skip;
-    }
-
-    private String applyDBUnitEscapePattern(String table) {
-        boolean hasEscapePattern = dbUnitConfig.getProperties().containsKey("escapePattern") && !"".equals(dbUnitConfig.getProperties().get("escapePattern").toString());
-        if (hasEscapePattern) {
-            String escapePattern = dbUnitConfig.getProperties().get("escapePattern").toString();
-            if (table.contains(".")) {//skip schema and applies the pattern only on the table
-                return table.substring(0, table.indexOf(".") + 1) + escapePattern.replace("?", table.substring(table.indexOf(".") + 1));
-            } else {
-                return escapePattern.replace("?", table);
-            }
-        } else {
-            return table;
-        }
-    }
-
-    private List<String> getTableNames(Connection con) {
-        if (tableNames != null && dbUnitConfig.isCacheTableNames()) {
-            return tableNames;
-        }
-        List<String> tables = new ArrayList<>();
-        try (ResultSet result = getTablesFromMetadata(con)) {
-            while (result.next()) {
-                String schema = resolveSchema(result);
-                if (!isSystemSchema(schema)) {
-                    String name = result.getString("TABLE_NAME");
-                    if (RESERVED_TABLE_NAMES.contains(name.toLowerCase())) {
-                        name = escapeTableName(name);
-                    } else {
-                        // table name escaping may have been defined as well
-                        name = applyDBUnitEscapePattern(name);
-                    }
-                    tables.add(schema != null && !"".equals(schema.trim()) ? schema + "." + name : name);
-                }
-            }
-
-            if (tableNames == null) {
-                this.tableNames = new ArrayList<>(tables);
-            }
-
-            return tables;
-        } catch (SQLException ex) {
-            log.warn("An exception occurred while trying to analyse the database.", ex);
-            return new ArrayList<>();
-        }
-    }
-
-    private String escapeTableName(String name) {
-        switch (getRiderDataSource().getDBType()) {
-            case MSSQL:
-                return "[" + name + "]";
-            case HSQLDB:
-            case H2:
-            case DB2:
-            case POSTGRESQL:
-            case ORACLE:
-                return "\"" + name + "\"";
-            case MYSQL:
-                return "`" + name + "`";
-            default:
-                return name;
-        }
-    }
-
-    private boolean isSystemSchema(String schema) {
-        DBType dbType = getRiderDataSource().getDBType();
-        Set<String> systemSchemas = SYSTEM_SCHEMAS.get(dbType);
-        return systemSchemas != null && schema != null && systemSchemas.contains(schema.toUpperCase());
-    }
-
-    private ResultSet getTablesFromMetadata(Connection con) throws SQLException {
-        DatabaseMetaData metaData = con.getMetaData();
-        return metaData.getTables(null, null, "%", new String[]{"TABLE"});
-    }
-
-    private String resolveSchema(ResultSet result) {
-        String schema = null;
-        try {
-            schema = result.getString("TABLE_SCHEM");
-            if (schema == null) {
-                schema = dbUnitConfig.getSchema();
-            }
-        } catch (Exception e) {
-            log.warn("Can't resolve schema", e);
-            schema = dbUnitConfig.getSchema();
-        }
-        return schema;
-    }
-
-    private String resolveSchema() {
-        try {
-            try (ResultSet tables = getTablesFromMetadata(getRiderDataSource().getConnection())) {
-                return resolveSchema(tables);
-            }
-        } catch (Exception e) {
-            log.warn("Can't resolve schema", e);
-            return dbUnitConfig.getSchema();
-        }
     }
 
     @Override
@@ -1003,9 +897,10 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
     @Override
     public void setDBUnitConfig(DBUnitConfig dbUnitConfig) {
-        if (this.dbUnitConfig != dbUnitConfig) {
+        if (!this.dbUnitConfig.equals(dbUnitConfig)) {
             this.dbUnitConfig = dbUnitConfig;
             riderDataSource = null;
+            tableNameResolver = new TableNameResolver(dbUnitConfig);
         }
     }
 
