@@ -76,7 +76,7 @@ public class DBUnitInterceptorImpl implements Serializable {
             try {
                 if (dbUnitConfig.isLeakHunter()) {
                     leakHunter = LeakHunterFactory.from(dataSetProcessor.getDataSetExecutor().getRiderDataSource(),
-                            invocationContext.getMethod().getName());
+                            invocationContext.getMethod().getName(), dbUnitConfig.isCacheConnection());
                     leakHunter.measureConnectionsBeforeExecution();
                 }
                 proceed = invocationContext.proceed();

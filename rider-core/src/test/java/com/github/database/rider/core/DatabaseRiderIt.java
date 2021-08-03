@@ -231,7 +231,7 @@ public class DatabaseRiderIt {
 
     @AfterClass//optional
     public static void close() throws SQLException {
-        DataSetExecutorImpl.getExecutorById(DataSetExecutorImpl.DEFAULT_EXECUTOR_ID).getConnection().close();
+        DataSetExecutorImpl.getExecutorById(DataSetExecutorImpl.DEFAULT_EXECUTOR_ID).getRiderDataSource().getDBUnitConnection().getConnection().close();
     }
 
 }

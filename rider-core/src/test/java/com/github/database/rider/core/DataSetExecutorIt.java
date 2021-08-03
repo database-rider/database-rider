@@ -1,23 +1,26 @@
 package com.github.database.rider.core;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import com.github.database.rider.core.api.dataset.DataSetExecutor;
+import com.github.database.rider.core.configuration.DataSetConfig;
+import com.github.database.rider.core.connection.ConnectionHolderImpl;
+import com.github.database.rider.core.dataset.DataSetExecutorImpl;
+import com.github.database.rider.core.exception.DataBaseSeedingException;
+import com.github.database.rider.core.model.Follower;
+import com.github.database.rider.core.model.User;
+import com.github.database.rider.core.util.EntityManagerProvider;
+import org.dbunit.DatabaseUnitException;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.github.database.rider.core.configuration.DataSetConfig;
-import com.github.database.rider.core.connection.ConnectionHolderImpl;
-import com.github.database.rider.core.model.Follower;
-import com.github.database.rider.core.util.EntityManagerProvider;
-import com.github.database.rider.core.dataset.DataSetExecutorImpl;
-import com.github.database.rider.core.exception.DataBaseSeedingException;
-import org.dbunit.DatabaseUnitException;
-import org.junit.*;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-
-import com.github.database.rider.core.model.User;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by pestano on 23/07/15.
@@ -27,7 +30,7 @@ public class DataSetExecutorIt {
 
     public EntityManagerProvider emProvider = EntityManagerProvider.instance("executor-it");
 
-    private static DataSetExecutorImpl executor;
+    private static DataSetExecutor executor;
 
     @BeforeClass
     public static void setup() {
@@ -36,7 +39,7 @@ public class DataSetExecutorIt {
 
     @AfterClass
     public static void tearDown() throws SQLException {
-        Connection connection = executor.getConnection();
+        Connection connection = executor.getRiderDataSource().getDBUnitConnection().getConnection();
         if (connection != null && !connection.isClosed()) {
             connection.close();
         }
@@ -139,7 +142,7 @@ public class DataSetExecutorIt {
 
     @Test
     public void shouldNotCreateDataSetWithoutConnection(){
-        DataSetExecutorImpl executor = DataSetExecutorImpl.instance(new ConnectionHolderImpl(null));
+        DataSetExecutor executor = DataSetExecutorImpl.instance(new ConnectionHolderImpl(null));
         try{
             executor.createDataSet(new DataSetConfig("test-dataset"));
         }catch (DataBaseSeedingException e){

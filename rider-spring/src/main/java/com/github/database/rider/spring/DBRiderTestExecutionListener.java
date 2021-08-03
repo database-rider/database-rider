@@ -19,7 +19,6 @@ public class DBRiderTestExecutionListener extends AbstractTestExecutionListener 
     public void beforeTestMethod(TestContext testContext) throws Exception {
         RiderTestContext riderTestContext = SpringRiderTestContext.create(testContext);
         testContext.setAttribute(RIDER_TEST_CONTEXT, riderTestContext);
-
         RiderRunner riderRunner = new RiderRunner();
         riderRunner.setup(riderTestContext);
         riderRunner.runBeforeTest(riderTestContext);
@@ -29,12 +28,11 @@ public class DBRiderTestExecutionListener extends AbstractTestExecutionListener 
     public void afterTestMethod(TestContext testContext) throws Exception {
         RiderTestContext riderTestContext = (RiderTestContext) testContext.getAttribute(RIDER_TEST_CONTEXT);
         RiderRunner riderRunner = new RiderRunner();
-
         try {
             riderRunner.runAfterTest(riderTestContext);
         } finally {
             riderRunner.teardown(riderTestContext);
-            riderTestContext.getDataSetExecutor().getRiderDataSource().getConnection().close();
+            riderTestContext.getDataSetExecutor().getRiderDataSource().getDBUnitConnection().getConnection().close();
         }
     }
 }

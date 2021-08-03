@@ -73,7 +73,7 @@ public class DBUnitRule implements TestRule {
                     riderRunner.runBeforeTest(riderTestContext);
                     LeakHunter leakHunter = null;
                     if (dbUnitConfig.isLeakHunter()) {
-                        leakHunter = LeakHunterFactory.from(riderTestContext.getDataSetExecutor().getRiderDataSource(), riderTestContext.getMethodName());
+                        leakHunter = LeakHunterFactory.from(riderTestContext.getDataSetExecutor().getRiderDataSource(), riderTestContext.getMethodName(), dbUnitConfig.isCacheConnection());
                         leakHunter.measureConnectionsBeforeExecution();
                     }
                     statement.evaluate();

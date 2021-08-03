@@ -32,7 +32,6 @@ public class EscapePatternIt {
     public TestRule theRule = RuleChain.outerRule(emProvider).
             around(DBUnitRule.instance(emProvider.connection()));
 
-
     @BeforeClass
     public static void init(){
         Order order = new Order();

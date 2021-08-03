@@ -1,0 +1,17 @@
+USERS:
+  - ID: 1
+    EMAIL: "dbunit@gmail.com"
+    NAME: "dbunit"
+  - ID: 2
+    EMAIL: "rmpestano@gmail.com"
+    NAME: "rmpestano"
+  - ID: 3
+    EMAIL: "springboot@gmail.com"
+    NAME: "springboot"
+  - ID: 4
+    EMAIL: "junit5@mail.com"
+    NAME: "junit5"
+  - ID: 5
+    EMAIL: "bdd@cucumber.com"
+    NAME: "cucumber"
+
