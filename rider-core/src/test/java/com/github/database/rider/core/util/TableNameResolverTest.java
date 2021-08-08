@@ -20,9 +20,9 @@ public class TableNameResolverTest {
     public void shouldGetTableNames() {
         TableNameResolver tableNameResolver = new TableNameResolver();
         Set<String> tableNames = tableNameResolver.getTableNames(new RiderDataSource(
-                new ConnectionHolderImpl(EntityManagerProvider.instance("rider-it").connection())));
-        assertThat(tableNames).hasSize(4)
-                .containsExactly("PUBLIC.\"USER\"", "PUBLIC.FOLLOWER", "PUBLIC.SEQUENCE", "PUBLIC.TWEET");
+                new ConnectionHolderImpl(EntityManagerProvider.instance("table-names-it").connection())));
+        assertThat(tableNames).hasSize(3)
+                .containsExactly("PUBLIC.\"ORDER\"", "PUBLIC.\"LIMIT\"", "PUBLIC.SEQUENCE");
     }
 
     @Test
@@ -30,9 +30,9 @@ public class TableNameResolverTest {
         TableNameResolver tableNameResolver = new TableNameResolver();
 
         Set<String> tableNames = tableNameResolver.getTableNames(new RiderDataSource(
-                new ConnectionHolderImpl(EntityManagerProvider.instance("rider-it").connection())));
-        assertThat(tableNames).hasSize(4)
-                .containsExactly("PUBLIC.\"USER\"", "PUBLIC.FOLLOWER", "PUBLIC.SEQUENCE", "PUBLIC.TWEET");
+                new ConnectionHolderImpl(EntityManagerProvider.instance("table-names-it").connection())));
+        assertThat(tableNames).hasSize(3)
+                .containsExactly("PUBLIC.\"ORDER\"", "PUBLIC.\"LIMIT\"", "PUBLIC.SEQUENCE");
 
         Set<String> newTableNames = tableNameResolver.getTableNames(new RiderDataSource(
                 new ConnectionHolderImpl(EntityManagerProvider.instance("escape-pattern").connection())));
@@ -45,15 +45,15 @@ public class TableNameResolverTest {
         TableNameResolver tableNameResolver = new TableNameResolver(DBUnitConfig.from(TableNameResolverTest.class.getAnnotation(DBUnit.class)));
 
         Set<String> tableNames = tableNameResolver.getTableNames(new RiderDataSource(
-                new ConnectionHolderImpl(EntityManagerProvider.instance("rider-it").connection())));
-        assertThat(tableNames).hasSize(4)
-                .containsExactly("PUBLIC.\"USER\"", "PUBLIC.FOLLOWER", "PUBLIC.SEQUENCE", "PUBLIC.TWEET");
+                new ConnectionHolderImpl(EntityManagerProvider.instance("table-names-it").connection())));
+        assertThat(tableNames).hasSize(3)
+                .containsExactly("PUBLIC.\"ORDER\"", "PUBLIC.\"LIMIT\"", "PUBLIC.SEQUENCE");
 
         Set<String> newTableNames = tableNameResolver.getTableNames(new RiderDataSource(
                 new ConnectionHolderImpl(EntityManagerProvider.instance("escape-pattern").connection())));
 
         assertThat(newTableNames).isNotEqualTo(tableNames)
-                .containsExactly("PUBLIC.ORDER", "PUBLIC.SEQUENCE");
+                .containsExactly("PUBLIC.\"ORDER\"", "PUBLIC.SEQUENCE");
     }
 
     @DBUnit(escapePattern = "***?***")
@@ -64,7 +64,7 @@ public class TableNameResolverTest {
                 new ConnectionHolderImpl(EntityManagerProvider.instance("escape-pattern").connection())));
 
         assertThat(tableNames).hasSize(2)
-                .containsExactlyInAnyOrder("PUBLIC.***SEQUENCE***", "PUBLIC.***ORDER***");
+                .containsExactlyInAnyOrder("PUBLIC.***SEQUENCE***", "PUBLIC.\"ORDER\"");
     }
 
 }
