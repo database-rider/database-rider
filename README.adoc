@@ -172,7 +172,7 @@ This module is the basis for subsequent modules. It contains a JUnit rule (shown
 <dependency>
       <groupId>com.github.database-rider</groupId>
       <artifactId>rider-core</artifactId>
-      <version>1.27.0</version>
+      <version>1.28.0</version>
       <scope>test</scope>
 </dependency>
 ----
@@ -353,7 +353,7 @@ properties:
   batchSize: 100
   fetchSize: 100
   allowEmptyFields: false
-  escapePattern:
+  escapePattern: <8>
   schema:
   datatypeFactory: !!com.github.database.rider.core.configuration.DBUnitConfigTest$MockDataTypeFactory {} <7>
   tableType: ["TABLE"]
@@ -370,6 +370,7 @@ connectionConfig:
 <5> Disables sequenceFiltering at dbunit level, overriding the default behavior of `@DataSet(useSequenceFiltering)` which is true.
 <6> List of table names to disable primary key checking while seeding the database.
 <7> Make it possible to define a datatype factory, https://github.com/database-rider/database-rider/issues/30[see issue #30^] for details.
+<8> Allows to configure DBUnit escapePattern property. Note that since v`1.28.0` DBRider will discover the escapePattern for each DB without the need to use the escapePattern property in @DBUnit or via dbunit.yml config file. If an espapePattern is provided then it will be used.
 
 IMPORTANT: `@DBUnit` annotation takes precedence over `dbunit.yml` global configuration which will be used only if the annotation is not present.
 
@@ -1485,7 +1486,7 @@ If you use CDI in your tests then you should give a try in Database Rider https:
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-cdi</artifactId>
-    <version>1.27.0</version>
+    <version>1.28.0</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -1552,7 +1553,7 @@ NOTE: If you don't use CDI you'll need to https://github.com/database-rider/data
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-cucumber</artifactId>
-    <version>1.27.0</version>
+    <version>1.28.0</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -1759,7 +1760,7 @@ http://junit.org/junit5/[JUnit 5] is the new version of JUnit and comes with a n
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-junit5</artifactId>
-    <version>1.27.0</version>
+    <version>1.28.0</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -1835,7 +1836,7 @@ Add Database Rider Spring extension to your project
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-spring</artifactId>
-    <version>1.27.0</version>
+    <version>1.28.0</version>
     <scope>test</scope>
 </dependency>
 ----
