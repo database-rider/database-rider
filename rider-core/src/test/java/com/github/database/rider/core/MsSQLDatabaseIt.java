@@ -73,7 +73,7 @@ public class MsSQLDatabaseIt {
     @DBUnit(leakHunter = true, caseSensitiveTableNames = true, escapePattern = "\"?\"")
     public void shouldFindConnectionLeak() throws SQLException {
         exception.expect(LeakHunterException.class);
-        exception.expectMessage("Execution of method shouldFindConnectionLeak left 2 open connection(s).");
+        exception.expectMessage("Execution of method shouldFindConnectionLeak left 1 open connection(s).");
         createLeak();
     }
 
