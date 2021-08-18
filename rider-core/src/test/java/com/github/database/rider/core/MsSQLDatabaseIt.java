@@ -16,6 +16,7 @@ import org.testcontainers.containers.MSSQLServerContainer;
 
 import java.sql.*;
 
+import static com.github.database.rider.core.api.dataset.SeedStrategy.IDENTITY_INSERT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(JUnit4.class)
@@ -46,6 +47,14 @@ public class MsSQLDatabaseIt {
     @Test
     @DataSet(value = "datasets/yml/lowercaseUsers.yml")
     public void shouldSeedDataSet() {
+        User user = (User) EntityManagerProvider.em().createQuery("select u from User u where u.id = 1").getSingleResult();
+        assertThat(user).isNotNull();
+        assertThat(user.getId()).isEqualTo(1);
+    }
+	
+    @Test
+    @DataSet(value = "datasets/yml/lowercaseUsers.yml", strategy = IDENTITY_INSERT)
+    public void shouldSeedDataSetWithIdentityInsertStrategy() {
         User user = (User) EntityManagerProvider.em().createQuery("select u from User u where u.id = 1").getSingleResult();
         assertThat(user).isNotNull();
         assertThat(user.getId()).isEqualTo(1);
