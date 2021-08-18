@@ -28,7 +28,8 @@ public enum SeedStrategy {
     TRUNCATE_INSERT(new CompositeOperation(DatabaseOperation.TRUNCATE_TABLE, DatabaseOperation.INSERT)),
     INSERT(DatabaseOperation.INSERT),
     REFRESH(DatabaseOperation.REFRESH),
-    UPDATE(DatabaseOperation.UPDATE);
+    UPDATE(DatabaseOperation.UPDATE),
+    IDENTITY_INSERT(InsertIdentityOperation.CLEAN_INSERT);
 
     private final DatabaseOperation operation;
 
