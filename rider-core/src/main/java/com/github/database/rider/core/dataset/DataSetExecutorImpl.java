@@ -39,7 +39,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.github.database.rider.core.configuration.DBUnitConfig.Constants.*;
-import static com.github.database.rider.core.connection.RiderDataSource.DBType.ORACLE;
 
 /**
  * Created by pestano on 26/07/15.
@@ -381,7 +380,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                                         + oracleSqlQueryCondition + " 'DISABLED'");
                         while (resultSet.next()) {
                             String tableName = resultSet.getString("TABLE_NAME");
-                            String escapedTableName = tableNameResolver.resolveTableName(tableName, ORACLE);
+                            String escapedTableName = tableNameResolver.resolveTableName(tableName, getRiderDataSource());
                             String constraintName = resultSet.getString("CONSTRAINT_NAME");
                             String qualifiedTableName = hasSchema ? schemaName + "." + escapedTableName : escapedTableName;
 
@@ -425,7 +424,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 statement.executeBatch();
                 connection.commit();
             } catch (Exception e) {
-                throw new RuntimeException("Could execute statements:" + e.getMessage(), e);
+                throw new RuntimeException("Could not execute statements:" + e.getMessage(), e);
             } finally {
                 try {
                     getRiderDataSource().resetConnectionAutoCommit();
@@ -585,7 +584,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                         // https://github.com/rmpestano/dbunit-rules/issues/26
                         continue;
                     }
-                    final String escapedTableName = tableNameResolver.resolveTableName(table, getRiderDataSource().getDBType());
+                    final String escapedTableName = tableNameResolver.resolveTableName(table, getRiderDataSource());
                     cleanupStatements.add("DELETE FROM " + escapedTableName + " where 1=1");
                 }
             }
@@ -623,7 +622,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         if (!tablesToSkipOnCleaning.isEmpty()) {
             for (Iterator<String> it = tablesToSkipOnCleaning.iterator(); it.hasNext(); ) {
                 String tableName = it.next();
-                tablesToSkipOnCleaning.set(tablesToSkipOnCleaning.indexOf(tableName), tableNameResolver.resolveTableName(tableName, getRiderDataSource().getDBType()));
+                tablesToSkipOnCleaning.set(tablesToSkipOnCleaning.indexOf(tableName), tableNameResolver.resolveTableName(tableName, getRiderDataSource()));
             }
         }
         return tablesToSkipOnCleaning;

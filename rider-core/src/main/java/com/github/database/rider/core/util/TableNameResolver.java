@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,9 +36,9 @@ public final class TableNameResolver {
         this.tableNamesCache = new HashSet<>();
     }
 
-    public String resolveTableName(String name, RiderDataSource.DBType dbType) {
-        if (RESERVED_TABLE_NAMES.contains(name.toLowerCase())) {
-            name = escapeTableName(name, dbType);
+    public String resolveTableName(String name, RiderDataSource riderDataSource) {
+        if (RESERVED_TABLE_NAMES.contains(name.toUpperCase()) || getDatabaseReservedWords(riderDataSource).contains(name.toUpperCase())) {
+            name = escapeTableName(name, riderDataSource);
         } else {
             // table name escaping may have been defined as well
             name = applyDBUnitEscapePattern(name);
@@ -55,7 +56,7 @@ public final class TableNameResolver {
                 String schema = resolveSchema(result);
                 if (!isSystemSchema(schema, riderDataSource)) {
                     String name = result.getString("TABLE_NAME");
-                    name = resolveTableName(name, riderDataSource.getDBType());
+                    name = resolveTableName(name, riderDataSource);
                     tables.add(schema != null && !"".equals(schema.trim()) ? schema + "." + name : name);
                 }
             }
@@ -112,29 +113,48 @@ public final class TableNameResolver {
         if (hasEscapePattern) {
             String escapePattern = dbUnitConfig.getProperties().get("escapePattern").toString();
             if (table.contains(".")) {//skip schema and applies the pattern only on the table
-                return table.substring(0, table.indexOf(".") + 1) + escapePattern.replace("?", table.substring(table.indexOf(".") + 1));
+                return table.substring(0, table.indexOf(".") + 1) + formatTableName(table.substring(table.indexOf(".") + 1), escapePattern);
             } else {
-                return escapePattern.replace("?", table);
+                return formatTableName(table, escapePattern);
             }
         } else {
             return table;
         }
     }
 
-    private String escapeTableName(String name, RiderDataSource.DBType type) {
-        switch (type) {
-            case MSSQL:
-                return "[" + name + "]";
-            case HSQLDB:
-            case H2:
-            case DB2:
-            case POSTGRESQL:
-            case ORACLE:
-                return "\"" + name + "\"";
-            case MYSQL:
-                return "`" + name + "`";
-            default:
-                return name;
+    private String formatTableName(String tableName, String escapePattern) {
+        return escapePattern.contains("?") ? escapePattern.replace("?", tableName) : String.format("%s%s%s", escapePattern, tableName, escapePattern);
+    }
+
+    private DatabaseMetaData getDatabaseMetaData(RiderDataSource riderDataSource) {
+        try {
+            return riderDataSource.getDBUnitConnection().getConnection().getMetaData();
+        } catch (SQLException e) {
+            throw new RuntimeException("Could not retrieve database metadata: " + e.getMessage(), e);
         }
+    }
+
+    private Set<String> getDatabaseReservedWords(RiderDataSource riderDataSource) {
+        HashSet<String> databaseReservedWords = new HashSet<>();
+        try {
+            Collections.addAll(databaseReservedWords, getDatabaseMetaData(riderDataSource).getSQLKeywords().toUpperCase().split(","));
+        } catch (SQLException e) {
+            LOG.warn("Unable to get SQL keywords", e);
+        }
+        return databaseReservedWords;
+    }
+
+    private String getDatabaseEscapePattern(RiderDataSource riderDataSource) {
+        try {
+            return getDatabaseMetaData(riderDataSource).getIdentifierQuoteString().trim();
+        } catch (SQLException e) {
+            LOG.warn("Unable to get database escape pattern, will use empty string", e);
+            return "";
+        }
+    }
+
+    private String escapeTableName(String name, RiderDataSource riderDataSource) {
+        String escapePattern = getDatabaseEscapePattern(riderDataSource);
+        return formatTableName(name, escapePattern);
     }
 }

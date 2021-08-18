@@ -6,11 +6,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * Table name "ORDER" belongs to standard SQL reserved words.
+ * Table name "LIMIT" belongs to H2 database reserved words.
  */
 @Entity
-@Table(name = "`Order`")
-public class Order {
+@Table(name = "\"LIMIT\"")
+public class Limit {
 
     @Id
     @GeneratedValue
@@ -18,13 +18,12 @@ public class Order {
 
     private String name;
 
-    public Order() {
+    public Limit() {
     }
 
-    public Order(long id) {
+    public Limit(long id) {
         this.id = id;
     }
-
 
     public String getName() {
         return name;
@@ -34,16 +33,16 @@ public class Order {
         this.name = name;
     }
 
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
-        Order user = (Order) o;
+        Limit groups = (Limit) o;
 
-        return id == user.id;
-
+        return id == groups.id;
     }
 
     @Override
