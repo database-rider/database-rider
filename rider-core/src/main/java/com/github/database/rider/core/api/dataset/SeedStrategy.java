@@ -4,6 +4,7 @@ package com.github.database.rider.core.api.dataset;
  * Created by pestano on 23/07/15.
  */
 
+import org.dbunit.ext.mssql.InsertIdentityOperation;
 import org.dbunit.operation.*;
 
 /**
