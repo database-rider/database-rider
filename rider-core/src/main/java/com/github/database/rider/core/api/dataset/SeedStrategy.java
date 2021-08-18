@@ -22,6 +22,9 @@ import org.dbunit.operation.*;
 
  UPDATE
  This strategy updates existing rows using data provided in the datasets. If dataset contain a row which is not present in the database (identified by its primary key) then exception is thrown.
+ 
+ IDENTITY_INSERT
+ This strategy disables the MS SQL Server automatic identifier generation for the execution of inserts. Use it if you need to define record ids in your datasets.
  */
 public enum SeedStrategy {
     CLEAN_INSERT(DatabaseOperation.CLEAN_INSERT),
