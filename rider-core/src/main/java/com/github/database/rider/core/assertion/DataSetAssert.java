@@ -30,8 +30,6 @@ public class DataSetAssert extends DbUnitAssert {
      * @param failureHandler handler
      * @throws DataSetException if datasets does not match
      */
-
-
     @Override
     protected void compareData(ITable expectedTable, ITable actualTable, ComparisonColumn[] comparisonCols, FailureHandler failureHandler) throws DataSetException {
         logger.debug("compareData(expectedTable={}, actualTable={}, "

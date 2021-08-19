@@ -10,8 +10,6 @@ public class DataSetAssertion {
 
     private static final DataSetAssert INSTANCE = new DataSetAssert();
 
-
-
     public static void assertEqualsIgnoreCols(ITable expectedDataSet,
                                     ITable actualDataSet, String[] ignoreCols)
             throws DatabaseUnitException {
