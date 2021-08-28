@@ -90,7 +90,7 @@ public class RiderRunner {
                 }
             }
 
-            if (dataSetConfig.isCleanAfter()) {
+            if (executor.getDBUnitConfig().isAlwaysCleanAfter() || dataSetConfig.isCleanAfter()) {
                 executor.clearDatabase(dataSetConfig);
             }
 

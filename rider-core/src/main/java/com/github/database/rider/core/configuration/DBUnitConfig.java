@@ -33,6 +33,7 @@ public class DBUnitConfig {
     private Boolean raiseExceptionOnCleanUp;
     private Boolean disableSequenceFiltering;
     private Boolean alwaysCleanBefore;
+    private Boolean alwaysCleanAfter;
     private Orthography caseInsensitiveStrategy;
     private String[] disablePKCheckFor;
     private DataSetMergingStrategy mergingStrategy;
@@ -63,6 +64,7 @@ public class DBUnitConfig {
         raiseExceptionOnCleanUp = Boolean.FALSE;
         disableSequenceFiltering = Boolean.FALSE;
         alwaysCleanBefore = Boolean.FALSE;
+        alwaysCleanAfter = Boolean.FALSE;
         expectedDbType = RiderDataSource.DBType.UNKNOWN;
         initDefaultProperties();
         initDefaultConnectionConfig();
@@ -134,6 +136,7 @@ public class DBUnitConfig {
                 .raiseExceptionOnCleanUp(dbUnit.raiseExceptionOnCleanUp())
                 .disableSequenceFiltering(dbUnit.disableSequenceFiltering())
                 .alwaysCleanBefore(dbUnit.alwaysCleanBefore())
+                .alwaysCleanAfter(dbUnit.alwaysCleanAfter())
                 .expectedDbType(dbUnit.expectedDbType())
                 .caseInsensitiveStrategy(dbUnit.caseInsensitiveStrategy())
                 .mergingStrategy(dbUnit.mergingStrategy())
@@ -244,6 +247,11 @@ public class DBUnitConfig {
 
     private DBUnitConfig alwaysCleanBefore(boolean alwaysCleanBefore){
         this.alwaysCleanBefore = alwaysCleanBefore;
+        return this;
+    }
+
+    private DBUnitConfig alwaysCleanAfter(boolean alwaysCleanAfter){
+        this.alwaysCleanAfter = alwaysCleanAfter;
         return this;
     }
 
@@ -416,6 +424,14 @@ public class DBUnitConfig {
         this.alwaysCleanBefore = alwaysCleanBefore;
     }
 
+    public Boolean isAlwaysCleanAfter() {
+        return alwaysCleanAfter;
+    }
+
+    public void setAlwaysCleanAfter(Boolean alwaysCleanAfter) {
+        this.alwaysCleanAfter = alwaysCleanAfter;
+    }
+
     public RiderDataSource.DBType getExpectedDbType() {
         return expectedDbType;
     }
@@ -484,6 +500,7 @@ public class DBUnitConfig {
                 Objects.equals(raiseExceptionOnCleanUp, that.raiseExceptionOnCleanUp) &&
                 Objects.equals(disableSequenceFiltering, that.disableSequenceFiltering) &&
                 Objects.equals(alwaysCleanBefore, that.alwaysCleanBefore) &&
+                Objects.equals(alwaysCleanAfter, that.alwaysCleanAfter) &&
                 caseInsensitiveStrategy == that.caseInsensitiveStrategy &&
                 Arrays.equals(disablePKCheckFor, that.disablePKCheckFor) &&
                 mergingStrategy == that.mergingStrategy &&
