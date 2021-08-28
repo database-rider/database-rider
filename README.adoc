@@ -345,6 +345,8 @@ raiseExceptionOnCleanUp: false <3>
 expectedDbType: UNKNOWN <4>
 disableSequenceFiltering: false <5>
 disablePKCheckFor: [""] <6>
+alwaysCleanBefore: false <7>
+alwaysCleanAfter: false <8>
 properties:
   batchedStatements:  false
   qualifiedTableNames: false
@@ -353,9 +355,9 @@ properties:
   batchSize: 100
   fetchSize: 100
   allowEmptyFields: false
-  escapePattern: <8>
+  escapePattern: <9>
   schema:
-  datatypeFactory: !!com.github.database.rider.core.configuration.DBUnitConfigTest$MockDataTypeFactory {} <7>
+  datatypeFactory: !!com.github.database.rider.core.configuration.DBUnitConfigTest$MockDataTypeFactory {} <10>
   tableType: ["TABLE"]
 connectionConfig:
   driver: ""
@@ -369,8 +371,13 @@ connectionConfig:
 <4> In the process of initialization, if the actual database type is different from the expected database type, exception will be thrown unless the expected database type is UNKNOWN. Default is UNKNOWN.
 <5> Disables sequenceFiltering at dbunit level, overriding the default behavior of `@DataSet(useSequenceFiltering)` which is true.
 <6> List of table names to disable primary key checking while seeding the database.
-<7> Make it possible to define a datatype factory, https://github.com/database-rider/database-rider/issues/30[see issue #30^] for details.
-<8> Allows to configure DBUnit escapePattern property. Note that since v`1.28.0` DBRider will discover the escapePattern for each DB without the need to use the escapePattern property in @DBUnit or via dbunit.yml config file. If an espapePattern is provided then it will be used.
+<7> Always enables cleanBefore at dbunit level, overriding the default behavior of `@DataSet(cleanBefore)` which is
+false.
+<8> Always enables cleanAfter at dbunit level, overriding the default behavior of `@DataSet(cleanAfter)` which is false.
+<9> Make it possible to define a datatype factory, https://github.com/database-rider/database-rider/issues/30[see
+issue #30^] for details.
+<10> Allows to configure DBUnit escapePattern property. Note that since v`1.28.0` DBRider will discover the
+escapePattern for each DB without the need to use the escapePattern property in @DBUnit or via dbunit.yml config file. If an espapePattern is provided then it will be used.
 
 IMPORTANT: `@DBUnit` annotation takes precedence over `dbunit.yml` global configuration which will be used only if the annotation is not present.
 

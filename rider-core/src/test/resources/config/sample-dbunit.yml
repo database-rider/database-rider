@@ -3,6 +3,8 @@ cacheTableNames: false
 leakHunter: true
 raiseExceptionOnCleanUp: true
 disableSequenceFiltering: true
+alwaysCleanBefore: true
+alwaysCleanAfter: true
 expectedDbType: HSQLDB
 mergingStrategy: CLASS
 caseInsensitiveStrategy: LOWERCASE
