@@ -103,7 +103,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 if (dataSetConfig.isDisableConstraints()) {
                     disableConstraints();
                 }
-                if (dataSetConfig.isCleanBefore()) {
+                if (dbUnitConfig.isAlwaysCleanBefore() || dataSetConfig.isCleanBefore()) {
                     clearDatabase(dataSetConfig);
                 }
                 if (dataSetConfig.getExecuteStatementsBefore() != null
@@ -168,6 +168,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     .append("mergeDataSets: ").append(dbUnitConfig.isMergeDataSets()).append("\n")
                     .append("mergingStrategy: ").append(dbUnitConfig.getMergingStrategy()).append("\n")
                     .append("disableSequenceFiltering: ").append(dbUnitConfig.isDisableSequenceFiltering()).append("\n")
+                    .append("alwaysCleanBefore: ").append(dbUnitConfig.isAlwaysCleanBefore()).append("\n")
                     .append("raiseExceptionOnCleanUp: ").append(dbUnitConfig.isRaiseExceptionOnCleanUp()).append("\n")
                     .append("disablePKCheckFor: ").append("" + dbUnitConfig.disablePKCheckFor()).append("\n");
 

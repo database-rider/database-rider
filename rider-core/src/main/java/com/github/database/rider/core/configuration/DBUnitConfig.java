@@ -32,6 +32,7 @@ public class DBUnitConfig {
     private Boolean columnSensing;
     private Boolean raiseExceptionOnCleanUp;
     private Boolean disableSequenceFiltering;
+    private Boolean alwaysCleanBefore;
     private Orthography caseInsensitiveStrategy;
     private String[] disablePKCheckFor;
     private DataSetMergingStrategy mergingStrategy;
@@ -61,6 +62,7 @@ public class DBUnitConfig {
         columnSensing = Boolean.FALSE;
         raiseExceptionOnCleanUp = Boolean.FALSE;
         disableSequenceFiltering = Boolean.FALSE;
+        alwaysCleanBefore = Boolean.FALSE;
         expectedDbType = RiderDataSource.DBType.UNKNOWN;
         initDefaultProperties();
         initDefaultConnectionConfig();
@@ -131,6 +133,7 @@ public class DBUnitConfig {
                 .columnSensing(dbUnit.columnSensing())
                 .raiseExceptionOnCleanUp(dbUnit.raiseExceptionOnCleanUp())
                 .disableSequenceFiltering(dbUnit.disableSequenceFiltering())
+                .alwaysCleanBefore(dbUnit.alwaysCleanBefore())
                 .expectedDbType(dbUnit.expectedDbType())
                 .caseInsensitiveStrategy(dbUnit.caseInsensitiveStrategy())
                 .mergingStrategy(dbUnit.mergingStrategy())
@@ -236,6 +239,11 @@ public class DBUnitConfig {
 
     private DBUnitConfig disableSequenceFiltering(boolean disableSequenceFiltering) {
         this.disableSequenceFiltering = disableSequenceFiltering;
+        return this;
+    }
+
+    private DBUnitConfig alwaysCleanBefore(boolean alwaysCleanBefore){
+        this.alwaysCleanBefore = alwaysCleanBefore;
         return this;
     }
 
@@ -400,6 +408,14 @@ public class DBUnitConfig {
         this.disableSequenceFiltering = disableSequenceFiltering;
     }
 
+    public Boolean isAlwaysCleanBefore() {
+        return alwaysCleanBefore;
+    }
+
+    public void setAlwaysCleanBefore(Boolean alwaysCleanBefore) {
+        this.alwaysCleanBefore = alwaysCleanBefore;
+    }
+
     public RiderDataSource.DBType getExpectedDbType() {
         return expectedDbType;
     }
@@ -467,6 +483,7 @@ public class DBUnitConfig {
                 Objects.equals(columnSensing, that.columnSensing) &&
                 Objects.equals(raiseExceptionOnCleanUp, that.raiseExceptionOnCleanUp) &&
                 Objects.equals(disableSequenceFiltering, that.disableSequenceFiltering) &&
+                Objects.equals(alwaysCleanBefore, that.alwaysCleanBefore) &&
                 caseInsensitiveStrategy == that.caseInsensitiveStrategy &&
                 Arrays.equals(disablePKCheckFor, that.disablePKCheckFor) &&
                 mergingStrategy == that.mergingStrategy &&
