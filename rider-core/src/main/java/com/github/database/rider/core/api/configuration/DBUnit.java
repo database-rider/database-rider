@@ -72,6 +72,13 @@ public @interface DBUnit {
     boolean disableSequenceFiltering() default false;
 
     /**
+     * If enabled then cleanBefore will be enabled even if it is disabled at <code>@DataSet</code> level
+     * @since 1.30.0
+     * @return boolean indicating cleanBefore should always be performed or not.
+     */
+    boolean alwaysCleanBefore() default false;
+
+    /**
      * In the process of initialization, if the actual database type is different from the expected database type,
      * exception will be thrown unless the expected database type is {@link RiderDataSource.DBType#UNKNOWN}.
      * <p>
