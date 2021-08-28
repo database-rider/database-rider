@@ -79,6 +79,13 @@ public @interface DBUnit {
     boolean alwaysCleanBefore() default false;
 
     /**
+     * If enabled then cleanAfter will be enabled even if it is disabled at <code>@DataSet</code> level
+     * @since 1.30.0
+     * @return boolean indicating cleanAfter should always be performed or not.
+     */
+    boolean alwaysCleanAfter() default false;
+
+    /**
      * In the process of initialization, if the actual database type is different from the expected database type,
      * exception will be thrown unless the expected database type is {@link RiderDataSource.DBType#UNKNOWN}.
      * <p>
@@ -98,8 +105,8 @@ public @interface DBUnit {
      * @return value which configures DatabaseConfig.PROPERTY_METADATA_HANDLER
      */
     Class<? extends IMetadataHandler> metaDataHandler() default IMetadataHandler.class;
-    
-    
+
+
     /**
      * @return implementations of {@link Replacer}, which are merged with default replacers
      */
@@ -110,15 +117,15 @@ public @interface DBUnit {
      * (case-insensitive mode). If {@link #caseSensitiveTableNames()}=<code>false</code>, then this property is ignored
      * and has no effect. Defaults to {@link Orthography#UPPERCASE}.<br>
      * This is a database-rider internal property and not related to dbunit.
-     * 
+     *
      * @since 1.2.0
      * @return The {@link Orthography} constant
      */
     Orthography caseInsensitiveStrategy() default Orthography.UPPERCASE;
-    
+
     /**
-     * 
-     * @return Enable or disable dataset merging. If enabled then datasets declared at class/test level AND method will be merged into one dataset to seed database. 
+     *
+     * @return Enable or disable dataset merging. If enabled then datasets declared at class/test level AND method will be merged into one dataset to seed database.
      * Note that only array properties of @DataSet annotation like 'value' and 'executeStatementsBefore' will be merged.
      */
     boolean mergeDataSets() default false;
@@ -139,7 +146,7 @@ public @interface DBUnit {
 
     /**
      * Allow to call INSERT/UPDATE with empty strings ('').
-     * 
+     *
      * @return value which configures DatabaseConfig.FEATURE_ALLOW_EMPTY_FIELDS. Defaults to false.
      */
     boolean allowEmptyFields() default false;
@@ -161,7 +168,7 @@ public @interface DBUnit {
      * result in "\"MY_TABLE\""). As a fallback if no questionmark is in the given String and its length is one it is
      * used to surround the table name on the left and right side. For example the escape pattern "\"" will have the
      * same effect as the escape pattern "\"?\"".
-     * 
+     *
      * @return value which configures DatabaseConfig.PROPERTY_ESCAPE_PATTERN. Defaults to none
      */
     String escapePattern() default "";

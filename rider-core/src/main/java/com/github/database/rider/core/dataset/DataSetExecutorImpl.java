@@ -169,6 +169,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     .append("mergingStrategy: ").append(dbUnitConfig.getMergingStrategy()).append("\n")
                     .append("disableSequenceFiltering: ").append(dbUnitConfig.isDisableSequenceFiltering()).append("\n")
                     .append("alwaysCleanBefore: ").append(dbUnitConfig.isAlwaysCleanBefore()).append("\n")
+                    .append("alwaysCleanAfter: ").append(dbUnitConfig.isAlwaysCleanAfter()).append("\n")
                     .append("raiseExceptionOnCleanUp: ").append(dbUnitConfig.isRaiseExceptionOnCleanUp()).append("\n")
                     .append("disablePKCheckFor: ").append("" + dbUnitConfig.disablePKCheckFor()).append("\n");
 
