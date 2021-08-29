@@ -536,7 +536,7 @@ table.CodeRay td.code{padding:0 0 0 .75em}
   <div id="header"> 
    <h1>Database Rider Documentation</h1> 
    <div class="details"> 
-    <span id="revnumber">version 1.29.1-SNAPSHOT</span> 
+    <span id="revnumber">version 1.30.1-SNAPSHOT</span> 
    </div> 
    <div id="toc" class="toc"> 
     <div id="toctitle">
@@ -720,7 +720,7 @@ table.CodeRay td.code{padding:0 0 0 .75em}
         <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
    <span class="tag">&lt;groupId&gt;</span>com.github.database-rider<span class="tag">&lt;/groupId&gt;</span>
    <span class="tag">&lt;artifactId&gt;</span>rider-core<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>1.29.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;version&gt;</span>1.30.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
        </div> 
@@ -873,7 +873,7 @@ FOLLOWER:
         <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
    <span class="tag">&lt;groupId&gt;</span>com.github.database-rider<span class="tag">&lt;/groupId&gt;</span>
    <span class="tag">&lt;artifactId&gt;</span>rider-cdi<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>1.29.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;version&gt;</span>1.30.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
        </div> 
@@ -1072,7 +1072,7 @@ FOLLOWER:
         <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
    <span class="tag">&lt;groupId&gt;</span>com.github.database-rider<span class="tag">&lt;/groupId&gt;</span>
    <span class="tag">&lt;artifactId&gt;</span>rider-junit5<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>1.29.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;version&gt;</span>1.30.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
        </div> 
@@ -1293,7 +1293,7 @@ FOLLOWER:
         <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
    <span class="tag">&lt;groupId&gt;</span>com.github.database-rider<span class="tag">&lt;/groupId&gt;</span>
    <span class="tag">&lt;artifactId&gt;</span>rider-cucumber<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>1.29.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;version&gt;</span>1.30.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
        </div> 
@@ -2919,13 +2919,13 @@ properties:
           <div class="listingblock"> 
            <div class="content"> 
             <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
-<span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">datasets/yml/groovy-with-date-replacements.yml</span><span class="delimiter">"</span></span>,cleanBefore = <span class="predefined-constant">true</span>, disableConstraints = <span class="predefined-constant">true</span>, executorId = <span class="string"><span class="delimiter">"</span><span class="content">rider-it</span><span class="delimiter">"</span></span>)
+<span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">datasets/yml/groovy-with-date-replacements.yml</span><span class="delimiter">"</span></span>, cleanBefore = <span class="predefined-constant">true</span>, disableConstraints = <span class="predefined-constant">true</span>, executorId = <span class="string"><span class="delimiter">"</span><span class="content">rider-it</span><span class="delimiter">"</span></span>)
 <span class="directive">public</span> <span class="type">void</span> shouldReplaceDateUsingGroovyInDataset() {
     Tweet tweet = (Tweet) emProvider.em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select t from Tweet t where t.id = '1'</span><span class="delimiter">"</span></span>).getSingleResult();
     assertThat(tweet).isNotNull();
     assertThat(tweet.getDate().get(<span class="predefined-type">Calendar</span>.DAY_OF_MONTH)).
             isEqualTo(now.get(<span class="predefined-type">Calendar</span>.DAY_OF_MONTH));
-    assertThat(tweet.getDate(). get(<span class="predefined-type">Calendar</span>.HOUR_OF_DAY)).
+    assertThat(tweet.getDate().get(<span class="predefined-type">Calendar</span>.HOUR_OF_DAY)).
             isEqualTo(now.get(<span class="predefined-type">Calendar</span>.HOUR_OF_DAY));
 }</code></pre> 
            </div> 
@@ -3007,7 +3007,7 @@ properties:
           <div class="listingblock"> 
            <div class="content"> 
             <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
-<span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">datasets/yml/js-with-calc-replacements.yml</span><span class="delimiter">"</span></span>,cleanBefore = <span class="predefined-constant">true</span>, disableConstraints = <span class="predefined-constant">true</span>, executorId = <span class="string"><span class="delimiter">"</span><span class="content">rider-it</span><span class="delimiter">"</span></span>)
+<span class="annotation">@DataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">datasets/yml/js-with-calc-replacements.yml</span><span class="delimiter">"</span></span>, cleanBefore = <span class="predefined-constant">true</span>, disableConstraints = <span class="predefined-constant">true</span>, executorId = <span class="string"><span class="delimiter">"</span><span class="content">rider-it</span><span class="delimiter">"</span></span>)
 <span class="directive">public</span> <span class="type">void</span> shouldReplaceLikesUsingJavaScriptInDataset() {
     Tweet tweet = (Tweet) emProvider.em().createQuery(<span class="string"><span class="delimiter">"</span><span class="content">select t from Tweet t where t.id = '1'</span><span class="delimiter">"</span></span>).getSingleResult();
     assertThat(tweet).isNotNull();
@@ -3079,11 +3079,13 @@ properties:
     <span class="annotation">@Rule</span>
     <span class="directive">public</span> ExpectedException exception = ExpectedException.none();
 
+
     <span class="annotation">@Test</span>
     <span class="annotation">@DataSet</span>(<span class="string"><span class="delimiter">"</span><span class="content">yml/user.yml</span><span class="delimiter">"</span></span>)
-    <span class="directive">public</span> <span class="type">void</span> shouldFindConnectionLeak() <span class="directive">throws</span> <span class="exception">SQLException</span> {
+    <span class="directive">public</span> <span class="type">void</span> shouldFindTwoConnectionLeaks() <span class="directive">throws</span> <span class="exception">SQLException</span> {
         exception.expect(LeakHunterException.class);
-        exception.expectMessage(<span class="string"><span class="delimiter">"</span><span class="content">Execution of method shouldFindConnectionLeak left 1 open connection(s).</span><span class="delimiter">"</span></span>);
+        exception.expectMessage(<span class="string"><span class="delimiter">"</span><span class="content">Execution of method shouldFindTwoConnectionLeaks left 2 open connection(s).</span><span class="delimiter">"</span></span>);
+        createLeak();
         createLeak();
     }
 
@@ -4099,8 +4101,8 @@ public @interface AnotherMetaDataSet {
   </div> 
   <div id="footer" style="color:gray;font-size:11px">
     Generated by 
-   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 3.6.0</a> - Aug 29, 2021, 9:35:09 AM 
-   <span style="float:right;font-size:11px"> Execution time: 8.28 seconds</span> 
+   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 3.6.0</a> - Aug 29, 2021, 1:58:50 PM 
+   <span style="float:right;font-size:11px"> Execution time: 5.974 seconds</span> 
   </div> 
   <style>  
 
