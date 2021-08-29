@@ -37,14 +37,6 @@ public class LeakHunterIt {
 
 
 //tag::find-leak[]
-    @Test
-    @DataSet("yml/user.yml")
-    public void shouldFindConnectionLeak() throws SQLException {
-        exception.expect(LeakHunterException.class);
-        exception.expectMessage("Execution of method shouldFindConnectionLeak left 1 open connection(s).");
-        createLeak();
-    }
-//end::find-leak[]
 
     @Test
     @DataSet("yml/user.yml")
@@ -54,7 +46,7 @@ public class LeakHunterIt {
         createLeak();
         createLeak();
     }
-
+//end::find-leak[]
 
     @Test
     @DataSet("yml/user.yml")
@@ -92,13 +84,10 @@ public class LeakHunterIt {
 //end::create-leak[]
 
     private void createAndCloseConnection() throws SQLException {
-        Connection connection = getConnection();
-        try (Statement stmt = connection.createStatement()) {
+        try (Connection connection = getConnection(); Statement stmt = connection.createStatement()) {
             ResultSet resultSet = stmt.executeQuery("select count(*) from user");
             assertThat(resultSet.next()).isTrue();
             assertThat(resultSet.getInt(1)).isEqualTo(2);
-        } finally {
-            connection.close();
         }
     }
 
