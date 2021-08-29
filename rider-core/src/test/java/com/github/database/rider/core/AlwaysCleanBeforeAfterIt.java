@@ -17,9 +17,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
-/**
- * Created by pestano on 26/02/16.
- */
+
 @RunWith(JUnit4.class)
 public class AlwaysCleanBeforeAfterIt {
 
@@ -47,7 +45,6 @@ public class AlwaysCleanBeforeAfterIt {
             fail("users should be empty");
         }
     }
-
 
     @Test
     @DataSet(value = "datasets/yml/users.yml")
