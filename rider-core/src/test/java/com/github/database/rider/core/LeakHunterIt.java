@@ -35,7 +35,6 @@ public class LeakHunterIt {
         Persistence.createEntityManagerFactory("rules-it");
     }
 
-
 //tag::find-leak[]
 
     @Test
