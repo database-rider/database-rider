@@ -1,0 +1,5 @@
+USER:
+  - ID: "js:(value > 0)"
+    NAME: "@realpestano"
+  - ID: "groovy:(value > 0)"
+    NAME: "@dbunit"
