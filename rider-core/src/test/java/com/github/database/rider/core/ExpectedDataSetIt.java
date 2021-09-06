@@ -251,4 +251,10 @@ public class ExpectedDataSetIt {
         tx().commit();
     }
 
+    @Test
+    @DataSet(value = "yml/user.yml", cleanBefore = true, cleanAfter = true)
+    @ExpectedDataSet(value = "yml/expectedUserWithScripting.yml")
+    public void shouldEvaluateScriptsInExpectedDataSet() {
+    }
+
 }

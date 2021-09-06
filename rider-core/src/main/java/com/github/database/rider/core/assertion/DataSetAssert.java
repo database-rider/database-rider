@@ -1,5 +1,6 @@
 package com.github.database.rider.core.assertion;
 
+import com.github.database.rider.core.api.scripting.ScriptEngineManagerWrapper;
 import org.dbunit.assertion.DbUnitAssert;
 import org.dbunit.assertion.Difference;
 import org.dbunit.assertion.FailureHandler;
@@ -10,6 +11,7 @@ import org.dbunit.dataset.datatype.DataType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.script.ScriptEngine;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -19,6 +21,8 @@ import java.util.regex.Pattern;
 public class DataSetAssert extends DbUnitAssert {
 
     private static final Logger logger = LoggerFactory.getLogger(DbUnitAssert.class);
+
+    private final ScriptEngineManagerWrapper manager = ScriptEngineManagerWrapper.getInstance();
 
 
     /**
@@ -84,6 +88,23 @@ public class DataSetAssert extends DbUnitAssert {
 
                         // Handle the difference (throw error immediately or something else)
                         failureHandler.handle(diff);
+                    }
+                } else if (expectedValue != null && manager.rowValueContainsScriptEngine(expectedValue)) {
+                    ScriptEngine engine = manager.getScriptEngine(expectedValue.toString().trim());
+                    if (engine != null) {
+                        try {
+                            if (!manager.getScriptAssert(expectedValue.toString(), engine, actualValue)) {
+                                Difference diff = new Difference(
+                                   expectedTable, actualTable,
+                                   i, columnName,
+                                   expectedValue, actualValue);
+
+                                // Handle the difference (throw error immediately or something else)
+                                failureHandler.handle(diff);
+                            }
+                        } catch (Exception e) {
+                            logger.warn(String.format("Could not evaluate script expression for table '%s', column '%s'. The original value will be used.", actualTable.getTableMetaData().getTableName(), columnName), e);
+                        }
                     }
                 } else if (dataType.compare(expectedValue, actualValue) != 0) {
 
