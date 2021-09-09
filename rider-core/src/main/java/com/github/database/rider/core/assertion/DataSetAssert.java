@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.script.ScriptEngine;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -24,6 +26,12 @@ public class DataSetAssert extends DbUnitAssert {
 
     private final ScriptEngineManagerWrapper manager = ScriptEngineManagerWrapper.getInstance();
 
+    private List<Integer> comparedRowsList; //to avoid comparing the same row twice
+
+
+    public void initComparedRows() {
+        comparedRowsList = new ArrayList<>();
+    }
 
     /**
      * Same as DBUnitAssert with support for regex in row values
@@ -60,6 +68,10 @@ public class DataSetAssert extends DbUnitAssert {
 
         // iterate over all rows
         for (int i = 0; i < expectedTable.getRowCount(); i++) {
+            if (skipRow(i)) {
+                continue;
+            }
+            comparedRowsList.add(i);
             // iterate over all columns of the current row
             for (int j = 0; j < comparisonCols.length; j++) {
                 ComparisonColumn compareColumn = comparisonCols[j];
@@ -70,7 +82,6 @@ public class DataSetAssert extends DbUnitAssert {
                 Object expectedValue = expectedTable.getValue(i, columnName);
                 Object actualValue = actualTable.getValue(i, columnName);
 
-                // Compare the values
                 if (skipCompare(columnName, expectedValue, actualValue)) {
                     if (logger.isTraceEnabled()) {
                         logger.trace("ignoring comparison " + expectedValue + "=" +
@@ -78,36 +89,41 @@ public class DataSetAssert extends DbUnitAssert {
                     }
                     continue;
                 }
+                if (expectedValue != null) {
+                    if (expectedValue.toString().startsWith("regex:")) {
+                        if (!regexMatches(expectedValue.toString(), actualValue)) {
+                            Difference diff = new Difference(
+                                    expectedTable, actualTable,
+                                    i, columnName,
+                                    expectedValue, actualValue);
 
-                if (expectedValue != null && expectedValue.toString().startsWith("regex:")) {
-                    if (!regexMatches(expectedValue.toString(), actualValue)) {
-                        Difference diff = new Difference(
-                                expectedTable, actualTable,
-                                i, columnName,
-                                expectedValue, actualValue);
-
-                        // Handle the difference (throw error immediately or something else)
-                        failureHandler.handle(diff);
+                            // Handle the difference (throw error immediately or something else)
+                            failureHandler.handle(diff);
+                        }
+                        continue;
                     }
-                } else if (expectedValue != null && manager.rowValueContainsScriptEngine(expectedValue)) {
-                    ScriptEngine engine = manager.getScriptEngine(expectedValue.toString().trim());
-                    if (engine != null) {
-                        try {
-                            if (!manager.getScriptAssert(expectedValue.toString(), engine, actualValue)) {
-                                Difference diff = new Difference(
-                                   expectedTable, actualTable,
-                                   i, columnName,
-                                   expectedValue, actualValue);
+                    if (manager.rowValueContainsScriptEngine(expectedValue)) {
+                        ScriptEngine engine = manager.getScriptEngine(expectedValue.toString().trim());
+                        if (engine != null) {
+                            try {
+                                if (!manager.getScriptAssert(expectedValue.toString(), engine, actualValue)) {
+                                    Difference diff = new Difference(
+                                            expectedTable, actualTable,
+                                            i, columnName,
+                                            expectedValue, actualValue);
 
-                                // Handle the difference (throw error immediately or something else)
-                                failureHandler.handle(diff);
+                                    // Handle the difference (throw error immediately or something else)
+                                    failureHandler.handle(diff);
+                                }
+                                continue;
+                            } catch (Exception e) {
+                                logger.warn(String.format("Could not evaluate script expression for table '%s', column '%s'. The original value will be used.", actualTable.getTableMetaData().getTableName(), columnName), e);
                             }
-                        } catch (Exception e) {
-                            logger.warn(String.format("Could not evaluate script expression for table '%s', column '%s'. The original value will be used.", actualTable.getTableMetaData().getTableName(), columnName), e);
                         }
                     }
-                } else if (dataType.compare(expectedValue, actualValue) != 0) {
+                }
 
+                if (dataType.compare(expectedValue, actualValue) != 0) {
                     Difference diff = new Difference(
                             expectedTable, actualTable,
                             i, columnName,
@@ -120,11 +136,15 @@ public class DataSetAssert extends DbUnitAssert {
         }
     }
 
+    private boolean skipRow(int i) {
+        return comparedRowsList.contains(i);
+    }
+
     @Override
     protected void compareData(ITable expectedTable, ITable actualTable, ComparisonColumn[] comparisonCols, FailureHandler failureHandler, ValueComparer defaultValueComparer,
                                final Map<String, ValueComparer> columnValueComparers,
                                final int rowNum, final int columnNum) throws DataSetException {
-        this.compareData(expectedTable,actualTable, comparisonCols, failureHandler);
+        this.compareData(expectedTable, actualTable, comparisonCols, failureHandler);
     }
 
 
