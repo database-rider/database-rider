@@ -41,7 +41,7 @@ public class YMLWriter implements IDataSetConsumer {
         try {
             out.flush();
         } catch (IOException e) {
-        	logger.warn("Could not end dataset.", e);
+            logger.warn("Could not end dataset.", e);
         } finally {
             try {
                 out.close();
@@ -55,9 +55,9 @@ public class YMLWriter implements IDataSetConsumer {
     public void startTable(ITableMetaData metaData) throws DataSetException {
         this.metaData = metaData;
         try {
-            out.write(metaData.getTableName()+":"+NEW_LINE);
+            out.write(metaData.getTableName() + ":" + NEW_LINE);
         } catch (IOException e) {
-        	logger.warn("Could not start table.", e);
+            logger.warn("Could not start table.", e);
         }
     }
 
@@ -66,7 +66,7 @@ public class YMLWriter implements IDataSetConsumer {
         try {
             out.write(NEW_LINE);
         } catch (IOException e) {
-        	logger.warn("Could end table.", e);
+            logger.warn("Could end table.", e);
         }
     }
 
@@ -75,24 +75,24 @@ public class YMLWriter implements IDataSetConsumer {
         try {
             for (int i = 0; i < values.length; i++) {
 
-                if(values[i] == null){
+                if (values[i] == null) {
                     continue;
                 }
 
                 if (i == 0) {
                     out.write(DOUBLE_SPACES + "- ");
-                } else{
+                } else {
                     out.write(DOUBLE_SPACES + DOUBLE_SPACES);
                 }
-                
+
                 Column currentColumn = metaData.getColumns()[i];
-                out.write(metaData.getColumns()[i].getColumnName()+": ");
+                out.write(metaData.getColumns()[i].getColumnName() + ": ");
                 boolean isNumber = currentColumn.getDataType().isNumber();
-                if(!isNumber){
+                if (!isNumber) {
                     out.write("\"");
                 }
-                if(values[i] != null){
-                    if(values[i] instanceof byte[]){
+                if (values[i] != null) {
+                    if (values[i] instanceof byte[]) {
                         out.write(DatatypeConverter.printBase64Binary((byte[]) values[i]));
                     } else {
                         out.write(values[i].toString()
@@ -101,18 +101,17 @@ public class YMLWriter implements IDataSetConsumer {
                         );
                     }
                 }
-                if(!isNumber){
+                if (!isNumber) {
                     out.write("\"");
                 }
                 out.write(NEW_LINE);
             }
-        }catch (Exception e){
-        	logger.warn("Could not write row.",e);
+        } catch (Exception e) {
+            logger.warn("Could not write row.", e);
         }
     }
 
-    public synchronized void write(IDataSet dataSet) throws DataSetException
-    {
+    public synchronized void write(IDataSet dataSet) throws DataSetException {
         DataSetProducerAdapter provider = new DataSetProducerAdapter(dataSet);
         provider.setConsumer(this);
         provider.produce();
