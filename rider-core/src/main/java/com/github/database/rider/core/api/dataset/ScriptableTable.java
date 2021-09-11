@@ -1,6 +1,6 @@
 package com.github.database.rider.core.api.dataset;
 
-import com.github.database.rider.core.api.scripting.ScriptEngineManagerWrapper;
+import com.github.database.rider.core.script.ScriptEngineManagerWrapper;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.ITableMetaData;
@@ -41,13 +41,10 @@ public class ScriptableTable implements ITable {
     public Object getValue(int row, String column) throws DataSetException {
         final Object value = delegate.getValue(row, column);
         if (manager.rowValueContainsScriptEngine(value)) {
-            ScriptEngine engine = manager.getScriptEngine(value.toString().trim());
-            if (engine != null) {
-                try {
-                    return manager.getScriptResult(value.toString(), engine);
-                } catch (Exception e) {
-                    log.log(Level.WARNING, String.format("Could not evaluate script expression for table '%s', column '%s'. The original value will be used.", getTableMetaData().getTableName(), column), e);
-                }
+            try {
+                return manager.getScriptResult(value.toString());
+            } catch (Exception e) {
+                log.log(Level.WARNING, String.format("Could not evaluate script expression for table '%s', column '%s'. The original value will be used.", getTableMetaData().getTableName(), column), e);
             }
         }
         return value;
