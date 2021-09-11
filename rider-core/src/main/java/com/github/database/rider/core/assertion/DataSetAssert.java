@@ -1,6 +1,6 @@
 package com.github.database.rider.core.assertion;
 
-import com.github.database.rider.core.api.scripting.ScriptEngineManagerWrapper;
+import com.github.database.rider.core.script.ScriptEngineManagerWrapper;
 import org.dbunit.assertion.DbUnitAssert;
 import org.dbunit.assertion.Difference;
 import org.dbunit.assertion.FailureHandler;
@@ -103,22 +103,19 @@ public class DataSetAssert extends DbUnitAssert {
                         continue;
                     }
                     if (manager.rowValueContainsScriptEngine(expectedValue)) {
-                        ScriptEngine engine = manager.getScriptEngine(expectedValue.toString().trim());
-                        if (engine != null) {
-                            try {
-                                if (!manager.getScriptAssert(expectedValue.toString(), engine, actualValue)) {
-                                    Difference diff = new Difference(
-                                            expectedTable, actualTable,
-                                            i, columnName,
-                                            expectedValue, actualValue);
+                        try {
+                            if (!manager.getScriptAssert(expectedValue.toString(), actualValue)) {
+                                Difference diff = new Difference(
+                                        expectedTable, actualTable,
+                                        i, columnName,
+                                        expectedValue, actualValue);
 
-                                    // Handle the difference (throw error immediately or something else)
-                                    failureHandler.handle(diff);
-                                }
-                                continue;
-                            } catch (Exception e) {
-                                logger.warn(String.format("Could not evaluate script expression for table '%s', column '%s'. The original value will be used.", actualTable.getTableMetaData().getTableName(), columnName), e);
+                                // Handle the difference (throw error immediately or something else)
+                                failureHandler.handle(diff);
                             }
+                            continue;
+                        } catch (Exception e) {
+                            logger.warn(String.format("Could not evaluate script expression for table '%s', column '%s'. The original value will be used.", actualTable.getTableMetaData().getTableName(), columnName), e);
                         }
                     }
                 }
