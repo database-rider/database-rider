@@ -104,7 +104,7 @@ public class DataSetAssert extends DbUnitAssert {
                     }
                     if (manager.rowValueContainsScriptEngine(expectedValue)) {
                         try {
-                            if (!manager.getScriptAssert(expectedValue.toString(), actualValue)) {
+                            if (manager.hasScriptExpression(expectedValue) && !manager.getScriptAssert(expectedValue.toString(), actualValue)) {
                                 Difference diff = new Difference(
                                         expectedTable, actualTable,
                                         i, columnName,
@@ -115,11 +115,10 @@ public class DataSetAssert extends DbUnitAssert {
                             }
                             continue;
                         } catch (Exception e) {
-                            logger.warn(String.format("Could not evaluate script expression for table '%s', column '%s'. The original value will be used.", actualTable.getTableMetaData().getTableName(), columnName), e);
+                            logger.warn(String.format("Could not evaluate script expression '%s' for table '%s', column '%s'.", expectedValue, actualTable.getTableMetaData().getTableName(), columnName), e);
                         }
                     }
                 }
-
                 if (dataType.compare(expectedValue, actualValue) != 0) {
                     Difference diff = new Difference(
                             expectedTable, actualTable,

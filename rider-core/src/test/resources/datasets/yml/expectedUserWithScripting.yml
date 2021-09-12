@@ -1,5 +1,5 @@
 USER:
   - ID: "js:(value > 0)"
-    NAME: "@realpestano"
+    NAME: "js:(value != null && value.contains('@realpestano'))"
   - ID: "groovy:(value > 0)"
-    NAME: "@dbunit"
+    NAME: "groovy:(value != null && value.contains('@dbunit'))"

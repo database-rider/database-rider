@@ -7,9 +7,10 @@ import com.github.database.rider.core.model.Tweet;
 import com.github.database.rider.core.model.User;
 import com.github.database.rider.core.replacers.NullReplacer;
 import com.github.database.rider.core.util.EntityManagerProvider;
-import org.junit.Ignore;
+import junit.framework.ComparisonFailure;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
@@ -25,6 +26,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 // tag::expectedDeclaration[]
 @RunWith(JUnit4.class)
 public class ExpectedDataSetIt {
+    @Rule
+    public ExpectedException exceptionRule = ExpectedException.none();
 
     @Rule
     public EntityManagerProvider emProvider = EntityManagerProvider.instance("rules-it");
@@ -53,11 +56,13 @@ public class ExpectedDataSetIt {
     // end::expected[]
 
 
-    @Ignore(value = "How to test failled comparisons?")
     // tag::faillingExpected[]
     @Test
+    @DataSet(cleanBefore = true)
     @ExpectedDataSet(value = "yml/expectedUsers.yml", ignoreCols = "id")
     public void shouldNotMatchExpectedDataSet() {
+        exceptionRule.expect(ComparisonFailure.class);
+        exceptionRule.expectMessage("value (table=USER, row=0, col=NAME) expected:<[]expected user1> but was:<[non ]expected user1>");
         User u = new User();
         u.setName("non expected user1");
         User u2 = new User();
@@ -175,7 +180,6 @@ public class ExpectedDataSetIt {
         Tweet t = new Tweet();
         t.setContent("dbunit rules again!");
         em().persist(t);
-
     }
 
 
@@ -255,6 +259,21 @@ public class ExpectedDataSetIt {
     @DataSet(value = "yml/user.yml", cleanBefore = true, cleanAfter = true)
     @ExpectedDataSet(value = "yml/expectedUserWithScripting.yml")
     public void shouldEvaluateScriptsInExpectedDataSet() {
+
+    }
+
+    @Test
+    @DataSet(value = "yml/empty.yml", transactional = true)
+    @ExpectedDataSet(value = "yml/expectedUserWithScripting.yml")
+    public void shouldShowAssertionErrorWhenScriptsEvaluateToFalseInExpectedDataSet() {
+        exceptionRule.expect(ComparisonFailure.class);
+        exceptionRule.expectMessage("value (table=USER, row=0, col=NAME) expected:<[js:(value != null && value.contains('@realpestano'))]> but was:<[test1]>");
+        User u = new User(1);
+        u.setName("test1");
+        User u2 = new User(2);
+        u2.setName("test2");
+        em().persist(u);
+        em().persist(u2);
     }
 
 }
