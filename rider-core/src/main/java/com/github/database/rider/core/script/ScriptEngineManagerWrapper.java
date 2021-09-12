@@ -5,12 +5,11 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 public class ScriptEngineManagerWrapper {
-    private static final Logger log = Logger.getLogger(ScriptEngineManagerWrapper.class.getName());
-
     private static final ScriptEngineManagerWrapper INSTANCE = new ScriptEngineManagerWrapper();
+    private static final Pattern SCRIPT_EXPRESSION_PATTERN = Pattern.compile("\\b((js|groovy):\\((.*value.*)\\))");//starts with js or groovy followed by ':' followed by anything before or after the 'value' inside parentheses
 
     private final ScriptEngineManager manager;
 
@@ -75,5 +74,12 @@ public class ScriptEngineManagerWrapper {
 
     private String getScriptToExecute(String script) {
         return script.substring(script.indexOf(':') + 1);
+    }
+
+    public boolean hasScriptExpression(Object script) {
+        if(script ==  null) {
+            return false;
+        }
+        return SCRIPT_EXPRESSION_PATTERN.matcher(script.toString()).matches();
     }
 }

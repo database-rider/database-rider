@@ -5,9 +5,9 @@ import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.ITableMetaData;
 
-import javax.script.ScriptEngine;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static java.lang.String.format;
 
 /**
  * Adds support for script language (JSR 223) in table values.
@@ -40,11 +40,11 @@ public class ScriptableTable implements ITable {
     @Override
     public Object getValue(int row, String column) throws DataSetException {
         final Object value = delegate.getValue(row, column);
-        if (manager.rowValueContainsScriptEngine(value)) {
+        if (manager.rowValueContainsScriptEngine(value) && !manager.hasScriptExpression(value)) {
             try {
                 return manager.getScriptResult(value.toString());
             } catch (Exception e) {
-                log.log(Level.WARNING, String.format("Could not evaluate script expression for table '%s', column '%s'. The original value will be used.", getTableMetaData().getTableName(), column), e);
+                throw new RuntimeException(format("Could not evaluate script expression: '%s' for table '%s', column '%s'.", value, getTableMetaData().getTableName(), column), e);
             }
         }
         return value;
