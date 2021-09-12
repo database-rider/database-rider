@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public class ScriptEngineManagerWrapper {
+
     private static final ScriptEngineManagerWrapper INSTANCE = new ScriptEngineManagerWrapper();
     private static final Pattern SCRIPT_EXPRESSION_PATTERN = Pattern.compile("\\b((js|groovy):\\((.*value.*)\\))");//starts with js or groovy followed by ':' followed by anything before or after the 'value' inside parentheses
 
@@ -23,7 +24,6 @@ public class ScriptEngineManagerWrapper {
     public static ScriptEngineManagerWrapper getInstance() {
         return INSTANCE;
     }
-
 
     public boolean rowValueContainsScriptEngine(Object value) {
         if (value == null || value.toString().length() == 0) {
@@ -44,7 +44,7 @@ public class ScriptEngineManagerWrapper {
         return engine.eval(scriptToExecute);
     }
 
-    public boolean getScriptAssert(final String script, final   Object actualValue) throws ScriptException {
+    public boolean getScriptAssert(final String script, final Object actualValue) throws ScriptException {
         final ScriptEngine engine = getScriptEngine(script.trim());
         final String scriptToExecute = getScriptToExecute(script);
         engine.put("value", actualValue);
@@ -77,7 +77,7 @@ public class ScriptEngineManagerWrapper {
     }
 
     public boolean hasScriptExpression(Object script) {
-        if(script ==  null) {
+        if (script == null) {
             return false;
         }
         return SCRIPT_EXPRESSION_PATTERN.matcher(script.toString()).matches();
