@@ -754,6 +754,38 @@ And the integration test below:
 
 NOTE: This test will pass if database state after test contains a row in `user table` with `id=3` and `name = @dbrider`. Other rows doesn't matter.
 
+==== Using `script assertions` in expected datatset
+
+Since `v1.31.0` it's possible to use javascript oe groovy assertions (based on <<Scriptable DataSets>>) in `@ExpectedDataSet`, for example consider the following dataset:
+
+```
+USER:
+  - ID: "js:(value > 0)"
+    NAME: "js:(value != null && value.contains('@realpestano'))"
+  - ID: "groovy:(value > 0)"
+    NAME: "groovy:(value != null && value.contains('@dbunit'))"
+```
+
+To enable the scripting you mainly need the `js: or groovy:` prefix *followed by an expression which evaluates to boolean* inside a `parentheses`.
+
+```
+    @Test
+    @DataSet(value = "yml/empty.yml", transactional = true)
+    @ExpectedDataSet(value = "yml/expectedUserWithScripting.yml")
+    public void shouldEvaluateScriptsInExpectedDataSet() {
+        User u = new User(1);
+        u.setName("@realpestano");
+        User u2 = new User(2);
+        u2.setName("@dbunit");
+        em().persist(u);
+        em().persist(u2);
+    }
+```
+
+
+NOTE: To enable groovy scripts you need `groovy-all` in your test classpath
+
+
 === Meta DataSets
 
 With meta datasets you can create annotations which holds `@DataSet` configuration and (re)use this custom annotation in any test:
