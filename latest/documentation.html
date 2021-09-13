@@ -536,7 +536,7 @@ table.CodeRay td.code{padding:0 0 0 .75em}
   <div id="header"> 
    <h1>Database Rider Documentation</h1> 
    <div class="details"> 
-    <span id="revnumber">version 1.30.1-SNAPSHOT</span> 
+    <span id="revnumber">version 1.31.1-SNAPSHOT</span> 
    </div> 
    <div id="toc" class="toc"> 
     <div id="toctitle">
@@ -720,7 +720,7 @@ table.CodeRay td.code{padding:0 0 0 .75em}
         <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
    <span class="tag">&lt;groupId&gt;</span>com.github.database-rider<span class="tag">&lt;/groupId&gt;</span>
    <span class="tag">&lt;artifactId&gt;</span>rider-core<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>1.30.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;version&gt;</span>1.31.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
        </div> 
@@ -873,7 +873,7 @@ FOLLOWER:
         <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
    <span class="tag">&lt;groupId&gt;</span>com.github.database-rider<span class="tag">&lt;/groupId&gt;</span>
    <span class="tag">&lt;artifactId&gt;</span>rider-cdi<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>1.30.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;version&gt;</span>1.31.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
        </div> 
@@ -1072,7 +1072,7 @@ FOLLOWER:
         <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
    <span class="tag">&lt;groupId&gt;</span>com.github.database-rider<span class="tag">&lt;/groupId&gt;</span>
    <span class="tag">&lt;artifactId&gt;</span>rider-junit5<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>1.30.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;version&gt;</span>1.31.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
        </div> 
@@ -1293,7 +1293,7 @@ FOLLOWER:
         <pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;dependency&gt;</span>
    <span class="tag">&lt;groupId&gt;</span>com.github.database-rider<span class="tag">&lt;/groupId&gt;</span>
    <span class="tag">&lt;artifactId&gt;</span>rider-cucumber<span class="tag">&lt;/artifactId&gt;</span>
-    <span class="tag">&lt;version&gt;</span>1.30.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;version&gt;</span>1.31.1-SNAPSHOT<span class="tag">&lt;/version&gt;</span>
    <span class="tag">&lt;scope&gt;</span>test<span class="tag">&lt;/scope&gt;</span>
 <span class="tag">&lt;/dependency&gt;</span></code></pre> 
        </div> 
@@ -2422,6 +2422,8 @@ properties:
            <div class="content"> 
             <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@RunWith</span>(JUnit4.class)
 <span class="directive">public</span> <span class="type">class</span> <span class="class">ExpectedDataSetIt</span> {
+    <span class="annotation">@Rule</span>
+    <span class="directive">public</span> ExpectedException exceptionRule = ExpectedException.none();
 
     <span class="annotation">@Rule</span>
     <span class="directive">public</span> EntityManagerProvider emProvider = EntityManagerProvider.instance(<span class="string"><span class="delimiter">"</span><span class="content">rules-it</span><span class="delimiter">"</span></span>);
@@ -2683,8 +2685,11 @@ properties:
           <div class="listingblock"> 
            <div class="content"> 
             <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Test</span>
+<span class="annotation">@DataSet</span>(cleanBefore = <span class="predefined-constant">true</span>)
 <span class="annotation">@ExpectedDataSet</span>(value = <span class="string"><span class="delimiter">"</span><span class="content">yml/expectedUsers.yml</span><span class="delimiter">"</span></span>, ignoreCols = <span class="string"><span class="delimiter">"</span><span class="content">id</span><span class="delimiter">"</span></span>)
 <span class="directive">public</span> <span class="type">void</span> shouldNotMatchExpectedDataSet() {
+    exceptionRule.expect(ComparisonFailure.class);
+    exceptionRule.expectMessage(<span class="string"><span class="delimiter">"</span><span class="content">value (table=USER, row=0, col=NAME) expected:&lt;[]expected user1&gt; but was:&lt;[non ]expected user1&gt;</span><span class="delimiter">"</span></span>);
     User u = <span class="keyword">new</span> User();
     u.setName(<span class="string"><span class="delimiter">"</span><span class="content">non expected user1</span><span class="delimiter">"</span></span>);
     User u2 = <span class="keyword">new</span> User();
@@ -4101,8 +4106,8 @@ public @interface AnotherMetaDataSet {
   </div> 
   <div id="footer" style="color:gray;font-size:11px">
     Generated by 
-   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 3.6.0</a> - Aug 30, 2021, 5:26:33 AM 
-   <span style="float:right;font-size:11px"> Execution time: 7.564 seconds</span> 
+   <a href="https://github.com/rmpestano/cukedoctor" target="_blank"> Cukedoctor 3.6.0</a> - Sep 13, 2021, 6:58:05 AM 
+   <span style="float:right;font-size:11px"> Execution time: 7.31 seconds</span> 
   </div> 
   <style>  
 
