@@ -90,7 +90,7 @@
         <dependency>
             <groupId>io.micronaut</groupId>
             <artifactId>micronaut-inject</artifactId>
-            <version>1.3.6</version>
+            <version>3.0.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
