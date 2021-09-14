@@ -30,7 +30,7 @@ public class EntityManagerProvider {
 
     private static PropertyResolutionUtil propertyResolutionUtil = new PropertyResolutionUtil();
 
-    private static Map<String, String> overridingProperties;
+    private static Map<String, Object> overridingProperties;
 
     private static EntityManagerProvider instance;
 
@@ -61,7 +61,8 @@ public class EntityManagerProvider {
      * @param overridingPersistenceProps properties to override persistence.xml props or define additions to them
      * @return EntityManagerProvider instance
      */
-    public static synchronized EntityManagerProvider instance(String unitName, Map<String, String> overridingPersistenceProps) {
+    public static synchronized EntityManagerProvider instance(String unitName,
+            Map<String, Object> overridingPersistenceProps) {
         overridingProperties = overridingPersistenceProps;
         return instance(unitName);
     }
@@ -86,9 +87,11 @@ public class EntityManagerProvider {
     private void init(String unitName) {
         if (emf == null) {
             log.debug("creating emf for unit {}", unitName);
-            Map<String, String> dbConfig = getDbPropertyConfig();
+            Map<String, Object> dbConfig = getDbPropertyConfig();
             log.debug("using dbConfig '{}' to create emf", dbConfig);
-            emf = dbConfig == null ? Persistence.createEntityManagerFactory(unitName) : Persistence.createEntityManagerFactory(unitName, dbConfig);
+            emf = dbConfig == null ?
+                    Persistence.createEntityManagerFactory(unitName) :
+                    Persistence.createEntityManagerFactory(unitName, dbConfig);
             em = emf.createEntityManager();
             conn = createConnection(em);
             tx = em.getTransaction();
@@ -112,7 +115,7 @@ public class EntityManagerProvider {
         return connection;
     }
 
-    private Map<String, String> getDbPropertyConfig() {
+    private Map<String, Object> getDbPropertyConfig() {
         if (overridingProperties == null) {
             return propertyResolutionUtil.getSystemJavaxPersistenceOverrides();
         }
@@ -184,8 +187,8 @@ public class EntityManagerProvider {
     }
 
     /**
-     * @param puName unit name
-     *               clears entityManager persistence context and entityManager factory cache represented by given puName
+     * @param puName unit name clears entityManager persistence context and entityManager factory cache represented by
+     *               given puName
      * @return provider represented by puName
      */
     public static EntityManagerProvider clear(String puName) {

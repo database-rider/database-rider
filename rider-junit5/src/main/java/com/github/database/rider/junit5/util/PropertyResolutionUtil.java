@@ -2,6 +2,7 @@ package com.github.database.rider.junit5.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Property Resolution Util Implementation.
@@ -25,25 +26,30 @@ public class PropertyResolutionUtil {
      *              javax.persistence.jdbc.driver,javax.persistence.jdbc.url, javax.persistence.jdbc.user, javax.persistence.jdbc.password
      */
     @SuppressWarnings("unchecked")
-    public Map<String, String> getSystemJavaxPersistenceOverrides() {
+    public Map<String, Object> getSystemJavaxPersistenceOverrides() {
         if(propertyOverridesExist()) {
             // we make use of a type cast hack to convert Properties to a Map
-            return mergeFilteredMaps(System.getenv(), (Map) System.getProperties());
+            return mergeFilteredMaps(castMap(System.getenv()), (Map) System.getProperties());
         }
         return null;
     }
-    
+
+    public static Map<String, Object> castMap(Map<String, String> stringStringMap) {
+        return stringStringMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+
     /**
      * Resolves a Union of System.env and System.getProperties() and overridingProperties where the KeyValue-Pairs of the later have the highest precedence.
      * @param overridingProperties overridingProperties
      *
      * @return Map or null if there are no entries that match the Persistence Filter {@link #PROP_FILTER}
      */
-    public Map<String, String> persistencePropertiesOverrides(Map<String, String> overridingProperties) {
+    public Map<String, Object> persistencePropertiesOverrides(Map<String, Object> overridingProperties) {
         if(overridingProperties == null) {
             throw new IllegalArgumentException("the property 'overridingProperties' is not allowed to be null.");
         }
-        Map<String, String> overridingProperttiesCopy = new HashMap<>(overridingProperties);
+        Map<String, Object> overridingProperttiesCopy = new HashMap<>(overridingProperties);
         
         return mergeFilteredMaps(getSystemJavaxPersistenceOverrides(), overridingProperttiesCopy);
     }
@@ -60,13 +66,13 @@ public class PropertyResolutionUtil {
     }
     
    
-    Map<String, String> mergeFilteredMaps(Map<String,String> ... enlistedMaps) {
-        Map<String, String> targetMap = new HashMap<>();
-        for(Map<String, String> map: enlistedMaps) {
+    Map<String, Object> mergeFilteredMaps(Map<String,Object> ... enlistedMaps) {
+        Map<String, Object> targetMap = new HashMap<>();
+        for(Map<String, Object> map: enlistedMaps) {
             if(map != null) {
-                for(Map.Entry<String,String> entry : map.entrySet()) {
+                for(Map.Entry<String, Object> entry : map.entrySet()) {
                     if(entry.getKey().matches(PROP_FILTER)) {
-                        targetMap.put(entry.getKey(), entry.getValue());
+                        targetMap.put(entry.getKey(), ((Object)entry.getValue()));
                     }
                 }
             }
