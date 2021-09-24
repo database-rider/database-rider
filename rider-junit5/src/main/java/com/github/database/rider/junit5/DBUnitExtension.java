@@ -14,7 +14,8 @@ import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.leak.LeakHunterException;
 import com.github.database.rider.core.leak.LeakHunterFactory;
-import com.github.database.rider.junit5.util.EntityManagerProvider;
+import com.github.database.rider.core.util.EntityManagerProvider;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.dbunit.DatabaseUnitException;
 import org.junit.jupiter.api.AfterAll;

@@ -3,7 +3,7 @@ package com.github.database.rider.junit5;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.leak.LeakHunterException;
-import com.github.database.rider.junit5.util.EntityManagerProvider;
+import com.github.database.rider.core.util.EntityManagerProvider;
 import com.github.database.rider.core.api.dataset.DataSet;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

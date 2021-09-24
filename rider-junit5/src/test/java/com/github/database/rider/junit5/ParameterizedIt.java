@@ -4,7 +4,7 @@ import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.junit5.api.DBRider;
 import com.github.database.rider.junit5.model.User;
-import com.github.database.rider.junit5.util.EntityManagerProvider;
+import com.github.database.rider.core.util.EntityManagerProvider;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.platform.runner.JUnitPlatform;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 public class ParameterizedIt {
 
     private ConnectionHolder connectionHolder = () ->
-            com.github.database.rider.junit5.util.EntityManagerProvider.instance("junit5-pu").clear().connection();
+            com.github.database.rider.core.util.EntityManagerProvider.instance("junit5-pu").clear().connection();
 
     @DataSet(value = "users.yml", cleanBefore = true)
     @ParameterizedTest

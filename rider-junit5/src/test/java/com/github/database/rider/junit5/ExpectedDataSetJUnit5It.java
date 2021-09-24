@@ -7,14 +7,14 @@ import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.replacers.NullReplacer;
 import com.github.database.rider.junit5.model.Tweet;
 import com.github.database.rider.junit5.model.User;
-import com.github.database.rider.junit5.util.EntityManagerProvider;
+import com.github.database.rider.core.util.EntityManagerProvider;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
-import static com.github.database.rider.junit5.util.EntityManagerProvider.em;
+import static com.github.database.rider.core.util.EntityManagerProvider.em;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DBUnitExtension.class)

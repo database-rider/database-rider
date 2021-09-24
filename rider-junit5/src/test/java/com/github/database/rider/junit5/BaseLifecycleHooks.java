@@ -5,7 +5,7 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.junit5.model.Tweet;
 import com.github.database.rider.junit5.model.User;
-import com.github.database.rider.junit5.util.EntityManagerProvider;
+import com.github.database.rider.core.util.EntityManagerProvider;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;

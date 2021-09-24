@@ -25,7 +25,7 @@ public class EntityManagerDynamicOverrideTestIt {
     private static final String PROP_KEY_DRIVER = "javax.persistence.jdbc.driver";
     private static final String PROP_KEY_USER = "javax.persistence.jdbc.user";
     private static final String PROP_KEY_PASSWORD = "javax.persistence.jdbc.password";
-    private static Map<String,String> systemConfigOverridingProps= new HashMap<String, String>() {{
+    private static Map<String,Object> systemConfigOverridingProps= new HashMap<String, Object>() {{
         put(PROP_KEY_URL, PROP_VALUE_URL);
         put(PROP_KEY_DRIVER,  "org.hsqldb.jdbc.JDBCDriver");
         put(PROP_KEY_USER, "sa");

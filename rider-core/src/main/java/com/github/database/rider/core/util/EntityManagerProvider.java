@@ -33,13 +33,13 @@ public class EntityManagerProvider implements TestRule {
 
     private static PropertyResolutionUtil propertyResolutionUtil = new PropertyResolutionUtil();
     
-    private static Map<String, String> overridingProperties;
+    private static Map<String, Object> overridingProperties;
     
     private static EntityManagerProvider instance;
 
     private static Logger log = LoggerFactory.getLogger(EntityManagerProvider.class);
 
-    private EntityManagerProvider() {
+    protected EntityManagerProvider() {
     }
     
     public static synchronized EntityManagerProvider instance(String unitName) {
@@ -63,14 +63,25 @@ public class EntityManagerProvider implements TestRule {
      *
      * @param unitName unit name
      * @param overridingPersistenceProps properties to override persistence.xml props or define additions to them
-     *
      * @return EntityManagerProvider instance
      */
-    public static synchronized EntityManagerProvider instance(String unitName, Map<String,String> overridingPersistenceProps) {
+    public static synchronized EntityManagerProvider instance(String unitName,
+            Map<String, Object> overridingPersistenceProps) {
         overridingProperties = overridingPersistenceProps;
         return instance(unitName);
     }
-    
+
+    /**
+     * @param unitName
+     * @param overridingPersistenceProps
+     * clear entities on underlying context
+     * @return a clean EntityManagerProvider
+     */
+    public static synchronized EntityManagerProvider newInstance(String unitName, Map<String, Object> overridingPersistenceProps) {
+        overridingProperties = overridingPersistenceProps;
+        return newInstance(unitName);
+    }
+
     /**
      * @param unitName unit name
      * clear entities on underlying context
@@ -91,7 +102,7 @@ public class EntityManagerProvider implements TestRule {
     private void init(String unitName) {
         if (emf == null) {
             log.debug("creating emf for unit {}", unitName);
-            Map<String,String> dbConfig = getDbPropertyConfig();
+            Map<String, Object> dbConfig = getDbPropertyConfig();
             log.debug("using dbConfig '{}' to create emf", dbConfig);
             emf = dbConfig == null ? Persistence.createEntityManagerFactory(unitName) : Persistence.createEntityManagerFactory(unitName, dbConfig);
             em =  emf.createEntityManager();
@@ -117,7 +128,7 @@ public class EntityManagerProvider implements TestRule {
         return connection;
     }
 
-    private Map<String, String> getDbPropertyConfig() {
+    private Map<String, Object> getDbPropertyConfig() {
         if(overridingProperties == null) {
             return propertyResolutionUtil.getSystemJavaxPersistenceOverrides();
         }
@@ -125,7 +136,6 @@ public class EntityManagerProvider implements TestRule {
     }
 
     /**
-     *
      * @param puName unit name
      * @return jdbc connection of provider instance represented by given puName
      */
@@ -134,8 +144,7 @@ public class EntityManagerProvider implements TestRule {
     }
 
     /**
-     *
-     * @return jdbc connection of current provider instance
+     * @return jdbc conection of current provider instance
      */
     public Connection connection() {
         checkInstance();
@@ -150,7 +159,6 @@ public class EntityManagerProvider implements TestRule {
     }
 
     /**
-     *
      * @param puName unit name
      * @return entityManager represented by given puName
      */
@@ -159,7 +167,6 @@ public class EntityManagerProvider implements TestRule {
     }
 
     /**
-     *
      * @param puName unit name
      * @return entityManagerFactory represented by given puName
      */
@@ -168,7 +175,6 @@ public class EntityManagerProvider implements TestRule {
     }
 
     /**
-     *
      * @return entityManager of current instance of this provider
      */
     public static EntityManager em() {
@@ -193,8 +199,8 @@ public class EntityManagerProvider implements TestRule {
     }
 
     /**
-     * @param puName unit name
-     * clears entityManager persistence context and entityManager factory cache represented by given puName
+     * @param puName unit name clears entityManager persistence context and entityManager factory cache represented by
+     *               given puName
      * @return provider represented by puName
      */
     public static EntityManagerProvider clear(String puName){
@@ -222,7 +228,6 @@ public class EntityManagerProvider implements TestRule {
     }
 
     /**
-     *
      * @return transaction of entityManager of current instance of this provider
      */
     public static EntityTransaction tx() {

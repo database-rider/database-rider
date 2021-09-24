@@ -10,10 +10,9 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
 import java.util.List;
-
-import static com.github.database.rider.junit5.util.EntityManagerProvider.em;
-import static com.github.database.rider.junit5.util.EntityManagerProvider.instance;
-import static com.github.database.rider.junit5.util.EntityManagerProvider.tx;
+import static com.github.database.rider.core.util.EntityManagerProvider.em;
+import static com.github.database.rider.core.util.EntityManagerProvider.instance;
+import static com.github.database.rider.core.util.EntityManagerProvider.tx;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**

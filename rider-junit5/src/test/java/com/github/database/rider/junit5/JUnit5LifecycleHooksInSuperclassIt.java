@@ -7,7 +7,7 @@ import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.github.database.rider.junit5.api.DBRider;
 import com.github.database.rider.junit5.model.Tweet;
 import com.github.database.rider.junit5.model.User;
-import com.github.database.rider.junit5.util.EntityManagerProvider;
+import com.github.database.rider.core.util.EntityManagerProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;

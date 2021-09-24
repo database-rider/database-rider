@@ -7,7 +7,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.junit5.util.EntityManagerProvider;
+import com.github.database.rider.core.util.EntityManagerProvider;
 import com.github.database.rider.junit5.model.User;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;

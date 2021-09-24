@@ -63,14 +63,14 @@ public class PropertyResolutionUtilTest {
     
     @Test
     public void testMergeFilteredMapsWithNoMapsAtAll() {
-        Map<String, String> filteredMap = systemUnderTest.mergeFilteredMaps(null, null);
+        Map<String, Object> filteredMap = systemUnderTest.mergeFilteredMaps(null, null);
         
         Assert.assertNull(filteredMap);
     }
     
     @Test
     public void testMergeFilteredMapsWithNoPersistenceProps() {
-        Map<String, String> filteredMap = systemUnderTest.mergeFilteredMaps(null, new HashMap<String, String>() {{
+        Map<String, Object> filteredMap = systemUnderTest.mergeFilteredMaps(null, new HashMap<String, Object>() {{
             put("a", "b");
             put("b", "c");
         }});
@@ -80,7 +80,7 @@ public class PropertyResolutionUtilTest {
     
     @Test
     public void testMergeFilteredMapsWithNoPersistencePropsVariant2() {
-        Map<String, String> filteredMap = systemUnderTest.mergeFilteredMaps( new HashMap<String, String>() {{
+        Map<String, Object> filteredMap = systemUnderTest.mergeFilteredMaps( new HashMap<String, Object>() {{
             put("a", "b");
             put("b", "c");
         }}, null);
@@ -90,10 +90,10 @@ public class PropertyResolutionUtilTest {
     
     @Test
     public void testMergeFilteredMapsWithNoPersistencePropsVariant3() {
-        Map<String, String> filteredMap = systemUnderTest.mergeFilteredMaps( new HashMap<String, String>() {{
+        Map<String, Object> filteredMap = systemUnderTest.mergeFilteredMaps( new HashMap<String, Object>() {{
                 put("a", "b");
                 put("b", "c");
-            }}, new HashMap<String, String>() {{
+            }}, new HashMap<String, Object>() {{
                 put("a", "b");
                 put("b", "c");
         }});
@@ -105,7 +105,7 @@ public class PropertyResolutionUtilTest {
     public void testMergeFilteredMapsWithOnePersistenceProp() {
         final String EXPECTED_PROPERTY_KEY = "javax.persistence.jdbc.url";
         final String EXPECTED_PROPERTY_VALUE = "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1";
-        Map<String, String> filteredMap = systemUnderTest.mergeFilteredMaps(null, new HashMap<String, String>() {{
+        Map<String, Object> filteredMap = systemUnderTest.mergeFilteredMaps(null, new HashMap<String, Object>() {{
             put(EXPECTED_PROPERTY_KEY, EXPECTED_PROPERTY_VALUE);
             put("b", "c");
         }});
@@ -120,7 +120,7 @@ public class PropertyResolutionUtilTest {
     public void testMergeFilteredMapsWithOnePersistencePropVariant2() {
         final String EXPECTED_PROPERTY_KEY = "javax.persistence.jdbc.url";
         final String EXPECTED_PROPERTY_VALUE = "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1";
-        Map<String, String> filteredMap = systemUnderTest.mergeFilteredMaps( new HashMap<String, String>() {{
+        Map<String, Object> filteredMap = systemUnderTest.mergeFilteredMaps( new HashMap<String, Object>() {{
             put(EXPECTED_PROPERTY_KEY, EXPECTED_PROPERTY_VALUE);
             put("b", "c");
         }}, null);
@@ -135,7 +135,7 @@ public class PropertyResolutionUtilTest {
     public void testMergeFilteredMapsWithOneHibernateProp() {
         final String EXPECTED_PROPERTY_KEY = "hibernate.connection.url";
         final String EXPECTED_PROPERTY_VALUE = "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1";
-        Map<String, String> filteredMap = systemUnderTest.mergeFilteredMaps(null, new HashMap<String, String>() {{
+        Map<String, Object> filteredMap = systemUnderTest.mergeFilteredMaps(null, new HashMap<String, Object>() {{
             put(EXPECTED_PROPERTY_KEY, EXPECTED_PROPERTY_VALUE);
             put("b", "c");
         }});
@@ -151,11 +151,11 @@ public class PropertyResolutionUtilTest {
         final String EXPECTED_PROPERTY_KEY = "javax.persistence.jdbc.url";
         final String EXPECTED_PROPERTY_VALUE_ENV = "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1";
         final String EXPECTED_PROPERTY_VALUE_RUNTIME_ARGS = "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=0";
-        Map<String, String> filteredMap = systemUnderTest.mergeFilteredMaps(new HashMap<String, String>() {{
+        Map<String, Object> filteredMap = systemUnderTest.mergeFilteredMaps(new HashMap<String, Object>() {{
                 put(EXPECTED_PROPERTY_KEY, EXPECTED_PROPERTY_VALUE_ENV);
                 put("b", "c");
             }},
-            new HashMap<String, String>() {{
+            new HashMap<String, Object>() {{
                 put(EXPECTED_PROPERTY_KEY, EXPECTED_PROPERTY_VALUE_RUNTIME_ARGS);
                 put("b", "c");
         }});
@@ -178,14 +178,14 @@ public class PropertyResolutionUtilTest {
         System.setProperty("hibernate.connection.url", "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1");
         System.setProperty("eclipselink.connection.url", "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1");
         System.setProperty("openjpa.connection.url", "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1");
-        Map<String, String> systemJavaxPersistenceOverrides = systemUnderTest.getSystemJavaxPersistenceOverrides();
+        Map<String, Object> systemJavaxPersistenceOverrides = systemUnderTest.getSystemJavaxPersistenceOverrides();
         Assert.assertNotNull(systemJavaxPersistenceOverrides);
         Assert.assertTrue(systemJavaxPersistenceOverrides.size() == 5);
     }
     
     @Test
     public void testPersistencePropertiesOverridesReturnsNull() {
-        Map<String, String> systemJavaxPersistenceOverrides = systemUnderTest.persistencePropertiesOverrides(new HashMap<String, String>() {{
+        Map<String, Object> systemJavaxPersistenceOverrides = systemUnderTest.persistencePropertiesOverrides(new HashMap<String, Object>() {{
             put("a", "b");
             put("b", "c");
         }});
@@ -197,7 +197,7 @@ public class PropertyResolutionUtilTest {
         final String EXPECTED_PROPERTY_KEY = "javax.persistence.jdbc.url";
         final String EXPECTED_PROPERTY_VALUE = "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1";
         
-        Map<String, String> propertiesOverrides = systemUnderTest.persistencePropertiesOverrides(new HashMap<String, String>() {{
+        Map<String, Object> propertiesOverrides = systemUnderTest.persistencePropertiesOverrides(new HashMap<String, Object>() {{
             put(EXPECTED_PROPERTY_KEY,EXPECTED_PROPERTY_VALUE);
             put("b", "c");
         }});
