@@ -213,10 +213,13 @@ public class EntityManagerProvider implements TestRule {
      * clears entityManager persistence context and entity manager factory cache of current instance of this provider
      * @return current provider
      */
-    public static EntityManagerProvider clear(){
-        em().clear();
-        emf().getCache().evictAll();
-        return instance;
+    public static EntityManagerProvider clear() {
+        if (isEntityManagerActive()) {
+            em().clear();
+            emf().getCache().evictAll();
+            return instance;
+        }
+        return null;
     }
 
     /**
