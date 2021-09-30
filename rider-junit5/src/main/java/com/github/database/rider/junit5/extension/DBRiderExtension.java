@@ -1,4 +1,4 @@
-package com.github.database.rider.junit5;
+package com.github.database.rider.junit5.extension;
 
 import static com.github.database.rider.junit5.jdbc.ConnectionManager.getConfiguredDataSourceBeanName;
 import static com.github.database.rider.junit5.jdbc.ConnectionManager.getTestConnection;
@@ -44,21 +44,17 @@ import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.leak.LeakHunterFactory;
-import com.github.database.rider.junit5.extension.DBRiderExtension;
-import com.github.database.rider.junit5.util.EntityManagerProvider;
+import com.github.database.rider.core.util.EntityManagerProvider;
+import com.github.database.rider.junit5.DBUnitTestContext;
 
 /**
  * Created by pestano on 27/08/16.
  */
-@Deprecated
-/**
- * use {@link DBRiderExtension} instead
- * */
-public class DBUnitExtension
+public class DBRiderExtension
         implements BeforeTestExecutionCallback, AfterTestExecutionCallback, BeforeEachCallback, AfterEachCallback,
         BeforeAllCallback, AfterAllCallback {
 
-    private static final Logger LOG = Logger.getLogger(DBUnitExtension.class.getName());
+    private static final Logger LOG = Logger.getLogger(DBRiderExtension.class.getName());
 
     @Override
     public void beforeTestExecution(ExtensionContext extensionContext) throws Exception {

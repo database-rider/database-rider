@@ -1,7 +1,7 @@
-package com.github.database.rider.junit5;
+package com.github.database.rider.junit5.extension;
 
-import static com.github.database.rider.junit5.util.EntityManagerProvider.em;
-import static com.github.database.rider.junit5.util.EntityManagerProvider.isEntityManagerActive;
+import static com.github.database.rider.core.util.EntityManagerProvider.em;
+import static com.github.database.rider.core.util.EntityManagerProvider.isEntityManagerActive;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -16,7 +16,6 @@ import org.junit.platform.commons.util.AnnotationUtils;
 import com.github.database.rider.core.AbstractRiderTestContext;
 import com.github.database.rider.core.api.dataset.DataSetExecutor;
 
-@Deprecated
 public class JUnit5RiderTestContext extends AbstractRiderTestContext {
 
     private final ExtensionContext extensionContext;
