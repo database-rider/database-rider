@@ -3,7 +3,7 @@ package com.github.database.rider.junit5;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
-import com.github.database.rider.junit5.incubating.DBRiderExtension;
+import com.github.database.rider.junit5.incubating.DBUnitExtension;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 /**
  * Created by rafael-pestano on 13/09/2016.
  */
-@ExtendWith(DBRiderExtension.class)
+@ExtendWith(DBUnitExtension.class)
 @RunWith(JUnitPlatform.class)
 @DBUnit(url = "jdbc:hsqldb:mem:flyway;DB_CLOSE_DELAY=-1", driver = "org.hsqldb.jdbcDriver", user = "sa")
 public class FlywayIt {

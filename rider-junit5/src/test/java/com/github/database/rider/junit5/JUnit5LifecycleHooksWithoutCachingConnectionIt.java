@@ -4,7 +4,7 @@ import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.util.EntityManagerProvider;
-import com.github.database.rider.junit5.incubating.Rider;
+import com.github.database.rider.junit5.incubating.DBRider;
 import com.github.database.rider.junit5.model.Tweet;
 import com.github.database.rider.junit5.model.User;
 import org.junit.jupiter.api.*;
@@ -15,7 +15,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Rider
+@DBRider
 @RunWith(JUnitPlatform.class)
 @DBUnit(url = "jdbc:hsqldb:mem:junit5;DB_CLOSE_DELAY=-1", driver = "org.hsqldb.jdbcDriver", user = "sa", cacheConnection = false)
 public class JUnit5LifecycleHooksWithoutCachingConnectionIt {

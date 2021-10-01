@@ -3,7 +3,7 @@ package com.github.database.rider.junit5;
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.util.EntityManagerProvider;
-import com.github.database.rider.junit5.incubating.DBRiderExtension;
+import com.github.database.rider.junit5.incubating.DBUnitExtension;
 import com.github.database.rider.junit5.model.User;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.fail;
 /**
  * Created by pestano on 26/02/16.
  */
-@ExtendWith(DBRiderExtension.class)
+@ExtendWith(DBUnitExtension.class)
 @RunWith(JUnitPlatform.class)
 public class CleanBeforeAfterIt {
 

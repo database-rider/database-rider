@@ -21,8 +21,8 @@ import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
  * It will be removed with the database-rider 2.0.0 release <br/>
  *
  * You can use {@link com.github.database.rider.core.util.EntityManagerProvider} for testing purposes. <br/>
- * Use in this case temporarily {@link com.github.database.rider.junit5.incubating.DBRiderExtension} instead of {@link com.github.database.rider.junit5.DBUnitExtension} <br/>
- * And use {@link com.github.database.rider.junit5.incubating.Rider} instead of {@link com.github.database.rider.junit5.api.DBRider} <br/>
+ * Use in this case temporarily {@link com.github.database.rider.junit5.incubating.DBUnitExtension} instead of {@link com.github.database.rider.junit5.DBUnitExtension} <br/>
+ * And use {@link com.github.database.rider.junit5.incubating.DBRider} instead of {@link com.github.database.rider.junit5.api.DBRider} <br/>
  * DBRiderExtension and @Rider are help classes to ensure backwards compatibility during the <2.0.0 release and will be removed in the 2.0.0 Release.
  * */
 @Deprecated

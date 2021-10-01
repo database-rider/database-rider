@@ -43,11 +43,11 @@ import static java.lang.String.format;
 /**
  * Created by pestano on 27/08/16.
  */
-public class DBRiderExtension
+public class DBUnitExtension
         implements BeforeTestExecutionCallback, AfterTestExecutionCallback, BeforeEachCallback, AfterEachCallback,
         BeforeAllCallback, AfterAllCallback {
 
-    private static final Logger LOG = Logger.getLogger(DBRiderExtension.class.getName());
+    private static final Logger LOG = Logger.getLogger(DBUnitExtension.class.getName());
 
     @Override
     public void beforeTestExecution(ExtensionContext extensionContext) throws Exception {

@@ -1,7 +1,7 @@
 package com.github.database.rider.junit5;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.junit5.incubating.Rider;
+import com.github.database.rider.junit5.incubating.DBRider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.platform.runner.JUnitPlatform;
@@ -51,7 +51,7 @@ public class DBRiderSpringDataSourceIt {
         jdbcTemplatePrimary = new JdbcTemplate(dataSourcePrimary);
     }
 
-    @Rider(dataSourceBeanName = "data-source-1")
+    @DBRider(dataSourceBeanName = "data-source-1")
     @DataSet(value = "entity-ds1-test.yml")
     public void shouldPopulateDataSource1() {
         Set<String> expected = new HashSet<>(Arrays.asList("value1", "value2"));
@@ -60,7 +60,7 @@ public class DBRiderSpringDataSourceIt {
         assertThat(actual).containsExactlyElementsOf(expected);
     }
 
-    @Rider(dataSourceBeanName = "data-source-2")
+    @DBRider(dataSourceBeanName = "data-source-2")
     @DataSet(value = "entity-ds2-test.yml")
     @Disabled("Spring users must use the Deprecated @DBRider Annotation here")
     public void shouldPopulateDataSource2() {
@@ -70,7 +70,7 @@ public class DBRiderSpringDataSourceIt {
         assertThat(actual).containsExactlyElementsOf(expected);
     }
 
-    @Rider
+    @DBRider
     @DataSet(value = "entity-ds1-test.yml", executorId = "primary-ds-executor")
     public void shouldPopulateDataSourcePrimary() {
         Set<String> expected = new HashSet<>(Arrays.asList("value1", "value2"));

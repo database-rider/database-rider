@@ -5,7 +5,7 @@ import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.github.database.rider.core.util.EntityManagerProvider;
-import com.github.database.rider.junit5.incubating.Rider;
+import com.github.database.rider.junit5.incubating.DBRider;
 import com.github.database.rider.junit5.model.Tweet;
 import com.github.database.rider.junit5.model.User;
 import org.junit.jupiter.api.AfterEach;
@@ -25,7 +25,7 @@ public class MergeDataSetsJUnit5It {
     private ConnectionHolder connectionHolder = ()
             -> EntityManagerProvider.instance("junit5-pu").connection();
 
-    @Rider
+    @DBRider
     @DataSet(value = "users.yml", executeScriptsAfter = "tweets.sql", cleanBefore = true,
             executeStatementsBefore = "INSERT INTO USER VALUES (9,'user9')", strategy = SeedStrategy.INSERT)
     public void shouldMergeDataSetsFromClassAndMethod() {

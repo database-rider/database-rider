@@ -1,6 +1,5 @@
 package com.github.database.rider.junit5.incubating;
 
-import com.github.database.rider.junit5.incubating.DBRiderExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -16,9 +15,9 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@ExtendWith(DBRiderExtension.class)
+@ExtendWith(DBUnitExtension.class)
 @Test
-public @interface Rider {
+public @interface DBRider {
 
     /**
      * @return name of the DataSource bean in Spring Context.

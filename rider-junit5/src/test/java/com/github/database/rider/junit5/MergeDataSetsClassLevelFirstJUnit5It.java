@@ -5,7 +5,7 @@ import com.github.database.rider.core.api.configuration.DataSetMergingStrategy;
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.util.EntityManagerProvider;
-import com.github.database.rider.junit5.incubating.Rider;
+import com.github.database.rider.junit5.incubating.DBRider;
 import com.github.database.rider.junit5.model.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.platform.runner.JUnitPlatform;
@@ -25,7 +25,7 @@ public class MergeDataSetsClassLevelFirstJUnit5It {
     private ConnectionHolder connectionHolder = ()
             -> EntityManagerProvider.instance("junit5-pu").connection();
 
-    @Rider
+    @DBRider
     @DataSet(value = "users.yml", cleanAfter = false) //clean after is overridden by merging dataset
     public void shouldMergeDataSetsFromClassAndMethod() {
         List<User> users = em().createQuery("select u from User u").getResultList();

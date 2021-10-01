@@ -5,7 +5,7 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetFormat;
 import com.github.database.rider.core.api.exporter.ExportDataSet;
 import com.github.database.rider.core.util.EntityManagerProvider;
-import com.github.database.rider.junit5.incubating.DBRiderExtension;
+import com.github.database.rider.junit5.incubating.DBUnitExtension;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.contentOf;
  * Created by pestano on 23/07/15.
  */
 
-@ExtendWith(DBRiderExtension.class)
+@ExtendWith(DBUnitExtension.class)
 @RunWith(JUnitPlatform.class)
 public class ExportDataSetJUnit5It {
 

@@ -4,7 +4,7 @@ import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.util.EntityManagerProvider;
-import com.github.database.rider.junit5.incubating.Rider;
+import com.github.database.rider.junit5.incubating.DBRider;
 import com.github.database.rider.junit5.model.schema.User;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
@@ -23,14 +23,14 @@ public class DBUnitJUnit5ChemaIt {
             EntityManagerProvider.instance("schema-pu").clear().connection();
 
 
-    @Rider
+    @DBRider
     @DataSet(value = "usersWithTweetAndSchema.yml", executorId = "schemaIt")
     public void shouldListUsers() {
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
         assertThat(users).isNotNull().isNotEmpty().hasSize(2);
     }
 
-    @Rider
+    @DBRider
     @DataSet(value = "usersWithTweetAndSchema.yml", executorId = "schemaIt")
     //no need for clean before because DBUnit uses CLEAN_INSERT seeding strategy which clears involved tables before seeding
     public void shouldUpdateUser() {
@@ -44,7 +44,7 @@ public class DBUnitJUnit5ChemaIt {
         assertThat(updatedUser.getName()).isEqualTo("@rmpestano");
     }
 
-    @Rider
+    @DBRider
     @DataSet(value = "usersWithTweetAndSchema.yml", transactional = true, cleanBefore = true, executorId = "schemaIt")
     @ExpectedDataSet("expectedUser.yml")
     public void shouldDeleteUser() {

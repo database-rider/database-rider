@@ -3,7 +3,7 @@ package com.github.database.rider.junit5;
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.util.EntityManagerProvider;
-import com.github.database.rider.junit5.incubating.Rider;
+import com.github.database.rider.junit5.incubating.DBRider;
 import com.github.database.rider.junit5.model.User;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
@@ -23,7 +23,7 @@ public class DBRiderAnnotationIt {
 
 
     //tag::junit5-annotation[]
-    @Rider //shortcut for @ExtendWith(DBUnitExtension.class) and @Test
+    @DBRider //shortcut for @ExtendWith(DBUnitExtension.class) and @Test
     @DataSet(value = "usersWithTweet.yml")
     public void shouldListUsers() {
         List users = EntityManagerProvider.em().
