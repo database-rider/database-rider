@@ -1834,6 +1834,12 @@ public class DBUnitJUnit5Test {
 
 [IMPORTANT]
 ====
+If you use the EntityManagerProducer in your junit5 tests ensure to use the class from the package `com.github.database.rider.junit5.util`. This class works but is marked as @Deprecated and will be removed in the 2.0.0 release. For testing purposes you can try the 'new one' from `com.github.database.rider.core.util`. To make this working you need to import '@DBRider' and DBUnitExtension from the `com.github.database.rider.junit5.incubating` packages. Don't forget to set these imports to their defaults when version 2.0.0 is released.
+
+====
+
+[IMPORTANT]
+====
 
 If you use SpringBoot extension for JUnit5 you don't need to declare the field or method, see an https://github.com/database-rider/database-rider/blob/master/rider-examples/spring-boot-dbunit-sample/src/test/java/com/github/database/rider/springboot/SpringBootDBUnitTest.java#L19[example here^].
 
