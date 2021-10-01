@@ -7,6 +7,7 @@ import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.dataset.builder.ColumnSpec;
 import com.github.database.rider.core.dataset.builder.DataSetBuilder;
 import com.github.database.rider.core.util.EntityManagerProvider;
+import com.github.database.rider.junit5.incubating.DBRiderExtension;
 import com.github.database.rider.junit5.model.Tweet;
 import com.github.database.rider.junit5.model.User;
 import com.github.database.rider.junit5.model.User_;
@@ -24,7 +25,7 @@ import static com.github.database.rider.core.util.EntityManagerProvider.em;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(JUnitPlatform.class)
-@ExtendWith(DBUnitExtension.class)
+@ExtendWith(DBRiderExtension.class)
 @DataSet(provider = DataSetProviderIt.TweetDataSetProvider.class, cleanBefore = true)
 public class DataSetProviderIt {
 

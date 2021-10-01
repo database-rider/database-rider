@@ -1,35 +1,4 @@
-package com.github.database.rider.junit5.extension;
-
-import static com.github.database.rider.junit5.jdbc.ConnectionManager.getConfiguredDataSourceBeanName;
-import static com.github.database.rider.junit5.jdbc.ConnectionManager.getTestConnection;
-import static com.github.database.rider.junit5.util.Constants.*;
-import static java.lang.String.format;
-
-import java.lang.reflect.Method;
-import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Stream;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.dbunit.DatabaseUnitException;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
-import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.ExtensionContext.Store;
-import org.junit.platform.commons.util.AnnotationUtils;
-import org.junit.platform.commons.util.StringUtils;
+package com.github.database.rider.junit5.incubating;
 
 import com.github.database.rider.core.RiderRunner;
 import com.github.database.rider.core.RiderTestContext;
@@ -46,6 +15,30 @@ import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.leak.LeakHunterFactory;
 import com.github.database.rider.core.util.EntityManagerProvider;
 import com.github.database.rider.junit5.DBUnitTestContext;
+import org.apache.commons.collections.CollectionUtils;
+import org.dbunit.DatabaseUnitException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.*;
+import org.junit.jupiter.api.extension.ExtensionContext.Store;
+import org.junit.platform.commons.util.AnnotationUtils;
+import org.junit.platform.commons.util.StringUtils;
+
+import java.lang.reflect.Method;
+import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
+
+import static com.github.database.rider.junit5.jdbc.ConnectionManager.getConfiguredDataSourceBeanName;
+import static com.github.database.rider.junit5.jdbc.ConnectionManager.getTestConnection;
+import static com.github.database.rider.junit5.util.Constants.*;
+import static java.lang.String.format;
 
 /**
  * Created by pestano on 27/08/16.
@@ -178,7 +171,7 @@ public class DBRiderExtension
     }
 
     private void executeDataSetForCallback(ExtensionContext extensionContext, Class callbackAnnotation,
-            Method callbackMethod) throws SQLException {
+                                           Method callbackMethod) throws SQLException {
         Class testClass = extensionContext.getTestClass().get();
         // get DataSet annotation, if any
         Optional<DataSet> dataSetAnnotation = AnnotationUtils.findAnnotation(callbackMethod, DataSet.class);
@@ -226,7 +219,7 @@ public class DBRiderExtension
     }
 
     private void executeExpectedDataSetForCallback(ExtensionContext extensionContext, Class callbackAnnotation,
-            Method callbackMethod) throws DatabaseUnitException, SQLException {
+                                                   Method callbackMethod) throws DatabaseUnitException, SQLException {
         Class testClass = extensionContext.getTestClass().get();
         // get ExpectedDataSet annotation, if any
         Optional<ExpectedDataSet> expectedDataSetAnnotation = AnnotationUtils
@@ -252,7 +245,7 @@ public class DBRiderExtension
     }
 
     private DataSetExecutor resetExecutorConnectionIfNeeded(ExtensionContext extensionContext, Class callbackAnnotation,
-            DBUnitConfig dbUnitConfig, DataSetExecutor dataSetExecutor) {
+                                                            DBUnitConfig dbUnitConfig, DataSetExecutor dataSetExecutor) {
         if (!dbUnitConfig.isCacheConnection() && isAfterTestCallback(
                 callbackAnnotation)) { //we close the connection after test execution when cache is disabled so we
             // need a new one for the callback
@@ -270,7 +263,7 @@ public class DBRiderExtension
 
     // Resolve DBUnit config from annotation or file
     private DBUnitConfig resolveDbUnitConfig(Optional<Class> callbackAnnotation, Optional<Method> method,
-            Class testClass) {
+                                             Class testClass) {
         Optional<DBUnit> dbUnitAnnotation = AnnotationUtils.findAnnotation(method, DBUnit.class);
         if (!dbUnitAnnotation.isPresent()) {
             dbUnitAnnotation = AnnotationUtils.findAnnotation(testClass, DBUnit.class);
@@ -291,7 +284,7 @@ public class DBRiderExtension
 
     // Resolve dataSet annotation, merging class and method annotations if needed
     private DataSet resolveDataSet(Optional<DataSet> methodLevelDataSet, Optional<DataSet> classLevelDataSet,
-            DBUnitConfig config) {
+                                   DBUnitConfig config) {
         if (classLevelDataSet.isPresent()) {
             if (DataSetMergingStrategy.METHOD.equals(config.getMergingStrategy())) {
                 return com.github.database.rider.core.util.AnnotationUtils

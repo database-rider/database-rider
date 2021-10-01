@@ -4,7 +4,7 @@ import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.util.EntityManagerProvider;
-import com.github.database.rider.junit5.api.DBRider;
+import com.github.database.rider.junit5.incubating.Rider;
 import com.github.database.rider.junit5.model.schema.User;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
@@ -23,15 +23,16 @@ public class DBUnitJUnit5ChemaIt {
             EntityManagerProvider.instance("schema-pu").clear().connection();
 
 
-    @DBRider
+    @Rider
     @DataSet(value = "usersWithTweetAndSchema.yml", executorId = "schemaIt")
     public void shouldListUsers() {
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
         assertThat(users).isNotNull().isNotEmpty().hasSize(2);
     }
 
-    @DBRider
-    @DataSet(value = "usersWithTweetAndSchema.yml", executorId = "schemaIt") //no need for clean before because DBUnit uses CLEAN_INSERT seeding strategy which clears involved tables before seeding
+    @Rider
+    @DataSet(value = "usersWithTweetAndSchema.yml", executorId = "schemaIt")
+    //no need for clean before because DBUnit uses CLEAN_INSERT seeding strategy which clears involved tables before seeding
     public void shouldUpdateUser() {
         User user = (User) EntityManagerProvider.em().createQuery("select u from User u  where u.id = 1").getSingleResult();
         assertThat(user).isNotNull();
@@ -43,7 +44,7 @@ public class DBUnitJUnit5ChemaIt {
         assertThat(updatedUser.getName()).isEqualTo("@rmpestano");
     }
 
-    @DBRider
+    @Rider
     @DataSet(value = "usersWithTweetAndSchema.yml", transactional = true, cleanBefore = true, executorId = "schemaIt")
     @ExpectedDataSet("expectedUser.yml")
     public void shouldDeleteUser() {
@@ -55,8 +56,7 @@ public class DBUnitJUnit5ChemaIt {
     }
 
 
-
-    public User getUser(Long id){
+    public User getUser(Long id) {
         return (User) EntityManagerProvider.em().createQuery("select u from User u where u.id = :id").
                 setParameter("id", id).getSingleResult();
     }

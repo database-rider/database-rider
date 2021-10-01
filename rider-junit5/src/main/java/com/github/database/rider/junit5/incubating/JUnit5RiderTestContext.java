@@ -1,7 +1,10 @@
-package com.github.database.rider.junit5.extension;
+package com.github.database.rider.junit5.incubating;
 
-import static com.github.database.rider.core.util.EntityManagerProvider.em;
-import static com.github.database.rider.core.util.EntityManagerProvider.isEntityManagerActive;
+import com.github.database.rider.core.AbstractRiderTestContext;
+import com.github.database.rider.core.api.dataset.DataSetExecutor;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.platform.commons.util.AnnotationUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -9,12 +12,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Optional;
 
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.platform.commons.util.AnnotationUtils;
-
-import com.github.database.rider.core.AbstractRiderTestContext;
-import com.github.database.rider.core.api.dataset.DataSetExecutor;
+import static com.github.database.rider.core.util.EntityManagerProvider.em;
+import static com.github.database.rider.core.util.EntityManagerProvider.isEntityManagerActive;
 
 public class JUnit5RiderTestContext extends AbstractRiderTestContext {
 

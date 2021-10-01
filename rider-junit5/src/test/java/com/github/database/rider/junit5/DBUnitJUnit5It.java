@@ -3,6 +3,7 @@ package com.github.database.rider.junit5;
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
+import com.github.database.rider.junit5.incubating.DBRiderExtension;
 import com.github.database.rider.junit5.model.User;
 import com.github.database.rider.core.util.EntityManagerProvider;
 import org.junit.jupiter.api.*;
@@ -18,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Created by pestano on 28/08/16.
  */
 //tag::declaration[]
-@ExtendWith(DBUnitExtension.class) //<1>
+@ExtendWith(DBRiderExtension.class) //<1>
 @RunWith(JUnitPlatform.class) //<2>
 @DataSet(cleanBefore = true)
 public class DBUnitJUnit5It {

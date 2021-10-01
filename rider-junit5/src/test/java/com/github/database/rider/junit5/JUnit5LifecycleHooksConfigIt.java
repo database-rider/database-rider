@@ -2,7 +2,7 @@ package com.github.database.rider.junit5;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.util.EntityManagerProvider;
-import com.github.database.rider.junit5.api.DBRider;
+import com.github.database.rider.junit5.incubating.Rider;
 import com.github.database.rider.junit5.model.Tweet;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -19,7 +19,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DBRider
+@Rider
 @RunWith(JUnitPlatform.class)
 public class JUnit5LifecycleHooksConfigIt {
 
@@ -47,7 +47,7 @@ public class JUnit5LifecycleHooksConfigIt {
     @BeforeEach
     @DataSet(value = "tweetBeforeEach.yml", disableConstraints = true)
     public void shouldLoadDBUnitConfigViaCustomGlobalFile() {
-        List<Tweet> tweets =  EntityManagerProvider.em().createQuery("select t from Tweet t").getResultList();
+        List<Tweet> tweets = EntityManagerProvider.em().createQuery("select t from Tweet t").getResultList();
         assertThat(tweets).isNotNull()
                 .hasSize(1)
                 .extracting("content")

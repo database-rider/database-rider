@@ -4,6 +4,7 @@ import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.SeedStrategy;
 import com.github.database.rider.core.util.EntityManagerProvider;
+import com.github.database.rider.junit5.incubating.DBRiderExtension;
 import com.github.database.rider.junit5.model.User;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,7 +21,7 @@ import static org.assertj.core.api.Assertions.fail;
 /**
  * Created by pestano on 27/02/16.
  */
-@ExtendWith(DBUnitExtension.class)
+@ExtendWith(DBRiderExtension.class)
 @RunWith(JUnitPlatform.class)
 public class ScriptsIt {
 
@@ -41,14 +42,15 @@ public class ScriptsIt {
 
     @Test
     @DataSet(value = "users.yml", executeScriptsBefore = "users.sql",
-            executeScriptsAfter = "after.sql", strategy = SeedStrategy.INSERT)//NEED to be INSERT because clean will delete users inserted in script
+            executeScriptsAfter = "after.sql", strategy = SeedStrategy.INSERT)
+//NEED to be INSERT because clean will delete users inserted in script
     public void shouldExecuteScriptsBefore() {
         User userFromSqlScript = new User(10);
         List<User> users = listUsers("select u from User u where u.id = 6");
         assertThat(users).isNotNull().hasSize(0);//user insert in @Before was deleted by users.sql script
         users = listUsers("select u from User u");
         assertThat(users).isNotNull().hasSize(3)// two from users.yaml dataset and one from users.sql script
-        .contains(userFromSqlScript);
+                .contains(userFromSqlScript);
     }
 
     private List<User> listUsers(String sql) {

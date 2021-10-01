@@ -5,9 +5,10 @@ import com.github.database.rider.core.api.dataset.CompareOperation;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.replacers.NullReplacer;
+import com.github.database.rider.core.util.EntityManagerProvider;
+import com.github.database.rider.junit5.incubating.DBRiderExtension;
 import com.github.database.rider.junit5.model.Tweet;
 import com.github.database.rider.junit5.model.User;
-import com.github.database.rider.core.util.EntityManagerProvider;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +18,7 @@ import org.junit.runner.RunWith;
 import static com.github.database.rider.core.util.EntityManagerProvider.em;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(DBUnitExtension.class)
+@ExtendWith(DBRiderExtension.class)
 @RunWith(JUnitPlatform.class)
 public class ExpectedDataSetJUnit5It {
 
@@ -157,7 +158,6 @@ public class ExpectedDataSetJUnit5It {
     }
 
 
-
     @Test
     @DataSet(value = "user.yml", transactional = true)
     @ExpectedDataSet(value = "expectedUsersContainsColumns.yml", ignoreCols = "id", compareOperation = CompareOperation.CONTAINS)
@@ -188,7 +188,7 @@ public class ExpectedDataSetJUnit5It {
     @Test
     @DataSet(value = "empty.yml", transactional = true)
     @ExpectedDataSet(value = "null-replacements.yml", ignoreCols = "id",
-    replacers = NullReplacer.class)
+            replacers = NullReplacer.class)
     @Disabled("Fails randomly with 'ExpectedDataSetJUnit5It.shouldMatchExpectedDataSetNullReplacer value (table=TWEET, row=0, col=CONTENT) expected:<null> but was:<null>'")
     public void shouldMatchExpectedDataSetNullReplacer() {
         User u = new User();

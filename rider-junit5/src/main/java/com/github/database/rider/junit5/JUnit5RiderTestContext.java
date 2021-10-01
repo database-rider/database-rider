@@ -1,7 +1,10 @@
 package com.github.database.rider.junit5;
 
-import static com.github.database.rider.junit5.util.EntityManagerProvider.em;
-import static com.github.database.rider.junit5.util.EntityManagerProvider.isEntityManagerActive;
+import com.github.database.rider.core.AbstractRiderTestContext;
+import com.github.database.rider.core.api.dataset.DataSetExecutor;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.platform.commons.util.AnnotationUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -9,14 +12,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Optional;
 
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.platform.commons.util.AnnotationUtils;
+import static com.github.database.rider.junit5.util.EntityManagerProvider.em;
+import static com.github.database.rider.junit5.util.EntityManagerProvider.isEntityManagerActive;
 
-import com.github.database.rider.core.AbstractRiderTestContext;
-import com.github.database.rider.core.api.dataset.DataSetExecutor;
-
-@Deprecated
 public class JUnit5RiderTestContext extends AbstractRiderTestContext {
 
     private final ExtensionContext extensionContext;

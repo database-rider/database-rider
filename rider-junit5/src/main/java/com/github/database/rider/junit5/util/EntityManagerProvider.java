@@ -1,5 +1,6 @@
 package com.github.database.rider.junit5.util;
 
+import com.github.database.rider.core.util.PropertyResolutionUtil;
 import org.hibernate.Session;
 import org.hibernate.internal.SessionImpl;
 import org.slf4j.Logger;
@@ -15,9 +16,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
-
-import com.github.database.rider.core.util.PropertyResolutionUtil;
-
+/**
+ * This class is set to @Deprecated because it's duplicated from {@link com.github.database.rider.core.util.EntityManagerProvider}
+ * It will be removed with the database-rider 2.0.0 release <br/>
+ *
+ * You can use {@link com.github.database.rider.core.util.EntityManagerProvider} for testing purposes. <br/>
+ * Use in this case temporarily {@link com.github.database.rider.junit5.incubating.DBRiderExtension} instead of {@link com.github.database.rider.junit5.DBUnitExtension} <br/>
+ * And use {@link com.github.database.rider.junit5.incubating.Rider} instead of {@link com.github.database.rider.junit5.api.DBRider} <br/>
+ * DBRiderExtension and @Rider are help classes to ensure backwards compatibility during the <2.0.0 release and will be removed in the 2.0.0 Release.
+ * */
+@Deprecated
 public class EntityManagerProvider {
 
     private static Map<String, EntityManagerProvider> providers = new ConcurrentHashMap<>();//one emf per unit
@@ -64,7 +72,7 @@ public class EntityManagerProvider {
      * @return EntityManagerProvider instance
      */
     public static synchronized EntityManagerProvider instance(String unitName,
-            Map<String, Object> overridingPersistenceProps) {
+                                                              Map<String, Object> overridingPersistenceProps) {
         overridingProperties = overridingPersistenceProps;
         return instance(unitName);
     }
