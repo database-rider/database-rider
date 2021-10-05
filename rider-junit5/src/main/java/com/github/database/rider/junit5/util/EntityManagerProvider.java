@@ -64,6 +64,7 @@ public class EntityManagerProvider {
      * @param overridingPersistenceProps properties to override persistence.xml props or define additions to them
      * @return EntityManagerProvider instance
      */
+    @Deprecated //TODO: an existing instance will never be overridden if the  props have changed. Must be removed. Use newInstance instead.
     public static synchronized EntityManagerProvider instance(String unitName,
             Map<String, Object> overridingPersistenceProps) {
 
