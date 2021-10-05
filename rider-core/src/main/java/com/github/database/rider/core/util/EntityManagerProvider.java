@@ -71,6 +71,10 @@ public class EntityManagerProvider implements TestRule {
         return instance;
     }
 
+    public static void removeInstance(String unitName) {
+        providers.remove(unitName);
+    }
+
     /**
      * @param unitName
      * @param overridingPersistenceProps clear entities on underlying context
