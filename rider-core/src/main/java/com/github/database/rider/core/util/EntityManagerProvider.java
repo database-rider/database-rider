@@ -14,6 +14,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -32,21 +33,21 @@ public class EntityManagerProvider implements TestRule {
     private Connection conn;
 
     private static PropertyResolutionUtil propertyResolutionUtil = new PropertyResolutionUtil();
-    
+
     private static Map<String, Object> overridingProperties;
-    
+
     private static EntityManagerProvider instance;
 
     private static Logger log = LoggerFactory.getLogger(EntityManagerProvider.class);
 
     protected EntityManagerProvider() {
     }
-    
+
     public static synchronized EntityManagerProvider instance(String unitName) {
         instance = providers.get(unitName);
         if (instance == null) {
             instance = new EntityManagerProvider();
-            providers.put(unitName,instance);
+            providers.put(unitName, instance);
         }
 
         try {
@@ -57,24 +58,23 @@ public class EntityManagerProvider implements TestRule {
 
         return instance;
     }
-    
+
     /**
      * Allows to pass in overriding Properties that may be specific to the JPA Vendor.
      *
-     * @param unitName unit name
+     * @param unitName                   unit name
      * @param overridingPersistenceProps properties to override persistence.xml props or define additions to them
      * @return EntityManagerProvider instance
      */
     public static synchronized EntityManagerProvider instance(String unitName,
-            Map<String, Object> overridingPersistenceProps) {
+                                                              Map<String, Object> overridingPersistenceProps) {
         overridingProperties = overridingPersistenceProps;
         return instance(unitName);
     }
 
     /**
      * @param unitName
-     * @param overridingPersistenceProps
-     * clear entities on underlying context
+     * @param overridingPersistenceProps clear entities on underlying context
      * @return a clean EntityManagerProvider
      */
     public static synchronized EntityManagerProvider newInstance(String unitName, Map<String, Object> overridingPersistenceProps) {
@@ -84,12 +84,12 @@ public class EntityManagerProvider implements TestRule {
 
     /**
      * @param unitName unit name
-     * clear entities on underlying context
+     *                 clear entities on underlying context
      * @return a clean EntityManagerProvider
      */
     public static synchronized EntityManagerProvider newInstance(String unitName) {
-        instance =  new EntityManagerProvider();
-        providers.put(unitName,instance);
+        instance = new EntityManagerProvider();
+        providers.put(unitName, instance);
         try {
             instance.init(unitName);
         } catch (Exception e) {
@@ -99,13 +99,18 @@ public class EntityManagerProvider implements TestRule {
         return instance;
     }
 
+    public static void removeInstance(String unitName) {
+        overridingProperties = propertyResolutionUtil.persistencePropertiesOverrides(new HashMap<String, Object>());
+        providers.remove(unitName);
+    }
+
     private void init(String unitName) {
         if (emf == null) {
             log.debug("creating emf for unit {}", unitName);
             Map<String, Object> dbConfig = getDbPropertyConfig();
             log.debug("using dbConfig '{}' to create emf", dbConfig);
             emf = dbConfig == null ? Persistence.createEntityManagerFactory(unitName) : Persistence.createEntityManagerFactory(unitName, dbConfig);
-            em =  emf.createEntityManager();
+            em = emf.createEntityManager();
             conn = createConnection(em);
             tx = em.getTransaction();
         }
@@ -117,7 +122,7 @@ public class EntityManagerProvider implements TestRule {
         final EntityTransaction tx = em.getTransaction();
         if (isHibernateOnClasspath() && em.getDelegate() instanceof Session) {
             connection = ((SessionImpl) em.unwrap(Session.class)).connection();
-        } else{
+        } else {
             /**
              * see here:http://wiki.eclipse.org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager
              */
@@ -129,7 +134,7 @@ public class EntityManagerProvider implements TestRule {
     }
 
     private Map<String, Object> getDbPropertyConfig() {
-        if(overridingProperties == null) {
+        if (overridingProperties == null) {
             return propertyResolutionUtil.getSystemJavaxPersistenceOverrides();
         }
         return propertyResolutionUtil.persistencePropertiesOverrides(overridingProperties);
@@ -149,11 +154,11 @@ public class EntityManagerProvider implements TestRule {
     public Connection connection() {
         checkInstance();
         try {
-            if(instance.conn == null || instance.conn.isClosed()) {
+            if (instance.conn == null || instance.conn.isClosed()) {
                 instance.conn = createConnection(instance.em);
             }
         } catch (SQLException e) {
-           log.error("Could not create new jdbc connection.", e);
+            log.error("Could not create new jdbc connection.", e);
         }
         return instance.conn;
     }
@@ -186,7 +191,7 @@ public class EntityManagerProvider implements TestRule {
         return em();
     }
 
-    public static EntityManagerFactory emf(){
+    public static EntityManagerFactory emf() {
         return instance.emf;
     }
 
@@ -194,7 +199,7 @@ public class EntityManagerProvider implements TestRule {
         return instance.emf;
     }
 
-    public EntityManager getEm(String puName){
+    public EntityManager getEm(String puName) {
         return em(puName);
     }
 
@@ -203,7 +208,7 @@ public class EntityManagerProvider implements TestRule {
      *               given puName
      * @return provider represented by puName
      */
-    public static EntityManagerProvider clear(String puName){
+    public static EntityManagerProvider clear(String puName) {
         em(puName).clear();
         emf(puName).getCache().evictAll();
         return providers.get(puName);
@@ -211,6 +216,7 @@ public class EntityManagerProvider implements TestRule {
 
     /**
      * clears entityManager persistence context and entity manager factory cache of current instance of this provider
+     *
      * @return current provider
      */
     public static EntityManagerProvider clear() {
@@ -235,7 +241,7 @@ public class EntityManagerProvider implements TestRule {
      */
     public static EntityTransaction tx() {
         checkInstance();
-        if(instance.tx == null) {
+        if (instance.tx == null) {
             instance.tx = instance.em.getTransaction();
         }
         return instance.tx;
@@ -262,11 +268,12 @@ public class EntityManagerProvider implements TestRule {
     }
 
     private static void checkInstance() {
-        if(instance == null){
+        if (instance == null) {
             throw new IllegalStateException("Call instance('PU_NAME') before calling em()");
         }
     }
-    public static boolean isEntityManagerActive(){
+
+    public static boolean isEntityManagerActive() {
         return instance != null && em().isOpen();
     }
 }

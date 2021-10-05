@@ -78,6 +78,17 @@ public class EntityManagerProvider {
     }
 
     /**
+     * @param unitName
+     * @param overridingPersistenceProps
+     * clear entities on underlying context
+     * @return a clean EntityManagerProvider
+     */
+    public static synchronized EntityManagerProvider newInstance(String unitName, Map<String, Object> overridingPersistenceProps) {
+        overridingProperties = overridingPersistenceProps;
+        return newInstance(unitName);
+    }
+
+    /**
      * @param unitName unit name
      *                 clear entities on underlying context
      * @return a clean EntityManagerProvider
