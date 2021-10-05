@@ -1,5 +1,18 @@
 package com.github.database.rider.core.util;
 
+import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
+
 import org.hibernate.Session;
 import org.hibernate.internal.SessionImpl;
 import org.junit.rules.TestRule;
@@ -7,18 +20,6 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
 
 public class EntityManagerProvider implements TestRule {
 
@@ -34,8 +35,6 @@ public class EntityManagerProvider implements TestRule {
 
     private static PropertyResolutionUtil propertyResolutionUtil = new PropertyResolutionUtil();
 
-    private static Map<String, Object> overridingProperties;
-
     private static EntityManagerProvider instance;
 
     private static Logger log = LoggerFactory.getLogger(EntityManagerProvider.class);
@@ -44,19 +43,7 @@ public class EntityManagerProvider implements TestRule {
     }
 
     public static synchronized EntityManagerProvider instance(String unitName) {
-        instance = providers.get(unitName);
-        if (instance == null) {
-            instance = new EntityManagerProvider();
-            providers.put(unitName, instance);
-        }
-
-        try {
-            instance.init(unitName);
-        } catch (Exception e) {
-            log.error("Could not initialize persistence unit " + unitName, e);
-        }
-
-        return instance;
+        return instance(unitName, new HashMap<String, Object>());
     }
 
     /**
@@ -67,31 +54,16 @@ public class EntityManagerProvider implements TestRule {
      * @return EntityManagerProvider instance
      */
     public static synchronized EntityManagerProvider instance(String unitName,
-                                                              Map<String, Object> overridingPersistenceProps) {
-        overridingProperties = overridingPersistenceProps;
-        return instance(unitName);
-    }
+            Map<String, Object> overridingPersistenceProps) {
 
-    /**
-     * @param unitName
-     * @param overridingPersistenceProps clear entities on underlying context
-     * @return a clean EntityManagerProvider
-     */
-    public static synchronized EntityManagerProvider newInstance(String unitName, Map<String, Object> overridingPersistenceProps) {
-        overridingProperties = overridingPersistenceProps;
-        return newInstance(unitName);
-    }
+        instance = providers.get(unitName);
+        if (instance == null) {
+            instance = new EntityManagerProvider();
+            providers.put(unitName, instance);
+        }
 
-    /**
-     * @param unitName unit name
-     *                 clear entities on underlying context
-     * @return a clean EntityManagerProvider
-     */
-    public static synchronized EntityManagerProvider newInstance(String unitName) {
-        instance = new EntityManagerProvider();
-        providers.put(unitName, instance);
         try {
-            instance.init(unitName);
+            instance.init(unitName, overridingPersistenceProps);
         } catch (Exception e) {
             log.error("Could not initialize persistence unit " + unitName, e);
         }
@@ -99,17 +71,40 @@ public class EntityManagerProvider implements TestRule {
         return instance;
     }
 
-    public static void removeInstance(String unitName) {
-        overridingProperties = propertyResolutionUtil.persistencePropertiesOverrides(new HashMap<String, Object>());
-        providers.remove(unitName);
+    /**
+     * @param unitName
+     * @param overridingPersistenceProps clear entities on underlying context
+     * @return a clean EntityManagerProvider
+     */
+    public static synchronized EntityManagerProvider newInstance(String unitName,
+            Map<String, Object> overridingPersistenceProps) {
+        instance = new EntityManagerProvider();
+        providers.put(unitName, instance);
+        try {
+            instance.init(unitName, overridingPersistenceProps);
+        } catch (Exception e) {
+            log.error("Could not initialize persistence unit " + unitName, e);
+        }
+
+        return instance;
     }
 
-    private void init(String unitName) {
+    /**
+     * @param unitName unit name clear entities on underlying context
+     * @return a clean EntityManagerProvider
+     */
+    public static synchronized EntityManagerProvider newInstance(String unitName) {
+        return newInstance(unitName, new HashMap<String, Object>());
+    }
+
+    private void init(String unitName, Map<String, Object> props) {
         if (emf == null) {
             log.debug("creating emf for unit {}", unitName);
-            Map<String, Object> dbConfig = getDbPropertyConfig();
+            Map<String, Object> dbConfig = propertyResolutionUtil.persistencePropertiesOverrides(props);
             log.debug("using dbConfig '{}' to create emf", dbConfig);
-            emf = dbConfig == null ? Persistence.createEntityManagerFactory(unitName) : Persistence.createEntityManagerFactory(unitName, dbConfig);
+            emf = dbConfig == null ?
+                    Persistence.createEntityManagerFactory(unitName) :
+                    Persistence.createEntityManagerFactory(unitName, dbConfig);
             em = emf.createEntityManager();
             conn = createConnection(em);
             tx = em.getTransaction();
@@ -124,7 +119,8 @@ public class EntityManagerProvider implements TestRule {
             connection = ((SessionImpl) em.unwrap(Session.class)).connection();
         } else {
             /**
-             * see here:http://wiki.eclipse.org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager
+             * see here:http://wiki.eclipse
+             * .org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager
              */
             tx.begin();
             connection = em.unwrap(Connection.class);
@@ -133,12 +129,12 @@ public class EntityManagerProvider implements TestRule {
         return connection;
     }
 
-    private Map<String, Object> getDbPropertyConfig() {
-        if (overridingProperties == null) {
-            return propertyResolutionUtil.getSystemJavaxPersistenceOverrides();
-        }
-        return propertyResolutionUtil.persistencePropertiesOverrides(overridingProperties);
-    }
+    //    private Map<String, Object> getDbPropertyConfig() {
+    //        if (overridingProperties == null) {
+    //            return propertyResolutionUtil.getSystemJavaxPersistenceOverrides();
+    //        }
+    //        return propertyResolutionUtil.persistencePropertiesOverrides(overridingProperties);
+    //    }
 
     /**
      * @param puName unit name

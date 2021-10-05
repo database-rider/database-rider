@@ -1,30 +1,36 @@
 package com.github.database.rider.junit5.util;
 
-import com.github.database.rider.core.util.PropertyResolutionUtil;
-import org.hibernate.Session;
-import org.hibernate.internal.SessionImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
+import org.hibernate.Session;
+import org.hibernate.internal.SessionImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.github.database.rider.core.util.PropertyResolutionUtil;
+
 /**
- * This class is set to @Deprecated because it's duplicated from {@link com.github.database.rider.core.util.EntityManagerProvider}
- * It will be removed with the database-rider 2.0.0 release <br/>
- *
- * You can use {@link com.github.database.rider.core.util.EntityManagerProvider} for testing purposes. <br/>
- * Use in this case temporarily {@link com.github.database.rider.junit5.incubating.DBUnitExtension} instead of {@link com.github.database.rider.junit5.DBUnitExtension} <br/>
- * And use {@link com.github.database.rider.junit5.incubating.DBRider} instead of {@link com.github.database.rider.junit5.api.DBRider} <br/>
- * DBRiderExtension and @Rider are help classes to ensure backwards compatibility during the <2.0.0 release and will be removed in the 2.0.0 Release.
- * */
+ * This class is set to @Deprecated because it's duplicated from {@link EntityManagerProvider} It will be removed with
+ * the database-rider 2.0.0 release <br/>
+ * <p>
+ * You can use {@link EntityManagerProvider} for testing purposes. <br/> Use in this case temporarily {@link
+ * com.github.database.rider.junit5.incubating.DBUnitExtension} instead of
+ * {@link com.github.database.rider.junit5.DBUnitExtension}
+ * <br/> And use {@link com.github.database.rider.junit5.incubating.DBRider} instead of {@link
+ * com.github.database.rider.junit5.api.DBRider} <br/> DBRiderExtension and @Rider are help classes to ensure backwards
+ * compatibility during the <2.0.0 release and will be removed in the 2.0.0 Release.
+ */
 @Deprecated
 public class EntityManagerProvider {
 
@@ -40,28 +46,15 @@ public class EntityManagerProvider {
 
     private static PropertyResolutionUtil propertyResolutionUtil = new PropertyResolutionUtil();
 
-    private static Map<String, Object> overridingProperties;
-
     private static EntityManagerProvider instance;
 
     private static Logger log = LoggerFactory.getLogger(EntityManagerProvider.class);
 
-    private EntityManagerProvider() {
+    protected EntityManagerProvider() {
     }
 
     public static synchronized EntityManagerProvider instance(String unitName) {
-        instance = providers.get(unitName);
-        if (instance == null) {
-            instance = new EntityManagerProvider();
-            providers.put(unitName, instance);
-        }
-        try {
-            instance.init(unitName);
-        } catch (Exception e) {
-            log.error("Could not initialize persistence unit " + unitName, e);
-        }
-
-        return instance;
+        return instance(unitName, new HashMap<>());
     }
 
     /**
@@ -72,32 +65,16 @@ public class EntityManagerProvider {
      * @return EntityManagerProvider instance
      */
     public static synchronized EntityManagerProvider instance(String unitName,
-                                                              Map<String, Object> overridingPersistenceProps) {
-        overridingProperties = overridingPersistenceProps;
-        return instance(unitName);
-    }
+            Map<String, Object> overridingPersistenceProps) {
 
-    /**
-     * @param unitName
-     * @param overridingPersistenceProps
-     * clear entities on underlying context
-     * @return a clean EntityManagerProvider
-     */
-    public static synchronized EntityManagerProvider newInstance(String unitName, Map<String, Object> overridingPersistenceProps) {
-        overridingProperties = overridingPersistenceProps;
-        return newInstance(unitName);
-    }
+        instance = providers.get(unitName);
+        if (instance == null) {
+            instance = new EntityManagerProvider();
+            providers.put(unitName, instance);
+        }
 
-    /**
-     * @param unitName unit name
-     *                 clear entities on underlying context
-     * @return a clean EntityManagerProvider
-     */
-    public static synchronized EntityManagerProvider newInstance(String unitName) {
-        instance = new EntityManagerProvider();
-        providers.put(unitName, instance);
         try {
-            instance.init(unitName);
+            instance.init(unitName, overridingPersistenceProps);
         } catch (Exception e) {
             log.error("Could not initialize persistence unit " + unitName, e);
         }
@@ -105,10 +82,36 @@ public class EntityManagerProvider {
         return instance;
     }
 
-    private void init(String unitName) {
+    /**
+     * @param unitName
+     * @param overridingPersistenceProps clear entities on underlying context
+     * @return a clean EntityManagerProvider
+     */
+    public static synchronized EntityManagerProvider newInstance(String unitName,
+            Map<String, Object> overridingPersistenceProps) {
+        instance = new EntityManagerProvider();
+        providers.put(unitName, instance);
+        try {
+            instance.init(unitName, overridingPersistenceProps);
+        } catch (Exception e) {
+            log.error("Could not initialize persistence unit " + unitName, e);
+        }
+
+        return instance;
+    }
+
+    /**
+     * @param unitName unit name clear entities on underlying context
+     * @return a clean EntityManagerProvider
+     */
+    public static synchronized EntityManagerProvider newInstance(String unitName) {
+        return newInstance(unitName, new HashMap<String, Object>());
+    }
+
+    private void init(String unitName, Map<String, Object> props) {
         if (emf == null) {
             log.debug("creating emf for unit {}", unitName);
-            Map<String, Object> dbConfig = getDbPropertyConfig();
+            Map<String, Object> dbConfig = propertyResolutionUtil.persistencePropertiesOverrides(props);
             log.debug("using dbConfig '{}' to create emf", dbConfig);
             emf = dbConfig == null ?
                     Persistence.createEntityManagerFactory(unitName) :
@@ -127,7 +130,8 @@ public class EntityManagerProvider {
             connection = ((SessionImpl) em.unwrap(Session.class)).connection();
         } else {
             /**
-             * see here:http://wiki.eclipse.org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager
+             * see here:http://wiki.eclipse
+             * .org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager
              */
             tx.begin();
             connection = em.unwrap(Connection.class);
@@ -136,13 +140,12 @@ public class EntityManagerProvider {
         return connection;
     }
 
-    private Map<String, Object> getDbPropertyConfig() {
-        if (overridingProperties == null) {
-            return propertyResolutionUtil.getSystemJavaxPersistenceOverrides();
-        }
-
-        return propertyResolutionUtil.persistencePropertiesOverrides(overridingProperties);
-    }
+    //    private Map<String, Object> getDbPropertyConfig() {
+    //        if (overridingProperties == null) {
+    //            return propertyResolutionUtil.getSystemJavaxPersistenceOverrides();
+    //        }
+    //        return propertyResolutionUtil.persistencePropertiesOverrides(overridingProperties);
+    //    }
 
     /**
      * @param puName unit name
@@ -245,6 +248,9 @@ public class EntityManagerProvider {
      */
     public static EntityTransaction tx() {
         checkInstance();
+        if (instance.tx == null) {
+            instance.tx = instance.em.getTransaction();
+        }
         return instance.tx;
     }
 
