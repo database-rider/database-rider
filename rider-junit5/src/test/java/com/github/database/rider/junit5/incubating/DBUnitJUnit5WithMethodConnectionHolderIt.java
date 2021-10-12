@@ -1,8 +1,9 @@
-package com.github.database.rider.junit5;
+package com.github.database.rider.junit5.incubating;
 
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
+import com.github.database.rider.junit5.incubating.DBUnitExtension;
 import com.github.database.rider.junit5.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,7 +12,7 @@ import org.junit.runner.RunWith;
 
 import java.util.List;
 
-import static com.github.database.rider.junit5.util.EntityManagerProvider.*;
+import static com.github.database.rider.core.util.EntityManagerProvider.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -19,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @ExtendWith(DBUnitExtension.class)
 @RunWith(JUnitPlatform.class)
-public class DBUnitJUnit5WithMethodConnectionHolderItDeprecated {
+public class DBUnitJUnit5WithMethodConnectionHolderIt {
 
     //DBUnitExtension will get connection by reflection so either declare a field or a method with ConncetionHolder as return typr
     private ConnectionHolder getConnection() {

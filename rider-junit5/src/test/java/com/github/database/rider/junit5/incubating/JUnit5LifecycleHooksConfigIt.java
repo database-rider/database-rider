@@ -1,9 +1,8 @@
-package com.github.database.rider.junit5;
+package com.github.database.rider.junit5.incubating;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.junit5.api.DBRider;
+import com.github.database.rider.core.util.EntityManagerProvider;
 import com.github.database.rider.junit5.model.Tweet;
-import com.github.database.rider.junit5.util.EntityManagerProvider;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DBRider
 @RunWith(JUnitPlatform.class)
-public class JUnit5LifecycleHooksConfigItDeprecated {
+public class JUnit5LifecycleHooksConfigIt {
 
     private static File customConfigFile = new File("target/test-classes/dbunit.yml");
 
@@ -39,7 +38,7 @@ public class JUnit5LifecycleHooksConfigItDeprecated {
     }
 
     private static void copyResourceToFile(String resourceName, File to) throws IOException {
-        try (InputStream from = JUnit5LifecycleHooksConfigItDeprecated.class.getResourceAsStream(resourceName)) {
+        try (InputStream from = JUnit5LifecycleHooksConfigIt.class.getResourceAsStream(resourceName)) {
             Files.copy(from, to.toPath());
         }
     }

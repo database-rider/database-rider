@@ -1,8 +1,8 @@
-package com.github.database.rider.junit5;
+package com.github.database.rider.junit5.incubating;
 
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.junit5.api.DBRider;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +25,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(JUnitPlatform.class)
 @SpringBootTest
-@ContextConfiguration(classes = {DBRiderSpringDataSourceItDeprecated.TestConfig.class})
-public class DBRiderSpringDataSourceItDeprecated {
+@ContextConfiguration(classes = {DBRiderSpringDataSourceIt.TestConfig.class})
+public class DBRiderSpringDataSourceIt {
 
     @Autowired
     @Qualifier("data-source-1")
@@ -61,6 +61,7 @@ public class DBRiderSpringDataSourceItDeprecated {
 
     @DBRider(dataSourceBeanName = "data-source-2")
     @DataSet(value = "entity-ds2-test.yml")
+    @Disabled("Spring users must use the Deprecated @DBRider Annotation here")
     public void shouldPopulateDataSource2() {
         Set<String> expected = new HashSet<>(Arrays.asList("value1", "value2"));
         Set<String> actual = new HashSet<>(jdbcTemplate2.queryForList("SELECT value FROM Entity2", String.class));

@@ -1,25 +1,26 @@
-package com.github.database.rider.junit5;
+package com.github.database.rider.junit5.incubating;
 
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.CompareOperation;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.core.replacers.NullReplacer;
+import com.github.database.rider.core.util.EntityManagerProvider;
+import com.github.database.rider.junit5.incubating.DBUnitExtension;
 import com.github.database.rider.junit5.model.Tweet;
 import com.github.database.rider.junit5.model.User;
-import com.github.database.rider.junit5.util.EntityManagerProvider;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
-import static com.github.database.rider.junit5.util.EntityManagerProvider.em;
+import static com.github.database.rider.core.util.EntityManagerProvider.em;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DBUnitExtension.class)
 @RunWith(JUnitPlatform.class)
-public class ExpectedDataSetJUnit5ItDeprecated {
+public class ExpectedDataSetJUnit5It {
 
     private ConnectionHolder connectionHolder = () ->
             EntityManagerProvider.instance("junit5-pu").connection();

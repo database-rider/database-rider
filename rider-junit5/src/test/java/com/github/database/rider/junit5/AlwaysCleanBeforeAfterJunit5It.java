@@ -3,9 +3,8 @@ package com.github.database.rider.junit5;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.core.util.EntityManagerProvider;
-import com.github.database.rider.junit5.incubating.DBUnitExtension;
 import com.github.database.rider.junit5.model.User;
+import com.github.database.rider.junit5.util.EntityManagerProvider;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,7 +16,7 @@ import org.junit.runner.RunWith;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-import static com.github.database.rider.core.util.EntityManagerProvider.em;
+import static com.github.database.rider.junit5.util.EntityManagerProvider.em;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
@@ -26,7 +25,7 @@ import static org.assertj.core.api.Assertions.fail;
 @RunWith(JUnitPlatform.class)
 public class AlwaysCleanBeforeAfterJunit5It {
 
-    private ConnectionHolder connectionHolder = () -> EntityManagerProvider.instance("junit5-pu").clear().connection();
+    private ConnectionHolder connectionHolder = () ->  EntityManagerProvider.instance("junit5-pu").clear().connection();
 
 
     @BeforeAll

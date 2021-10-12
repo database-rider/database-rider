@@ -3,10 +3,10 @@ package com.github.database.rider.junit5;
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
-import com.github.database.rider.core.util.EntityManagerProvider;
-import com.github.database.rider.junit5.incubating.DBRider;
+import com.github.database.rider.junit5.api.DBRider;
 import com.github.database.rider.junit5.model.Tweet;
 import com.github.database.rider.junit5.model.User;
+import com.github.database.rider.junit5.util.EntityManagerProvider;
 import org.junit.jupiter.api.*;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
@@ -27,7 +27,7 @@ public class JUnit5LifecycleHooksIt {
     static void loadDataSetBeforeAll() {
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
         assertThat(users).isNotNull().isEmpty();
-        List<Tweet> tweets = EntityManagerProvider.em().createQuery("select t from Tweet t").getResultList();
+        List<Tweet> tweets =  EntityManagerProvider.em().createQuery("select t from Tweet t").getResultList();
         assertThat(tweets).isNotNull()
                 .hasSize(1)
                 .extracting("content")
@@ -39,7 +39,7 @@ public class JUnit5LifecycleHooksIt {
     void loadDataSetBeforeEach() {
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
         assertThat(users).isNotNull().isEmpty();
-        List<Tweet> tweets = EntityManagerProvider.em().createQuery("select t from Tweet t").getResultList();
+        List<Tweet> tweets =  EntityManagerProvider.em().createQuery("select t from Tweet t").getResultList();
         assertThat(tweets).isNotNull()
                 .hasSize(1)
                 .extracting("content")
@@ -53,7 +53,7 @@ public class JUnit5LifecycleHooksIt {
     public void shouldHaveUserAndTweetsInDB() {
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
         assertThat(users).isNotNull().isNotEmpty().hasSize(2);
-        List<Tweet> tweets = EntityManagerProvider.em().createQuery("select t from Tweet t").getResultList();
+        List<Tweet> tweets =  EntityManagerProvider.em().createQuery("select t from Tweet t").getResultList();
         assertThat(tweets).isNotNull()
                 .hasSize(1)
                 .extracting("content")

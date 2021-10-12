@@ -1,9 +1,8 @@
 package com.github.database.rider.junit5;
 
-import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.core.util.EntityManagerProvider;
-import com.github.database.rider.junit5.incubating.DBUnitExtension;
+import com.github.database.rider.junit5.util.EntityManagerProvider;
+import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.junit5.model.User;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,7 @@ public class ConnectionConfigJUnit5It {
 
 
     @BeforeAll
-    public static void initDB() {
+    public static void initDB(){
         //trigger db creation
         EntityManagerProvider.instance("junit5-pu");
     }

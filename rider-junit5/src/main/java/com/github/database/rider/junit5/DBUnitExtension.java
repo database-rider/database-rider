@@ -12,6 +12,7 @@ import com.github.database.rider.core.api.leak.LeakHunter;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
+import com.github.database.rider.core.leak.LeakHunterException;
 import com.github.database.rider.core.leak.LeakHunterFactory;
 import com.github.database.rider.junit5.util.EntityManagerProvider;
 import org.apache.commons.collections.CollectionUtils;
@@ -42,9 +43,8 @@ import static java.lang.String.format;
 /**
  * Created by pestano on 27/08/16.
  */
-public class DBUnitExtension
-        implements BeforeTestExecutionCallback, AfterTestExecutionCallback, BeforeEachCallback, AfterEachCallback,
-        BeforeAllCallback, AfterAllCallback {
+public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestExecutionCallback,
+        BeforeEachCallback, AfterEachCallback, BeforeAllCallback, AfterAllCallback {
 
     private static final Logger LOG = Logger.getLogger(DBUnitExtension.class.getName());
 
@@ -53,23 +53,18 @@ public class DBUnitExtension
         EntityManagerProvider.clear();
         DBUnitTestContext dbUnitTestContext = getTestContext(extensionContext);
         final DataSetExecutor dataSetExecutor = dbUnitTestContext.getExecutor();
-        final DBUnitConfig dbUnitConfig = resolveDbUnitConfig(Optional.empty(), extensionContext.getTestMethod(),
-                extensionContext.getRequiredTestClass());
+        final DBUnitConfig dbUnitConfig = resolveDbUnitConfig(Optional.empty(), extensionContext.getTestMethod(), extensionContext.getRequiredTestClass());
         dataSetExecutor.setDBUnitConfig(dbUnitConfig);
         if (dbUnitConfig.isLeakHunter()) {
             try {
-                LeakHunter leakHunter = LeakHunterFactory
-                        .from(dataSetExecutor.getRiderDataSource(), extensionContext.getRequiredTestMethod().getName(),
-                                dbUnitConfig.isCacheConnection());
+                LeakHunter leakHunter = LeakHunterFactory.from(dataSetExecutor.getRiderDataSource(), extensionContext.getRequiredTestMethod().getName(), dbUnitConfig.isCacheConnection());
                 leakHunter.measureConnectionsBeforeExecution();
                 dbUnitTestContext.setLeakHunter(leakHunter);
             } catch (SQLException e) {
-                LOG.log(Level.WARNING, format("Could not create leak hunter for test %s",
-                        extensionContext.getRequiredTestMethod().getName()), e);
+                LOG.log(Level.WARNING, format("Could not create leak hunter for test %s", extensionContext.getRequiredTestMethod().getName()), e);
             }
         }
-        RiderTestContext riderTestContext = new JUnit5RiderTestContext(dbUnitTestContext.getExecutor(),
-                extensionContext);
+        RiderTestContext riderTestContext = new JUnit5RiderTestContext(dbUnitTestContext.getExecutor(), extensionContext);
         RiderRunner riderRunner = new RiderRunner();
         riderRunner.setup(riderTestContext);
         riderRunner.runBeforeTest(riderTestContext);
@@ -79,8 +74,7 @@ public class DBUnitExtension
     public void afterTestExecution(ExtensionContext extensionContext) throws Exception {
         final DBUnitTestContext dbUnitTestContext = getTestContext(extensionContext);
         final DBUnitConfig dbUnitConfig = dbUnitTestContext.getExecutor().getDBUnitConfig();
-        RiderTestContext riderTestContext = new JUnit5RiderTestContext(dbUnitTestContext.getExecutor(),
-                extensionContext);
+        RiderTestContext riderTestContext = new JUnit5RiderTestContext(dbUnitTestContext.getExecutor(), extensionContext);
         RiderRunner riderRunner = new RiderRunner();
         try {
             riderRunner.runAfterTest(riderTestContext);
@@ -111,7 +105,9 @@ public class DBUnitExtension
 
     private Set<Method> findCallbackMethods(Class testClass, Class callback) {
         final Set<Method> methods = new HashSet<>();
-        Stream.of(testClass.getSuperclass().getDeclaredMethods(), testClass.getDeclaredMethods()).flatMap(Stream::of)
+        Stream.of(testClass.getSuperclass()
+                .getDeclaredMethods(), testClass.getDeclaredMethods())
+                .flatMap(Stream::of)
                 .filter(m -> m.getAnnotation(callback) != null)
                 .forEach(m -> methods.add((Method) m)); //do not use Collectors.toSet here: stream incompatible types
         return methods;
@@ -169,8 +165,7 @@ public class DBUnitExtension
         }
     }
 
-    private void executeDataSetForCallback(ExtensionContext extensionContext, Class callbackAnnotation,
-                                           Method callbackMethod) throws SQLException {
+    private void executeDataSetForCallback(ExtensionContext extensionContext, Class callbackAnnotation, Method callbackMethod) throws SQLException {
         Class testClass = extensionContext.getTestClass().get();
         // get DataSet annotation, if any
         Optional<DataSet> dataSetAnnotation = AnnotationUtils.findAnnotation(callbackMethod, DataSet.class);
@@ -180,8 +175,7 @@ public class DBUnitExtension
         }
         EntityManagerProvider.clear();
         final DBUnitTestContext dbUnitTestContext = getTestContext(extensionContext);
-        final DBUnitConfig dbUnitConfig = resolveDbUnitConfig(Optional.of(callbackAnnotation),
-                Optional.of(callbackMethod), testClass);
+        final DBUnitConfig dbUnitConfig = resolveDbUnitConfig(Optional.of(callbackAnnotation), Optional.of(callbackMethod), testClass);
         DataSet dataSet;
         if (dbUnitConfig.isMergeDataSets()) {
             Optional<DataSet> classLevelDataSetAnnotation = AnnotationUtils.findAnnotation(testClass, DataSet.class);
@@ -191,38 +185,32 @@ public class DBUnitExtension
         }
         DataSetExecutor dataSetExecutor = dbUnitTestContext.getExecutor();
         dataSetExecutor.setDBUnitConfig(dbUnitConfig);
-        dataSetExecutor = resetExecutorConnectionIfNeeded(extensionContext, callbackAnnotation, dbUnitConfig,
-                dataSetExecutor);
+        dataSetExecutor = resetExecutorConnectionIfNeeded(extensionContext, callbackAnnotation, dbUnitConfig, dataSetExecutor);
         dataSetExecutor.createDataSet(new DataSetConfig().from(dataSet));
         closeConnectionForAfterCallback(dataSetExecutor, callbackAnnotation);
     }
 
     /**
-     * We only need to close the connection in afterCallback because the connection opened in before callback is closed
-     * after test execution ({@link RiderRunner#teardown(RiderTestContext)})
+     * We only need to close the connection in afterCallback because the connection opened in before callback is closed after test execution ({@link RiderRunner#teardown(RiderTestContext)})
      *
      * @param dataSetExecutor
      * @param callbackAnnotation
      * @throws SQLException
      */
-    private void closeConnectionForAfterCallback(DataSetExecutor dataSetExecutor, Class callbackAnnotation)
-            throws SQLException {
+    private void closeConnectionForAfterCallback(DataSetExecutor dataSetExecutor, Class callbackAnnotation) throws SQLException {
         if (!isAfterTestCallback(callbackAnnotation)) {
             return;
         }
-        if (!dataSetExecutor.getDBUnitConfig().isCacheConnection() && !dataSetExecutor.getRiderDataSource()
-                .getDBUnitConnection().getConnection().isClosed()) {
+        if (!dataSetExecutor.getDBUnitConfig().isCacheConnection() && !dataSetExecutor.getRiderDataSource().getDBUnitConnection().getConnection().isClosed()) {
             dataSetExecutor.getRiderDataSource().getDBUnitConnection().getConnection().close();
             ((DataSetExecutorImpl) dataSetExecutor).clearRiderDataSource();
         }
     }
 
-    private void executeExpectedDataSetForCallback(ExtensionContext extensionContext, Class callbackAnnotation,
-                                                   Method callbackMethod) throws DatabaseUnitException, SQLException {
+    private void executeExpectedDataSetForCallback(ExtensionContext extensionContext, Class callbackAnnotation, Method callbackMethod) throws DatabaseUnitException, SQLException {
         Class testClass = extensionContext.getTestClass().get();
         // get ExpectedDataSet annotation, if any
-        Optional<ExpectedDataSet> expectedDataSetAnnotation = AnnotationUtils
-                .findAnnotation(callbackMethod, ExpectedDataSet.class);
+        Optional<ExpectedDataSet> expectedDataSetAnnotation = AnnotationUtils.findAnnotation(callbackMethod, ExpectedDataSet.class);
         if (!expectedDataSetAnnotation.isPresent()) {
             LOG.warning("Could not find expectedDataSet annotation annotation from callback method: " + callbackMethod);
             return;
@@ -230,28 +218,23 @@ public class DBUnitExtension
         ExpectedDataSet expectedDataSet = expectedDataSetAnnotation.get();
         // Verify expected dataset
         // Resolve DBUnit config from annotation or file
-        DBUnitConfig dbUnitConfig = resolveDbUnitConfig(Optional.of(callbackAnnotation), Optional.of(callbackMethod),
-                testClass);
+        DBUnitConfig dbUnitConfig = resolveDbUnitConfig(Optional.of(callbackAnnotation), Optional.of(callbackMethod), testClass);
         DataSetExecutor dataSetExecutor = getTestContext(extensionContext).getExecutor();
         dataSetExecutor.setDBUnitConfig(dbUnitConfig);
-        dataSetExecutor = resetExecutorConnectionIfNeeded(extensionContext, callbackAnnotation, dbUnitConfig,
-                dataSetExecutor);
-        dataSetExecutor.compareCurrentDataSetWith(new DataSetConfig(expectedDataSet.value()).disableConstraints(true)
-                        .datasetProvider(expectedDataSet.provider()), expectedDataSet.ignoreCols(),
+        dataSetExecutor = resetExecutorConnectionIfNeeded(extensionContext, callbackAnnotation, dbUnitConfig, dataSetExecutor);
+        dataSetExecutor.compareCurrentDataSetWith(
+                new DataSetConfig(expectedDataSet.value()).disableConstraints(true).datasetProvider(expectedDataSet.provider()),
+                expectedDataSet.ignoreCols(),
                 expectedDataSet.replacers(),
-                expectedDataSet.orderBy(), expectedDataSet.compareOperation());
+                expectedDataSet.orderBy(),
+                expectedDataSet.compareOperation());
         closeConnectionForAfterCallback(dataSetExecutor, callbackAnnotation);
     }
 
-    private DataSetExecutor resetExecutorConnectionIfNeeded(ExtensionContext extensionContext, Class callbackAnnotation,
-                                                            DBUnitConfig dbUnitConfig, DataSetExecutor dataSetExecutor) {
-        if (!dbUnitConfig.isCacheConnection() && isAfterTestCallback(
-                callbackAnnotation)) { //we close the connection after test execution when cache is disabled so we
-            // need a new one for the callback
-            final ConnectionHolder connectionHolder = getTestConnection(extensionContext,
-                    dataSetExecutor.getExecutorId());
-            dataSetExecutor = DataSetExecutorImpl
-                    .instance(dataSetExecutor.getExecutorId(), connectionHolder, dbUnitConfig);
+    private DataSetExecutor resetExecutorConnectionIfNeeded(ExtensionContext extensionContext, Class callbackAnnotation, DBUnitConfig dbUnitConfig, DataSetExecutor dataSetExecutor) {
+        if (!dbUnitConfig.isCacheConnection() && isAfterTestCallback(callbackAnnotation)) { //we close the connection after test execution when cache is disabled so we need a new one for the callback
+            final ConnectionHolder connectionHolder = getTestConnection(extensionContext, dataSetExecutor.getExecutorId());
+            dataSetExecutor = DataSetExecutorImpl.instance(dataSetExecutor.getExecutorId(), connectionHolder, dbUnitConfig);
         }
         return dataSetExecutor;
     }
@@ -261,8 +244,7 @@ public class DBUnitExtension
     }
 
     // Resolve DBUnit config from annotation or file
-    private DBUnitConfig resolveDbUnitConfig(Optional<Class> callbackAnnotation, Optional<Method> method,
-                                             Class testClass) {
+    private DBUnitConfig resolveDbUnitConfig(Optional<Class> callbackAnnotation, Optional<Method> method, Class testClass) {
         Optional<DBUnit> dbUnitAnnotation = AnnotationUtils.findAnnotation(method, DBUnit.class);
         if (!dbUnitAnnotation.isPresent()) {
             dbUnitAnnotation = AnnotationUtils.findAnnotation(testClass, DBUnit.class);
@@ -276,21 +258,17 @@ public class DBUnitExtension
         if (!dbUnitAnnotation.isPresent() && testClass.getSuperclass() != null) {
             dbUnitAnnotation = AnnotationUtils.findAnnotation(testClass.getSuperclass(), DBUnit.class);
         }
-        return dbUnitAnnotation.isPresent() ?
-                DBUnitConfig.from(dbUnitAnnotation.get()) :
-                DBUnitConfig.fromGlobalConfig();
+        return dbUnitAnnotation.isPresent() ? DBUnitConfig.from(dbUnitAnnotation.get()) : DBUnitConfig.fromGlobalConfig();
     }
 
     // Resolve dataSet annotation, merging class and method annotations if needed
-    private DataSet resolveDataSet(Optional<DataSet> methodLevelDataSet, Optional<DataSet> classLevelDataSet,
-                                   DBUnitConfig config) {
+    private DataSet resolveDataSet(Optional<DataSet> methodLevelDataSet,
+                                   Optional<DataSet> classLevelDataSet, DBUnitConfig config) {
         if (classLevelDataSet.isPresent()) {
             if (DataSetMergingStrategy.METHOD.equals(config.getMergingStrategy())) {
-                return com.github.database.rider.core.util.AnnotationUtils
-                        .mergeDataSetAnnotations(classLevelDataSet.get(), methodLevelDataSet.get());
+                return com.github.database.rider.core.util.AnnotationUtils.mergeDataSetAnnotations(classLevelDataSet.get(), methodLevelDataSet.get());
             } else {
-                return com.github.database.rider.core.util.AnnotationUtils
-                        .mergeDataSetAnnotations(methodLevelDataSet.get(), classLevelDataSet.get());
+                return com.github.database.rider.core.util.AnnotationUtils.mergeDataSetAnnotations(methodLevelDataSet.get(), classLevelDataSet.get());
             }
         } else {
             return methodLevelDataSet.get();
@@ -306,7 +284,10 @@ public class DBUnitExtension
         }
         String dataSourceBeanName = getConfiguredDataSourceBeanName(extensionContext);
         String executionIdSuffix = dataSourceBeanName.isEmpty() ? EMPTY_STRING : "-" + dataSourceBeanName;
-        return annDataSet.map(DataSet::executorId).filter(StringUtils::isNotBlank).map(id -> id + executionIdSuffix)
+        return annDataSet
+                .map(DataSet::executorId)
+                .filter(StringUtils::isNotBlank)
+                .map(id -> id + executionIdSuffix)
                 .orElseGet(() -> JUNIT5_EXECUTOR + executionIdSuffix);
     }
 

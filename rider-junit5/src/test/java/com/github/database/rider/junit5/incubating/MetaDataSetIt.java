@@ -1,9 +1,11 @@
-package com.github.database.rider.junit5;
+package com.github.database.rider.junit5.incubating;
 
 
 import com.github.database.rider.core.api.connection.ConnectionHolder;
+import com.github.database.rider.core.util.EntityManagerProvider;
+import com.github.database.rider.junit5.AnotherMetaDataSet;
+import com.github.database.rider.junit5.MetaDataSet;
 import com.github.database.rider.junit5.model.User;
-import com.github.database.rider.junit5.util.EntityManagerProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
@@ -14,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(JUnitPlatform.class)
 @MetaDataSet
-public class MetaDataSetItDeprecated {
+public class MetaDataSetIt {
 
     private ConnectionHolder connectionHolder = () -> //<3>
             EntityManagerProvider.instance("junit5-pu").connection();

@@ -1,10 +1,11 @@
-package com.github.database.rider.junit5;
+package com.github.database.rider.junit5.incubating;
 
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
+import com.github.database.rider.core.util.EntityManagerProvider;
+import com.github.database.rider.junit5.incubating.DBUnitExtension;
 import com.github.database.rider.junit5.model.User;
-import com.github.database.rider.junit5.util.EntityManagerProvider;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(DBUnitExtension.class) //<1>
 @RunWith(JUnitPlatform.class) //<2>
 @DataSet(cleanBefore = true)
-public class DBUnitJUnit5NestedItDeprecated {
+public class DBUnitJUnit5NestedIt {
 
     private ConnectionHolder connectionHolder = () -> //<3>
             EntityManagerProvider.instance("junit5-pu").clear().connection();//<4>

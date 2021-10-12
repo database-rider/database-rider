@@ -1,11 +1,11 @@
-package com.github.database.rider.junit5;
+package com.github.database.rider.junit5.incubating;
 
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
-import com.github.database.rider.junit5.api.DBRider;
+import com.github.database.rider.core.util.EntityManagerProvider;
+import com.github.database.rider.junit5.incubating.DBRider;
 import com.github.database.rider.junit5.model.schema.User;
-import com.github.database.rider.junit5.util.EntityManagerProvider;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Created by pestano on 26/10/17.
  */
 @RunWith(JUnitPlatform.class)
-public class DBUnitJUnit5ChemaItDeprecated {
+public class DBUnitJUnit5ChemaIt {
 
     private ConnectionHolder connectionHolder = () ->
             EntityManagerProvider.instance("schema-pu").clear().connection();

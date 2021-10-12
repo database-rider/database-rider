@@ -1,10 +1,9 @@
 package com.github.database.rider.junit5;
 
+import com.github.database.rider.junit5.model.User;
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
-import com.github.database.rider.junit5.incubating.DBUnitExtension;
-import com.github.database.rider.junit5.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
@@ -12,7 +11,9 @@ import org.junit.runner.RunWith;
 
 import java.util.List;
 
-import static com.github.database.rider.core.util.EntityManagerProvider.*;
+import static com.github.database.rider.junit5.util.EntityManagerProvider.em;
+import static com.github.database.rider.junit5.util.EntityManagerProvider.instance;
+import static com.github.database.rider.junit5.util.EntityManagerProvider.tx;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -23,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DBUnitJUnit5WithMethodConnectionHolderIt {
 
     //DBUnitExtension will get connection by reflection so either declare a field or a method with ConncetionHolder as return typr
-    private ConnectionHolder getConnection() {
+    private ConnectionHolder getConnection(){
         return () -> instance("junit5-pu").connection();
     }
 
@@ -35,7 +36,7 @@ public class DBUnitJUnit5WithMethodConnectionHolderIt {
     }
 
     @Test
-    @DataSet(cleanBefore = true) //avoid conflict with other tests
+    @DataSet(cleanBefore=true) //avoid conflict with other tests 
     public void shouldInsertUser() {
         User user = new User();
         user.setName("user");
@@ -43,14 +44,13 @@ public class DBUnitJUnit5WithMethodConnectionHolderIt {
         tx().begin();
         em().persist(user);
         tx().commit();
-        User insertedUser = (User) em().createQuery("select u from User u where u.name = '@rmpestano'").getSingleResult();
+        User insertedUser = (User)em().createQuery("select u from User u where u.name = '@rmpestano'").getSingleResult();
         assertThat(insertedUser).isNotNull();
         assertThat(insertedUser.getId()).isNotNull();
     }
 
     @Test
-    @DataSet("usersWithTweet.yml")
-    //no need for clean before because DBUnit uses CLEAN_INSERT seeding strategy which clears involved tables before seeding
+    @DataSet("usersWithTweet.yml") //no need for clean before because DBUnit uses CLEAN_INSERT seeding strategy which clears involved tables before seeding
     public void shouldUpdateUser() {
         User user = (User) em().createQuery("select u from User u  where u.id = 1").getSingleResult();
         assertThat(user).isNotNull();
@@ -76,7 +76,7 @@ public class DBUnitJUnit5WithMethodConnectionHolderIt {
     }
 
 
-    public User getUser(Long id) {
+    public User getUser(Long id){
         return (User) em().createQuery("select u from User u where u.id = :id").
                 setParameter("id", id).getSingleResult();
     }

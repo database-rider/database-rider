@@ -2,6 +2,8 @@ package com.github.database.rider.junit5;
 
 import com.github.database.rider.core.AbstractRiderTestContext;
 import com.github.database.rider.core.api.dataset.DataSetExecutor;
+import com.github.database.rider.junit5.util.EntityManagerProvider;
+import java.util.Optional;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.util.AnnotationUtils;
@@ -10,7 +12,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Optional;
 
 import static com.github.database.rider.junit5.util.EntityManagerProvider.em;
 import static com.github.database.rider.junit5.util.EntityManagerProvider.isEntityManagerActive;
@@ -26,7 +27,9 @@ public class JUnit5RiderTestContext extends AbstractRiderTestContext {
 
     @Override
     public String getMethodName() {
-        return extensionContext.getTestMethod().map(Method::getName).orElse(null);
+        return extensionContext.getTestMethod()
+                .map(Method::getName)
+                .orElse(null);
     }
 
     @Override
@@ -39,11 +42,12 @@ public class JUnit5RiderTestContext extends AbstractRiderTestContext {
         return getClassAnnotation(extensionContext.getTestClass(), clazz);
     }
 
-    private <T extends Annotation> T getClassAnnotation(Optional<Class<?>> testClass, Class<T> clazz) {
-        return AnnotationUtils.findAnnotation(testClass, clazz).orElseGet(
-                () -> AnnotationUtils.findAnnotation(testClass.filter(Class::isMemberClass), Nested.class)
-                        .map(nested -> getClassAnnotation(testClass.map(Class::getEnclosingClass), clazz))
-                        .orElse(null));
+    private  <T extends Annotation> T getClassAnnotation(Optional<Class<?>> testClass, Class<T> clazz) {
+        return AnnotationUtils.findAnnotation(testClass, clazz)
+            .orElseGet(() -> AnnotationUtils.findAnnotation(testClass.filter(Class::isMemberClass), Nested.class)
+                .map(nested -> getClassAnnotation(testClass.map(Class::getEnclosingClass), clazz))
+                .orElse(null)
+            );
     }
 
     @Override
@@ -59,8 +63,8 @@ public class JUnit5RiderTestContext extends AbstractRiderTestContext {
 
     @Override
     public void beginTransaction() throws SQLException {
-        if (isEntityManagerActive()) {
-            em().getTransaction().begin();
+        if (EntityManagerProvider.isEntityManagerActive()) {
+            EntityManagerProvider.em().getTransaction().begin();
         } else {
             Connection connection = executor.getRiderDataSource().getDBUnitConnection().getConnection();
             connection.setAutoCommit(false);
@@ -69,8 +73,8 @@ public class JUnit5RiderTestContext extends AbstractRiderTestContext {
 
     @Override
     public void rollback() throws SQLException {
-        if (isEntityManagerActive() && em().getTransaction().isActive()) {
-            em().getTransaction().rollback();
+        if (EntityManagerProvider.isEntityManagerActive() && EntityManagerProvider.em().getTransaction().isActive()) {
+            EntityManagerProvider.em().getTransaction().rollback();
         } else {
             Connection connection = executor.getRiderDataSource().getDBUnitConnection().getConnection();
             connection.rollback();
@@ -79,8 +83,8 @@ public class JUnit5RiderTestContext extends AbstractRiderTestContext {
 
     @Override
     public void clearEntityManager() {
-        if (isEntityManagerActive()) {
-            em().clear();
+        if (EntityManagerProvider.isEntityManagerActive()) {
+            EntityManagerProvider.em().clear();
         }
     }
 }

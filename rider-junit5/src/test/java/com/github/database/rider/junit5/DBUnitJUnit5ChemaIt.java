@@ -3,8 +3,8 @@ package com.github.database.rider.junit5;
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
-import com.github.database.rider.core.util.EntityManagerProvider;
-import com.github.database.rider.junit5.incubating.DBRider;
+import com.github.database.rider.junit5.util.EntityManagerProvider;
+import com.github.database.rider.junit5.api.DBRider;
 import com.github.database.rider.junit5.model.schema.User;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
@@ -31,8 +31,7 @@ public class DBUnitJUnit5ChemaIt {
     }
 
     @DBRider
-    @DataSet(value = "usersWithTweetAndSchema.yml", executorId = "schemaIt")
-    //no need for clean before because DBUnit uses CLEAN_INSERT seeding strategy which clears involved tables before seeding
+    @DataSet(value = "usersWithTweetAndSchema.yml", executorId = "schemaIt") //no need for clean before because DBUnit uses CLEAN_INSERT seeding strategy which clears involved tables before seeding
     public void shouldUpdateUser() {
         User user = (User) EntityManagerProvider.em().createQuery("select u from User u  where u.id = 1").getSingleResult();
         assertThat(user).isNotNull();
@@ -56,7 +55,8 @@ public class DBUnitJUnit5ChemaIt {
     }
 
 
-    public User getUser(Long id) {
+
+    public User getUser(Long id){
         return (User) EntityManagerProvider.em().createQuery("select u from User u where u.id = :id").
                 setParameter("id", id).getSingleResult();
     }

@@ -1,37 +1,23 @@
 package com.github.database.rider.junit5.util;
 
-import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
+import com.github.database.rider.core.util.PropertyResolutionUtil;
+import org.hibernate.Session;
+import org.hibernate.internal.SessionImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
 
-import org.hibernate.Session;
-import org.hibernate.internal.SessionImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.github.database.rider.core.util.PropertyResolutionUtil;
-
-/**
- * This class is set to @Deprecated because it's duplicated from {@link EntityManagerProvider} It will be removed with
- * the database-rider 2.0.0 release <br/>
- * <p>
- * You can use {@link EntityManagerProvider} for testing purposes. <br/> Use in this case temporarily {@link
- * com.github.database.rider.junit5.incubating.DBUnitExtension} instead of
- * {@link com.github.database.rider.junit5.DBUnitExtension}
- * <br/> And use {@link com.github.database.rider.junit5.incubating.DBRider} instead of {@link
- * com.github.database.rider.junit5.api.DBRider} <br/> DBRiderExtension and @Rider are help classes to ensure backwards
- * compatibility during the <2.0.0 release and will be removed in the 2.0.0 Release.
- */
-@Deprecated
 public class EntityManagerProvider {
 
     private static Map<String, EntityManagerProvider> providers = new ConcurrentHashMap<>();//one emf per unit
@@ -64,9 +50,10 @@ public class EntityManagerProvider {
      * @param overridingPersistenceProps properties to override persistence.xml props or define additions to them
      * @return EntityManagerProvider instance
      */
-    @Deprecated //TODO: an existing instance will never be overridden if the  props have changed. Must be removed. Use newInstance instead.
+    @Deprecated
+    //TODO: an existing instance will never be overridden if the  props have changed. Must be removed. Use newInstance instead.
     public static synchronized EntityManagerProvider instance(String unitName,
-            Map<String, Object> overridingPersistenceProps) {
+                                                              Map<String, Object> overridingPersistenceProps) {
 
         instance = providers.get(unitName);
         if (instance == null) {
@@ -93,7 +80,7 @@ public class EntityManagerProvider {
      * @return a clean EntityManagerProvider
      */
     public static synchronized EntityManagerProvider newInstance(String unitName,
-            Map<String, Object> overridingPersistenceProps) {
+                                                                 Map<String, Object> overridingPersistenceProps) {
         instance = new EntityManagerProvider();
         providers.put(unitName, instance);
         try {
@@ -135,8 +122,7 @@ public class EntityManagerProvider {
             connection = ((SessionImpl) em.unwrap(Session.class)).connection();
         } else {
             /**
-             * see here:http://wiki.eclipse
-             * .org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager
+             * see here:http://wiki.eclipse.org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager
              */
             tx.begin();
             connection = em.unwrap(Connection.class);
@@ -145,12 +131,6 @@ public class EntityManagerProvider {
         return connection;
     }
 
-    //    private Map<String, Object> getDbPropertyConfig() {
-    //        if (overridingProperties == null) {
-    //            return propertyResolutionUtil.getSystemJavaxPersistenceOverrides();
-    //        }
-    //        return propertyResolutionUtil.persistencePropertiesOverrides(overridingProperties);
-    //    }
 
     /**
      * @param puName unit name

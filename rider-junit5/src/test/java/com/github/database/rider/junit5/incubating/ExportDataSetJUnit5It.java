@@ -1,10 +1,11 @@
-package com.github.database.rider.junit5;
+package com.github.database.rider.junit5.incubating;
 
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetFormat;
 import com.github.database.rider.core.api.exporter.ExportDataSet;
-import com.github.database.rider.junit5.util.EntityManagerProvider;
+import com.github.database.rider.core.util.EntityManagerProvider;
+import com.github.database.rider.junit5.incubating.DBUnitExtension;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +23,7 @@ import static org.assertj.core.api.Assertions.contentOf;
 
 @ExtendWith(DBUnitExtension.class)
 @RunWith(JUnitPlatform.class)
-public class ExportDataSetJUnit5ItDeprecated {
+public class ExportDataSetJUnit5It {
 
     private static final String NEW_LINE = System.getProperty("line.separator");
 

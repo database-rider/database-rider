@@ -1,9 +1,10 @@
-package com.github.database.rider.junit5;
+package com.github.database.rider.junit5.incubating;
 
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.util.EntityManagerProvider;
+import com.github.database.rider.junit5.incubating.DBUnitExtension;
 import com.github.database.rider.junit5.model.User;
-import com.github.database.rider.junit5.util.EntityManagerProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
@@ -19,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(DBUnitExtension.class)
 @RunWith(JUnitPlatform.class)
 @DataSet("usersWithTweet.yml")
-public class TestLevelItDeprecated {
+public class TestLevelIt {
 
     private ConnectionHolder connectionHolder = () -> //<3>
             EntityManagerProvider.instance("junit5-pu").connection();

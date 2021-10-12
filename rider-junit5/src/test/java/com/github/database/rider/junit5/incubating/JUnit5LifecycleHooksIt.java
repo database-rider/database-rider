@@ -1,12 +1,12 @@
-package com.github.database.rider.junit5;
+package com.github.database.rider.junit5.incubating;
 
-import com.github.database.rider.core.api.configuration.DBUnit;
+import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
-import com.github.database.rider.junit5.api.DBRider;
+import com.github.database.rider.core.util.EntityManagerProvider;
+import com.github.database.rider.junit5.incubating.DBRider;
 import com.github.database.rider.junit5.model.Tweet;
 import com.github.database.rider.junit5.model.User;
-import com.github.database.rider.junit5.util.EntityManagerProvider;
 import org.junit.jupiter.api.*;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
@@ -17,18 +17,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DBRider
 @RunWith(JUnitPlatform.class)
-@DBUnit(url = "jdbc:hsqldb:mem:junit5;DB_CLOSE_DELAY=-1", driver = "org.hsqldb.jdbcDriver", user = "sa", cacheConnection = false)
-public class JUnit5LifecycleHooksWithoutCachingConnectionItDeprecated {
+public class JUnit5LifecycleHooksIt {
 
+    private static ConnectionHolder connectionHolder = () ->
+            EntityManagerProvider.instance("junit5-pu").connection();
 
     @BeforeAll
-    public static void loadDataSetBeforeAll() {
-        EntityManagerProvider.instance("junit5-pu");//init db used
+    @DataSet(value = "usersAndTweetsBeforeAll.yml", disableConstraints = true)
+    static void loadDataSetBeforeAll() {
+        List<User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
+        assertThat(users).isNotNull().isEmpty();
+        List<Tweet> tweets = EntityManagerProvider.em().createQuery("select t from Tweet t").getResultList();
+        assertThat(tweets).isNotNull()
+                .hasSize(1)
+                .extracting("content")
+                .contains("tweet before all!");
     }
 
     @BeforeEach
     @DataSet(value = "tweetBeforeEach.yml", disableConstraints = true)
-    public void loadDataSetBeforeEach() {
+    void loadDataSetBeforeEach() {
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
         assertThat(users).isNotNull().isEmpty();
         List<Tweet> tweets = EntityManagerProvider.em().createQuery("select t from Tweet t").getResultList();
@@ -59,8 +67,7 @@ public class JUnit5LifecycleHooksWithoutCachingConnectionItDeprecated {
 
     @AfterAll
     @DataSet(value = "usersAndTweetsAfterAll.yml", disableConstraints = true)
-    @ExpectedDataSet(value = "usersAndTweetsAfterAll.yml")
-    public static void loadDataSetAfterAll() {
+    static void loadDataSetAfterAll() {
     }
 
 }

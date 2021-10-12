@@ -2,9 +2,8 @@ package com.github.database.rider.junit5;
 
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.core.util.EntityManagerProvider;
-import com.github.database.rider.junit5.incubating.DBUnitExtension;
 import com.github.database.rider.junit5.model.User;
+import com.github.database.rider.junit5.util.EntityManagerProvider;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -29,7 +28,7 @@ public class CleanBeforeAfterIt {
 
 
     @BeforeAll
-    public static void before() {
+    public static void before(){
         EntityManagerProvider.em("junit5-pu").getTransaction().begin();
         EntityManagerProvider.em().createNativeQuery("DELETE FROM TWEET").executeUpdate();
         EntityManagerProvider.em().createNativeQuery("DELETE FROM USER").executeUpdate();
@@ -42,9 +41,9 @@ public class CleanBeforeAfterIt {
     }
 
     @AfterAll
-    public static void after() {
+    public static void after(){
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
-        if (users != null && !users.isEmpty()) {
+        if(users != null && !users.isEmpty()){
             fail("users should be empty");
         }
     }

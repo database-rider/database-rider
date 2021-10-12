@@ -2,9 +2,8 @@ package com.github.database.rider.junit5;
 
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.core.util.EntityManagerProvider;
-import com.github.database.rider.junit5.incubating.DBUnitExtension;
 import com.github.database.rider.junit5.model.User;
+import com.github.database.rider.junit5.util.EntityManagerProvider;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -19,7 +18,7 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 public class ParameterizedClassLevelIt {
 
     private ConnectionHolder connectionHolder = () ->
-            com.github.database.rider.core.util.EntityManagerProvider.instance("junit5-pu").clear().connection();
+            com.github.database.rider.junit5.util.EntityManagerProvider.instance("junit5-pu").clear().connection();
 
 
     @ParameterizedTest

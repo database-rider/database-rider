@@ -1,10 +1,10 @@
-package com.github.database.rider.junit5;
+package com.github.database.rider.junit5.incubating;
 
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.junit5.api.DBRider;
+import com.github.database.rider.core.util.EntityManagerProvider;
+import com.github.database.rider.junit5.incubating.DBRider;
 import com.github.database.rider.junit5.model.User;
-import com.github.database.rider.junit5.util.EntityManagerProvider;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Created by pestano on 07/09/16.
  */
 @RunWith(JUnitPlatform.class)
-public class DBRiderAnnotationItDeprecated {
+public class DBRiderAnnotationIt {
 
     private ConnectionHolder connectionHolder = () ->
             EntityManagerProvider.instance("junit5-pu").connection();

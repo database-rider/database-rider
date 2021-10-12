@@ -1,9 +1,8 @@
 package com.github.database.rider.junit5;
 
-import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
-import com.github.database.rider.junit5.incubating.DBUnitExtension;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -32,7 +31,7 @@ public class FlywayIt {
 
 
     @BeforeAll
-    public static void initDB() {
+    public static void initDB(){
         flyway = new Flyway();
         flyway.setDataSource("jdbc:hsqldb:mem:flyway;DB_CLOSE_DELAY=-1", "sa", "");
         flyway.setLocations("filesystem:src/test/resources/migration");
@@ -41,7 +40,7 @@ public class FlywayIt {
     }
 
     @Test
-    @DataSet(value = "users.yml", executorId = "flyway")
+    @DataSet(value = "users.yml",executorId = "flyway")
     public void shouldListUsers() throws SQLException {
         try (Statement stmt = flyway.getDataSource().getConnection().createStatement()) {
             ResultSet resultSet = stmt.executeQuery("select * from user u order by id");
@@ -51,7 +50,7 @@ public class FlywayIt {
     }
 
     @Test
-    @DataSet(cleanBefore = true, transactional = true, executorId = "flyway")
+    @DataSet(cleanBefore = true, transactional = true,executorId = "flyway")
     @ExpectedDataSet(value = "usersInserted.yml")
     public void shouldInserUsers() throws SQLException {
         Connection connection = flyway.getDataSource().getConnection();

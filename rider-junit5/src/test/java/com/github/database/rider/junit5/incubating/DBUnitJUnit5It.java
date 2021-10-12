@@ -1,11 +1,12 @@
-package com.github.database.rider.junit5;
+package com.github.database.rider.junit5.incubating;
 
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
-import com.github.database.rider.junit5.util.EntityManagerProvider;
+import com.github.database.rider.junit5.incubating.DBUnitExtension;
 import com.github.database.rider.junit5.model.User;
-import org.junit.jupiter.api.Test;
+import com.github.database.rider.core.util.EntityManagerProvider;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
@@ -21,11 +22,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(DBUnitExtension.class) //<1>
 @RunWith(JUnitPlatform.class) //<2>
 @DataSet(cleanBefore = true)
-public class DBUnitJUnit5ItDeprecated {
+public class DBUnitJUnit5It {
 
 //end::declaration[]
 
-    //DBUnitExtension will get connection by reflection so either declare a field or a method with ConncetionHolder as return type
+//DBUnitExtension will get connection by reflection so either declare a field or a method with ConncetionHolder as return type
 //tag::connectionField[]
     private ConnectionHolder connectionHolder = () -> //<3>
             EntityManagerProvider.instance("junit5-pu").clear().connection();//<4>
@@ -33,7 +34,7 @@ public class DBUnitJUnit5ItDeprecated {
 //end::connectionField[]
 
 
-    //tag::test[]
+//tag::test[]
     @Test
     @DataSet(value = "usersWithTweet.yml")
     public void shouldListUsers() {
@@ -57,8 +58,7 @@ public class DBUnitJUnit5ItDeprecated {
     }
 
     @Test
-    @DataSet("usersWithTweet.yml")
-    //no need for clean before because DBUnit uses CLEAN_INSERT seeding strategy which clears involved tables before seeding
+    @DataSet("usersWithTweet.yml") //no need for clean before because DBUnit uses CLEAN_INSERT seeding strategy which clears involved tables before seeding
     public void shouldUpdateUser() {
         User user = (User) EntityManagerProvider.em().createQuery("select u from User u  where u.id = 1").getSingleResult();
         assertThat(user).isNotNull();
@@ -89,7 +89,7 @@ public class DBUnitJUnit5ItDeprecated {
         assertThat(users).isEmpty();
     }
 
-    public User getUser(Long id) {
+    public User getUser(Long id){
         return (User) EntityManagerProvider.em().createQuery("select u from User u where u.id = :id").
                 setParameter("id", id).getSingleResult();
     }
@@ -106,11 +106,11 @@ public class DBUnitJUnit5ItDeprecated {
     @Test
     @DataSet(value = "usersWithTweet.yml",
             useSequenceFiltering = false,
-            tableOrdering = {"USER", "TWEET"},
-            executeStatementsBefore = {"DELETE FROM TWEET", "DELETE FROM USER"}
+            tableOrdering = {"USER","TWEET"},
+            executeStatementsBefore = {"DELETE FROM TWEET","DELETE FROM USER"}
     )
     public void shouldSeedDataSetUsingTableCreationOrder() {
-        List<User> users = EntityManagerProvider.em().createQuery("select u from User u left join fetch u.tweets").getResultList();
+        List<User> users =  EntityManagerProvider.em().createQuery("select u from User u left join fetch u.tweets").getResultList();
         assertThat(users).hasSize(2);
     }
 

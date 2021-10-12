@@ -1,18 +1,5 @@
 package com.github.database.rider.core.util;
 
-import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
-
 import org.hibernate.Session;
 import org.hibernate.internal.SessionImpl;
 import org.junit.rules.TestRule;
@@ -20,6 +7,18 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
 
 public class EntityManagerProvider implements TestRule {
 
@@ -53,9 +52,10 @@ public class EntityManagerProvider implements TestRule {
      * @param overridingPersistenceProps properties to override persistence.xml props or define additions to them
      * @return EntityManagerProvider instance
      */
-    @Deprecated //TODO: an existing instance will never be overridden if the  props have changed. Must be removed. Use newInstance instead.
+    @Deprecated
+    //TODO: an existing instance will never be overridden if the  props have changed. Must be removed. Use newInstance instead.
     public static synchronized EntityManagerProvider instance(String unitName,
-            Map<String, Object> overridingPersistenceProps) {
+                                                              Map<String, Object> overridingPersistenceProps) {
 
         instance = providers.get(unitName);
         if (instance == null) {
@@ -82,7 +82,7 @@ public class EntityManagerProvider implements TestRule {
      * @return a clean EntityManagerProvider
      */
     public static synchronized EntityManagerProvider newInstance(String unitName,
-            Map<String, Object> overridingPersistenceProps) {
+                                                                 Map<String, Object> overridingPersistenceProps) {
         instance = new EntityManagerProvider();
         providers.put(unitName, instance);
         try {
@@ -124,8 +124,7 @@ public class EntityManagerProvider implements TestRule {
             connection = ((SessionImpl) em.unwrap(Session.class)).connection();
         } else {
             /**
-             * see here:http://wiki.eclipse
-             * .org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager
+             * see here:http://wiki.eclipse.org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager
              */
             tx.begin();
             connection = em.unwrap(Connection.class);
@@ -134,12 +133,6 @@ public class EntityManagerProvider implements TestRule {
         return connection;
     }
 
-    //    private Map<String, Object> getDbPropertyConfig() {
-    //        if (overridingProperties == null) {
-    //            return propertyResolutionUtil.getSystemJavaxPersistenceOverrides();
-    //        }
-    //        return propertyResolutionUtil.persistencePropertiesOverrides(overridingProperties);
-    //    }
 
     /**
      * @param puName unit name

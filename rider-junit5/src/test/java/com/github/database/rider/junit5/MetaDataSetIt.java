@@ -2,7 +2,7 @@ package com.github.database.rider.junit5;
 
 
 import com.github.database.rider.core.api.connection.ConnectionHolder;
-import com.github.database.rider.core.util.EntityManagerProvider;
+import com.github.database.rider.junit5.util.EntityManagerProvider;
 import com.github.database.rider.junit5.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;

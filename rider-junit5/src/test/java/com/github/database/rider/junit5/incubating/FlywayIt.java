@@ -1,8 +1,9 @@
-package com.github.database.rider.junit5;
+package com.github.database.rider.junit5.incubating;
 
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.ExpectedDataSet;
+import com.github.database.rider.junit5.incubating.DBUnitExtension;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 @ExtendWith(DBUnitExtension.class)
 @RunWith(JUnitPlatform.class)
 @DBUnit(url = "jdbc:hsqldb:mem:flyway;DB_CLOSE_DELAY=-1", driver = "org.hsqldb.jdbcDriver", user = "sa")
-public class FlywayItDeprecated {
+public class FlywayIt {
 
     private static Flyway flyway;
 
@@ -55,7 +56,7 @@ public class FlywayItDeprecated {
     public void shouldInserUsers() throws SQLException {
         Connection connection = flyway.getDataSource().getConnection();
         //connection.setAutoCommit(false); //transactional=true
-        Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+        java.sql.Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
                 ResultSet.CONCUR_UPDATABLE);
 
         statement.addBatch("INSERT INTO User VALUES (1, 'user1')");
