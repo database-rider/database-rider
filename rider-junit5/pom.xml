@@ -134,7 +134,6 @@
                     <includes>
                         <include>**/Test*.java</include>
                         <include>**/*It.java</include>
-                        <include>**/*ItDeprecated.java</include>
                         <include>**/*Test.java</include>
                     </includes>
                 </configuration>
