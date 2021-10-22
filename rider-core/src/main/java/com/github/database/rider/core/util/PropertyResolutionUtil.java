@@ -33,10 +33,10 @@ public class PropertyResolutionUtil {
         return null;
     }
 
-    private static Map<String, Object> castMap(Map<String, String> stringStringMap) {
+    Map<String, Object> castMap(Map<String, String> stringStringMap) {
         Map<String, Object> stringObjectMap = new HashMap<>();
 
-        for (Map.Entry<String, Object> entry : stringObjectMap.entrySet()) {
+        for (Map.Entry<String, String> entry : stringStringMap.entrySet()) {
             stringObjectMap.put(entry.getKey(), entry.getValue());
         }
 
