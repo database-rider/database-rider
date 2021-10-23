@@ -1,5 +1,6 @@
 package com.github.database.rider.junit5.util;
 
+import com.github.database.rider.core.util.PropertyResolutionUtil;
 import org.hibernate.Session;
 import org.hibernate.internal.SessionImpl;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -30,28 +32,15 @@ public class EntityManagerProvider {
 
     private static PropertyResolutionUtil propertyResolutionUtil = new PropertyResolutionUtil();
 
-    private static Map<String, String> overridingProperties;
-
     private static EntityManagerProvider instance;
 
     private static Logger log = LoggerFactory.getLogger(EntityManagerProvider.class);
 
-    private EntityManagerProvider() {
+    protected EntityManagerProvider() {
     }
 
     public static synchronized EntityManagerProvider instance(String unitName) {
-        instance = providers.get(unitName);
-        if (instance == null) {
-            instance = new EntityManagerProvider();
-            providers.put(unitName, instance);
-        }
-        try {
-            instance.init(unitName);
-        } catch (Exception e) {
-            log.error("Could not initialize persistence unit " + unitName, e);
-        }
-
-        return instance;
+        return instance(unitName, new HashMap<>());
     }
 
     /**
@@ -61,21 +50,19 @@ public class EntityManagerProvider {
      * @param overridingPersistenceProps properties to override persistence.xml props or define additions to them
      * @return EntityManagerProvider instance
      */
-    public static synchronized EntityManagerProvider instance(String unitName, Map<String, String> overridingPersistenceProps) {
-        overridingProperties = overridingPersistenceProps;
-        return instance(unitName);
-    }
+    @Deprecated
+    //TODO: an existing instance will never be overridden if the  props have changed. Must be removed. Use newInstance instead.
+    public static synchronized EntityManagerProvider instance(String unitName,
+                                                              Map<String, Object> overridingPersistenceProps) {
 
-    /**
-     * @param unitName unit name
-     *                 clear entities on underlying context
-     * @return a clean EntityManagerProvider
-     */
-    public static synchronized EntityManagerProvider newInstance(String unitName) {
-        instance = new EntityManagerProvider();
-        providers.put(unitName, instance);
+        instance = providers.get(unitName);
+        if (instance == null) {
+            instance = new EntityManagerProvider();
+            providers.put(unitName, instance);
+        }
+
         try {
-            instance.init(unitName);
+            instance.init(unitName, overridingPersistenceProps);
         } catch (Exception e) {
             log.error("Could not initialize persistence unit " + unitName, e);
         }
@@ -83,12 +70,44 @@ public class EntityManagerProvider {
         return instance;
     }
 
-    private void init(String unitName) {
+    public static void removeInstance(String unitName) {
+        providers.remove(unitName);
+    }
+
+    /**
+     * @param unitName
+     * @param overridingPersistenceProps clear entities on underlying context
+     * @return a clean EntityManagerProvider
+     */
+    public static synchronized EntityManagerProvider newInstance(String unitName,
+                                                                 Map<String, Object> overridingPersistenceProps) {
+        instance = new EntityManagerProvider();
+        providers.put(unitName, instance);
+        try {
+            instance.init(unitName, overridingPersistenceProps);
+        } catch (Exception e) {
+            log.error("Could not initialize persistence unit " + unitName, e);
+        }
+
+        return instance;
+    }
+
+    /**
+     * @param unitName unit name clear entities on underlying context
+     * @return a clean EntityManagerProvider
+     */
+    public static synchronized EntityManagerProvider newInstance(String unitName) {
+        return newInstance(unitName, new HashMap<String, Object>());
+    }
+
+    private void init(String unitName, Map<String, Object> props) {
         if (emf == null) {
             log.debug("creating emf for unit {}", unitName);
-            Map<String, String> dbConfig = getDbPropertyConfig();
+            Map<String, Object> dbConfig = propertyResolutionUtil.persistencePropertiesOverrides(props);
             log.debug("using dbConfig '{}' to create emf", dbConfig);
-            emf = dbConfig == null ? Persistence.createEntityManagerFactory(unitName) : Persistence.createEntityManagerFactory(unitName, dbConfig);
+            emf = dbConfig == null ?
+                    Persistence.createEntityManagerFactory(unitName) :
+                    Persistence.createEntityManagerFactory(unitName, dbConfig);
             em = emf.createEntityManager();
             conn = createConnection(em);
             tx = em.getTransaction();
@@ -112,13 +131,6 @@ public class EntityManagerProvider {
         return connection;
     }
 
-    private Map<String, String> getDbPropertyConfig() {
-        if (overridingProperties == null) {
-            return propertyResolutionUtil.getSystemJavaxPersistenceOverrides();
-        }
-
-        return propertyResolutionUtil.persistencePropertiesOverrides(overridingProperties);
-    }
 
     /**
      * @param puName unit name
@@ -184,8 +196,8 @@ public class EntityManagerProvider {
     }
 
     /**
-     * @param puName unit name
-     *               clears entityManager persistence context and entityManager factory cache represented by given puName
+     * @param puName unit name clears entityManager persistence context and entityManager factory cache represented by
+     *               given puName
      * @return provider represented by puName
      */
     public static EntityManagerProvider clear(String puName) {
@@ -221,6 +233,9 @@ public class EntityManagerProvider {
      */
     public static EntityTransaction tx() {
         checkInstance();
+        if (instance.tx == null) {
+            instance.tx = instance.em.getTransaction();
+        }
         return instance.tx;
     }
 
