@@ -4,7 +4,6 @@ import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.connection.ConnectionHolderImpl;
 import com.github.database.rider.core.leak.LeakHunterException;
-import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -28,9 +27,6 @@ public class LeakHunterIt {
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
-    Connection connection;
-    Connection connection2;
-
 //end::leak-hunter-declare[]
 
     @BeforeClass
@@ -39,27 +35,14 @@ public class LeakHunterIt {
         Persistence.createEntityManagerFactory("rules-it");
     }
 
-    @After
-    public void closeConnections() throws SQLException {
-        closeConnection(connection);
-        closeConnection(connection2);
-    }
-
-    private void closeConnection(Connection connection) throws SQLException {
-        if(connection != null && !connection.isClosed()) {
-            connection.close();
-        }
-    }
-
 //tag::find-leak[]
 
     @Test
     @DataSet("yml/user.yml")
     public void shouldFindTwoConnectionLeaks() throws SQLException {
         exception.expect(LeakHunterException.class);
-        exception.expectMessage("Execution of method shouldFindTwoConnectionLeaks left 2 open connection(s).");
-        createLeak(connection);
-        createLeak(connection2);
+        exception.expectMessage("Execution of method shouldFindTwoConnectionLeaks left 1 open connection(s).");
+        createLeak();
     }
 //end::find-leak[]
 
@@ -67,7 +50,7 @@ public class LeakHunterIt {
     @DataSet("yml/user.yml")
     @DBUnit(leakHunter = false)
     public void shouldNotFindConnectionLeakWhenHunterIsDisabled() throws SQLException {
-        createLeak(connection);
+        createLeak();
     }
 
     @Test
@@ -88,9 +71,9 @@ public class LeakHunterIt {
 
 //tag::create-leak[]
 
-    private void createLeak(Connection conn) throws SQLException {
-        conn = getConnection();
-        try (Statement stmt = conn.createStatement()) {
+    private void createLeak() throws SQLException {
+        Connection connection = getConnection();
+        try (Statement stmt = connection.createStatement()) {
             ResultSet resultSet = stmt.executeQuery("select count(*) from user");
             assertThat(resultSet.next()).isTrue();
             assertThat(resultSet.getInt(1)).isEqualTo(2);
