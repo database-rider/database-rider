@@ -344,6 +344,10 @@ public class DBUnitConfig {
         return columnSensing;
     }
 
+    public void setColumnSensing(boolean columnSensing) {
+        this.columnSensing = columnSensing;
+    }
+
     public Boolean isLeakHunter() {
         return leakHunter;
     }
