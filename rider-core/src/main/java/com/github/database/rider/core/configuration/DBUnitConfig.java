@@ -245,12 +245,12 @@ public class DBUnitConfig {
         return this;
     }
 
-    private DBUnitConfig alwaysCleanBefore(boolean alwaysCleanBefore){
+    private DBUnitConfig alwaysCleanBefore(boolean alwaysCleanBefore) {
         this.alwaysCleanBefore = alwaysCleanBefore;
         return this;
     }
 
-    private DBUnitConfig alwaysCleanAfter(boolean alwaysCleanAfter){
+    private DBUnitConfig alwaysCleanAfter(boolean alwaysCleanAfter) {
         this.alwaysCleanAfter = alwaysCleanAfter;
         return this;
     }
@@ -314,14 +314,22 @@ public class DBUnitConfig {
         return connectionConfig;
     }
 
+    public void setConnectionConfig(ConnectionConfig connectionConfig) {
+        this.connectionConfig = connectionConfig;
+    }
+
     // methods below are for snakeyml library
 
-    public void setCacheConnection(boolean cacheConnection) {
-        this.cacheConnection = cacheConnection;
+    public Map<String, Object> getProperties() {
+        return properties;
     }
 
     public void setProperties(Map<String, Object> properties) {
         this.properties = properties;
+    }
+
+    public Boolean isCacheTableNames() {
+        return cacheTableNames;
     }
 
     public void setCacheTableNames(boolean cacheTableNames) {
@@ -332,16 +340,24 @@ public class DBUnitConfig {
         return cacheConnection;
     }
 
-    public Boolean isCacheTableNames() {
-        return cacheTableNames;
+    public void setCacheConnection(boolean cacheConnection) {
+        this.cacheConnection = cacheConnection;
     }
 
     public Boolean isMergeDataSets() {
         return mergeDataSets;
     }
 
+    public void setMergeDataSets(Boolean mergeDataSets) {
+        this.mergeDataSets = mergeDataSets;
+    }
+
     public Boolean isColumnSensing() {
         return columnSensing;
+    }
+
+    public void setColumnSensing(boolean columnSensing) {
+        this.columnSensing = columnSensing;
     }
 
     public Boolean isLeakHunter() {
@@ -368,20 +384,8 @@ public class DBUnitConfig {
         this.mergingStrategy = mergingStrategy;
     }
 
-    public Map<String, Object> getProperties() {
-        return properties;
-    }
-
     public String getExecutorId() {
         return executorId;
-    }
-
-    public void setConnectionConfig(ConnectionConfig connectionConfig) {
-        this.connectionConfig = connectionConfig;
-    }
-
-    public void setMergeDataSets(Boolean mergeDataSets) {
-        this.mergeDataSets = mergeDataSets;
     }
 
     public boolean isCaseSensitiveTableNames() {
