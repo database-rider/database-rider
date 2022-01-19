@@ -99,7 +99,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         if (dataSetConfig != null) {
             IDataSet resultingDataSet = null;
             try {
-                getRiderDataSource().setConnectionAutoCommit(true);
                 if (dataSetConfig.isDisableConstraints()) {
                     disableConstraints();
                 }
@@ -139,12 +138,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     logDataSet(resultingDataSet, e);
                 }
                 throw new DataBaseSeedingException("Could not initialize dataset: " + dataSetConfig, e);
-            } finally {
-                try {
-                    getRiderDataSource().resetConnectionAutoCommit();
-                } catch (SQLException e) {
-                    log.error("Could not reset connection auto commit", e);
-                }
             }
         }
 
