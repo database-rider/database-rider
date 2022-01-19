@@ -10,7 +10,7 @@
      <artifactId>rider-quarkus-sample</artifactId>
 
      <properties>
-        <quarkus.version>1.13.7.Final</quarkus.version>
+        <quarkus.version>2.6.2.Final</quarkus.version>
         <surefire.version>2.22.1</surefire.version>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
