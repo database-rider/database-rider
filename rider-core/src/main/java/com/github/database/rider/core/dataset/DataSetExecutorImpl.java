@@ -345,8 +345,8 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     executeStatements("SET DATABASE REFERENTIAL INTEGRITY " + hsqlDBFlag + ";");
                     break;
                 case H2:
-                    String h2DBFlag = enable ? "1" : "0";
-                    executeStatements("SET foreign_key_checks = " + h2DBFlag + ";");
+                    String h2DBFlag = enable ? "TRUE" : "FALSE";
+                    executeStatements("SET REFERENTIAL_INTEGRITY " + h2DBFlag + ";");
                     break;
                 case MYSQL:
                     String mySqlDBFlag = enable ? "1" : "0";

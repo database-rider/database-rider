@@ -21,8 +21,8 @@ public class TableNameResolverTest {
         TableNameResolver tableNameResolver = new TableNameResolver();
         Set<String> tableNames = tableNameResolver.getTableNames(new RiderDataSource(
                 new ConnectionHolderImpl(EntityManagerProvider.instance("table-names-it").connection())));
-        assertThat(tableNames).hasSize(3)
-                .containsExactly("PUBLIC.\"ORDER\"", "PUBLIC.\"LIMIT\"", "PUBLIC.SEQUENCE");
+        assertThat(tableNames)
+                .contains("PUBLIC.\"ORDER\"", "PUBLIC.\"LIMIT\"");
     }
 
     @Test
@@ -31,8 +31,8 @@ public class TableNameResolverTest {
 
         Set<String> tableNames = tableNameResolver.getTableNames(new RiderDataSource(
                 new ConnectionHolderImpl(EntityManagerProvider.instance("table-names-it").connection())));
-        assertThat(tableNames).hasSize(3)
-                .containsExactly("PUBLIC.\"ORDER\"", "PUBLIC.\"LIMIT\"", "PUBLIC.SEQUENCE");
+        assertThat(tableNames)
+                .contains("PUBLIC.\"ORDER\"", "PUBLIC.\"LIMIT\"");
 
         Set<String> newTableNames = tableNameResolver.getTableNames(new RiderDataSource(
                 new ConnectionHolderImpl(EntityManagerProvider.instance("escape-pattern").connection())));
@@ -46,14 +46,15 @@ public class TableNameResolverTest {
 
         Set<String> tableNames = tableNameResolver.getTableNames(new RiderDataSource(
                 new ConnectionHolderImpl(EntityManagerProvider.instance("table-names-it").connection())));
-        assertThat(tableNames).hasSize(3)
-                .containsExactly("PUBLIC.\"ORDER\"", "PUBLIC.\"LIMIT\"", "PUBLIC.SEQUENCE");
+        assertThat(tableNames)
+                .contains("PUBLIC.\"ORDER\"", "PUBLIC.\"LIMIT\"");
 
         Set<String> newTableNames = tableNameResolver.getTableNames(new RiderDataSource(
                 new ConnectionHolderImpl(EntityManagerProvider.instance("escape-pattern").connection())));
 
         assertThat(newTableNames).isNotEqualTo(tableNames)
-                .containsExactly("PUBLIC.\"ORDER\"", "PUBLIC.SEQUENCE");
+                .contains("PUBLIC.\"ORDER\"")
+                .doesNotContain("PUBLIC.\"LIMIT\"");
     }
 
     @DBUnit(escapePattern = "***?***")
@@ -63,8 +64,8 @@ public class TableNameResolverTest {
         Set<String> tableNames = tableNameResolver.getTableNames(new RiderDataSource(
                 new ConnectionHolderImpl(EntityManagerProvider.instance("escape-pattern").connection())));
 
-        assertThat(tableNames).hasSize(2)
-                .containsExactlyInAnyOrder("PUBLIC.***SEQUENCE***", "PUBLIC.\"ORDER\"");
+        assertThat(tableNames)
+                .contains("PUBLIC.***SEQUENCE***", "PUBLIC.\"ORDER\"");
     }
 
 }
