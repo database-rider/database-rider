@@ -11,6 +11,7 @@ import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.leak.LeakHunterFactory;
 import com.github.database.rider.core.util.AnnotationUtils;
 
+import javax.annotation.Priority;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
@@ -26,6 +27,7 @@ import java.util.List;
 /**
  * Created by pestano on 26/07/15.
  */
+@Priority(0)
 @Interceptor
 @DBUnitInterceptor
 public class DBUnitInterceptorImpl implements Serializable {
