@@ -68,10 +68,6 @@ public final class TableNameResolver {
         }
     }
 
-    public boolean hasTableNamesCache() {
-        return dbUnitConfig.isCacheTableNames() && !tableNamesCache.isEmpty();
-    }
-
     public String resolveSchema(final Connection connection) {
         try {
             try (ResultSet tables = getTablesFromMetadata(connection)) {
@@ -81,6 +77,10 @@ public final class TableNameResolver {
             LOG.warn("Can't resolve schema", e);
             return dbUnitConfig.getSchema();
         }
+    }
+
+    private boolean hasTableNamesCache() {
+        return dbUnitConfig.isCacheTableNames() && !tableNamesCache.isEmpty();
     }
 
     private boolean isSystemSchema(String schema, RiderDataSource riderDataSource) {
