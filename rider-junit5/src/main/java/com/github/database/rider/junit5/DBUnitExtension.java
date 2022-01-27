@@ -12,10 +12,8 @@ import com.github.database.rider.core.api.leak.LeakHunter;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
-import com.github.database.rider.core.leak.LeakHunterException;
 import com.github.database.rider.core.leak.LeakHunterFactory;
 import com.github.database.rider.junit5.util.EntityManagerProvider;
-import org.apache.commons.collections.CollectionUtils;
 import org.dbunit.DatabaseUnitException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -28,6 +26,7 @@ import org.junit.platform.commons.util.StringUtils;
 
 import java.lang.reflect.Method;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -106,18 +105,18 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     private Set<Method> findCallbackMethods(Class testClass, Class callback) {
         final Set<Method> methods = new HashSet<>();
         Stream.of(testClass.getSuperclass()
-                .getDeclaredMethods(), testClass.getDeclaredMethods())
+                        .getDeclaredMethods(), testClass.getDeclaredMethods())
                 .flatMap(Stream::of)
                 .filter(m -> m.getAnnotation(callback) != null)
                 .forEach(m -> methods.add((Method) m)); //do not use Collectors.toSet here: stream incompatible types
-        return methods;
+        return Collections.unmodifiableSet(methods);
     }
 
     @Override
     public void beforeEach(ExtensionContext extensionContext) throws Exception {
         if (extensionContext.getTestClass().isPresent()) {
             Set<Method> callbackMethods = findCallbackMethods(extensionContext.getTestClass().get(), BeforeEach.class);
-            if (CollectionUtils.isNotEmpty(callbackMethods)) {
+            if (!callbackMethods.isEmpty()) {
                 for (Method callbackMethod : callbackMethods) {
                     executeDataSetForCallback(extensionContext, BeforeEach.class, callbackMethod);
                     executeExpectedDataSetForCallback(extensionContext, BeforeEach.class, callbackMethod);
@@ -130,7 +129,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     public void afterEach(ExtensionContext extensionContext) throws Exception {
         if (extensionContext.getTestClass().isPresent()) {
             Set<Method> callbackMethods = findCallbackMethods(extensionContext.getTestClass().get(), AfterEach.class);
-            if (CollectionUtils.isNotEmpty(callbackMethods)) {
+            if (!callbackMethods.isEmpty()) {
                 for (Method callbackMethod : callbackMethods) {
                     executeDataSetForCallback(extensionContext, AfterEach.class, callbackMethod);
                     executeExpectedDataSetForCallback(extensionContext, AfterEach.class, callbackMethod);
@@ -143,7 +142,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     public void beforeAll(ExtensionContext extensionContext) throws Exception {
         if (extensionContext.getTestClass().isPresent()) {
             Set<Method> callbackMethods = findCallbackMethods(extensionContext.getTestClass().get(), BeforeAll.class);
-            if (CollectionUtils.isNotEmpty(callbackMethods)) {
+            if (!callbackMethods.isEmpty()) {
                 for (Method callbackMethod : callbackMethods) {
                     executeDataSetForCallback(extensionContext, BeforeAll.class, callbackMethod);
                     executeExpectedDataSetForCallback(extensionContext, BeforeAll.class, callbackMethod);
@@ -156,7 +155,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     public void afterAll(ExtensionContext extensionContext) throws Exception {
         if (extensionContext.getTestClass().isPresent()) {
             Set<Method> callbackMethods = findCallbackMethods(extensionContext.getTestClass().get(), AfterAll.class);
-            if (CollectionUtils.isNotEmpty(callbackMethods)) {
+            if (!callbackMethods.isEmpty()) {
                 for (Method callbackMethod : callbackMethods) {
                     executeDataSetForCallback(extensionContext, AfterAll.class, callbackMethod);
                     executeExpectedDataSetForCallback(extensionContext, AfterAll.class, callbackMethod);
@@ -251,7 +250,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         }
         if (!dbUnitAnnotation.isPresent() && callbackAnnotation.isPresent()) {
             Set<Method> callbackMethods = findCallbackMethods(testClass, callbackAnnotation.get());
-            if (CollectionUtils.isNotEmpty(callbackMethods)) {
+            if (!callbackMethods.isEmpty()) {
                 dbUnitAnnotation = AnnotationUtils.findAnnotation(callbackMethods.iterator().next(), DBUnit.class);
             }
         }
