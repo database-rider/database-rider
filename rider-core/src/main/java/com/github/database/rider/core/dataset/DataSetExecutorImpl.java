@@ -571,7 +571,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     public void clearDatabase(DataSetConfig config) throws SQLException {
         try {
             disableConstraints();
-            Set<String> cleanupStatements = new HashSet<>();
+            List<String> cleanupStatements = new LinkedList<>();
             if (config != null && config.getTableOrdering() != null && config.getTableOrdering().length > 0) {
                 for (String table : config.getTableOrdering()) {
                     if (table.toUpperCase().contains(SEQUENCE_TABLE_NAME)) {
