@@ -14,9 +14,11 @@ A sample project, based on https://antoniogoncalves.org/2019/06/07/configuring-a
 
 === Running
 
+`docker` should be running
+
 Just run `mvn clean test`
 
-TIP: Use `coverage` profile to generate test coverage in `target/site/jacoco` folder.
+Coverage results in `target/jacoco-report/` folder
 
 === Usage
 

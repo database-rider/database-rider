@@ -17,30 +17,29 @@
 package com.github.quarkus.sample;
 
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 import com.github.database.rider.cdi.api.DBRider;
+import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.quarkus.sample.domain.Book;
-import io.quarkus.test.junit.QuarkusTest;
+
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import javax.inject.Inject;
-
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 @DBRider
+@DBUnit(schema = "public", caseSensitiveTableNames = true, cacheConnection = false)
 @DataSet(value = "books.yml")
 public class QuarkusDBUnitParameterizedTest {
-
-    @Inject
-    BookRepository repository;
 
     @ParameterizedTest
     @CsvSource({"2001,Douglas Adams", "2002,Frank Herbert"})
     public void shouldFindBookByTitle(String id, String title) {
-        Book book = repository.findById(Long.parseLong(id));
+        Book book = Book.findById(Long.parseLong(id));
         assertThat(book)
                 .isNotNull()
                 .extracting(Book::getAuthor)
@@ -50,7 +49,7 @@ public class QuarkusDBUnitParameterizedTest {
     @ParameterizedTest
     @ValueSource(longs = {4004})
     public void shouldFindBookById(Long id) {
-        Book book = repository.findById(id);
+        Book book = Book.findById(id);
         assertThat(book)
                 .isNotNull()
                 .extracting(Book::getAuthor)
