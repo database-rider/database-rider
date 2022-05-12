@@ -17,7 +17,6 @@
 package com.github.quarkus.sample.rest;
 
 import com.github.quarkus.sample.domain.Book;
-import com.github.quarkus.sample.BookRepository;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,9 +57,6 @@ public class BookResource {
     @ConfigProperty(name = "isbn.suffix")
     String isbnSuffix;
 
-    @Inject
-    BookRepository bookRepository;
-
     /**
      * curl -X GET http://localhost:8080/api/books/1234 -v
      */
@@ -69,10 +65,10 @@ public class BookResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response findById(@PathParam("id") final Long id) {
         log.debug("Getting the book " + id);
-        return ofNullable(bookRepository.findById(id))
-            .map(Response::ok)
-            .orElse(status(NOT_FOUND))
-            .build();
+        return ofNullable(Book.findById(id))
+                .map(Response::ok)
+                .orElse(status(NOT_FOUND))
+                .build();
     }
 
     /**
@@ -82,11 +78,13 @@ public class BookResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll() {
         log.debug("Getting all the books");
-        return ok(bookRepository.findAll().list()).build();
+        return ok(Book.findAll().list()).build();
     }
 
     /**
-     * curl -X POST http://localhost:8080/api/books  -H "Content-Type: application/json" -d '{"author":"Douglas Adams", "title":"H2G2", "year":"1979", "genre":"sci-fi"}' -v
+     * curl -X POST http://localhost:8080/api/books -H "Content-Type:
+     * application/json" -d '{"author":"Douglas Adams", "title":"H2G2",
+     * "year":"1979", "genre":"sci-fi"}' -v
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -100,7 +98,7 @@ public class BookResource {
         String isbn = isbnPrefix + "-" + (int) (Math.random() * 1000) + "-" + isbnSuffix;
         book.setIsbn(isbn);
 
-        bookRepository.persist(book);
+        Book.persist(book);
 
         URI createdURI = uriInfo.getAbsolutePathBuilder().path(String.valueOf(book.getId())).build();
         log.info("Created book URI " + createdURI);
@@ -109,16 +107,18 @@ public class BookResource {
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
     public Response update(Book book) {
         log.debug("Updating the book " + book);
-        return ok(bookRepository.update(book)).build();
+        book.persist();
+        return ok(book).build();
     }
 
     @DELETE
     @Path("/{id : \\d+}")
     public Response delete(@PathParam("id") final Long id) {
         log.debug("Deleting the book " + id);
-        bookRepository.deleteById(id);
+        Book.deleteById(id);
         return noContent().build();
     }
 }

@@ -22,8 +22,10 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "book")
 @JsonIgnoreProperties("entityManager")
 public class Book extends PanacheEntityBase {
 
