@@ -1,0 +1,10 @@
+email_entity:
+  - id: 1
+    mail: "lucifer@hell.org"
+  - id: 2
+    mail: "gabriel@heaven.org"
+  - id: 3
+    mail: "michael@heaven.org"
+  - id: 4
+    mail: "raphael@heaven.org"
+

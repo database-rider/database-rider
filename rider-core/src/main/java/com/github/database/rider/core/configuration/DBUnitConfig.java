@@ -483,6 +483,8 @@ public class DBUnitConfig {
             SEQUENCE_TABLE_NAME = System.getProperty("SEQUENCE_TABLE_NAME") == null ? "SEQ"
                     : System.getProperty("SEQUENCE_TABLE_NAME");
             SYSTEM_SCHEMAS.put(RiderDataSource.DBType.MSSQL, Collections.singleton("SYS"));
+            SYSTEM_SCHEMAS.put(RiderDataSource.DBType.H2, Collections.singleton("INFORMATION_SCHEMA"));
+
             Collections.addAll(RESERVED_TABLE_NAMES, DEFAULT_SQL_RESERVED_WORDS.split(","));
             if (System.getProperty("RESERVED_TABLE_NAMES") != null) {
                 Collections.addAll(RESERVED_TABLE_NAMES, System.getProperty("RESERVED_TABLE_NAMES").toUpperCase().split(","));

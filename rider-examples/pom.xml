@@ -19,6 +19,7 @@
         <module>quarkus-dbunit-sample</module>
         <module>quarkus-postgres-sample</module>
         <module>rider-micronaut</module>
+        <module>rider-kotlin</module>
     </modules>
 
     <name>Database Rider examples</name>
