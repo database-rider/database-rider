@@ -231,6 +231,7 @@
                                 <exclude>**/*DefaultCatalog.*</exclude>
                                 <exclude>**/*Tables.*</exclude>
                                 <exclude>**/org/example/*</exclude>
+                                <exclude>**/com/github/trks1970/*</exclude>
                             </excludes>
                         </configuration>
 
