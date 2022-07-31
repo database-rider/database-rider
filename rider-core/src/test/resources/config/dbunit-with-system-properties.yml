@@ -1,0 +1,15 @@
+properties:
+  batchedStatements:  true
+  caseSensitiveTableNames: false
+  qualifiedTableNames: true
+  schema: ${spring.datasource.username}
+  batchSize: 200
+  fetchSize: 200
+  allowEmptyFields: true
+  escapePattern: ${dbunit.escapePattern}
+  tableType: ["TABLE","VIEW"]
+connectionConfig:
+  driver: ${dbunit.driver}
+  url: ${dbunit.url}
+  user: ${dbunit.user}
+  password: ${dbunit.password}

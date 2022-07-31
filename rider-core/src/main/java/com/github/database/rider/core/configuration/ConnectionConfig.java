@@ -1,5 +1,7 @@
 package com.github.database.rider.core.configuration;
 
+import static com.github.database.rider.core.configuration.DBUnitConfigPropertyResolver.resolveProperty;
+
 /**
  * Created by rafael-pestano on 13/09/2016.
  */
@@ -15,7 +17,7 @@ public class ConnectionConfig {
     }
 
     public void setDriver(String driver) {
-        this.driver = driver;
+        this.driver = resolveProperty(driver);
     }
 
     public String getUrl() {
@@ -23,7 +25,7 @@ public class ConnectionConfig {
     }
 
     public void setUrl(String url) {
-        this.url = url;
+        this.url = resolveProperty(url);
     }
 
     public String getUser() {
@@ -31,7 +33,7 @@ public class ConnectionConfig {
     }
 
     public void setUser(String user) {
-        this.user = user;
+        this.user = resolveProperty(user);
     }
 
     public String getPassword() {
@@ -39,6 +41,6 @@ public class ConnectionConfig {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = resolveProperty(password);
     }
 }

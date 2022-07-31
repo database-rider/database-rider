@@ -8,7 +8,10 @@ import com.github.database.rider.core.replacers.CustomReplacer;
 import org.dbunit.database.IMetadataHandler;
 import org.dbunit.dataset.datatype.DataType;
 import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
@@ -22,6 +25,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,8 +35,23 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @RunWith(JUnit4.class)
 public class DBUnitConfigTest {
+    @Rule
+    public final EnvironmentVariables env = new EnvironmentVariables();
 
     private File customConfigFile = new File("target/test-classes/dbunit.yml");
+
+    @Before
+    public void cleanProperties() {
+        List<String> propertiesToClean = Arrays.asList("dbunit.driver", "dbunit.url", "dbunit.user", "dbunit.password", "dbunit.escapePattern", "spring.datasource.username", "dbunit.caseStrategy");
+        for (String property : propertiesToClean) {
+            cleanProperty(property);
+        }
+    }
+
+    private void cleanProperty(String propertyName) {
+        System.clearProperty(propertyName);
+        env.clear(propertyName);
+    }
 
     @After
     public void deleteConfigFile() {
@@ -70,12 +89,6 @@ public class DBUnitConfigTest {
                 .hasFieldOrPropertyWithValue("url", "")
                 .hasFieldOrPropertyWithValue("user", "")
                 .hasFieldOrPropertyWithValue("password", "");
-    }
-
-    private void copyResourceToFile(String resourceName, File to) throws IOException {
-        try (InputStream from = getClass().getResourceAsStream(resourceName)) {
-            Files.copy(from, to.toPath());
-        }
     }
 
     @Test
@@ -160,6 +173,58 @@ public class DBUnitConfigTest {
     }
 
     @Test
+    @DBUnit(cacheTableNames = false, allowEmptyFields = true, batchSize = 50, schema = "${spring.datasource.username}",
+            escapePattern = "${dbunit.escapePattern}",
+            url = "${dbunit.url}",
+            user = "${dbunit.user}",
+            password = "${dbunit.password}",
+            driver = "${dbunit.driver}")
+    public void shouldLoadDBUnitConfigWithSystemPropertiesViaAnnotation() throws NoSuchMethodException {
+        setSysPropsAndEnvVars();
+        Method method = getClass().getMethod("shouldLoadDBUnitConfigWithSystemPropertiesViaAnnotation");
+        DBUnit dbUnit = method.getAnnotation(DBUnit.class);
+        DBUnitConfig dbUnitConfig = DBUnitConfig.from(dbUnit);
+
+        assertThat(dbUnitConfig).isNotNull()
+                .hasFieldOrPropertyWithValue("schema", "test");
+
+        assertThat(dbUnitConfig.getProperties()).
+                containsEntry("escapePattern", "[?]").
+                containsEntry("schema", "test").
+                containsEntry("batchSize", 50).
+                containsEntry("fetchSize", 100).
+                doesNotContainKey("datatypeFactory");
+
+        assertThat(dbUnitConfig.getConnectionConfig()).isNotNull()
+                .hasFieldOrPropertyWithValue("driver", "org.hsqldb.jdbcDriver")
+                .hasFieldOrPropertyWithValue("user", "user")
+                .hasFieldOrPropertyWithValue("password", "password")
+                .hasFieldOrPropertyWithValue("url", "jdbc:hsqldb:mem:test-config;DB_CLOSE_DELAY=-1");
+    }
+
+    @Test
+    public void shouldLoadDBUnitConfigViaCustomGlobalFileWithSystemProperties() throws IOException {
+        copyResourceToFile("/config/dbunit-with-system-properties.yml", customConfigFile);
+        setSysPropsAndEnvVars();
+        DBUnitConfig config = GlobalConfig.newInstance().getDbUnitConfig();
+        assertThat(config).isNotNull()
+                .hasFieldOrPropertyWithValue("schema", "test");
+
+        assertThat(config.getProperties()).
+                containsEntry("escapePattern", "[?]").
+                containsEntry("schema", "test").
+                containsEntry("batchSize", 200).
+                containsEntry("fetchSize", 200).
+                doesNotContainKey("datatypeFactory");
+
+        assertThat(config.getConnectionConfig()).isNotNull()
+                .hasFieldOrPropertyWithValue("driver", "org.hsqldb.jdbcDriver")
+                .hasFieldOrPropertyWithValue("user", "user")
+                .hasFieldOrPropertyWithValue("password", "password")
+                .hasFieldOrPropertyWithValue("url", "jdbc:hsqldb:mem:test-config;DB_CLOSE_DELAY=-1");
+    }
+
+    @Test
     @DBUnit()
     public void shouldTreatAnnotationWithNonExistingSchemaAsNull() throws NoSuchMethodException {
         Method method = getClass().getMethod("shouldTreatAnnotationWithNonExistingSchemaAsNull");
@@ -192,7 +257,21 @@ public class DBUnitConfigTest {
                 containsEntry("metadataHandler", new MockMetadataHandler());
     }
 
-    public static class MockDataTypeFactory implements org.dbunit.dataset.datatype.IDataTypeFactory {
+    private void copyResourceToFile(String resourceName, File to) throws IOException {
+        try (InputStream from = getClass().getResourceAsStream(resourceName)) {
+            Files.copy(from, to.toPath());
+        }
+    }
+
+    private void setSysPropsAndEnvVars() {
+        env.set("dbunit.user", "user").set("dbunit.password", "pass").set("dbunit.driver", "org.hsqldb.jdbcDriver");
+        System.setProperty("dbunit.url", "jdbc:hsqldb:mem:test-config;DB_CLOSE_DELAY=-1");
+        System.setProperty("dbunit.password", "password");//should override env var
+        System.setProperty("spring.datasource.username", "test");
+        System.setProperty("dbunit.escapePattern", "[?]");
+    }
+
+    static class MockDataTypeFactory implements org.dbunit.dataset.datatype.IDataTypeFactory {
         @Override
         public DataType createDataType(int i, String s) {
             throw new UnsupportedOperationException("only for configuration tests");
@@ -215,7 +294,7 @@ public class DBUnitConfigTest {
         }
     }
 
-    public static class MockMetadataHandler implements IMetadataHandler {
+    static class MockMetadataHandler implements IMetadataHandler {
 
         @Override
         public ResultSet getColumns(DatabaseMetaData databaseMetaData, String schemaName, String tableName)

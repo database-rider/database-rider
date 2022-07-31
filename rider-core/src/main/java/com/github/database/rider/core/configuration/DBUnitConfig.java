@@ -9,7 +9,6 @@ import com.github.database.rider.core.replacers.DateTimeReplacer;
 import com.github.database.rider.core.replacers.NullReplacer;
 import com.github.database.rider.core.replacers.Replacer;
 import com.github.database.rider.core.replacers.UnixTimestampReplacer;
-
 import org.dbunit.database.IMetadataHandler;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.yaml.snakeyaml.Yaml;
@@ -18,6 +17,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.*;
+
+import static com.github.database.rider.core.configuration.DBUnitConfigPropertyResolver.resolveProperties;
+import static com.github.database.rider.core.configuration.DBUnitConfigPropertyResolver.resolveProperty;
 
 /**
  * represents DBUnit configuration of a dataset executor.
@@ -83,7 +85,7 @@ public class DBUnitConfig {
         putIfAbsent(properties, "allowEmptyFields", false);
         putIfAbsent(properties, "replacers", new ArrayList<>(
                 Arrays.asList(new DateTimeReplacer(), new UnixTimestampReplacer(), new NullReplacer())));
-        putIfAbsent(properties, "tableType", Arrays.asList("TABLE"));
+        putIfAbsent(properties, "tableType", Collections.singletonList("TABLE"));
     }
 
     private <K, V> void putIfAbsent(Map<K, V> map, K key, V value) {
@@ -271,7 +273,7 @@ public class DBUnitConfig {
     }
 
     public DBUnitConfig addDBUnitProperty(String name, Object value) {
-        properties.put(name, value);
+        properties.put(name, resolveProperty(value));
         return this;
     }
 
@@ -325,7 +327,7 @@ public class DBUnitConfig {
     }
 
     public void setProperties(Map<String, Object> properties) {
-        this.properties = properties;
+        this.properties = resolveProperties(properties);
     }
 
     public Boolean isCacheTableNames() {
