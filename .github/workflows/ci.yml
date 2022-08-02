@@ -15,8 +15,8 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3.1.1
         with:
-          distribution: 'adopt'
-          java-version: '11.0.4'
+          distribution: 'temurin'
+          java-version: '11'
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository
@@ -34,8 +34,8 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3.1.1
         with:
-          distribution: 'adopt'
-          java-version: '11.0.4'
+          distribution: 'temurin'
+          java-version: '11'
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository
@@ -74,8 +74,8 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3.1.1
         with:
-          distribution: 'adopt'
-          java-version: '11.0.4'
+          distribution: 'temurin'
+          java-version: '11'
           server-id: releases
           server-username: MAVEN_USER
           server-password: MAVEN_PASS
@@ -91,7 +91,7 @@ jobs:
         run: mvn deploy --settings settings.xml -DskipTests=true -Darguments="-DskipTests -Dmaven.test.skip=true"
         if: "contains(github.ref, 'master') && !contains(github.event.head_commit.message, 'prepare release')"
       - name: Release
-        run: mvn deploy -Prelease
+        run: mvn -pl '!rider-examples/rider-kotlin' deploy -Prelease
         if: "contains(github.ref, 'master') && contains(github.event.head_commit.message, 'prepare release')"
         env:
           MAVEN_USER: ${{ secrets.MAVEN_USER }}

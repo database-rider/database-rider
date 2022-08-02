@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.github.database-rider</groupId>
         <artifactId>rider-examples</artifactId>
-        <version>1.33.0</version>
+        <version>1.33.1-SNAPSHOT</version>
     </parent>
     <artifactId>quarkus-postgres-sample</artifactId>
     <description>This sample project was created by Alexei Bratuhin(@coiouhkc github user) as a reproducer for issue #253 </description>
@@ -118,8 +118,8 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.1.1</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -135,7 +135,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.7</version>
                 <configuration>
                     <skip>true</skip>
                 </configuration>

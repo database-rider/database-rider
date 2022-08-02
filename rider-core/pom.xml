@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.github.database-rider</groupId>
         <artifactId>rider-parent</artifactId>
-        <version>1.33.0</version>
+        <version>1.33.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -181,7 +181,7 @@
                     <plugin>
                         <groupId>com.github.cukedoctor</groupId>
                         <artifactId>cukedoctor-maven-plugin</artifactId>
-                        <version>3.6.0</version>
+                        <version>3.9.0</version>
                         <configuration>
                             <outputFileName>documentation</outputFileName>
                             <!-- by default it resolves to 'latest' and is overriden by release profile -->
