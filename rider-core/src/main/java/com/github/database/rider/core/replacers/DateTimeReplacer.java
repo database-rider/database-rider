@@ -53,7 +53,7 @@ public class DateTimeReplacer implements Replacer {
     }
 
     private String getPlaceholderPattern(ReplacerType replacerType) {
-        return String.format(DateTimeReplacer.PLACEHOLDER_FORMAT, replacerType.getPerfix(), replacerType.getName());
+        return String.format(DateTimeReplacer.PLACEHOLDER_FORMAT, replacerType.getPrefix(), replacerType.getName());
     }
 
     private Date addMinutes(Date currentDate, int minutes) {

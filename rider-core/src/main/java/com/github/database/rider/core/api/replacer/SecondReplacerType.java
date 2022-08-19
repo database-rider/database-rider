@@ -23,7 +23,7 @@ public enum SecondReplacerType implements ReplacerType{
     }
 
     @Override
-    public String getPerfix() {
+    public String getPrefix() {
         return "SEC";
     }
 

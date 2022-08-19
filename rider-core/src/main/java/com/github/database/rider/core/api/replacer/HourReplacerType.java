@@ -21,7 +21,7 @@ public enum HourReplacerType implements ReplacerType{
     }
 
     @Override
-    public String getPerfix() {
+    public String getPrefix() {
         return "HOUR";
     }
 
