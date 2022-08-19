@@ -5,7 +5,7 @@ package com.github.database.rider.core.api.replacer;
  */
 public interface ReplacerType {
 
-    String getPerfix();
+    String getPrefix();
 
     String getName();
 }
