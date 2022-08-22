@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     name: DBRider Build
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK
@@ -27,7 +27,7 @@ jobs:
         run: mvn install -DskipTests
   test:
     name: DBRider Test, Coverage & Docs
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     needs: build
     steps:
       - uses: actions/checkout@v2
@@ -64,7 +64,7 @@ jobs:
         if: "contains(github.ref, 'master') && contains(github.event.head_commit.message, 'prepare release')"
   release:
     name: Release DBRider to maven central
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     needs: test
     env:
       MAVEN_USER: ${{ secrets.MAVEN_USER }}
