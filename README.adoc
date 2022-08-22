@@ -381,7 +381,7 @@ escapePattern for each DB without the need to use the escapePattern property in 
 
 IMPORTANT: `@DBUnit` annotation takes precedence over `dbunit.yml` global configuration which will be used only if the annotation is not present.
 
-TIP: `System properties` and `Environment variables` can be used to resolve properties of type *String*. The value of the property must follow the format: `${system property or env var name}`. Check both annotation and global file [example here](https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/configuration/DBUnitConfigTest.java#L175-L225).
+TIP: `System properties` and `Environment variables` can be used to resolve properties of type *String*. The value of the property must follow the format: `${system property or env var name}`. Check both annotation and global file https://github.com/database-rider/database-rider/blob/be436283070f95f3487f9f41e7b773da23222eb4/rider-core/src/test/java/com/github/database/rider/core/configuration/DBUnitConfigTest.java#L175-L225[example here^].
 
 
 === JDBC Connection
