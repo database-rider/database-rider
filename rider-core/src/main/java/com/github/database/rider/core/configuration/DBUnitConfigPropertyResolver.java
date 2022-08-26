@@ -11,7 +11,6 @@ import static com.github.database.rider.core.util.ObjectUtils.defaultIfNull;
  * System properties take precedence over environment variables
  */
 final class DBUnitConfigPropertyResolver {
-
     private static final String DBUNIT_PROPERTY_EL_REGEX = "\\$\\{(.*)}";
     private static final String DBUNIT_PROPERTY_EL_IDENTIFIER = "${";
 
