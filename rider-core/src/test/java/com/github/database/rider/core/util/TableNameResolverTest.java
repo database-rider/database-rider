@@ -68,4 +68,14 @@ public class TableNameResolverTest {
                 .contains("PUBLIC.***SEQUENCE***", "PUBLIC.\"ORDER\"");
     }
 
+    @Test
+    public void shouldUseCatalogAsSchemaForMySQL() {
+        TableNameResolver tableNameResolver = new TableNameResolver(DBUnitConfig.from(TableNameResolverTest.class.getAnnotation(DBUnit.class)));
+
+        Set<String> tableNames = tableNameResolver.getTableNames(new RiderDataSource(
+                new ConnectionHolderImpl(EntityManagerProvider.instance("mysql-it").connection())));
+        assertThat(tableNames)
+                .contains("test.`USER`", "test.SEQUENCE", "test.FOLLOWER", "test.TWEET");
+    }
+
 }
