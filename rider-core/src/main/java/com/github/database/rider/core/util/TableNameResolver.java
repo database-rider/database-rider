@@ -19,6 +19,8 @@ import static com.github.database.rider.core.configuration.DBUnitConfig.Constant
 public final class TableNameResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(TableNameResolver.class.getName());
+    private static final String TABLE_SCHEM = "TABLE_SCHEM";
+    private static final String TABLE_CAT = "TABLE_CAT";
 
     private final Set<String> tableNamesCache;
 
@@ -52,8 +54,10 @@ public final class TableNameResolver {
         }
         final Set<String> tables = new HashSet<>();
         try (ResultSet result = getTablesFromMetadata(riderDataSource.getDBUnitConnection().getConnection())) {
+            String schemaColumnLabel = getSchemaColumnLabel(getDatabaseMetaData(riderDataSource));
+
             while (result.next()) {
-                String schema = resolveSchema(result);
+                String schema = resolveSchema(result, schemaColumnLabel);
                 if (!isSystemSchema(schema, riderDataSource)) {
                     String name = result.getString("TABLE_NAME");
                     name = resolveTableName(name, riderDataSource);
@@ -70,13 +74,19 @@ public final class TableNameResolver {
 
     public String resolveSchema(final Connection connection) {
         try {
+            String schemaColumnLabel = getSchemaColumnLabel(connection.getMetaData());
             try (ResultSet tables = getTablesFromMetadata(connection)) {
-                return resolveSchema(tables);
+                return resolveSchema(tables, schemaColumnLabel);
             }
         } catch (Exception e) {
             LOG.warn("Can't resolve schema", e);
             return dbUnitConfig.getSchema();
         }
+    }
+
+    private String getSchemaColumnLabel(DatabaseMetaData databaseMetaData) throws SQLException{
+        return databaseMetaData.getSchemaTerm() == null || databaseMetaData.getSchemaTerm().isEmpty() ?
+                TABLE_CAT : TABLE_SCHEM;
     }
 
     private boolean hasTableNamesCache() {
@@ -94,10 +104,10 @@ public final class TableNameResolver {
         return metaData.getTables(null, null, "%", new String[]{"TABLE"});
     }
 
-    private String resolveSchema(ResultSet result) {
+    private String resolveSchema(ResultSet result, String columnLabel) {
         String schema = null;
         try {
-            schema = result.getString("TABLE_SCHEM");
+            schema = result.getString(columnLabel);
             if (schema == null) {
                 schema = dbUnitConfig.getSchema();
             }
@@ -128,7 +138,15 @@ public final class TableNameResolver {
 
     private DatabaseMetaData getDatabaseMetaData(RiderDataSource riderDataSource) {
         try {
-            return riderDataSource.getDBUnitConnection().getConnection().getMetaData();
+            return getDatabaseMetaData(riderDataSource.getDBUnitConnection().getConnection());
+        } catch (SQLException e) {
+            throw new RuntimeException("Could not retrieve database metadata: " + e.getMessage(), e);
+        }
+    }
+
+    private DatabaseMetaData getDatabaseMetaData(Connection connection) {
+        try {
+            return connection.getMetaData();
         } catch (SQLException e) {
             throw new RuntimeException("Could not retrieve database metadata: " + e.getMessage(), e);
         }
