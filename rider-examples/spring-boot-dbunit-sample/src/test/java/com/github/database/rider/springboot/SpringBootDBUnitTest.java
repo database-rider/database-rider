@@ -6,6 +6,7 @@ import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.junit5.api.DBRider;
 import com.github.database.rider.springboot.model.user.User;
 import com.github.database.rider.springboot.model.user.UserRepository;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,10 @@ public class SpringBootDBUnitTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @BeforeAll
+    @DataSet("emptyUsers.yml")
+    static void beforeAll() {}
 
     @BeforeEach
     @DataSet("users.yml")
