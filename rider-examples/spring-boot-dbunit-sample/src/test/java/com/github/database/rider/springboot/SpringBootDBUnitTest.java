@@ -16,9 +16,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by pestano on 13/09/16.
+ * Declare @SpringBootTest first to ensure Spring context loads prior to DBRider extension execution.
  */
-@DBRider
 @SpringBootTest
+@DBRider
 @DBUnit(cacheConnection = false, leakHunter = true)
 public class SpringBootDBUnitTest {
 
