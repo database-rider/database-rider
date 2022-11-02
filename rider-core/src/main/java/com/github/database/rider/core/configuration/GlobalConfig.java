@@ -1,7 +1,7 @@
 package com.github.database.rider.core.configuration;
 
 /**
- * Created by pestano on 03/09/16. pojo which represents dbunit.yml, used for global which can be overrided via @DataSet
+ * Created by pestano on 03/09/16. pojo which represents dbunit.yml, used for global which can be overridden via @DataSet
  * annotation at class or method level and with @DBUnit at class or method level
  */
 public class GlobalConfig {
