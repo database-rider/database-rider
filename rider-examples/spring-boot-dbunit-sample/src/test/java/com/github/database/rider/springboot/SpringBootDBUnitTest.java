@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @SpringBootTest
 @DBRider
-@DBUnit(cacheConnection = false, leakHunter = true)
+@DBUnit(leakHunter = true)
 public class SpringBootDBUnitTest {
 
     @Autowired
