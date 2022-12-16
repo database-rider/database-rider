@@ -251,6 +251,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                             new File(dataSetUrl.getPath()).getParentFile()));
                     break;
                 }
+                case "xlsx":
                 case "xls": {
                     datasetStream = getDataSetStream(dataSetUrl);
                     target = new ScriptableDataSet(sensitiveTableNames, new XlsDataSet(datasetStream));

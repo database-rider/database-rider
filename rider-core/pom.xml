@@ -70,8 +70,9 @@
         <!-- export datasets to excel -->
         <dependency>
             <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-            <scope>test</scope>
+            <artifactId>poi-ooxml</artifactId>
+            <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
