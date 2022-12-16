@@ -77,6 +77,12 @@ public class ExportDataSetIt {
     public void shouldExportAllTablesInXLSFormat() {
     }
 
+    @Test
+    @DataSet("datasets/yml/users.yml")
+    @ExportDataSet(format = DataSetFormat.XLSX, outputName = "target/exported/xlsx/allTables.xlsx")
+    public void shouldExportAllTablesInXLSXFormat() {
+    }
+
 //tag::export-programmatically[]
     @Test
     @DataSet(cleanBefore = true)
@@ -328,6 +334,9 @@ public class ExportDataSetIt {
 
         File xlsDataSetWithAllTables = new File("target/exported/xls/allTables.xls");
         assertThat(xlsDataSetWithAllTables).exists();
+
+        File xlsxDataSetWithAllTables = new File("target/exported/xlsx/allTables.xlsx");
+        assertThat(xlsxDataSetWithAllTables).exists();
 
         File jsonDataSetWithAllTables = new File("target/exported/json/allTables.json");
         assertThat(jsonDataSetWithAllTables).exists();

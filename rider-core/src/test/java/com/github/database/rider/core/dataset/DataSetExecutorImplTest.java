@@ -88,6 +88,13 @@ public class DataSetExecutorImplTest {
         assertEquals("TWEET", tableNamesXls[1]);
         assertEquals("FOLLOWER", tableNamesXls[2]);
 
+        URL resourceXlsx = getClass().getResource("/datasets/xlsx/users.xlsx");
+        IDataSet iDataSetFromXlsx = dse.loadDataSet(resourceXlsx.toString());
+        String[] tableNamesXlsx = iDataSetFromXlsx.getTableNames();
+        assertEquals("USER", tableNamesXlsx[0]);
+        assertEquals("TWEET", tableNamesXlsx[1]);
+        assertEquals("FOLLOWER", tableNamesXlsx[2]);
+
         URL resourceYML = getClass().getResource("/datasets/yml/users.yml");
         IDataSet iDataSetFromYml = dse.loadDataSet(resourceYML.toString());
         String[] tableNamesYml = iDataSetFromYml.getTableNames();

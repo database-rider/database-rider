@@ -199,7 +199,7 @@ It will bring the following (transitive) dependencies to your test classpath:
 ====
 
 === DataSet executor
-A DataSet executor is a component which creates DBUnit datasets. Datasets are "sets" of data (tables and rows) that represent the *state of the database*. DataSets are defined as textual files in *YAML*, *XML*, *JSON*, *CSV* or *XLS* format, https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/resources/datasets/[see examples here^].
+A DataSet executor is a component which creates DBUnit datasets. Datasets are "sets" of data (tables and rows) that represent the *state of the database*. DataSets are defined as textual files in *YAML*, *XML*, *JSON*, *CSV*, *XLS* or *XLSX* format, https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/resources/datasets/[see examples here^].
 
 As in DBUnit Rule, `dataset executor` just needs a JDBC connection to be instantiated:
 
@@ -2047,7 +2047,7 @@ Manual creation of datasets is a very error prone task. In order to export datab
 After above test execution all tables will be exported to a xml dataset.
 
 
-NOTE: *XML*, *YML*, *JSON*, *XLS* and *CSV* formats are supported.
+NOTE: *XML*, *YML*, *JSON*, *XLS*, *XLSX* and *CSV* formats are supported.
 
 For generating `DataSetBuilder` code you just need to specify *builderType* attribute in `@ExportDataSet`:
 

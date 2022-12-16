@@ -5,5 +5,5 @@ package com.github.database.rider.core.api.dataset;
  */
 public enum DataSetFormat {
 
-    YML, JSON, XML, XLS, CSV, XML_DTD
+    YML, JSON, XML, XLS, XLSX, CSV, XML_DTD
 }

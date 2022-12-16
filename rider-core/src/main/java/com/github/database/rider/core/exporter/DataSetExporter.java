@@ -149,6 +149,11 @@ public class DataSetExporter {
                     new XlsDataSetWriter().write(dataSet, fos);
                     break;
                 }
+                case XLSX: {
+                    config.setProperty(DatabaseConfig.PROPERTY_RESULTSET_TABLE_FACTORY, new CachedResultSetTableFactory());
+                    new XlsxDataSetWriter().write(dataSet, fos);
+                    break;
+                }
                 case CSV: {
                     //csv needs a directory instead of file
                     outputFile = outputFile.substring(0, outputFile.lastIndexOf('.'));
