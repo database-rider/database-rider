@@ -46,22 +46,22 @@ jobs:
         run: mvn verify jacoco:report -Pcoverage
       - name: Coverage
         run: mvn coveralls:report -Pcoverage -DCOVERAGE_TOKEN=${{ secrets.COVERAGE_TOKEN }} -DskipTests
-        if: github.ref == 'refs/heads/master'
+        if: "github.ref == 'refs/heads/master'"
       - name: Sonar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: mvn sonar:sonar -Psonar -Dsonar.organization=database-rider -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.scanner.force-deprecated-java-version-grace-period=true
-        if: github.ref == 'refs/heads/master'
+        if: "github.ref == 'refs/heads/master'"
       - name: Configure Git user
         run: |
           git config --global user.email "${{ secrets.GIT_EMAIL }}"
           git config --global user.name "rmpestano"
       - name: Docs snapshot
         run: cd rider-core && mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs -DGH_TOKEN=${{ secrets.GH_TOKEN }}
-        if: github.ref == 'refs/heads/master' && !contains(github.event.head_commit.message, 'prepare release')
+        if: "github.ref == 'refs/heads/master' && !contains(github.event.head_commit.message, 'prepare release')"
       - name: Docs release
         run: cd rider-core && mvn -q cukedoctor:execute scm-publish:publish-scm -Pdocs -Prelease -DGH_TOKEN=${{ secrets.GH_TOKEN }}
-        if: github.ref == 'refs/heads/master' && contains(github.event.head_commit.message, 'prepare release')
+        if: "github.ref == 'refs/heads/master' && contains(github.event.head_commit.message, 'prepare release')"
   release:
     name: Release DBRider to maven central
     runs-on: ubuntu-22.04
@@ -90,7 +90,7 @@ jobs:
             ${{ runner.os }}-maven-
       - name: Deploy snapshots
         run: mvn deploy --settings settings.xml -DskipTests=true -Darguments="-DskipTests -Dmaven.test.skip=true"
-        if: !contains(github.event.head_commit.message, 'prepare release')
+        if: "!contains(github.event.head_commit.message, 'prepare release')"
       - name: Release
         run: mvn -pl '!rider-examples/rider-kotlin' deploy -Prelease
         if: "contains(github.event.head_commit.message, 'prepare release')"
