@@ -276,4 +276,11 @@ public class ExpectedDataSetIt {
         em().persist(u2);
     }
 
+
+    @Test
+    @DataSet(value = "yml/users.yml", transactional = true)
+    @ExpectedDataSet(value = "yml/expectedUserWithProlog.yml", compareOperation = CompareOperation.PROLOG)
+    public void shouldSupportPrologCompareOperation() {
+    }
+
 }

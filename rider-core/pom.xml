@@ -34,6 +34,21 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/it.unibo.tuprolog/solve-classic-jvm -->
+        <dependency>
+            <groupId>it.unibo.tuprolog</groupId>
+            <artifactId>solve-classic-jvm</artifactId>
+            <version>0.20.2</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/it.unibo.tuprolog/parser-theory-jvm -->
+        <dependency>
+            <groupId>it.unibo.tuprolog</groupId>
+            <artifactId>parser-theory-jvm</artifactId>
+            <version>0.20.2</version>
+        </dependency>
+
+
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
