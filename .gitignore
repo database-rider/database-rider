@@ -51,3 +51,4 @@ test-output/
 
 #macos
 .DS_Store
+**/.DS_Store
