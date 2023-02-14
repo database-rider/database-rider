@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.github.database-rider</groupId>
         <artifactId>rider-parent</artifactId>
-        <version>1.35.1-SNAPSHOT</version>
+        <version>1.35.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>rider-spring</artifactId>
@@ -40,12 +40,10 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.12</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>1.7.35</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
