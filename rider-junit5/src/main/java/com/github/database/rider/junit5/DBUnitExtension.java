@@ -23,6 +23,8 @@ import org.junit.jupiter.api.extension.*;
 import org.junit.jupiter.api.extension.ExtensionContext.Store;
 import org.junit.platform.commons.util.AnnotationUtils;
 import org.junit.platform.commons.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.sql.SQLException;
@@ -30,8 +32,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import static com.github.database.rider.junit5.jdbc.ConnectionManager.getConfiguredDataSourceBeanName;
@@ -45,7 +45,7 @@ import static java.lang.String.format;
 public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestExecutionCallback,
         BeforeEachCallback, AfterEachCallback, BeforeAllCallback, AfterAllCallback {
 
-    private static final Logger LOG = Logger.getLogger(DBUnitExtension.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(DBUnitExtension.class.getName());
 
     @Override
     public void beforeTestExecution(ExtensionContext extensionContext) throws Exception {
@@ -60,7 +60,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
                 leakHunter.measureConnectionsBeforeExecution();
                 dbUnitTestContext.setLeakHunter(leakHunter);
             } catch (SQLException e) {
-                LOG.log(Level.WARNING, format("Could not create leak hunter for test %s", extensionContext.getRequiredTestMethod().getName()), e);
+                LOG.warn(format("Could not create leak hunter for test %s", extensionContext.getRequiredTestMethod().getName()), e);
             }
         }
         RiderTestContext riderTestContext = new JUnit5RiderTestContext(dbUnitTestContext.getExecutor(), extensionContext);
@@ -169,7 +169,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         // get DataSet annotation, if any
         Optional<DataSet> dataSetAnnotation = AnnotationUtils.findAnnotation(callbackMethod, DataSet.class);
         if (!dataSetAnnotation.isPresent()) {
-            LOG.warning("Could not find dataset annotation from callback method: " + callbackMethod);
+            LOG.warn("Could not find dataset annotation from callback method: " + callbackMethod);
             return;
         }
         EntityManagerProvider.clear();
@@ -211,7 +211,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         // get ExpectedDataSet annotation, if any
         Optional<ExpectedDataSet> expectedDataSetAnnotation = AnnotationUtils.findAnnotation(callbackMethod, ExpectedDataSet.class);
         if (!expectedDataSetAnnotation.isPresent()) {
-            LOG.warning("Could not find expectedDataSet annotation annotation from callback method: " + callbackMethod);
+            LOG.warn("Could not find expectedDataSet annotation annotation from callback method: " + callbackMethod);
             return;
         }
         ExpectedDataSet expectedDataSet = expectedDataSetAnnotation.get();

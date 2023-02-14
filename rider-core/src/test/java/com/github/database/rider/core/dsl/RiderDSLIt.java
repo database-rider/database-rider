@@ -289,6 +289,18 @@ public class RiderDSLIt {
         assertThat(user.getName()).isEqualTo("@realpestano");
     }
 
+    @Test
+    //@DataSet("xlsx/users.xlsx")
+    public void shouldSeedDatabaseWithXLSXDataSet() {
+        withConnection(emProvider.connection())
+                .withDataSetConfig(new DataSetConfig("xlsx/users.xlsx")
+                        .cleanBefore(true))
+                .createDataSet();
+        User user = (User) EntityManagerProvider.em().createQuery("select u from User u join u.tweets t where t.content = 'dbunit rules!'").getSingleResult();
+        assertThat(user).isNotNull();
+        assertThat(user.getName()).isEqualTo("@realpestano");
+    }
+
     //expected datasets
     /**
      * same as:

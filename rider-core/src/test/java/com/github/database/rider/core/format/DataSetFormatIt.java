@@ -63,6 +63,15 @@ public class DataSetFormatIt {
     }
 //end::xls[]
 
+//tag::xlsx[]
+    @Test
+    @DataSet("xlsx/users.xlsx")
+    public void shouldSeedDatabaseWithXLSXDataSet() {
+        List<User> users = em().createQuery("select u from User u").getResultList();
+        assertThat(users).isNotNull().isNotEmpty().hasSize(2);
+    }
+//end::xlsx[]
+
 //tag::csv[]
     @Test
     @DataSet("datasets/csv/USER.csv") //<1>

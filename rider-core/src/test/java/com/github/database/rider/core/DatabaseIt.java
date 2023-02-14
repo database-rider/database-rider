@@ -156,6 +156,14 @@ public class DatabaseIt {
         assertThat(user.getName()).isEqualTo("@realpestano");
     }
 
+    @Test
+    @DataSet("xlsx/users.xlsx")
+    public void shouldSeedDatabaseWithXLSXDataSet() {
+        User user = (User) EntityManagerProvider.em().createQuery("select u from User u join u.tweets t where t.content = 'dbunit rules!'").getSingleResult();
+        assertThat(user).isNotNull();
+        assertThat(user.getName()).isEqualTo("@realpestano");
+    }
+
 
     private static Connection connection;
 

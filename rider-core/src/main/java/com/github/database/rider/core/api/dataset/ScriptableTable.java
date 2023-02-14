@@ -5,8 +5,6 @@ import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.ITableMetaData;
 
-import java.util.logging.Logger;
-
 import static java.lang.String.format;
 
 /**
@@ -15,8 +13,6 @@ import static java.lang.String.format;
  * @author <a href="mailto:rmpestano@gmail.com">Rafael Pestano</a>
  */
 public class ScriptableTable implements ITable {
-
-    private static final Logger log = Logger.getLogger(ScriptableTable.class.getName());
 
     private final ScriptEngineManagerWrapper manager;
 

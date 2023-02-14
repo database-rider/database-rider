@@ -1,13 +1,12 @@
 package com.github.database.rider.core.leak;
 
 import com.github.database.rider.core.api.leak.LeakHunter;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Created by pestano on 07/09/16.
@@ -57,7 +56,7 @@ public abstract class AbstractLeakHunter implements LeakHunter {
                 connection.close();
             }
         } catch (SQLException e) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Could not close leak hunter connection", e);
+            LoggerFactory.getLogger(getClass().getName()).error("Could not close leak hunter connection", e);
         }
         if (openConnectionsAfterExecution > openConnectionsBeforeExecution) {
             throw new LeakHunterException(methodName, openConnectionsAfterExecution - openConnectionsBeforeExecution);
