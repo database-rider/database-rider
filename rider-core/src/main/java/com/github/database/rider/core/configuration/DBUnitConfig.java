@@ -86,6 +86,7 @@ public class DBUnitConfig {
         putIfAbsent(properties, "replacers", new ArrayList<>(
                 Arrays.asList(new DateTimeReplacer(), new UnixTimestampReplacer(), new NullReplacer())));
         putIfAbsent(properties, "tableType", Collections.singletonList("TABLE"));
+        putIfAbsent(properties, "prologTimeout", 1_000L);
     }
 
     private <K, V> void putIfAbsent(Map<K, V> map, K key, V value) {
@@ -150,7 +151,8 @@ public class DBUnitConfig {
                 .addDBUnitProperty("qualifiedTableNames", dbUnit.qualifiedTableNames())
                 .addDBUnitProperty("schema", !dbUnit.schema().isEmpty() ? dbUnit.schema() : null)
                 .addDBUnitProperty("caseSensitiveTableNames", dbUnit.caseSensitiveTableNames())
-                .addDBUnitProperty("tableType", dbUnit.tableType());
+                .addDBUnitProperty("tableType", dbUnit.tableType())
+                .addDBUnitProperty("prologTimeout", dbUnit.prologTimeout());
 
 
         if (!"".equals(dbUnit.escapePattern())) {
@@ -392,6 +394,10 @@ public class DBUnitConfig {
 
     public boolean isCaseSensitiveTableNames() {
         return properties.containsKey("caseSensitiveTableNames") && Boolean.parseBoolean(properties.get("caseSensitiveTableNames").toString());
+    }
+
+    public Long getPrologTimeout() {
+        return (Long) properties.getOrDefault("prologTimeout", 1_000L);
     }
 
     public String[] getDisablePKCheckFor() {

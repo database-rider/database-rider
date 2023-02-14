@@ -3,7 +3,6 @@ package com.github.database.rider.core.api.configuration;
 import com.github.database.rider.core.connection.RiderDataSource;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.replacers.Replacer;
-
 import org.dbunit.database.IMetadataHandler;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 
@@ -214,5 +213,13 @@ public @interface DBUnit {
      * @return Schema for the database connection.
      */
     String schema() default "";
+
+
+    /**
+     * Amount of milliseconds to wait for finding a solution in {@link com.github.database.rider.core.assertion.PrologAssert}
+     * @return timeout (in ms) to find a solution using Prolog.
+     * @since 1.36.0
+     */
+    long prologTimeout() default 1_000L;
 
 }

@@ -3,6 +3,7 @@ package com.github.database.rider.core.dataset;
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.*;
 import com.github.database.rider.core.assertion.DataSetAssertion;
+import com.github.database.rider.core.assertion.PrologAssert;
 import com.github.database.rider.core.configuration.ConnectionConfig;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
@@ -11,14 +12,6 @@ import com.github.database.rider.core.exception.DataBaseSeedingException;
 import com.github.database.rider.core.replacers.Replacer;
 import com.github.database.rider.core.util.ContainsFilterTable;
 import com.github.database.rider.core.util.TableNameResolver;
-import it.unibo.tuprolog.core.parsing.TermParser;
-import it.unibo.tuprolog.solve.Solution;
-import it.unibo.tuprolog.solve.SolveOptions;
-import it.unibo.tuprolog.solve.Solver;
-import it.unibo.tuprolog.solve.SolverFactory;
-import it.unibo.tuprolog.solve.classic.ClassicSolverFactory;
-import it.unibo.tuprolog.theory.Theory;
-import it.unibo.tuprolog.theory.parsing.ClausesReader;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.dataset.*;
 import org.dbunit.dataset.csv.CsvDataSet;
@@ -45,7 +38,6 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 import static com.github.database.rider.core.configuration.DBUnitConfig.Constants.DATASETS_FOLDER;
 import static com.github.database.rider.core.configuration.DBUnitConfig.Constants.SEQUENCE_TABLE_NAME;
@@ -835,7 +827,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
         switch (compareOperation) {
             case PROLOG:
-                compareProlog(current, expected, tableNames);
+                PrologAssert.compareProlog(current, expected, tableNames, dbUnitConfig.getPrologTimeout());
                 break;
             case EQUALS:
             case CONTAINS:
@@ -882,90 +874,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             }
 
             DataSetAssertion.assertEqualsIgnoreCols(expectedTable, filteredActualTable, excludeCols);
-        }
-    }
-
-    // TODO: refactor
-    private void compareProlog(IDataSet current, IDataSet expected, String[] tableNames) throws DatabaseUnitException {
-        StringBuilder sbFacts = new StringBuilder();
-        List<String> queryTerms = new ArrayList<>();
-
-        for (String tableName : tableNames) {
-            ITable expectedTable = null;
-            ITable actualTable = null;
-            try {
-                expectedTable = expected.getTable(tableName);
-                actualTable = current.getTable(tableName);
-            } catch (DataSetException e) {
-                throw new RuntimeException("DataSet comparison failed due to following exception: ", e);
-            }
-
-            for (int i = 0; i < actualTable.getRowCount(); i++) {
-                sbFacts.append(actualTable.getTableMetaData().getTableName().toLowerCase());
-                sbFacts.append("(");
-                ITable finalActualTable = actualTable;
-                int finalI = i;
-                sbFacts.append(
-                        Arrays.stream(actualTable.getTableMetaData().getColumns())
-                                .map(column -> {
-                                    try {
-                                        return finalActualTable.getValue(finalI, column.getColumnName());
-                                    } catch (DataSetException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                })
-                                .map(o -> "'" + o + "'")
-                                .collect(Collectors.joining(","))
-                );
-                sbFacts.append(").\n");
-            }
-
-            for (int i = 0; i < expectedTable.getRowCount(); i++) {
-                StringBuilder sbQuery = new StringBuilder();
-                sbQuery.append(expectedTable.getTableMetaData().getTableName().toLowerCase());
-                sbQuery.append("(");
-                int finalI = i;
-                ITable finalExpectedTable = expectedTable;
-                sbQuery.append(
-                        Arrays.stream(actualTable.getTableMetaData().getColumns())
-                                .map(column -> {
-                                    try {
-                                        return finalExpectedTable.getValue(finalI, column.getColumnName());
-                                    } catch (DataSetException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                })
-                                // FIXME: simple #toString() may not work well with all datatypes
-                                .map(o -> o == null ? "_" : (o.toString().startsWith("$$") && o.toString().endsWith("$$")) ? o.toString().replaceAll("\\$\\$", "").toUpperCase() : "'" + o + "'")
-                                .collect(Collectors.joining(","))
-                );
-                sbQuery.append(")");
-                queryTerms.add(sbQuery.toString());
-            }
-        }
-
-        log.info("Facts = " + sbFacts);
-
-        log.info("Query = " + String.join(",", queryTerms));
-
-        ClausesReader theoryReader = ClausesReader.getWithDefaultOperators();
-        SolverFactory solverFactory = ClassicSolverFactory.INSTANCE; // or Solver.getClassic()
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(
-                sbFacts.toString().getBytes(StandardCharsets.UTF_8)
-        );
-
-        Theory theory = theoryReader.readTheory(bais);
-        Solver solver = solverFactory.solverWithDefaultBuiltins(theory);
-
-        TermParser termParser = TermParser.withOperators(solver.getOperators());
-
-        it.unibo.tuprolog.core.Struct query = termParser.parseStruct(String.join(",", queryTerms));
-
-        Iterator<Solution> si = solver.solve(query, SolveOptions.allLazilyWithTimeout(1000)).iterator();
-
-        if (!si.hasNext() || si.next().isNo()) {
-            throw new DataSetException("Could not find a solution to theory: " + theory + " given query: " + query);
         }
     }
 
