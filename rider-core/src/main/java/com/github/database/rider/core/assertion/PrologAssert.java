@@ -39,14 +39,8 @@ public class PrologAssert {
         List<String> queryTerms = new ArrayList<>();
 
         for (String tableName : tableNames) {
-            ITable expectedTable = null;
-            ITable actualTable = null;
-            try {
-                expectedTable = expected.getTable(tableName);
-                actualTable = current.getTable(tableName);
-            } catch (DataSetException e) {
-                throw new RuntimeException("DataSet comparison failed due to following exception: ", e);
-            }
+            ITable expectedTable = expected.getTable(tableName);
+            ITable actualTable = current.getTable(tableName);
 
             sbDatabaseFacts.append(createActualTableFacts(actualTable));
 
