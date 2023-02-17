@@ -77,7 +77,7 @@ public class PrologAssert {
                                     throw new RuntimeException(e);
                                 }
                             })
-                            .map(o -> "'" + o + "'")
+                            .map(o -> wrap(escape(o)))
                             .collect(Collectors.joining(","))
             );
             sbTableFacts.append(").\n");
@@ -110,11 +110,11 @@ public class PrologAssert {
                                 try {
                                     return expectedTable.getValue(finalI, column.getColumnName());
                                 } catch (DataSetException e) {
-                                    throw new RuntimeException(e);
+                                    return null;
                                 }
                             })
                             // FIXME: simple #toString() may not work well with all datatypes
-                            .map(o -> o == null ? "_" : (o.toString().startsWith("$$") && o.toString().endsWith("$$")) ? o.toString().replaceAll("\\$\\$", "").toUpperCase() : "'" + o + "'")
+                            .map(o -> o == null ? "_" : (o.toString().startsWith("$$") && o.toString().endsWith("$$")) ? o.toString().replaceAll("\\$\\$", "").toUpperCase() : wrap(escape(o)))
                             .collect(Collectors.joining(","))
             );
             sbQuery.append(")");
@@ -149,6 +149,16 @@ public class PrologAssert {
         if (!si.hasNext() || si.next().isNo()) {
             throw new DataSetException("Could not find a solution to theory: " + theory + " given query: " + query);
         }
+    }
+
+
+    private static String wrap(Object o) {
+        return "'" + o + "'";
+    }
+
+    private static String escape(Object o) {
+        return (o.toString())
+                .replaceAll("'", "''");
     }
 
 }
