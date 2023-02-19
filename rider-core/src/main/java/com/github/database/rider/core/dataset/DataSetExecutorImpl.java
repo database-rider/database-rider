@@ -3,6 +3,7 @@ package com.github.database.rider.core.dataset;
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import com.github.database.rider.core.api.dataset.*;
 import com.github.database.rider.core.assertion.DataSetAssertion;
+import com.github.database.rider.core.assertion.PrologAssert;
 import com.github.database.rider.core.configuration.ConnectionConfig;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
@@ -38,7 +39,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.github.database.rider.core.configuration.DBUnitConfig.Constants.*;
+import static com.github.database.rider.core.configuration.DBUnitConfig.Constants.DATASETS_FOLDER;
+import static com.github.database.rider.core.configuration.DBUnitConfig.Constants.SEQUENCE_TABLE_NAME;
 
 /**
  * Created by pestano on 26/07/15.
@@ -824,6 +826,18 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             throw new RuntimeException("Could not extract dataset table names.", e);
         }
 
+        switch (compareOperation) {
+            case PROLOG:
+                PrologAssert.compareProlog(current, expected, tableNames, dbUnitConfig.getPrologTimeout());
+                break;
+            case EQUALS:
+            case CONTAINS:
+                compareClassic(excludeCols, orderBy, compareOperation, current, expected, tableNames);
+                break;
+        }
+    }
+
+    private void compareClassic(String[] excludeCols, String[] orderBy, CompareOperation compareOperation, IDataSet current, IDataSet expected, String[] tableNames) throws DatabaseUnitException {
         for (String tableName : tableNames) {
             ITable expectedTable = null;
             ITable actualTable = null;
@@ -862,7 +876,6 @@ public class DataSetExecutorImpl implements DataSetExecutor {
 
             DataSetAssertion.assertEqualsIgnoreCols(expectedTable, filteredActualTable, excludeCols);
         }
-
     }
 
     private List<Replacer> getReplacerInstances(Class<? extends Replacer>[] replacers) {

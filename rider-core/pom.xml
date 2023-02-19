@@ -35,6 +35,17 @@
         </dependency>
 
         <dependency>
+            <groupId>it.unibo.tuprolog</groupId>
+            <artifactId>solve-classic-jvm</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>it.unibo.tuprolog</groupId>
+            <artifactId>parser-theory-jvm</artifactId>
+        </dependency>
+
+
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>4.3.5.Final</version>

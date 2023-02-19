@@ -1,0 +1,7 @@
+USER:
+  - ID: $$x$$
+    NAME: "@realpestano"
+TWEET:
+  - ID: abcdef12345
+    CONTENT: "dbunit rules!"
+    USER_ID: $$x$$
