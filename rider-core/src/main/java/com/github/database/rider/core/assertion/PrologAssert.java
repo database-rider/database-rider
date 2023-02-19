@@ -157,6 +157,10 @@ public class PrologAssert {
     }
 
     private static String escape(Object o) {
+        if (o == null) {
+            return "[null]"; // same as NullReplacer
+        }
+
         return (o.toString())
                 .replaceAll("'", "''");
     }
