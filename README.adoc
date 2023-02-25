@@ -787,6 +787,53 @@ To enable the scripting you mainly need the `js: or groovy:` prefix *followed by
 
 NOTE: To enable groovy scripts you need `groovy-all` in your test classpath
 
+==== Using `Prolog` assertions in expected datatset
+
+Prolog assertions enables linking column values with variables, ex:
+
+expectedUserWithProlog.yaml
+```
+USER:
+  - ID: $$x$$
+    NAME: "@realpestano"
+TWEET:
+  - ID: abcdef12345
+    CONTENT: "dbunit rules!"
+    USER_ID: $$x$$
+```
+
+In the dataset above we're linking `ID` and `USER_ID` values using the `$$x$$` variable.
+To enable this kind of assertion you need to use `compareOperation = CompareOperation.PROLOG` in `@ExpectedDataset`:
+
+----
+    @Test
+    @DataSet(value = "yml/users.yml", transactional = true)
+        @ExpectedDataSet(value = "yml/expectedUserWithProlog.yml", compareOperation = CompareOperation.PROLOG)
+    public void shouldSupportPrologCompareOperation() {
+    }
+----
+
+[TIP]
+====
+Multiple variables can be used:
+
+----
+table1:
+  - id: $$x$$
+     name: "name2"
+  - id: $$y$$
+     name: "name1"
+table2:
+  - table1_id: $$x$$
+  - table1_id: $$y$$
+----
+====
+
+In case the variable values don't match an assertion error will be raised, for example:
+
+```
+org.dbunit.dataset.DataSetException: Could not find a solution to theory: IndexedTheory{ user('1', '@realpestano') :- true. user('2', '@dbunit') :- true. tweet(abcdef12345, 'dbunit rules!', '2023-02-25 12:57:13.0', '[null]', '[null]', '2') :- true } given query: (user(X_2, '@realpestano'), tweet(abcdef12345, 'dbunit rules!', __2, __3, __4, X_2))
+```
 
 === Meta DataSets
 
