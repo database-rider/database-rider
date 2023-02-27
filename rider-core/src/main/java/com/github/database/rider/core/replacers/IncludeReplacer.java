@@ -33,11 +33,14 @@ public class IncludeReplacer implements Replacer {
         Column[] columns = table.getTableMetaData().getColumns();
         for (int i = 0; i < table.getRowCount(); i++) {
             for (Column column : columns) {
-                String columnValue = (String) table.getValue(i, column.getColumnName());
-                if (hasIncludePrefix(columnValue)) {
-                    String filePath = removeIncludePrefix(columnValue);
-                    String fileContent = readFile(filePath);
-                    dataSet.addReplacementSubstring(columnValue, fileContent);
+                Object value = table.getValue(i, column.getColumnName());
+                if (value instanceof String) {
+                    String columnValue = (String) value;
+                    if (hasIncludePrefix(columnValue)) {
+                        String filePath = removeIncludePrefix(columnValue);
+                        String fileContent = readFile(filePath);
+                        dataSet.addReplacementSubstring(columnValue, fileContent);
+                    }
                 }
             }
         }
