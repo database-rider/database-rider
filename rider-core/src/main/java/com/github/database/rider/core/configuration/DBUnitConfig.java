@@ -38,6 +38,7 @@ public class DBUnitConfig {
     private Boolean alwaysCleanAfter;
     private Orthography caseInsensitiveStrategy;
     private String[] disablePKCheckFor;
+    private String[] skipSchemas;
     private DataSetMergingStrategy mergingStrategy;
     private RiderDataSource.DBType expectedDbType;
     private Map<String, Object> properties;
@@ -144,6 +145,7 @@ public class DBUnitConfig {
                 .caseInsensitiveStrategy(dbUnit.caseInsensitiveStrategy())
                 .mergingStrategy(dbUnit.mergingStrategy())
                 .disablePKCheckFor(dbUnit.disablePKCheckFor())
+                .skipSchemas(dbUnit.skipSchemas())
                 .addDBUnitProperty("batchedStatements", dbUnit.batchedStatements())
                 .addDBUnitProperty("batchSize", dbUnit.batchSize())
                 .addDBUnitProperty("allowEmptyFields", dbUnit.allowEmptyFields())
@@ -309,6 +311,11 @@ public class DBUnitConfig {
         return this;
     }
 
+    public DBUnitConfig skipSchemas(String...schemas) {
+        skipSchemas = schemas;
+        return this;
+    }
+
     public DBUnitConfig expectedDbType(RiderDataSource.DBType expectedDbType) {
         this.expectedDbType = expectedDbType;
         return this;
@@ -406,6 +413,14 @@ public class DBUnitConfig {
 
     public void setDisablePKCheckFor(String[] disablePKCheckFor) {
         this.disablePKCheckFor = disablePKCheckFor;
+    }
+
+    public void setSkipSchemas(String[] skipSchemas) {
+        this.skipSchemas = skipSchemas;
+    }
+
+    public String[] getSkipSchemas() {
+        return skipSchemas;
     }
 
     public String getSchema() {

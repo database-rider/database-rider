@@ -1,17 +1,18 @@
 package com.github.database.rider.core.util;
 
-import com.github.database.rider.core.configuration.DBUnitConfig;
-import com.github.database.rider.core.connection.RiderDataSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.github.database.rider.core.configuration.DBUnitConfig;
+import com.github.database.rider.core.connection.RiderDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.github.database.rider.core.configuration.DBUnitConfig.Constants.RESERVED_TABLE_NAMES;
 import static com.github.database.rider.core.configuration.DBUnitConfig.Constants.SYSTEM_SCHEMAS;
@@ -58,7 +59,7 @@ public final class TableNameResolver {
 
             while (result.next()) {
                 String schema = resolveSchema(result, schemaColumnLabel);
-                if (!isSystemSchema(schema, riderDataSource)) {
+                if (!isSystemSchema(schema, riderDataSource) && !skipSchema(schema)) {
                     String name = result.getString("TABLE_NAME");
                     name = resolveTableName(name, riderDataSource);
                     tables.add(schema != null && !"".equals(schema.trim()) ? schema + "." + name : name);
@@ -97,6 +98,12 @@ public final class TableNameResolver {
         RiderDataSource.DBType dbType = riderDataSource.getDBType();
         Set<String> systemSchemas = SYSTEM_SCHEMAS.get(dbType);
         return systemSchemas != null && schema != null && systemSchemas.contains(schema.toUpperCase());
+    }
+
+    private boolean skipSchema(String schema) {
+        return schema != null &&
+            dbUnitConfig.getSkipSchemas() != null &&
+            Arrays.asList(dbUnitConfig.getSkipSchemas()).contains(schema);
     }
 
     private ResultSet getTablesFromMetadata(Connection con) throws SQLException {

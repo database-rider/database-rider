@@ -222,4 +222,6 @@ public @interface DBUnit {
      */
     long prologTimeout() default 1_000L;
 
+    String[] skipSchemas() default {};
+
 }
