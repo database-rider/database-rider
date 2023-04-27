@@ -413,9 +413,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             try {
                 final Connection connection = getRiderDataSource().getDBUnitConnection().getConnection();
                 getRiderDataSource().setConnectionAutoCommit(false);
-                statement = connection.createStatement(
-                        ResultSet.TYPE_SCROLL_SENSITIVE,
-                        ResultSet.CONCUR_UPDATABLE);
+                statement = connection.createStatement();
                 for (String stm : statements) {
                     statement.addBatch(stm);
                 }
