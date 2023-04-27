@@ -9,6 +9,7 @@ import com.github.database.rider.core.replacers.DateTimeReplacer;
 import com.github.database.rider.core.replacers.NullReplacer;
 import com.github.database.rider.core.replacers.Replacer;
 import com.github.database.rider.core.replacers.UnixTimestampReplacer;
+import org.apache.commons.io.IOUtils;
 import org.dbunit.database.IMetadataHandler;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.yaml.snakeyaml.Yaml;
@@ -16,6 +17,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static com.github.database.rider.core.configuration.DBUnitConfigPropertyResolver.resolveProperties;
@@ -114,18 +116,23 @@ public class DBUnitConfig {
     }
 
     public static DBUnitConfig fromCustomGlobalFile() {
-        try (InputStream customConfiguration = Thread.currentThread().getContextClassLoader().getResourceAsStream("dbunit.yml")) {
-            if (customConfiguration != null) {
-                DBUnitConfig configFromFile = new Yaml().loadAs(customConfiguration, DBUnitConfig.class);
-                configFromFile.initDefaultProperties();
-                configFromFile.initDefaultConnectionConfig();
-                return configFromFile;
-            }
+        try {
+            return IOUtils.readLines(Thread.currentThread().getContextClassLoader().getResourceAsStream(""), StandardCharsets.UTF_8)
+                    .stream()
+                    .filter(fileName -> fileName.startsWith("dbunit"))
+                    .map(fileName -> Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName))
+                    .filter(Objects::nonNull)
+                    .map(inputStream -> {
+                        DBUnitConfig configFromFile = new Yaml().loadAs(inputStream, DBUnitConfig.class);
+                        configFromFile.initDefaultProperties();
+                        configFromFile.initDefaultConnectionConfig();
+                        return configFromFile;
+                    })
+                    .findFirst()
+                    .orElse(new DBUnitConfig());
         } catch (IOException e) {
             throw new IllegalStateException("Can't load config from global file", e);
         }
-
-        return new DBUnitConfig();
     }
 
     public static DBUnitConfig from(DBUnit dbUnit) {
