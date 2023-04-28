@@ -14,8 +14,10 @@ import org.dbunit.database.IMetadataHandler;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -116,23 +118,19 @@ public class DBUnitConfig {
     }
 
     public static DBUnitConfig fromCustomGlobalFile() {
-        try {
-            return IOUtils.readLines(Thread.currentThread().getContextClassLoader().getResourceAsStream(""), StandardCharsets.UTF_8)
-                    .stream()
-                    .filter(fileName -> fileName.startsWith("dbunit"))
-                    .map(fileName -> Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName))
-                    .filter(Objects::nonNull)
-                    .map(inputStream -> {
-                        DBUnitConfig configFromFile = new Yaml().loadAs(inputStream, DBUnitConfig.class);
-                        configFromFile.initDefaultProperties();
-                        configFromFile.initDefaultConnectionConfig();
-                        return configFromFile;
-                    })
-                    .findFirst()
-                    .orElse(new DBUnitConfig());
-        } catch (IOException e) {
-            throw new IllegalStateException("Can't load config from global file", e);
-        }
+        return new BufferedReader(new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream("")))
+                .lines()
+                .filter(fileName -> fileName.startsWith("dbunit"))
+                .map(fileName -> Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName))
+                .filter(Objects::nonNull)
+                .map(inputStream -> {
+                    DBUnitConfig configFromFile = new Yaml().loadAs(inputStream, DBUnitConfig.class);
+                    configFromFile.initDefaultProperties();
+                    configFromFile.initDefaultConnectionConfig();
+                    return configFromFile;
+                })
+                .findFirst()
+                .orElse(new DBUnitConfig());
     }
 
     public static DBUnitConfig from(DBUnit dbUnit) {
