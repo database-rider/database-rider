@@ -1,7 +1,5 @@
 package com.github.database.rider.core.util;
 
-import java.util.Set;
-
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.connection.ConnectionHolderImpl;
@@ -9,6 +7,8 @@ import com.github.database.rider.core.connection.RiderDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
