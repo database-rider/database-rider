@@ -21,6 +21,7 @@ import org.dbunit.ext.oracle.Oracle10DataTypeFactory;
 import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +33,7 @@ import java.util.Map;
 public class RiderDataSource {
 
     public enum DBType {
-        HSQLDB, H2, MYSQL, ORACLE, POSTGRESQL, DB2, MSSQL, UNKNOWN
+        HSQLDB, H2, MYSQL, ORACLE, TIMESCALEDB, POSTGRESQL, DB2, MSSQL, UNKNOWN
     }
 
     private final ConnectionHolder connectionHolder;
@@ -172,11 +173,30 @@ public class RiderDataSource {
     }
 
     private void checkDbType(Connection conn) throws SQLException {
-        dbType = resolveDBType(DriverUtils.getDriverName(conn));
+        dbType = resolveDBType(conn);
         if (dbUnitConfig.getExpectedDbType() != DBType.UNKNOWN && dbUnitConfig.getExpectedDbType() != dbType) {
             throw new SQLException(String.format("Expect %s database, but actually %s database.",
                     dbUnitConfig.getExpectedDbType(), dbType));
         }
+    }
+
+    private DBType resolveDBType(Connection conn) throws SQLException {
+        final DBType driverBasedType = resolveDBType(DriverUtils.getDriverName(conn));
+        if (driverBasedType == DBType.POSTGRESQL && isTimescaleDb(conn)) {
+            return DBType.TIMESCALEDB;
+        }
+        return driverBasedType;
+    }
+
+    private boolean isTimescaleDb(Connection conn) throws SQLException {
+        final String schemaName = "_timescaledb_internal";
+        final ResultSet schemas = conn.getMetaData().getSchemas();
+        while (schemas.next()) {
+            if (schemaName.equalsIgnoreCase(schemas.getString(1))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private DBType resolveDBType(String driverName) {
