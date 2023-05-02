@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.github.database.rider.core.configuration.DBUnitConfigPropertyResolver.resolveProperties;
 import static com.github.database.rider.core.configuration.DBUnitConfigPropertyResolver.resolveProperty;
@@ -36,13 +35,7 @@ import static com.github.database.rider.core.configuration.DBUnitConfigPropertyR
  */
 public class DBUnitConfig {
 
-    private static final String DATASET_UNIT_FILE_NAME = "dbunit";
-
-    private static final String[] YAML_EXTENSIONS = {".yaml", ".yml"};
-
-    private static final Set<String> ALLOWED_DATASET_FILE_NAMES = Arrays.stream(YAML_EXTENSIONS)
-            .map(extension -> DATASET_UNIT_FILE_NAME.toLowerCase().concat(extension.toLowerCase()))
-            .collect(Collectors.toSet());
+    private static final List<String> ALLOWED_DATASET_FILE_NAMES = Arrays.asList("dbunit.yaml", "dbunit.yml");
 
     private String executorId;
     private Boolean cacheConnection;
