@@ -511,6 +511,15 @@ public class DBUnitConfig {
                     : System.getProperty("SEQUENCE_TABLE_NAME");
             SYSTEM_SCHEMAS.put(RiderDataSource.DBType.MSSQL, Collections.singleton("SYS"));
             SYSTEM_SCHEMAS.put(RiderDataSource.DBType.H2, Collections.singleton("INFORMATION_SCHEMA"));
+            final Set<String> timescaledbSchemas = new HashSet<>(Arrays.asList(
+                "_timescaledb_cache",
+                "_timescaledb_catalog",
+                "_timescaledb_internal",
+                "_timescaledb_config",
+                "timescaledb_information",
+                "timescaledb_experimental"
+            ));
+            SYSTEM_SCHEMAS.put(RiderDataSource.DBType.TIMESCALEDB, Collections.unmodifiableSet(timescaledbSchemas));
 
             Collections.addAll(RESERVED_TABLE_NAMES, DEFAULT_SQL_RESERVED_WORDS.split(","));
             if (System.getProperty("RESERVED_TABLE_NAMES") != null) {
