@@ -9,18 +9,24 @@ import com.github.database.rider.core.replacers.DateTimeReplacer;
 import com.github.database.rider.core.replacers.NullReplacer;
 import com.github.database.rider.core.replacers.Replacer;
 import com.github.database.rider.core.replacers.UnixTimestampReplacer;
-import org.apache.commons.io.IOUtils;
 import org.dbunit.database.IMetadataHandler;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.github.database.rider.core.configuration.DBUnitConfigPropertyResolver.resolveProperties;
 import static com.github.database.rider.core.configuration.DBUnitConfigPropertyResolver.resolveProperty;
@@ -29,6 +35,14 @@ import static com.github.database.rider.core.configuration.DBUnitConfigPropertyR
  * represents DBUnit configuration of a dataset executor.
  */
 public class DBUnitConfig {
+
+    private static final String DATASET_UNIT_FILE_NAME = "dbunit";
+
+    private static final String[] YAML_EXTENSIONS = {".yaml", ".yml"};
+
+    private static final Set<String> ALLOWED_DATASET_FILE_NAMES = Arrays.stream(YAML_EXTENSIONS)
+            .map(extension -> DATASET_UNIT_FILE_NAME.toLowerCase().concat(extension.toLowerCase()))
+            .collect(Collectors.toSet());
 
     private String executorId;
     private Boolean cacheConnection;
@@ -120,7 +134,7 @@ public class DBUnitConfig {
     public static DBUnitConfig fromCustomGlobalFile() {
         return new BufferedReader(new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream("")))
                 .lines()
-                .filter(fileName -> fileName.startsWith("dbunit"))
+                .filter(fileName -> ALLOWED_DATASET_FILE_NAMES.contains(fileName.toLowerCase()))
                 .map(fileName -> Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName))
                 .filter(Objects::nonNull)
                 .map(inputStream -> {
