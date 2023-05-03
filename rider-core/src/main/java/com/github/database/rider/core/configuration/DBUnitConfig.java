@@ -13,10 +13,19 @@ import org.dbunit.database.IMetadataHandler;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import static com.github.database.rider.core.configuration.DBUnitConfigPropertyResolver.resolveProperties;
 import static com.github.database.rider.core.configuration.DBUnitConfigPropertyResolver.resolveProperty;
@@ -25,6 +34,8 @@ import static com.github.database.rider.core.configuration.DBUnitConfigPropertyR
  * represents DBUnit configuration of a dataset executor.
  */
 public class DBUnitConfig {
+
+    private static final List<String> ALLOWED_DATASET_FILE_NAMES = Arrays.asList("dbunit.yaml", "dbunit.yml");
 
     private String executorId;
     private Boolean cacheConnection;
@@ -114,18 +125,19 @@ public class DBUnitConfig {
     }
 
     public static DBUnitConfig fromCustomGlobalFile() {
-        try (InputStream customConfiguration = Thread.currentThread().getContextClassLoader().getResourceAsStream("dbunit.yml")) {
-            if (customConfiguration != null) {
-                DBUnitConfig configFromFile = new Yaml().loadAs(customConfiguration, DBUnitConfig.class);
-                configFromFile.initDefaultProperties();
-                configFromFile.initDefaultConnectionConfig();
-                return configFromFile;
-            }
-        } catch (IOException e) {
-            throw new IllegalStateException("Can't load config from global file", e);
-        }
-
-        return new DBUnitConfig();
+        return new BufferedReader(new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream("")))
+                .lines()
+                .filter(fileName -> ALLOWED_DATASET_FILE_NAMES.contains(fileName.toLowerCase()))
+                .map(fileName -> Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName))
+                .filter(Objects::nonNull)
+                .map(inputStream -> {
+                    DBUnitConfig configFromFile = new Yaml().loadAs(inputStream, DBUnitConfig.class);
+                    configFromFile.initDefaultProperties();
+                    configFromFile.initDefaultConnectionConfig();
+                    return configFromFile;
+                })
+                .findFirst()
+                .orElse(new DBUnitConfig());
     }
 
     public static DBUnitConfig from(DBUnit dbUnit) {
