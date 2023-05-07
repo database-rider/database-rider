@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.github.database-rider</groupId>
         <artifactId>rider-examples</artifactId>
-        <version>1.37.1-SNAPSHOT</version>
+        <version>1.37.1</version>
     </parent>
     <artifactId>quarkus-postgres-sample</artifactId>
     <description>This sample project was created by Alexei Bratuhin(@coiouhkc github user) as a reproducer for issue #253 </description>
