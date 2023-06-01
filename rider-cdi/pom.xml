@@ -200,7 +200,7 @@
                         <executions>
                             <execution>
                                 <id>exec</id>
-                                <phase>process-classes</phase>
+                                <phase>process-sources</phase>
                                 <goals>
                                     <goal>find-and-replace</goal>
                                 </goals>
@@ -208,8 +208,23 @@
                                     <replacementType>file-contents</replacementType>
                                     <baseDir>target/classes/</baseDir>
                                     <fileMask>.java</fileMask>
-                                    <findRegex>jakarta</findRegex>
-                                    <replaceValue>javax</replaceValue>
+                                    <findRegex>javax</findRegex>
+                                    <replaceValue>jakarta</replaceValue>
+                                    <recursive>true</recursive>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>exec-sql</id>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>find-and-replace</goal>
+                                </goals>
+                                <configuration>
+                                    <replacementType>file-contents</replacementType>
+                                    <baseDir>target/classes/</baseDir>
+                                    <fileMask>.java</fileMask>
+                                    <findRegex>jakarta.sql.DataSource</findRegex>
+                                    <replaceValue>javax.sql.DataSource</replaceValue>
                                     <recursive>true</recursive>
                                 </configuration>
                             </execution>
@@ -228,7 +243,7 @@
                                 <configuration>
                                     <target>
                                         <delete>
-                                            <fileset dir="${project.build.directory}/classes" includes="**/*.java"/>
+                                           <!-- <fileset dir="${project.build.directory}/classes" includes="**/*.java"/>-->
                                             <fileset dir="${project.build.directory}/classes" includes="**/*.jv"/>
                                             <fileset dir="${project.build.directory}/classes"
                                                      includes="**/beans-jakarta.xml"/>
