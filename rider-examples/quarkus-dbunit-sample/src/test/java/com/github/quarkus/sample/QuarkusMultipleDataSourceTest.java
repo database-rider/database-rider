@@ -18,8 +18,8 @@ package com.github.quarkus.sample;
 
 
 import static io.restassured.RestAssured.given;
-import static javax.ws.rs.core.Response.Status.CREATED;
-import static javax.ws.rs.core.Response.Status.OK;
+import static jakarta.ws.rs.core.Response.Status.CREATED;
+import static jakarta.ws.rs.core.Response.Status.OK;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -27,7 +27,7 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 
 import java.util.List;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 
 import com.github.database.rider.cdi.api.DBRider;
 import com.github.database.rider.core.api.configuration.Orthography;
