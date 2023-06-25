@@ -23,11 +23,6 @@
             <artifactId>rider-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-        <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
-            <version>2.0</version>
-        </dependency>
 
         <dependency>
             <groupId>org.dbunit</groupId>
@@ -106,6 +101,19 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>javax</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>javax.enterprise</groupId>
+                    <artifactId>cdi-api</artifactId>
+                    <version>2.0</version>
+                </dependency>
+            </dependencies>
+        </profile>
         <profile>
             <id>jakarta</id>
             <properties>
