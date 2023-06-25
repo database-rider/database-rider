@@ -62,7 +62,7 @@
     <dependency>
       <groupId>com.github.database-rider</groupId>
       <artifactId>rider-cdi</artifactId>
-      <version>1.38.2-SNAPSHOT</version>
+      <version>1.38.1</version>
       <scope>test</scope>
       <classifier>jakarta</classifier>
       <exclusions>
