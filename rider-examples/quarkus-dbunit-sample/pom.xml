@@ -19,7 +19,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>2.9.0.Final</quarkus.platform.version>
+    <quarkus.platform.version>3.0.4.Final</quarkus.platform.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -43,19 +43,11 @@
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-hibernate-orm</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
       <artifactId>quarkus-hibernate-orm-panache</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-jdbc-postgresql</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-jacoco</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -70,8 +62,9 @@
     <dependency>
       <groupId>com.github.database-rider</groupId>
       <artifactId>rider-cdi</artifactId>
-      <version>${project.parent.version}</version>
+      <version>1.37.2-SNAPSHOT</version>
       <scope>test</scope>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <artifactId>stax-api</artifactId>
@@ -82,7 +75,7 @@
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>3.18.1</version>
+      <version>3.24.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>

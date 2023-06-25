@@ -1,7 +1,6 @@
 package com.github.database.rider.cdi.api;
 
 import javax.enterprise.util.Nonbinding;
-import javax.inject.Qualifier;
 import javax.interceptor.InterceptorBinding;
 import java.lang.annotation.*;
 
