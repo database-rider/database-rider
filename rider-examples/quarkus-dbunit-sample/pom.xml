@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-examples</artifactId>
-    <version>1.38.1</version>
+    <version>1.38.2-SNAPSHOT</version>
   </parent>
 
   <artifactId>rider-quarkus-sample</artifactId>
@@ -62,7 +62,7 @@
     <dependency>
       <groupId>com.github.database-rider</groupId>
       <artifactId>rider-cdi</artifactId>
-      <version>1.38.1</version>
+      <version>1.38.2-SNAPSHOT</version>
       <scope>test</scope>
       <classifier>jakarta</classifier>
       <exclusions>
