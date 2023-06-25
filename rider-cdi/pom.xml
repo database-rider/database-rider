@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>com.github.database-rider</groupId>
         <artifactId>rider-parent</artifactId>
         <!-- tag::version[] -->
-        <version>1.37.2-SNAPSHOT</version>
+        <version>1.38.1</version>
         <!-- end::version[] -->
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -251,10 +250,9 @@
                                 <configuration>
                                     <target>
                                         <delete>
-                                            <fileset dir="${project.build.directory}/classes" includes="**/*.java"/>
-                                            <fileset dir="${project.build.directory}/classes" includes="**/*.jv"/>
-                                            <fileset dir="${project.build.directory}/classes"
-                                                     includes="**/beans-jakarta.xml"/>
+                                            <fileset dir="${project.build.directory}/classes" includes="**/*.java" />
+                                            <fileset dir="${project.build.directory}/classes" includes="**/*.jv" />
+                                            <fileset dir="${project.build.directory}/classes" includes="**/beans-jakarta.xml" />
                                         </delete>
                                     </target>
                                 </configuration>
