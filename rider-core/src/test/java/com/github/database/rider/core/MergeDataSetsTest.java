@@ -17,10 +17,13 @@ package com.github.database.rider.core;
 
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetImpl;
+import com.github.database.rider.core.api.dataset.DataSetProvider;
 import com.github.database.rider.core.replacers.CustomReplacer;
 import com.github.database.rider.core.replacers.CustomReplacerBar;
 import com.github.database.rider.core.replacers.NullReplacer;
 import com.github.database.rider.core.util.AnnotationUtils;
+import org.dbunit.dataset.DataSetException;
+import org.dbunit.dataset.IDataSet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -46,7 +49,7 @@ public class MergeDataSetsTest {
     }
 
     @Test
-    public void shoudMergeDataSetsWithNoDataSets() {
+    public void shouldMergeDataSetsWithNoDataSets() {
         DataSet classLevel = DataSetImpl.instance().withValue("");
         DataSet methodLevel = DataSetImpl.instance().withValue(new String[]{"methodDataSet.yml", "methodDataSet2.json"});
 
@@ -135,5 +138,23 @@ public class MergeDataSetsTest {
         assertThat(mergeDataSets).isNotNull();
         assertThat(mergeDataSets.replacers())
                 .isEqualTo(new Class[]{CustomReplacer.class, CustomReplacerBar.class, NullReplacer.class});
+    }
+
+    @Test
+    public void shouldKeepProvider() {
+        DataSet classLevel = DataSetImpl.instance();
+        DataSet methodLevel = DataSetImpl.instance().withProvider(MockDataSetProvider.class);
+        DataSet mergeDataSets = AnnotationUtils.mergeDataSetAnnotations(classLevel, methodLevel);
+
+        assertThat(mergeDataSets.provider().getName()).isNotEqualTo(classLevel.provider().getName());
+        assertThat(mergeDataSets.provider().getName()).isEqualTo(methodLevel.provider().getName());
+    }
+
+    public static class MockDataSetProvider implements DataSetProvider {
+
+        @Override
+        public IDataSet provide() throws DataSetException {
+            return null;
+        }
     }
 }
