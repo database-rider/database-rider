@@ -16,7 +16,6 @@
 package com.github.database.rider.core.api.dataset;
 
 import com.github.database.rider.core.replacers.Replacer;
-import org.dbunit.dataset.IDataSet;
 
 import java.lang.annotation.Annotation;
 
