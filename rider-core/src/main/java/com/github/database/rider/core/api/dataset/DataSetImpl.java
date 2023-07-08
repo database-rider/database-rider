@@ -42,12 +42,13 @@ public class DataSetImpl implements DataSet {
     private boolean transactional;
     private String[] skipCleaningFor;
     private Class<? extends Replacer>[] replacers;
+    private Class<? extends DataSetProvider> provider = DataSetProvider.class;
 
     public DataSetImpl() {
     }
 
     public DataSetImpl(String[] value, String executorId, SeedStrategy strategy, boolean useSequenceFiltering, String[] tableOrdering, boolean disableConstraints, boolean fillIdentityColumns, String[] executeStatementsBefore, String[] executeScriptsAfter, String[] executeScriptsBefore, String[] executeStatementsAfter,
-                       boolean cleanBefore, boolean cleanAfter, boolean transactional, String[] skipCleaningFor, Class<? extends Replacer>[] replacers) {
+                       boolean cleanBefore, boolean cleanAfter, boolean transactional, String[] skipCleaningFor, Class<? extends Replacer>[] replacers, Class<? extends DataSetProvider> provider) {
         this.value = value;
         this.executorId = executorId;
         this.strategy = strategy;
@@ -64,6 +65,7 @@ public class DataSetImpl implements DataSet {
         this.transactional = transactional;
         this.skipCleaningFor = skipCleaningFor;
         this.replacers = replacers;
+        this.provider = provider;
     }
 
     public static DataSetImpl instance() {
@@ -108,6 +110,11 @@ public class DataSetImpl implements DataSet {
 
     public DataSetImpl withReplacers(Class<? extends Replacer>... replacers) {
         instance.replacers = replacers;
+        return instance;
+    }
+
+    public DataSetImpl withProvider(Class<? extends DataSetProvider> provider) {
+        instance.provider = provider;
         return instance;
     }
 
@@ -182,8 +189,8 @@ public class DataSetImpl implements DataSet {
     }
 
     @Override
-    public Class<DataSetProvider> provider() {
-        return DataSetProvider.class;
+    public Class<? extends DataSetProvider> provider() {
+        return provider;
     }
 
     @Override

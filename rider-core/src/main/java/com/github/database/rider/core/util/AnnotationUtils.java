@@ -3,6 +3,8 @@ package com.github.database.rider.core.util;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.api.dataset.DataSetImpl;
 import com.github.database.rider.core.replacers.Replacer;
+import org.dbunit.dataset.CompositeDataSet;
+import org.dbunit.dataset.IDataSet;
 import org.junit.runner.Description;
 
 import java.lang.annotation.Annotation;
@@ -188,7 +190,7 @@ public final class AnnotationUtils {
         Class<? extends Replacer>[] replacers = joinReplacers(classLevelDataSet.replacers(), methodLevelDataSet.replacers());
         DataSet mergedDataSet = new DataSetImpl(value, methodLevelDataSet.executorId(), methodLevelDataSet.strategy(), methodLevelDataSet.useSequenceFiltering(), tableOrdering,
                 methodLevelDataSet.disableConstraints(), methodLevelDataSet.fillIdentityColumns(), executeStatementsBefore, executeScriptsAfter, executeScriptsBefore, executeStatementsAfter,
-                methodLevelDataSet.cleanBefore(), methodLevelDataSet.cleanAfter(), methodLevelDataSet.transactional(), skipCleaningFor, replacers);
+                methodLevelDataSet.cleanBefore(), methodLevelDataSet.cleanAfter(), methodLevelDataSet.transactional(), skipCleaningFor, replacers, methodLevelDataSet.provider());
         return mergedDataSet;
     }
 
