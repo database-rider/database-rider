@@ -130,7 +130,7 @@ public class PrologAssert {
     private static void solve(Long prologTimeout, String databaseFacts, String databaseQuery) throws DataSetException {
         log.debug("Attempting to solve, facts = {}, query = {}", databaseFacts, databaseQuery);
 
-        ClausesReader theoryReader = ClausesReader.getWithDefaultOperators();
+        ClausesReader theoryReader = ClausesReader.withDefaultOperators();
         SolverFactory solverFactory = ClassicSolverFactory.INSTANCE; // or Solver.getClassic()
 
         ByteArrayInputStream bais = new ByteArrayInputStream(
