@@ -9,8 +9,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import javax.persistence.metamodel.Attribute;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -44,7 +44,7 @@ public class BuilderUtil {
             if (isEclipseLinkOnClasspath()) {
                 columnName = ((AttributeImpl) column).getMapping().getField().getName();
             } else if (isHibernateOnClasspath() && isEntityManagerActive()) {
-                AbstractEntityPersister entityMetadata = (AbstractEntityPersister) em().getEntityManagerFactory().unwrap(SessionFactory.class).getClassMetadata(column.getJavaMember().getDeclaringClass());
+                AbstractEntityPersister entityMetadata = (AbstractEntityPersister) ((org.hibernate.metamodel.MappingMetamodel)em().getEntityManagerFactory().unwrap(SessionFactory.class).getMetamodel()).getEntityDescriptor(column.getJavaMember().getDeclaringClass());
                 columnName = entityMetadata.getPropertyColumnNames(column.getName())[0];
             }
         } catch (Exception e) {
@@ -65,13 +65,13 @@ public class BuilderUtil {
     }
 
     /**
+     * @deprecated use <code>DataType.UNKNOWN</code> instead of this method. See https://github.com/database-rider/database-rider/pull/154#issuecomment-527622138
      * @param value column value
      * @return resolved datatype
-     * @deprecated use <code>DataType.UNKNOWN</code> instead of this method. See https://github.com/database-rider/database-rider/pull/154#issuecomment-527622138
      */
     public static DataType resolveColumnDataType(Object value) {
         DataType columnType = DataType.UNKNOWN;
-        if (value == null) {
+        if(value == null) {
             return columnType;
         }
         if (value instanceof Integer) {
