@@ -172,10 +172,13 @@ This module is the basis for subsequent modules. It contains a JUnit rule (shown
 <dependency>
       <groupId>com.github.database-rider</groupId>
       <artifactId>rider-core</artifactId>
-      <version>1.35.0</version>
+      <version>1.40.0</version>
       <scope>test</scope>
 </dependency>
 ----
+
+TIP: Use `jakarta` maven classifier if you use jakarta-cdi or jakarta-persistence
+
 
 [NOTE]
 ====
@@ -1574,10 +1577,12 @@ If you use CDI in your tests then you should give a try in Database Rider https:
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-cdi</artifactId>
-    <version>1.35.0</version>
+    <version>1.40.0</version>
     <scope>test</scope>
 </dependency>
 ----
+
+TIP: Use `jakarta` maven classifier if you use jakarta-cdi or jakarta-persistence
 
 === DBUnit Interceptor
 
@@ -1641,7 +1646,7 @@ NOTE: If you don't use CDI you'll need to https://github.com/database-rider/data
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-cucumber</artifactId>
-    <version>1.35.0</version>
+    <version>1.40.0</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -1848,7 +1853,7 @@ http://junit.org/junit5/[JUnit 5] is the new version of JUnit and comes with a n
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-junit5</artifactId>
-    <version>1.35.0</version>
+    <version>1.40.0</version>
     <scope>test</scope>
 </dependency>
 ----
@@ -1930,7 +1935,7 @@ Add Database Rider Spring extension to your project
 <dependency>
     <groupId>com.github.database-rider</groupId>
     <artifactId>rider-spring</artifactId>
-    <version>1.35.0</version>
+    <version>1.40.0</version>
     <scope>test</scope>
 </dependency>
 ----
