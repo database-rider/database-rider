@@ -12,7 +12,7 @@
         <!-- must be overriden when releasing a new version with release profile -->
         <docs.outputdir>docs/latest</docs.outputdir>
         <src.dir>src/main/java</src.dir>
-        <test.dir>src/main/java</test.dir>
+        <test.dir>src/test/java</test.dir>
     </properties>
 
     <dependencies>
