@@ -25,7 +25,7 @@ public class DataSetConfig {
     private String[] executeStatementsAfter = {};
     private String[] executeScriptsBefore = {};
     private String[] executeScriptsAfter = {};
-    private Class<? extends DataSetProvider> provider;
+    private DataSetProvider provider;
     private String[] skipCleaningFor;
     private Class<? extends Replacer>[] replacers;
 
@@ -147,7 +147,18 @@ public class DataSetConfig {
 
     }
 
-    public DataSetConfig datasetProvider(Class<? extends DataSetProvider> provider) {
+    public DataSetConfig datasetProvider(Class<? extends DataSetProvider> providerClass) {
+        if (providerClass != null && !providerClass.isInterface()) {
+            try {
+                this.provider = providerClass.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new RuntimeException("Could not instantiate provider: " + providerClass.getName(), e);
+            }
+        }
+        return this;
+    }
+
+    public DataSetConfig datasetProvider(DataSetProvider provider) {
         this.provider = provider;
         return this;
     }
@@ -200,7 +211,7 @@ public class DataSetConfig {
         return executorId;
     }
 
-    public Class<? extends DataSetProvider> getProvider() {
+    public DataSetProvider getProvider() {
         return provider;
     }
 
@@ -265,7 +276,7 @@ public class DataSetConfig {
             }
         }
         if(hasDataSetProvider()) {
-            sb.append("dataset provider: "+provider.getName()).append(", ");
+            sb.append("dataset provider: "+provider.getClass().getName()).append(", ");
         }
         if(sb.toString().contains(",")){
             sb.deleteCharAt(sb.lastIndexOf(","));
@@ -273,12 +284,8 @@ public class DataSetConfig {
         return sb.toString().trim();
     }
     
-    /**
-     * 
-     * @return true if dataset provider is not null and is not an interface (which means user has provided an implementation)
-     */
     public boolean hasDataSetProvider() {
-        return provider != null && !provider.isInterface();
+        return provider != null;
     }
 
     public boolean hasDataSets() {
