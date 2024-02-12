@@ -121,7 +121,9 @@ public class EntityManagerProvider implements TestRule {
         Connection connection;
         final EntityTransaction tx = em.getTransaction();
         if (isHibernateOnClasspath() && em.getDelegate() instanceof Session) {
-            connection = em.unwrap(org.hibernate.engine.spi.SessionImplementor.class).getJdbcConnectionAccess().obtainConnection();
+            connection = em.unwrap(org.hibernate.engine.spi.SessionImplementor.class).getJdbcCoordinator()
+                                                                                      .getLogicalConnection()
+                                                                                      .getPhysicalConnection();
         } else {
             /**
              * see here:http://wiki.eclipse.org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager
