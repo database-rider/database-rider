@@ -11,6 +11,8 @@
     <properties>
         <version.junit-platform>1.7.2</version.junit-platform>
         <version.junit-jupiter>5.7.2</version.junit-jupiter>
+        <src.dir>src/main/java</src.dir>
+        <test.dir>src/test/java</test.dir>
     </properties>
     <dependencies>
         <dependency>
@@ -115,6 +117,10 @@
     <profiles>
         <profile>
             <id>jakarta</id>
+            <properties>
+                <src.dir>${project.build.directory}/classes</src.dir>
+                <test.dir>${project.build.directory}/test-classes</test.dir>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>com.github.database-rider</groupId>
@@ -122,8 +128,29 @@
                     <version>${project.parent.version}</version>
                     <classifier>jakarta</classifier>
                 </dependency>
+                <dependency>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-core</artifactId>
+                    <version>6.2.3.Final</version>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.eclipse.persistence</groupId>
+                    <artifactId>eclipselink</artifactId>
+                    <version>4.0.1</version>
+                    <scope>provided</scope>
+                </dependency>
             </dependencies>
             <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/java</directory>
+                        <includes>
+                            <include>**/*.java</include>
+                            <include>**/*.jv</include>
+                        </includes>
+                    </resource>
+                </resources>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -138,12 +165,120 @@
                         <artifactId>maven-install-plugin</artifactId>
                         <version>2.5.2</version>
                     </plugin>
+                    <plugin>
+                        <groupId>com.coderplus.maven.plugins</groupId>
+                        <artifactId>copy-rename-maven-plugin</artifactId>
+                        <version>1.0.1</version>
+                        <executions>
+                            <execution>
+                                <id>copy-and-rename-sources</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <fileSets>
+                                        <fileSet>
+                                            <sourceFile>
+                                                ${project.basedir}/src/main/java/com/github/database/rider/junit5/util/EntityManagerProvider.jv
+                                            </sourceFile>
+                                            <destinationFile>
+                                                ${project.build.outputDirectory}/com/github/database/rider/junit5/util/EntityManagerProvider.java
+                                            </destinationFile>
+                                        </fileSet>
+                                    </fileSets>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>io.github.floverfelt</groupId>
+                        <artifactId>find-and-replace-maven-plugin</artifactId>
+                        <version>1.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>exec</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>find-and-replace</goal>
+                                </goals>
+                                <configuration>
+                                    <replacementType>file-contents</replacementType>
+                                    <baseDir>target/classes/</baseDir>
+                                    <fileMask>.java</fileMask>
+                                    <findRegex>javax</findRegex>
+                                    <replaceValue>jakarta</replaceValue>
+                                    <recursive>true</recursive>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>exec-tests</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>find-and-replace</goal>
+                                </goals>
+                                <configuration>
+                                    <replacementType>file-contents</replacementType>
+                                    <baseDir>target/test-classes/</baseDir>
+                                    <fileMask>.java</fileMask>
+                                    <findRegex>javax</findRegex>
+                                    <replaceValue>jakarta</replaceValue>
+                                    <recursive>true</recursive>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>exec-sql</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>find-and-replace</goal>
+                                </goals>
+                                <configuration>
+                                    <replacementType>file-contents</replacementType>
+                                    <baseDir>target/classes/</baseDir>
+                                    <fileMask>.java</fileMask>
+                                    <findRegex>jakarta.sql.DataSource</findRegex>
+                                    <replaceValue>javax.sql.DataSource</replaceValue>
+                                    <recursive>true</recursive>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.7</version>
+                        <executions>
+                            <execution>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <delete>
+                                            <fileset dir="${project.build.directory}/classes" includes="**/*.java" />
+                                            <fileset dir="${project.build.directory}/classes" includes="**/*.jv" />
+                                            <fileset dir="${project.build.directory}/classes" includes="**/beans-jakarta.xml" />
+                                        </delete>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
     </profiles>
 
     <build>
+        <sourceDirectory>${src.dir}</sourceDirectory>
+        <testSourceDirectory>${test.dir}</testSourceDirectory>
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
