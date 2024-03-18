@@ -25,7 +25,7 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -101,7 +101,7 @@ public class DataSetExporter {
         DatabaseConfig config = databaseConnection.getConfig();
         config.setProperty(DatabaseConfig.PROPERTY_RESULTSET_TABLE_FACTORY, new ForwardOnlyResultSetTableFactory());
 
-        Set<String> targetTables = new HashSet<>();
+        Set <String> targetTables = new LinkedHashSet<>();
 
         if (hasIncludes) {
             targetTables.addAll(Arrays.asList(dataSetExportConfig.getIncludeTables()));

@@ -542,33 +542,33 @@ public class ExportDataSetIt {
       
       assertThat(dtdDataSet).exists();
       assertThat(contentOf(dtdDataSet)).
-              contains("<!ELEMENT dataset (\n" + 
-              		"    TWEET*,\n" + 
-              		"    USER*,\n" + 
-              		"    FOLLOWER*)>\n" + 
-              		"\n" + 
-              		"<!ELEMENT TWEET EMPTY>\n" + 
-              		"<!ATTLIST TWEET\n" + 
-              		"    ID CDATA #REQUIRED\n" + 
-              		"    CONTENT CDATA #IMPLIED\n" + 
-              		"    DATE CDATA #IMPLIED\n" + 
-              		"    LIKES CDATA #IMPLIED\n" + 
-              		"    TIMESTAMP CDATA #IMPLIED\n" + 
-              		"    USER_ID CDATA #IMPLIED\n" + 
-              		">\n" + 
-              		"\n" + 
-              		"<!ELEMENT USER EMPTY>\n" + 
-              		"<!ATTLIST USER\n" + 
-              		"    ID CDATA #REQUIRED\n" + 
-              		"    NAME CDATA #IMPLIED\n" + 
-              		">\n" + 
-              		"\n" + 
-              		"<!ELEMENT FOLLOWER EMPTY>\n" + 
+              contains("<!ELEMENT dataset (\n" +
+                    "    USER*,\n" +
+                    "    FOLLOWER*,\n" +
+              		"    TWEET*)>\n" +
+              		"\n" +
+                    "<!ELEMENT USER EMPTY>\n" +
+                    "<!ATTLIST USER\n" +
+                    "    ID CDATA #REQUIRED\n" +
+                    "    NAME CDATA #IMPLIED\n" +
+              		">\n" +
+              		"\n" +
+              		"<!ELEMENT FOLLOWER EMPTY>\n" +
               		"<!ATTLIST FOLLOWER\n" + 
               		"    ID CDATA #REQUIRED\n" + 
               		"    USER_ID CDATA #IMPLIED\n" + 
-              		"    FOLLOWER_ID CDATA #IMPLIED\n" + 
-              		">\n" + 
+              		"    FOLLOWER_ID CDATA #IMPLIED\n" + ">" +
+                    "\n" +
+                    "\n" +
+                    "<!ELEMENT TWEET EMPTY>\n" +
+                    "<!ATTLIST TWEET\n" +
+                    "    ID CDATA #REQUIRED\n" +
+                    "    CONTENT CDATA #IMPLIED\n" +
+                    "    DATE CDATA #IMPLIED\n" +
+                    "    LIKES CDATA #IMPLIED\n" +
+                    "    TIMESTAMP CDATA #IMPLIED\n" +
+                    "    USER_ID CDATA #IMPLIED\n" +
+                    ">\n" +
               		"\n");
     }
     
