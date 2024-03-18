@@ -123,7 +123,7 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                     } else {
                         resultingDataSet = loadDataSetFromDataSetProvider(dataSetConfig.getProvider());
                         if (resultingDataSet == null) {
-                            throw new RuntimeException("Provided dataset cannot be null. DataSet provider: " + dataSetConfig.getProvider().getName());
+                            throw new RuntimeException("Provided dataset cannot be null. DataSet provider: " + dataSetConfig.getProvider().getClass().getName());
                         }
                     }
                     resultingDataSet = performSequenceFiltering(dataSetConfig, resultingDataSet);
@@ -187,12 +187,11 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         }
     }
 
-    private IDataSet loadDataSetFromDataSetProvider(Class<? extends DataSetProvider> provider) {
+    private IDataSet loadDataSetFromDataSetProvider(DataSetProvider provider) {
         try {
-            DataSetProvider dataSetProvider = provider.getDeclaredConstructor().newInstance();
-            return dataSetProvider.provide();
+            return provider.provide();
         } catch (Exception e) {
-            throw new RuntimeException("Could not load dataset from provider: " + provider.getName(), e);
+            throw new RuntimeException("Could not load dataset from provider: " + provider.getClass().getName(), e);
         }
     }
 

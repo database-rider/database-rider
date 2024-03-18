@@ -11,7 +11,6 @@ import com.github.database.rider.core.replacers.Replacer;
 import com.github.database.rider.core.replacers.UnixTimestampReplacer;
 import org.dbunit.database.IMetadataHandler;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -125,7 +124,7 @@ public class DBUnitConfig {
         if (inputStream == null) {
             return null;
         }
-        DBUnitConfig configFromFile = new Yaml().loadAs(inputStream, DBUnitConfig.class);
+        DBUnitConfig configFromFile = SnakeYamlHelper.createYaml().loadAs(inputStream, DBUnitConfig.class);
         configFromFile.initDefaultProperties();
         configFromFile.initDefaultConnectionConfig();
         return configFromFile;
