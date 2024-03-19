@@ -137,7 +137,7 @@ public class JSONWriter implements IDataSetConsumer {
     }
 
     private String replaceExtraCommaInTheEnd(StringBuilder sb) {
-        int indexOfPenultimateSymbol = sb.length() - 2;
+        int indexOfPenultimateSymbol = sb.length() - NEW_LINE.length()-1;
         if (sb.length() > 1 && sb.charAt(indexOfPenultimateSymbol) == ',') {
             sb.deleteCharAt(indexOfPenultimateSymbol);
         }
