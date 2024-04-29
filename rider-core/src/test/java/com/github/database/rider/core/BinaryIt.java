@@ -13,10 +13,10 @@ import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 
-import javax.xml.bind.DatatypeConverter;
-
 import static com.github.database.rider.core.util.EntityManagerProvider.em;
 import static org.assertj.core.api.Java6Assertions.assertThat;
+
+import java.util.Base64;
 
 public class BinaryIt {
 
@@ -75,7 +75,7 @@ public class BinaryIt {
                     .table("DOC")
                     .row()
                     .column("ID", 1)
-                    .column("CONTENT", DatatypeConverter.printBase64Binary("DBRider!".getBytes()))
+                    .column("CONTENT", Base64.getEncoder().encodeToString("DBRider!".getBytes()))
                     .build();
         }
     }
