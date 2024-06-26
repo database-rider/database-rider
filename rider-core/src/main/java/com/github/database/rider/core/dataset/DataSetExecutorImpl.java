@@ -119,6 +119,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 }
                 if (dataSetConfig.hasDataSets() || dataSetConfig.hasDataSetProvider()) {
                     if (dataSetConfig.hasDataSets()) {
+                        if (dataSetConfig.hasDataSetProvider()) {
+                            log.warn("The value attribute and the provider attribute of DataSet Annotation cannot be used together. The provider attribute will not be applied.");
+                        }
                         resultingDataSet = loadDataSets(dataSetConfig.getDatasets());
                     } else {
                         resultingDataSet = loadDataSetFromDataSetProvider(dataSetConfig.getProvider());
