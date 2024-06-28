@@ -631,6 +631,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         if (!skip && tableName.contains(".")) {
             skip = tablesToSkipCleaning.contains(tableName.substring(tableName.indexOf(".") + 1));
         }
+        if (!skip) {
+            skip = tablesToSkipCleaning.stream().anyMatch(tableName::matches);
+        }
         return skip;
     }
 
