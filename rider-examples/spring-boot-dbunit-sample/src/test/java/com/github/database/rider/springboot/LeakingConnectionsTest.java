@@ -57,7 +57,7 @@ public class LeakingConnectionsTest {
             config.setJdbcUrl("jdbc:hsqldb:mem:leak;DB_CLOSE_DELAY=-1");
             config.setUsername("sa");
             config.setPassword("");
-            config.setMaximumPoolSize(2);
+            config.setMaximumPoolSize(3);
             config.setConnectionTimeout(5000);
             return new WrappingDataSource(new HikariDataSource(config));
         }
