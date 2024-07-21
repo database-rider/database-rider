@@ -21,7 +21,11 @@ public class Micronaut {
 
     public static ConnectionHolder getConnectionFromMicronautContext(ExtensionContext extensionContext, String executorId) {
         String configuredDataSourceBeanName = getConfiguredDataSourceBeanName(extensionContext);
-        DataSource dataSource = getDataSourceFromMicronautContext(extensionContext, configuredDataSourceBeanName);
+        return getConnectionFromMicronautContext(extensionContext, executorId, configuredDataSourceBeanName);
+    }
+
+    public static ConnectionHolder getConnectionFromMicronautContext(ExtensionContext extensionContext, String executorId, String dataSourceBeanName) {
+        DataSource dataSource = getDataSourceFromMicronautContext(extensionContext, dataSourceBeanName);
         return getConnectionHolder(executorId, dataSource);
     }
 

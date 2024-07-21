@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static com.github.database.rider.junit5.jdbc.ConnectionManager.getConfiguredDataSourceBeanName;
+import static com.github.database.rider.junit5.jdbc.ConnectionManager.getCallbackConnection;
 import static com.github.database.rider.junit5.jdbc.ConnectionManager.getTestConnection;
 import static com.github.database.rider.junit5.util.Constants.*;
 import static java.lang.String.format;
@@ -173,7 +174,6 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
             return;
         }
         EntityManagerProvider.clear();
-        final DBUnitTestContext dbUnitTestContext = getTestContext(extensionContext);
         final DBUnitConfig dbUnitConfig = resolveDbUnitConfig(Optional.of(callbackAnnotation), Optional.of(callbackMethod), testClass);
         DataSet dataSet;
         if (dbUnitConfig.isMergeDataSets()) {
@@ -182,11 +182,18 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         } else {
             dataSet = dataSetAnnotation.get();
         }
-        DataSetExecutor dataSetExecutor = dbUnitTestContext.getExecutor();
+        DataSetExecutor dataSetExecutor = getDataSetExecutor(extensionContext, callbackMethod, dataSet);
         dataSetExecutor.setDBUnitConfig(dbUnitConfig);
         dataSetExecutor = resetExecutorConnectionIfNeeded(extensionContext, callbackAnnotation, dbUnitConfig, dataSetExecutor);
         dataSetExecutor.createDataSet(new DataSetConfig().from(dataSet));
         closeConnectionForAfterCallback(dataSetExecutor, callbackAnnotation);
+    }
+
+    private DataSetExecutor getDataSetExecutor(ExtensionContext extensionContext, Method callbackMethod, DataSet dataSet) {
+        final String dataSourceBeanName = getConfiguredDataSourceBeanName(extensionContext, callbackMethod);
+        final String executorId = getExecutorId(dataSourceBeanName, Optional.ofNullable(dataSet));
+        final ConnectionHolder connectionHolder = getCallbackConnection(extensionContext, executorId, dataSourceBeanName);
+        return DataSetExecutorImpl.instance(executorId, connectionHolder);
     }
 
     /**
@@ -218,7 +225,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         // Verify expected dataset
         // Resolve DBUnit config from annotation or file
         DBUnitConfig dbUnitConfig = resolveDbUnitConfig(Optional.of(callbackAnnotation), Optional.of(callbackMethod), testClass);
-        DataSetExecutor dataSetExecutor = getTestContext(extensionContext).getExecutor();
+        DataSetExecutor dataSetExecutor = getDataSetExecutor(extensionContext, callbackMethod, null);
         dataSetExecutor.setDBUnitConfig(dbUnitConfig);
         dataSetExecutor = resetExecutorConnectionIfNeeded(extensionContext, callbackAnnotation, dbUnitConfig, dataSetExecutor);
         dataSetExecutor.compareCurrentDataSetWith(
@@ -282,6 +289,10 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
             annDataSet = findDataSetAnnotation(extensionContext);
         }
         String dataSourceBeanName = getConfiguredDataSourceBeanName(extensionContext);
+        return getExecutorId(dataSourceBeanName, annDataSet);
+    }
+
+    private String getExecutorId(String dataSourceBeanName, Optional<DataSet> annDataSet) {
         String executionIdSuffix = dataSourceBeanName.isEmpty() ? EMPTY_STRING : "-" + dataSourceBeanName;
         return annDataSet
                 .map(DataSet::executorId)

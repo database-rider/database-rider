@@ -31,17 +31,30 @@ public final class ConnectionManager {
         return getConnectionFromTestClass(extensionContext, executorId);
     }
 
+    public static ConnectionHolder getCallbackConnection(ExtensionContext extensionContext, String executorId, String dataSourceBeanName) {
+        if (Spring.isEnabled(extensionContext)) {
+            return Spring.getConnectionFromSpringContext(extensionContext, executorId, dataSourceBeanName);
+        } else if (Micronaut.isEnabled(extensionContext)) {
+            return Micronaut.getConnectionFromMicronautContext(extensionContext, executorId, dataSourceBeanName);
+        }
+        return getConnectionFromTestClass(extensionContext, executorId);
+    }
+
     public static String getConfiguredDataSourceBeanName(ExtensionContext extensionContext) {
         Optional<Method> testMethod = extensionContext.getTestMethod();
         if (testMethod.isPresent()) {
-            Optional<DBRider> annotation = AnnotationUtils.findAnnotation(testMethod.get(), DBRider.class);
-            if (!annotation.isPresent()) {
-                annotation = AnnotationUtils.findAnnotation(extensionContext.getRequiredTestClass(), DBRider.class);
-            }
-            return annotation.map(DBRider::dataSourceBeanName).orElse(EMPTY_STRING);
+            return getConfiguredDataSourceBeanName(extensionContext, testMethod.get());
         } else {
             return EMPTY_STRING;
         }
+    }
+
+    public static String getConfiguredDataSourceBeanName(ExtensionContext extensionContext, Method method) {
+        Optional<DBRider> annotation = AnnotationUtils.findAnnotation(method, DBRider.class);
+        if (!annotation.isPresent()) {
+            annotation = AnnotationUtils.findAnnotation(extensionContext.getRequiredTestClass(), DBRider.class);
+        }
+        return annotation.map(DBRider::dataSourceBeanName).orElse(EMPTY_STRING);
     }
 
     public static ConnectionHolder getConnectionHolder(String executorId, DataSource dataSource) {

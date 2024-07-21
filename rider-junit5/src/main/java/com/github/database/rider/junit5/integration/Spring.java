@@ -30,6 +30,11 @@ public class Spring {
         return getConnectionHolder(executorId, dataSource);
     }
 
+    public static ConnectionHolder getConnectionFromSpringContext(ExtensionContext extensionContext, String executorId, String dataSourceBeanName) {
+        DataSource dataSource = getDataSourceFromSpringContext(extensionContext, dataSourceBeanName);
+        return getConnectionHolder(executorId, dataSource);
+    }
+
     private static DataSource getDataSourceFromSpringContext(ExtensionContext extensionContext, String beanName) {
         ApplicationContext context = SpringExtension.getApplicationContext(extensionContext);
         return beanName.isEmpty() ? context.getBean(DataSource.class) : context.getBean(beanName, DataSource.class);
