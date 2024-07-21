@@ -58,4 +58,17 @@ public class CleanAfterSkippingTablesIt {
         List<Follower> followers = em("rules-it").createQuery("select f from Follower f").getResultList();
         assertThat(followers).isNotNull().hasSize(1);
     }
+
+    @Test
+    @DataSet(value = "datasets/yml/users.yml", cleanAfter = true, skipCleaningFor = {".*USER.*|.*TWEET.*"})
+    public void shouldCleanAfterSkippingTablesDefinedAsRegex() {
+        List<User> users = em("rules-it").createQuery("select u from User u").getResultList();
+        assertThat(users).isNotNull().hasSize(2);
+
+        List<Tweet> tweets = em("rules-it").createQuery("select t from Tweet t").getResultList();
+        assertThat(tweets).isNotNull().hasSize(1);
+
+        List<Follower> followers = em("rules-it").createQuery("select f from Follower f").getResultList();
+        assertThat(followers).isNotNull().hasSize(1);
+    }
 }

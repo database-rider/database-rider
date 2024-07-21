@@ -119,6 +119,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
                 }
                 if (dataSetConfig.hasDataSets() || dataSetConfig.hasDataSetProvider()) {
                     if (dataSetConfig.hasDataSets()) {
+                        if (dataSetConfig.hasDataSetProvider()) {
+                            log.warn("The value attribute and the provider attribute of DataSet Annotation cannot be used together. The provider attribute will not be applied.");
+                        }
                         resultingDataSet = loadDataSets(dataSetConfig.getDatasets());
                     } else {
                         resultingDataSet = loadDataSetFromDataSetProvider(dataSetConfig.getProvider());
@@ -627,6 +630,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
         boolean skip = tablesToSkipCleaning.contains(tableName);
         if (!skip && tableName.contains(".")) {
             skip = tablesToSkipCleaning.contains(tableName.substring(tableName.indexOf(".") + 1));
+        }
+        if (!skip) {
+            skip = tablesToSkipCleaning.stream().anyMatch(tableName::matches);
         }
         return skip;
     }
