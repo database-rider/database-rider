@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 public class DataSetExecutorImplTest {
@@ -164,6 +165,25 @@ public class DataSetExecutorImplTest {
         assertEquals("TWEET", tableNamesXml[1]);
         assertEquals("FOLLOWER", tableNamesXml[2]);
 
+    }
+
+    @Test
+    public void shouldIgnoreJsonSchemaProperty() throws IOException, DataSetException {
+        DataSetExecutorImpl dse = DataSetExecutorImpl.instance(new ConnectionHolder() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Connection getConnection() {
+                return null;
+            }
+        });
+        URL resourceJson = getClass().getResource("/datasets/json/users_with_schema.json");
+        IDataSet iDataSetFromJson = dse.loadDataSet(resourceJson.toString());
+        String[] tableNamesJson = iDataSetFromJson.getTableNames();
+        assertThat(tableNamesJson).hasSize(3);
+        assertEquals("USER", tableNamesJson[0]);
+        assertEquals("TWEET", tableNamesJson[1]);
+        assertEquals("FOLLOWER", tableNamesJson[2]);
     }
 
 }
