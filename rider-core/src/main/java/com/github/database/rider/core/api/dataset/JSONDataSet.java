@@ -1,13 +1,14 @@
 package com.github.database.rider.core.api.dataset;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.dbunit.dataset.*;
+import org.dbunit.dataset.ITable;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * DBUnit DataSet format for JSON based datasets.
@@ -74,8 +75,8 @@ public class JSONDataSet extends MapDataSet {
 		public List<ITable> getTables(InputStream jsonStream) {
 			try {
 				// get the base object tree from the JSON stream
-				Map<String, Object> dataset = mapper.readValue(jsonStream,
-						Map.class);
+				Map<String, Object> dataset = mapper.readValue(jsonStream, Map.class);
+                dataset.remove("$schema");
 				return mapTableParser.getTables(dataset);
 
 			} catch (IOException e) {
