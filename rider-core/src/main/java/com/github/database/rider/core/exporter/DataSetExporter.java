@@ -204,21 +204,25 @@ public class DataSetExporter {
 
     private void addQueries(QueryDataSet dataSet, String[] queryList, Set<String> targetTables) {
         try {
-            for (String targetTable : targetTables) {
-                dataSet.addTable(targetTable);
+            if (targetTables != null) {
+                for (String targetTable : targetTables) {
+                    dataSet.addTable(targetTable);
+                }
             }
-            for (String query : queryList) {
-                //gets the first select to extract table
-                Matcher m = TABLE_MATCH_PATTERN.matcher(query.split("(?i)select")[1]);
-                if (!m.matches()) {
-                    log.warn("Unable to parse query. Ignoring '" + query + "'.");
-                } else {
-                    String table = m.group(1);
-                    if (targetTables.contains(table)) {
-                        //already in includes
-                        log.warn(String.format("Ignoring query %s because its table is already in includedTables.", query));
+            if (queryList != null) {
+                for (String query : queryList) {
+                    //gets the first select to extract table
+                    Matcher m = TABLE_MATCH_PATTERN.matcher(query.split("(?i)select")[1]);
+                    if (!m.matches()) {
+                        log.warn("Unable to parse query. Ignoring '" + query + "'.");
                     } else {
-                        dataSet.addTable(table, query);
+                        String table = m.group(1);
+                        if (targetTables.contains(table)) {
+                            //already in includes
+                            log.warn(String.format("Ignoring query %s because its table is already in includedTables.", query));
+                        } else {
+                            dataSet.addTable(table, query);
+                        }
                     }
                 }
             }
