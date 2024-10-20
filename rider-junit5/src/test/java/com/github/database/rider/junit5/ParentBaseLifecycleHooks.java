@@ -13,15 +13,17 @@ import org.junit.jupiter.api.BeforeEach;
 public abstract class ParentBaseLifecycleHooks {
 
     @BeforeAll
-    @DataSet(value = "usersAndTweetsBeforeAllOnParentSuperClass.yml", disableConstraints = true)
+    @DataSet(value = "usersAndTweetsBeforeAllOnParentSuperClass.yml", disableConstraints = true,
+        replacers = JUnit5LifecycleHooksInSuperclassIt.UnixTimestampReplacer.class)
     static void parentLoadDataSetBeforeAll() {}
 
     @BeforeEach
-    @DataSet(value = "tweetBeforeEachOnParentSuperClass.yml", disableConstraints = true, strategy = SeedStrategy.INSERT)
+    @DataSet(value = "tweetBeforeEachOnParentSuperClass.yml", disableConstraints = true, strategy = SeedStrategy.INSERT,
+        replacers = JUnit5LifecycleHooksInSuperclassIt.UnixTimestampReplacer.class)
     void parentLoadDataSetBeforeEach() {}
 
     @AfterEach
-    @ExpectedDataSet(value = "expectedUsersAndTweetsSuperclass.yml", orderBy = "CONTENT")
+    @ExpectedDataSet(value = "expectedUsersAndTweetsSuperclass.yml", orderBy = "ID")
     void parentVerifyInvariantsAfterEach() {}
 
     @AfterAll

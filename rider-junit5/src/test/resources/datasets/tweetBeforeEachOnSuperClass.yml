@@ -2,3 +2,4 @@ TWEET:
   - ID: "d"
     CONTENT: "super class tweet before each on superclass!"
     likes: 19
+    date: "[UNIX_TIMESTAMP]"

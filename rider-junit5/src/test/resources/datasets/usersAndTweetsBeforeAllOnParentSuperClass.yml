@@ -4,3 +4,4 @@ TWEET:
   - ID: "a"
     CONTENT: "parent super class tweet before all!"
     likes: 9
+    date: "[UNIX_TIMESTAMP]"
