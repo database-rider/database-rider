@@ -4,9 +4,18 @@ USER:
   - ID: 2
     NAME: "@dbunit"
 TWEET:
+  - ID: "a"
+    CONTENT: "parent super class tweet before all!"
+    likes: 9
+  - ID: "b"
+    CONTENT: "super class tweet before all!"
+    likes: 10
+  - ID: "c"
+    CONTENT: "parent super class tweet before each on superclass!"
+    likes: 18
+  - ID: "d"
+    CONTENT: "super class tweet before each on superclass!"
+    likes: 19
   - ID: "before-each"
     CONTENT: "tweet before each!"
     likes: 10
-  - ID: "before-each-superclass"
-    CONTENT: "tweet before each on superclass!"
-    likes: 19

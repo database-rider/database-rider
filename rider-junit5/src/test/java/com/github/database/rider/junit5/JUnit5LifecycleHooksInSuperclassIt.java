@@ -32,15 +32,16 @@ public class JUnit5LifecycleHooksInSuperclassIt extends BaseLifecycleHooks {
 
     @Test
     @DataSet("users.yml")
-    @ExpectedDataSet(value = "expectedUsersAndTweetsSuperclass.yml", orderBy = "CONTENT")
+    @ExpectedDataSet(value = "expectedUsersAndTweetsSuperclass.yml")
     public void shouldHaveUserAndTweetsInDB() {
         List<User> users = EntityManagerProvider.em().createQuery("select u from User u").getResultList();
         assertThat(users).isNotNull().isNotEmpty().hasSize(2);
         List<Tweet> tweets =  EntityManagerProvider.em().createQuery("select t from Tweet t").getResultList();
         assertThat(tweets).isNotNull()
-                .hasSize(2)
+                .hasSize(5)
                 .extracting("content")
-                .contains("tweet before each!", "tweet before each on superclass!");
+                .contains("parent super class tweet before all!", "super class tweet before all!", "parent super class tweet " +
+                    "before each on superclass!", "super class tweet before each on superclass!", "tweet before each!");
     }
 
 }

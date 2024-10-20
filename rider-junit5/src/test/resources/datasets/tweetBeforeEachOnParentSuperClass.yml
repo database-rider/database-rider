@@ -1,0 +1,4 @@
+TWEET:
+  - ID: "c"
+    CONTENT: "parent super class tweet before each on superclass!"
+    likes: 18
