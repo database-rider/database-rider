@@ -1,0 +1,7 @@
+USER:
+
+TWEET:
+  - ID: "b"
+    CONTENT: "super class tweet before all!"
+    likes: 10
+    date: "[UNIX_TIMESTAMP]"

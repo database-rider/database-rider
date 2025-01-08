@@ -1,5 +1,14 @@
 package com.github.database.rider.junit5;
 
+import java.lang.reflect.Method;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import com.github.database.rider.core.RiderRunner;
 import com.github.database.rider.core.RiderTestContext;
 import com.github.database.rider.core.api.configuration.DBUnit;
@@ -19,24 +28,25 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.*;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Store;
 import org.junit.platform.commons.util.AnnotationUtils;
 import org.junit.platform.commons.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Method;
-import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Stream;
-
+import static com.github.database.rider.junit5.jdbc.ConnectionManager.getCallbackConnection;
 import static com.github.database.rider.junit5.jdbc.ConnectionManager.getConfiguredDataSourceBeanName;
 import static com.github.database.rider.junit5.jdbc.ConnectionManager.getTestConnection;
-import static com.github.database.rider.junit5.util.Constants.*;
+import static com.github.database.rider.junit5.util.Constants.EMPTY_STRING;
+import static com.github.database.rider.junit5.util.Constants.JUNIT5_EXECUTOR;
+import static com.github.database.rider.junit5.util.Constants.NAMESPACE;
 import static java.lang.String.format;
 
 /**
@@ -103,12 +113,24 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
     }
 
     private Set<Method> findCallbackMethods(Class testClass, Class callback) {
-        final Set<Method> methods = new HashSet<>();
-        Stream.of(testClass.getSuperclass()
-                        .getDeclaredMethods(), testClass.getDeclaredMethods())
-                .flatMap(Stream::of)
-                .filter(m -> m.getAnnotation(callback) != null)
-                .forEach(m -> methods.add((Method) m)); //do not use Collectors.toSet here: stream incompatible types
+        LinkedHashSet<Method> collect = findCallbackMethods(testClass)
+            .stream()
+            .filter(m -> m.getAnnotation(callback) != null)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return Collections.unmodifiableSet(collect);
+    }
+
+    private Set<Method> findCallbackMethods(Class testClass) {
+        // Maintain order, methods of super classes first
+        final Set<Method> methods = new LinkedHashSet<>();
+
+        if (testClass.getSuperclass() != null) {
+            methods.addAll(findCallbackMethods(testClass.getSuperclass()));
+        }
+
+        methods.addAll(Arrays.asList(testClass.getDeclaredMethods()));
+
         return Collections.unmodifiableSet(methods);
     }
 
@@ -173,7 +195,6 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
             return;
         }
         EntityManagerProvider.clear();
-        final DBUnitTestContext dbUnitTestContext = getTestContext(extensionContext);
         final DBUnitConfig dbUnitConfig = resolveDbUnitConfig(Optional.of(callbackAnnotation), Optional.of(callbackMethod), testClass);
         DataSet dataSet;
         if (dbUnitConfig.isMergeDataSets()) {
@@ -182,11 +203,18 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         } else {
             dataSet = dataSetAnnotation.get();
         }
-        DataSetExecutor dataSetExecutor = dbUnitTestContext.getExecutor();
+        DataSetExecutor dataSetExecutor = getDataSetExecutor(extensionContext, callbackMethod, dataSet);
         dataSetExecutor.setDBUnitConfig(dbUnitConfig);
         dataSetExecutor = resetExecutorConnectionIfNeeded(extensionContext, callbackAnnotation, dbUnitConfig, dataSetExecutor);
         dataSetExecutor.createDataSet(new DataSetConfig().from(dataSet));
         closeConnectionForAfterCallback(dataSetExecutor, callbackAnnotation);
+    }
+
+    private DataSetExecutor getDataSetExecutor(ExtensionContext extensionContext, Method callbackMethod, DataSet dataSet) {
+        final String dataSourceBeanName = getConfiguredDataSourceBeanName(extensionContext, callbackMethod);
+        final String executorId = getExecutorId(dataSourceBeanName, Optional.ofNullable(dataSet));
+        final ConnectionHolder connectionHolder = getCallbackConnection(extensionContext, executorId, dataSourceBeanName);
+        return DataSetExecutorImpl.instance(executorId, connectionHolder);
     }
 
     /**
@@ -218,7 +246,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         // Verify expected dataset
         // Resolve DBUnit config from annotation or file
         DBUnitConfig dbUnitConfig = resolveDbUnitConfig(Optional.of(callbackAnnotation), Optional.of(callbackMethod), testClass);
-        DataSetExecutor dataSetExecutor = getTestContext(extensionContext).getExecutor();
+        DataSetExecutor dataSetExecutor = getDataSetExecutor(extensionContext, callbackMethod, null);
         dataSetExecutor.setDBUnitConfig(dbUnitConfig);
         dataSetExecutor = resetExecutorConnectionIfNeeded(extensionContext, callbackAnnotation, dbUnitConfig, dataSetExecutor);
         dataSetExecutor.compareCurrentDataSetWith(
@@ -282,6 +310,10 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
             annDataSet = findDataSetAnnotation(extensionContext);
         }
         String dataSourceBeanName = getConfiguredDataSourceBeanName(extensionContext);
+        return getExecutorId(dataSourceBeanName, annDataSet);
+    }
+
+    private String getExecutorId(String dataSourceBeanName, Optional<DataSet> annDataSet) {
         String executionIdSuffix = dataSourceBeanName.isEmpty() ? EMPTY_STRING : "-" + dataSourceBeanName;
         return annDataSet
                 .map(DataSet::executorId)
