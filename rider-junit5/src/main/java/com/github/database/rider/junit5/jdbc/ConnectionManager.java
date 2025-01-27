@@ -7,6 +7,7 @@ import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.junit5.api.DBRider;
 import com.github.database.rider.junit5.integration.Micronaut;
 import com.github.database.rider.junit5.integration.Spring;
+import io.micronaut.transaction.jdbc.DelegatingDataSource;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.util.AnnotationUtils;
 
@@ -63,7 +64,8 @@ public final class ConnectionManager {
             if (isCachedConnection(dataSetExecutor)) {
                 return new ConnectionHolderImpl(dataSetExecutor.getRiderDataSource().getDBUnitConnection().getConnection());
             } else {
-                return new ConnectionHolderImpl(dataSource.getConnection());
+                DataSource unwrappedDataSource = DelegatingDataSource.unwrapDataSource(dataSource);
+                return new ConnectionHolderImpl(unwrappedDataSource.getConnection());
             }
         } catch (SQLException e) {
             throw new RuntimeException("Could not get connection from DataSource.");
