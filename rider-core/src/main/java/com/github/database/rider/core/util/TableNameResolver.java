@@ -2,6 +2,7 @@ package com.github.database.rider.core.util;
 
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.connection.RiderDataSource;
+import org.dbunit.database.DatabaseConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,13 +102,15 @@ public final class TableNameResolver {
 
     private ResultSet getTablesFromMetadata(Connection con, RiderDataSource riderDataSource) throws SQLException {
         DatabaseMetaData metaData = con.getMetaData();
-        String[] tableTypes;
 
-        if (riderDataSource.getDBType() == RiderDataSource.DBType.POSTGRESQL) {
-            tableTypes = new String[]{"TABLE", "PARTITIONED TABLE"};
-        } else {
-            tableTypes = new String[]{"TABLE"};
-        }
+        // Retrieve tableType from DatabaseConfig
+        DatabaseConfig config = riderDataSource.getDBUnitConnection().getConfig();
+        Object tableTypeProperty = config.getProperty(DatabaseConfig.PROPERTY_TABLE_TYPE);
+
+        // Use configured tableType if available, otherwise default to TABLE
+        String[] tableTypes = (tableTypeProperty instanceof String[])
+            ? (String[]) tableTypeProperty
+            : new String[]{"TABLE"};
 
         return metaData.getTables(null, null, "%", tableTypes);
     }
