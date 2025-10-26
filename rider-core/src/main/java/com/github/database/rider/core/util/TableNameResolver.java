@@ -53,7 +53,7 @@ public final class TableNameResolver {
             return tableNamesCache;
         }
         final Set<String> tables = new HashSet<>();
-        try (ResultSet result = getTablesFromMetadata(riderDataSource.getDBUnitConnection().getConnection())) {
+        try (ResultSet result = getTablesFromMetadata(riderDataSource.getDBUnitConnection().getConnection(), riderDataSource)) {
             String schemaColumnLabel = getSchemaColumnLabel(getDatabaseMetaData(riderDataSource));
 
             while (result.next()) {
@@ -84,7 +84,7 @@ public final class TableNameResolver {
         }
     }
 
-    private String getSchemaColumnLabel(DatabaseMetaData databaseMetaData) throws SQLException{
+    private String getSchemaColumnLabel(DatabaseMetaData databaseMetaData) throws SQLException {
         return databaseMetaData.getSchemaTerm() == null || databaseMetaData.getSchemaTerm().isEmpty() ?
                 TABLE_CAT : TABLE_SCHEM;
     }
@@ -97,6 +97,19 @@ public final class TableNameResolver {
         RiderDataSource.DBType dbType = riderDataSource.getDBType();
         Set<String> systemSchemas = SYSTEM_SCHEMAS.get(dbType);
         return systemSchemas != null && schema != null && systemSchemas.contains(schema.toUpperCase());
+    }
+
+    private ResultSet getTablesFromMetadata(Connection con, RiderDataSource riderDataSource) throws SQLException {
+        DatabaseMetaData metaData = con.getMetaData();
+        String[] tableTypes;
+
+        if (riderDataSource.getDBType() == RiderDataSource.DBType.POSTGRESQL) {
+            tableTypes = new String[]{"TABLE", "PARTITIONED TABLE"};
+        } else {
+            tableTypes = new String[]{"TABLE"};
+        }
+
+        return metaData.getTables(null, null, "%", tableTypes);
     }
 
     private ResultSet getTablesFromMetadata(Connection con) throws SQLException {
