@@ -203,14 +203,19 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         } else {
             dataSet = dataSetAnnotation.get();
         }
-        DataSetExecutor dataSetExecutor = getDataSetExecutor(extensionContext, callbackMethod, dataSet);
+        DataSetExecutor dataSetExecutor = getDataSetExecutor(extensionContext, callbackMethod, dataSet, dbUnitConfig);
         dataSetExecutor.setDBUnitConfig(dbUnitConfig);
         dataSetExecutor = resetExecutorConnectionIfNeeded(extensionContext, callbackAnnotation, dbUnitConfig, dataSetExecutor);
         dataSetExecutor.createDataSet(new DataSetConfig().from(dataSet));
         closeConnectionForAfterCallback(dataSetExecutor, callbackAnnotation);
     }
 
-    private DataSetExecutor getDataSetExecutor(ExtensionContext extensionContext, Method callbackMethod, DataSet dataSet) {
+    private DataSetExecutor getDataSetExecutor(ExtensionContext extensionContext, Method callbackMethod, DataSet dataSet, DBUnitConfig dbUnitConfig) {
+        // If cacheConnection is true, use the shared executor from test context (v1.43.0 behavior)
+        if (dbUnitConfig != null && dbUnitConfig.isCacheConnection()) {
+            return getTestContext(extensionContext).getExecutor();
+        }
+        // Otherwise, create a new executor with independent connection (v1.44.0 new feature)
         final String dataSourceBeanName = getConfiguredDataSourceBeanName(extensionContext, callbackMethod);
         final String executorId = getExecutorId(dataSourceBeanName, Optional.ofNullable(dataSet));
         final ConnectionHolder connectionHolder = getCallbackConnection(extensionContext, executorId, dataSourceBeanName);
@@ -246,7 +251,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         // Verify expected dataset
         // Resolve DBUnit config from annotation or file
         DBUnitConfig dbUnitConfig = resolveDbUnitConfig(Optional.of(callbackAnnotation), Optional.of(callbackMethod), testClass);
-        DataSetExecutor dataSetExecutor = getDataSetExecutor(extensionContext, callbackMethod, null);
+        DataSetExecutor dataSetExecutor = getDataSetExecutor(extensionContext, callbackMethod, null, dbUnitConfig);
         dataSetExecutor.setDBUnitConfig(dbUnitConfig);
         dataSetExecutor = resetExecutorConnectionIfNeeded(extensionContext, callbackAnnotation, dbUnitConfig, dataSetExecutor);
         dataSetExecutor.compareCurrentDataSetWith(
