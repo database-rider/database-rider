@@ -359,7 +359,6 @@ properties:
   fetchSize: 100
   allowEmptyFields: false
   escapePattern: <9>
-  schema:
   datatypeFactory: !!com.github.database.rider.core.configuration.DBUnitConfigTest$MockDataTypeFactory {} <10>
   tableType: ["TABLE"]
 connectionConfig:
