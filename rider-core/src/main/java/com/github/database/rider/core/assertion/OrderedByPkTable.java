@@ -33,46 +33,28 @@ public class OrderedByPkTable implements ITable {
         return expected.getValue(mappedRow, column);
     }
 
-    public static OrderedByPkTable create(ITable expected, ITable actual) throws DataSetException {
-        return new OrderedByPkTable(expected, getPkMapping(expected, actual));
+    public static ITable wrapIfNeeded(ITable expected, ITable actual, final String[] ignoreCols) throws DataSetException {
+        return shouldWrap(actual, ignoreCols) ? new OrderedByPkTable(expected, getPkMapping(expected, actual)) : expected;
+    }
+
+    private static boolean shouldWrap(final ITable actual, final String[] ignoreCols) throws DataSetException {
+        final Column[] primaryKeys = actual.getTableMetaData().getPrimaryKeys();
+        if (primaryKeys.length == 0) {
+            return false;
+        }
+        for (int i = 0; i < primaryKeys.length; i++) {
+            final String columnName = primaryKeys[i].getColumnName();
+            for (int j = 0; j < ignoreCols.length; j++) {
+                if (ignoreCols[j].equalsIgnoreCase(columnName)) {
+                    // we cannot guarantee correct mapping for incomplete complex primary key, so just disable it.
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private static Map<Integer, Integer> getPkMapping(ITable expected, ITable actual) throws DataSetException {
-        final Column[] primaryKeys = actual.getTableMetaData().getPrimaryKeys();
-        if (primaryKeys.length == 0) {
-            return Collections.emptyMap();
-        }
-        if (primaryKeys.length == 1) {
-            return getSimplePkMapping(expected, actual);
-        }
-        return getCompositePkMapping(expected, actual);
-    }
-
-    private static Map<Integer, Integer> getSimplePkMapping(ITable expected, ITable actual) throws DataSetException {
-        final Column primaryKey = actual.getTableMetaData().getPrimaryKeys()[0];
-        final Map<Integer, Integer> orderMapping = new HashMap<>();
-        final Map<String, Integer> actualPkOrders = getSimplePkOrders(actual, primaryKey);
-        final Map<String, Integer> expectedPkOrders = getSimplePkOrders(expected, primaryKey);
-        actualPkOrders.forEach((value, rowIndex) -> {
-            if (expectedPkOrders.containsKey(value)) {
-                orderMapping.put(rowIndex, expectedPkOrders.get(value));
-            }
-        });
-        return orderMapping;
-    }
-
-    private static Map<String, Integer> getSimplePkOrders(ITable table, Column primaryKey) throws DataSetException {
-        final Map<String, Integer> actualOrders = new HashMap<>();
-        final int actualRowCount = table.getRowCount();
-        for (int i = 0; i < actualRowCount; i++) {
-            final String primaryKeyColumnName = primaryKey.getColumnName();
-            final Object actualPkValue = table.getValue(i, primaryKeyColumnName);
-            actualOrders.put(String.valueOf(actualPkValue), i);
-        }
-        return actualOrders;
-    }
-
-    private static Map<Integer, Integer> getCompositePkMapping(ITable expected, ITable actual) throws DataSetException {
         final Column[] primaryKeys = actual.getTableMetaData().getPrimaryKeys();
         final Map<Integer, Integer> orderMapping = new HashMap<>();
         final Map<List<String>, Integer> actualPkOrders = getCompositePkOrders(actual, primaryKeys);
