@@ -13,6 +13,7 @@ public class DataSetAssertion {
     public static void assertEqualsIgnoreCols(ITable expectedDataSet,
                                     ITable actualDataSet, String[] ignoreCols)
             throws DatabaseUnitException {
+        expectedDataSet = OrderedByPkTable.create(expectedDataSet, actualDataSet);
         INSTANCE.initComparedRows();
         INSTANCE.assertEqualsIgnoreCols(expectedDataSet, actualDataSet, ignoreCols);
     }
