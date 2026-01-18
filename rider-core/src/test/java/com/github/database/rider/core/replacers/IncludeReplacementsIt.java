@@ -3,6 +3,7 @@ package com.github.database.rider.core.replacers;
 import com.github.database.rider.core.DBUnitRule;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.core.model.Tweet;
+import com.github.database.rider.core.util.DateUtils;
 import com.github.database.rider.core.util.EntityManagerProvider;
 import org.junit.Rule;
 import org.junit.Test;
@@ -58,5 +59,19 @@ public class IncludeReplacementsIt {
         assertThat(tweet.getContent()).isEqualTo("DOC:" + NEW_LINE +
                 "  - ID: 1" + NEW_LINE +
                 "    CONTENT: \"Yaml included content\"");
+    }
+
+    @Test
+    @DataSet(replacers = IncludeReplacer.class, value = "datasets/yml/include-non-string-columns.yml")
+    public void shouldHandleNonStringColumns() {
+        Tweet tweet = (Tweet) EntityManagerProvider.em().createQuery("select t from Tweet t where t.id = '1'").getSingleResult();
+
+        assertThat(tweet).isNotNull();
+        assertThat(tweet.getContent()).isEqualTo("DOC:" + NEW_LINE +
+                "  - ID: 1" + NEW_LINE +
+                "    CONTENT: \"Yaml included content\"");
+        assertThat(tweet.getLikes()).isEqualTo(10);
+        assertThat(DateUtils.formatDate(tweet.getDate())).isEqualTo("2025-01-01");
+        assertThat(tweet.getTimestamp()).isEqualTo(30);
     }
 }
