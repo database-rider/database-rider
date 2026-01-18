@@ -79,15 +79,17 @@ public class ContainsFilterTable implements ITable {
             }
         }
         List<Integer> filteredRowIndexes = new ArrayList<>();
-
+        final ContainsErrorMessage message = ContainsErrorMessage.create(columns, this.originalTable);
         for ( int row=0; row<fullSize; row++ ) {
             List<Object> values = new ArrayList<>();
             for (String column : columns) {
                 values.add(expectedTable.getValue(row, column));
             }
-            Integer actualRowIndex = tableContains(columns, values, filteredRowIndexes, ignoredCols);
+            message.initWithValues(values);
+            Integer actualRowIndex = tableContains(columns, values, filteredRowIndexes, ignoredCols, message);
             if (actualRowIndex == null) {
                 this.logger.debug("Discarding row {}", row);
+                message.print();
                 continue;
             }
 
@@ -105,10 +107,11 @@ public class ContainsFilterTable implements ITable {
      * @return row index of original table containing all requested values
      * @throws DataSetException throws DataSetException
      */
-    private Integer tableContains(List<String> columns, List<Object> values, List<Integer> filteredRowIndexes, List<String> ignoredCols) throws DataSetException {
+    private Integer tableContains(List<String> columns, List<Object> values, List<Integer> filteredRowIndexes, List<String> ignoredCols, ContainsErrorMessage message) throws DataSetException {
         int fullSize = this.originalTable.getRowCount();
-
+        message.addTableHeader();
         for ( int row=0; row<fullSize; row++ ) {
+            message.addRow(row);
             boolean match = true;
             for (int column = 0; column < columns.size(); column++) {
                 if(ignoredCols != null && ignoredCols.contains(columns.get(column).toUpperCase())) {
@@ -126,13 +129,16 @@ public class ContainsFilterTable implements ITable {
                 DataType dataType = this.originalTable.getTableMetaData().getColumns()[columnIndex].getDataType();
                 if (dataType.compare(values.get(column), this.originalTable.getValue(row, columns.get(column))) != 0) {
                     match = false;
+                    message.addFail(column, row);
                     break;
                 }
             }
 
             if (match && !filteredRowIndexes.contains(row)) {
+                message.setMatch();
                 return row;
             }
+            message.nextLine();
         }
         return null;
     }
