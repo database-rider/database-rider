@@ -283,4 +283,60 @@ public class ExpectedDataSetIt {
     public void shouldSupportPrologCompareOperation() {
     }
 
+    @Test
+    @DataSet(value = "yml/user.yml", cleanBefore = true)
+    @ExpectedDataSet("yml/user.yml")
+    public void shouldMatchInitialDataset() {
+    }
+
+    @Test
+    @DataSet(value = "yml/user.yml", cleanBefore = true)
+    @ExpectedDataSet("yml/reversedUser.yml")
+    public void shouldMatchReversedDataset() {
+    }
+
+    @Test
+    @DataSet(value = "yml/otherUser.yml", cleanBefore = true, cleanAfter = true)
+    @ExpectedDataSet("yml/user.yml")
+    public void shouldMatchUpdatedInitialDataset() {
+        emProvider.tx().begin();
+        User user = emProvider.getEm().find(User.class, 2L);
+        user.setName("@dbunit");
+        emProvider.getEm().merge(user);
+        emProvider.tx().commit();
+    }
+
+    @Test
+    @DataSet(value = "yml/otherUser.yml", cleanBefore = true, cleanAfter = true)
+    @ExpectedDataSet("yml/reversedUser.yml")
+    public void shouldMatchUpdatedReversedDataset() {
+        emProvider.tx().begin();
+        User user = emProvider.getEm().find(User.class, 2L);
+        user.setName("@dbunit");
+        emProvider.getEm().merge(user);
+        emProvider.tx().commit();
+    }
+
+    @Test
+    @DataSet(value = "yml/user.yml", cleanBefore = true, cleanAfter = true)
+    @ExpectedDataSet("yml/newUser.yml")
+    public void shouldMatchInitialDatasetWithNewUser() {
+        User user = new User(3);
+        user.setName("@new");
+        emProvider.tx().begin();
+        emProvider.getEm().persist(user);
+        emProvider.tx().commit();
+    }
+
+    @Test
+    @DataSet(value = "yml/user.yml", cleanBefore = true, cleanAfter = true)
+    @ExpectedDataSet("yml/newReversedUser.yml")
+    public void shouldMatchReversedDatasetWithNewUser() {
+        User user = new User(3);
+        user.setName("@new");
+        emProvider.tx().begin();
+        emProvider.getEm().persist(user);
+        emProvider.tx().commit();
+    }
+
 }
