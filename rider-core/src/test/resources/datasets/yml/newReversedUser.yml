@@ -1,0 +1,7 @@
+USER:
+  - ID: 2
+    NAME: "@dbunit"
+  - ID: 1
+    NAME: "@realpestano"
+  - ID: "regex:.*"
+    NAME: "@new"
