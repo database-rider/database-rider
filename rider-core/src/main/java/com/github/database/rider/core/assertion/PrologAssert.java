@@ -4,10 +4,15 @@ import it.unibo.tuprolog.core.parsing.TermParser;
 import it.unibo.tuprolog.solve.Solution;
 import it.unibo.tuprolog.solve.SolveOptions;
 import it.unibo.tuprolog.solve.Solver;
-import it.unibo.tuprolog.solve.SolverFactory;
+import it.unibo.tuprolog.solve.library.Runtime;
+import it.unibo.tuprolog.solve.channel.InputStore;
+import it.unibo.tuprolog.solve.channel.OutputStore;
 import it.unibo.tuprolog.solve.classic.ClassicSolverFactory;
+import it.unibo.tuprolog.solve.flags.FlagStore;
+import it.unibo.tuprolog.solve.library.Library;
 import it.unibo.tuprolog.theory.Theory;
 import it.unibo.tuprolog.theory.parsing.ClausesReader;
+import it.unibo.tuprolog.unify.Unificator;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
@@ -131,14 +136,13 @@ public class PrologAssert {
         log.debug("Attempting to solve, facts = {}, query = {}", databaseFacts, databaseQuery);
 
         ClausesReader theoryReader = ClausesReader.withDefaultOperators();
-        SolverFactory solverFactory = ClassicSolverFactory.INSTANCE; // or Solver.getClassic()
 
         ByteArrayInputStream bais = new ByteArrayInputStream(
                 databaseFacts.getBytes(StandardCharsets.UTF_8)
         );
 
         Theory theory = theoryReader.readTheory(bais);
-        Solver solver = solverFactory.solverWithDefaultBuiltins(theory);
+        Solver solver = createSolver(theory);
 
         TermParser termParser = TermParser.withOperators(solver.getOperators());
 
@@ -149,6 +153,18 @@ public class PrologAssert {
         if (!si.hasNext() || si.next().isNo()) {
             throw new DataSetException("Could not find a solution to theory: " + theory + " given query: " + query);
         }
+    }
+
+    private static Solver createSolver(Theory theory) {
+        return ClassicSolverFactory.INSTANCE.solverOf(
+                Unificator.getDefault(),
+                Runtime.of(Library.of(ClassicSolverFactory.INSTANCE.getDefaultBuiltins())),
+                FlagStore.empty(),
+                theory,
+                Theory.empty(),
+                InputStore.fromStandard(),
+                OutputStore.fromStandard()
+        );
     }
 
 
@@ -162,7 +178,7 @@ public class PrologAssert {
         }
 
         return (o.toString())
-                .replaceAll("'", "''");
+                .replace("'", "''");
     }
 
 }

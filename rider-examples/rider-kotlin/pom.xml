@@ -21,7 +21,7 @@
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
         <!-- Versions -->
-        <kotlin.version>1.7.0</kotlin.version>
+        <kotlin.version>1.9.25</kotlin.version>
         <version.sprinboot>2.7.1</version.sprinboot>
     </properties>
 
