@@ -2,6 +2,7 @@ package com.github.database.rider.core.util;
 
 import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.connection.RiderDataSource;
+import org.dbunit.database.DatabaseConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +54,7 @@ public final class TableNameResolver {
             return tableNamesCache;
         }
         final Set<String> tables = new HashSet<>();
-        try (ResultSet result = getTablesFromMetadata(riderDataSource.getDBUnitConnection().getConnection())) {
+        try (ResultSet result = getTablesFromMetadata(riderDataSource.getDBUnitConnection().getConnection(), riderDataSource)) {
             String schemaColumnLabel = getSchemaColumnLabel(getDatabaseMetaData(riderDataSource));
 
             while (result.next()) {
@@ -84,7 +85,7 @@ public final class TableNameResolver {
         }
     }
 
-    private String getSchemaColumnLabel(DatabaseMetaData databaseMetaData) throws SQLException{
+    private String getSchemaColumnLabel(DatabaseMetaData databaseMetaData) throws SQLException {
         return databaseMetaData.getSchemaTerm() == null || databaseMetaData.getSchemaTerm().isEmpty() ?
                 TABLE_CAT : TABLE_SCHEM;
     }
@@ -97,6 +98,21 @@ public final class TableNameResolver {
         RiderDataSource.DBType dbType = riderDataSource.getDBType();
         Set<String> systemSchemas = SYSTEM_SCHEMAS.get(dbType);
         return systemSchemas != null && schema != null && systemSchemas.contains(schema.toUpperCase());
+    }
+
+    private ResultSet getTablesFromMetadata(Connection con, RiderDataSource riderDataSource) throws SQLException {
+        DatabaseMetaData metaData = con.getMetaData();
+
+        // Retrieve tableType from DatabaseConfig
+        DatabaseConfig config = riderDataSource.getDBUnitConnection().getConfig();
+        Object tableTypeProperty = config.getProperty(DatabaseConfig.PROPERTY_TABLE_TYPE);
+
+        // Use configured tableType if available, otherwise default to TABLE
+        String[] tableTypes = (tableTypeProperty instanceof String[])
+            ? (String[]) tableTypeProperty
+            : new String[]{"TABLE"};
+
+        return metaData.getTables(null, null, "%", tableTypes);
     }
 
     private ResultSet getTablesFromMetadata(Connection con) throws SQLException {
