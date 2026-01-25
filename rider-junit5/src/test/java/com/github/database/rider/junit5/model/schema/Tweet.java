@@ -2,7 +2,7 @@ package com.github.database.rider.junit5.model.schema;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Calendar;
 

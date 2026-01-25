@@ -20,10 +20,10 @@ public class PropertyResolutionUtilTest {
 
     @Before
     public void setup() {
-        System.clearProperty("javax.persistence.jdbc.driver");
-        System.clearProperty("javax.persistence.jdbc.url");
-        System.clearProperty("javax.persistence.jdbc.user");
-        System.clearProperty("javax.persistence.jdbc.password");
+        System.clearProperty("jakarta.persistence.jdbc.driver");
+        System.clearProperty("jakarta.persistence.jdbc.url");
+        System.clearProperty("jakarta.persistence.jdbc.user");
+        System.clearProperty("jakarta.persistence.jdbc.password");
         System.clearProperty("yet.another.prop");
         systemUnderTest = new PropertyResolutionUtil();
     }
@@ -41,25 +41,25 @@ public class PropertyResolutionUtilTest {
 
     @Test
     public void testPropertyOverridesExistEvaluatesToTrue() {
-        System.setProperty("javax.persistence.jdbc.driver", "org.hsqldb.jdbcDriver");
+        System.setProperty("jakarta.persistence.jdbc.driver", "org.hsqldb.jdbcDriver");
         Assert.assertTrue(systemUnderTest.propertyOverridesExist());
     }
 
     @Test
     public void testPropertyOverridesExistEvaluatesToTrueVariant2() {
-        System.setProperty("javax.persistence.jdbc.url", "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1");
+        System.setProperty("jakarta.persistence.jdbc.url", "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1");
         Assert.assertTrue(systemUnderTest.propertyOverridesExist());
     }
 
     @Test
     public void testPropertyOverridesExistEvaluatesToTrueVariant3() {
-        System.setProperty("javax.persistence.jdbc.user", "sa");
+        System.setProperty("jakarta.persistence.jdbc.user", "sa");
         Assert.assertTrue(systemUnderTest.propertyOverridesExist());
     }
 
     @Test
     public void testPropertyOverridesExistEvaluatesToTrueVariant4() {
-        System.setProperty("javax.persistence.jdbc.password", "changeit");
+        System.setProperty("jakarta.persistence.jdbc.password", "changeit");
         Assert.assertTrue(systemUnderTest.propertyOverridesExist());
     }
 
@@ -105,7 +105,7 @@ public class PropertyResolutionUtilTest {
 
     @Test
     public void testMergeFilteredMapsWithOnePersistenceProp() {
-        final String EXPECTED_PROPERTY_KEY = "javax.persistence.jdbc.url";
+        final String EXPECTED_PROPERTY_KEY = "jakarta.persistence.jdbc.url";
         final String EXPECTED_PROPERTY_VALUE = "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1";
         Map<String, Object> filteredMap = systemUnderTest.mergeFilteredMaps(null, new HashMap<String, Object>() {{
             put(EXPECTED_PROPERTY_KEY, EXPECTED_PROPERTY_VALUE);
@@ -120,7 +120,7 @@ public class PropertyResolutionUtilTest {
 
     @Test
     public void testMergeFilteredMapsWithOnePersistencePropVariant2() {
-        final String EXPECTED_PROPERTY_KEY = "javax.persistence.jdbc.url";
+        final String EXPECTED_PROPERTY_KEY = "jakarta.persistence.jdbc.url";
         final String EXPECTED_PROPERTY_VALUE = "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1";
         Map<String, Object> filteredMap = systemUnderTest.mergeFilteredMaps(new HashMap<String, Object>() {{
             put(EXPECTED_PROPERTY_KEY, EXPECTED_PROPERTY_VALUE);
@@ -150,7 +150,7 @@ public class PropertyResolutionUtilTest {
 
     @Test
     public void testMergeFilteredMapsWithOnePersistencePropOverridden() {
-        final String EXPECTED_PROPERTY_KEY = "javax.persistence.jdbc.url";
+        final String EXPECTED_PROPERTY_KEY = "jakarta.persistence.jdbc.url";
         final String EXPECTED_PROPERTY_VALUE_ENV = "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1";
         final String EXPECTED_PROPERTY_VALUE_RUNTIME_ARGS = "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=0";
         Map<String, Object> filteredMap = systemUnderTest.mergeFilteredMaps(new HashMap<String, Object>() {{
@@ -169,34 +169,34 @@ public class PropertyResolutionUtilTest {
     }
 
     @Test
-    public void testGetSystemJavaxPersistenceOverridesReturnsNull() {
-        Assert.assertNull(systemUnderTest.getSystemJavaxPersistenceOverrides());
+    public void testGetSystemjakartaPersistenceOverridesReturnsNull() {
+        Assert.assertNull(systemUnderTest.getSystemjakartaPersistenceOverrides());
     }
 
     @Test
-    public void testGetSystemJavaxPersistenceOverridesReturnsMap() {
-        System.setProperty("javax.persistence.jdbc.driver", "org.hsqldb.jdbcDriver");
-        System.setProperty("javax.persistence.jdbc.url", "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=0");
+    public void testGetSystemjakartaPersistenceOverridesReturnsMap() {
+        System.setProperty("jakarta.persistence.jdbc.driver", "org.hsqldb.jdbcDriver");
+        System.setProperty("jakarta.persistence.jdbc.url", "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=0");
         System.setProperty("hibernate.connection.url", "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1");
         System.setProperty("eclipselink.connection.url", "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1");
         System.setProperty("openjpa.connection.url", "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1");
-        Map<String, Object> systemJavaxPersistenceOverrides = systemUnderTest.getSystemJavaxPersistenceOverrides();
-        Assert.assertNotNull(systemJavaxPersistenceOverrides);
-        Assert.assertTrue(systemJavaxPersistenceOverrides.size() == 5);
+        Map<String, Object> systemjakartaPersistenceOverrides = systemUnderTest.getSystemjakartaPersistenceOverrides();
+        Assert.assertNotNull(systemjakartaPersistenceOverrides);
+        Assert.assertTrue(systemjakartaPersistenceOverrides.size() == 5);
     }
 
     @Test
     public void testPersistencePropertiesOverridesReturnsNull() {
-        Map<String, Object> systemJavaxPersistenceOverrides = systemUnderTest.persistencePropertiesOverrides(new HashMap<String, Object>() {{
+        Map<String, Object> systemjakartaPersistenceOverrides = systemUnderTest.persistencePropertiesOverrides(new HashMap<String, Object>() {{
             put("a", "b");
             put("b", "c");
         }});
-        Assert.assertNull(systemJavaxPersistenceOverrides);
+        Assert.assertNull(systemjakartaPersistenceOverrides);
     }
 
     @Test
     public void testPersistencePropertiesOverridesReturnsOneEntry() {
-        final String EXPECTED_PROPERTY_KEY = "javax.persistence.jdbc.url";
+        final String EXPECTED_PROPERTY_KEY = "jakarta.persistence.jdbc.url";
         final String EXPECTED_PROPERTY_VALUE = "jdbc:hsqldb:mem:test;DB_CLOSE_DELAY=-1";
 
         Map<String, Object> propertiesOverrides = systemUnderTest.persistencePropertiesOverrides(new HashMap<String, Object>() {{

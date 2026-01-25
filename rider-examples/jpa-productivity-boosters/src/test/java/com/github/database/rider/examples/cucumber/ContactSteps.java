@@ -9,7 +9,7 @@ import org.example.jpadomain.Contact;
 import org.example.jpadomain.Contact_;
 import org.example.service.deltaspike.ContactRepository;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

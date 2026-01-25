@@ -7,7 +7,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.sql.DataSource;
+import jakarta.sql.DataSource;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;

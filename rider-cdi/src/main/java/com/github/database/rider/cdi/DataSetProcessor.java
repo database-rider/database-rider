@@ -12,18 +12,16 @@ import com.github.database.rider.core.connection.ConnectionHolderImpl;
 import com.github.database.rider.core.dataset.DataSetExecutorImpl;
 import com.github.database.rider.core.exporter.DataSetExporter;
 import com.github.database.rider.core.replacers.Replacer;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Any;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import org.dbunit.DatabaseUnitException;
-import org.hibernate.Session;
-import org.hibernate.internal.SessionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -89,8 +87,9 @@ public class DataSetProcessor {
             if (isJta()) {
                 return jtaConnectionHolder.get().getConnection(entityManagerBeanName);
             } else {
-                if (isHibernatePresentOnClasspath() && entityManager.getDelegate() instanceof Session) {
-                    connection = ((SessionImpl) entityManager.unwrap(Session.class)).connection();
+                if (isHibernatePresentOnClasspath()) {
+                    connection = entityManager.unwrap(org.hibernate.engine.spi.SessionImplementor.class).getJdbcConnectionAccess().obtainConnection()
+                    ;
                 } else {
                     /**
                      * see here:http://wiki.eclipse.org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager

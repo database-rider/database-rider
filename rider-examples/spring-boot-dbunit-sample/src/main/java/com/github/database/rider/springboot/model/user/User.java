@@ -1,6 +1,6 @@
 package com.github.database.rider.springboot.model.user;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity

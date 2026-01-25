@@ -4,9 +4,9 @@ package com.github.database.rider.cdi.infra;
 import com.github.database.rider.cdi.api.RiderPU;
 import com.github.database.rider.core.util.EntityManagerProvider;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
-import javax.persistence.EntityManager;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
+import jakarta.persistence.EntityManager;
 
 /**
  * Created by pestano on 09/10/15.

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.sql.DataSource;
+import jakarta.sql.DataSource;
 
 import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
 import static com.github.database.rider.junit5.jdbc.ConnectionManager.getConnectionHolder;

@@ -8,12 +8,15 @@ import java.util.List;
  * Created by pestano on 22/07/15.
  */
 @Entity
+@Table(name = "USER")
 public class User {
 
     @Id
     @GeneratedValue
+    @Column(name = "\"id\"")
     private long id;
 
+    @Column(name = "\"name\"")
     private String name;
 
     @OneToMany(mappedBy = "user")

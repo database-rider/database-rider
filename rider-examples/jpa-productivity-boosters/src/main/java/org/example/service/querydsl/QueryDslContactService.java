@@ -7,8 +7,8 @@ import org.example.service.springdata.CompanyRepository;
 import org.example.service.springdata.ContactRepository;
 import org.springframework.data.domain.PageRequest;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import java.util.List;
 
 /**

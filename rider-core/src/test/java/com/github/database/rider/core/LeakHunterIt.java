@@ -12,7 +12,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import javax.persistence.Persistence;
+import jakarta.persistence.Persistence;
 import java.sql.*;
 
 import static org.assertj.core.api.Assertions.assertThat;

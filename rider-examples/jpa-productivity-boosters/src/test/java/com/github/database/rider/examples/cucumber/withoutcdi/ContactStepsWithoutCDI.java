@@ -12,7 +12,7 @@ import cucumber.api.java.en.When;
 import org.example.jpadomain.Contact;
 import org.junit.Assert;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 import static com.github.database.rider.core.util.EntityManagerProvider.em;
 import static com.github.database.rider.core.util.EntityManagerProvider.tx;

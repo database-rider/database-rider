@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.sql.DataSource;
+import jakarta.sql.DataSource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

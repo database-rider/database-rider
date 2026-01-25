@@ -20,11 +20,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @RunWith(JUnit4.class)
 public class EntityManagerSystemConfigOverrideTestIt {
-    private static final String PROP_KEY_URL = "javax.persistence.jdbc.url";
+    private static final String PROP_KEY_URL = "jakarta.persistence.jdbc.url";
     private static final String PROP_VALUE_URL = "jdbc:hsqldb:mem:susi;DB_CLOSE_DELAY=-1";
-    private static final String PROP_KEY_DRIVER = "javax.persistence.jdbc.driver";
-    private static final String PROP_KEY_USER = "javax.persistence.jdbc.user";
-    private static final String PROP_KEY_PASSWORD = "javax.persistence.jdbc.password";
+    private static final String PROP_KEY_DRIVER = "jakarta.persistence.jdbc.driver";
+    private static final String PROP_KEY_USER = "jakarta.persistence.jdbc.user";
+    private static final String PROP_KEY_PASSWORD = "jakarta.persistence.jdbc.password";
     
     @Rule
     public EntityManagerProvider emProvider = EntityManagerProvider.instance("rules-it");

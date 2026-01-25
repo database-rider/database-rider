@@ -2,7 +2,7 @@ package example;
 
 import java.util.Arrays;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 import io.micronaut.core.annotation.TypeHint;
 

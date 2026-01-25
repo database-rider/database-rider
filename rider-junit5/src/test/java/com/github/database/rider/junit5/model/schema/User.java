@@ -1,6 +1,6 @@
 package com.github.database.rider.junit5.model.schema;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 
 /**

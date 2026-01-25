@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.io.File;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 
 import org.apache.deltaspike.testcontrol.api.junit.CdiTestRunner;
 import org.junit.AfterClass;

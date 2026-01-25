@@ -45,18 +45,16 @@
             <groupId>it.unibo.tuprolog</groupId>
             <artifactId>parser-theory-jvm</artifactId>
         </dependency>
-
-
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>4.3.5.Final</version>
+            <version>6.2.3.Final</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
+       <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>eclipselink</artifactId>
-            <version>2.5.2</version>
+            <version>4.0.1</version>
             <scope>provided</scope>
         </dependency>
         <!-- bdd tests -->
@@ -203,187 +201,6 @@
     </build>
 
     <profiles>
-        <profile>
-            <id>jakarta</id>
-            <properties>
-                <src.dir>${project.build.directory}/classes</src.dir>
-                <test.dir>${project.build.directory}/test-classes</test.dir>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-core</artifactId>
-                    <version>6.2.3.Final</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.eclipse.persistence</groupId>
-                    <artifactId>eclipselink</artifactId>
-                    <version>4.0.1</version>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
-            <build>
-                <resources>
-                    <resource>
-                        <directory>src/main/java</directory>
-                        <includes>
-                            <include>**/*.java</include>
-                            <include>**/*.jv</include>
-                        </includes>
-                    </resource>
-                </resources>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <version>3.0.2</version>
-                        <configuration>
-                            <classifier>jakarta</classifier>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.coderplus.maven.plugins</groupId>
-                        <artifactId>copy-rename-maven-plugin</artifactId>
-                        <version>1.0.1</version>
-                        <executions>
-                            <execution>
-                                <id>copy-and-rename-sources</id>
-                                <phase>generate-sources</phase>
-                                <goals>
-                                    <goal>copy</goal>
-                                </goals>
-                                <configuration>
-                                    <fileSets>
-                                        <fileSet>
-                                            <sourceFile>
-                                                ${project.basedir}/src/main/java/com/github/database/rider/core/util/EntityManagerProvider.jv
-                                            </sourceFile>
-                                            <destinationFile>
-                                                ${project.build.outputDirectory}/com/github/database/rider/core/util/EntityManagerProvider.java
-                                            </destinationFile>
-                                        </fileSet>
-                                        <fileSet>
-                                            <sourceFile>
-                                                ${project.basedir}/src/main/java/com/github/database/rider/core/dataset//builder/BuilderUtil.jv
-                                            </sourceFile>
-                                            <destinationFile>
-                                                ${project.build.outputDirectory}/com/github/database/rider/core/dataset/builder/BuilderUtil.java
-                                            </destinationFile>
-                                        </fileSet>
-                                    </fileSets>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>io.github.floverfelt</groupId>
-                        <artifactId>find-and-replace-maven-plugin</artifactId>
-                        <version>1.1.0</version>
-                        <executions>
-                            <execution>
-                                <id>exec</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>find-and-replace</goal>
-                                </goals>
-                                <configuration>
-                                    <replacementType>file-contents</replacementType>
-                                    <baseDir>target/classes/</baseDir>
-                                    <fileMask>.java</fileMask>
-                                    <findRegex>javax</findRegex>
-                                    <replaceValue>jakarta</replaceValue>
-                                    <recursive>true</recursive>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>exec-tests</id>
-                                <phase>process-test-resources</phase>
-                                <goals>
-                                    <goal>find-and-replace</goal>
-                                </goals>
-                                <configuration>
-                                    <replacementType>file-contents</replacementType>
-                                    <baseDir>target/test-classes/</baseDir>
-                                    <fileMask>.java</fileMask>
-                                    <findRegex>javax</findRegex>
-                                    <replaceValue>jakarta</replaceValue>
-                                    <recursive>true</recursive>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>exec-sql</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>find-and-replace</goal>
-                                </goals>
-                                <configuration>
-                                    <replacementType>file-contents</replacementType>
-                                    <baseDir>target/classes/</baseDir>
-                                    <fileMask>.java</fileMask>
-                                    <findRegex>jakarta.sql.DataSource</findRegex>
-                                    <replaceValue>javax.sql.DataSource</replaceValue>
-                                    <recursive>true</recursive>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>exec-script</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>find-and-replace</goal>
-                                </goals>
-                                <configuration>
-                                    <replacementType>file-contents</replacementType>
-                                    <baseDir>target/classes/com/github/database/rider/core/script/</baseDir>
-                                    <fileMask>.java</fileMask>
-                                    <findRegex>jakarta</findRegex>
-                                    <replaceValue>javax</replaceValue>
-                                    <recursive>false</recursive>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.7</version>
-                        <executions>
-                            <execution>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target>
-                                        <delete>
-                                            <fileset dir="${project.build.directory}/classes" includes="**/*.java" />
-                                            <fileset dir="${project.build.directory}/classes" includes="**/*.jv" />
-                                            <fileset dir="${project.build.directory}/classes" includes="**/beans-jakarta.xml" />
-                                        </delete>
-                                    </target>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.1.0</version>
-                        <configuration>
-                            <skipTests>true</skipTests>
-                        </configuration>
-                    </plugin>
-                    <!-- Override version for maven-install-plugin because there is a bug in
- 3.0.0-M1 preventing installing of modules with packaging of feature
- see: https://issues.apache.org/jira/browse/MINSTALL-151 -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-install-plugin</artifactId>
-                        <version>2.5.2</version>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
         <profile>
             <id>docs</id>
             <build>
