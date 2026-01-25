@@ -10,7 +10,7 @@ import com.github.database.rider.junit5.integration.Spring;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.util.AnnotationUtils;
 
-import javax.sql.DataSource;
+import jakarta.sql.DataSource;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

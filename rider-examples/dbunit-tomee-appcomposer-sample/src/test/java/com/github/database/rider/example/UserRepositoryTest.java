@@ -8,9 +8,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.sql.DataSource;
+import jakarta.annotation.Resource;
+import jakarta.inject.Inject;
+import jakarta.sql.DataSource;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

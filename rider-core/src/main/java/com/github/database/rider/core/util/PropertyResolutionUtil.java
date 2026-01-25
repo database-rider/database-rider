@@ -16,16 +16,16 @@ import java.util.Map;
  * Created by markus meisterernst on 24/11/18.
  */
 public class PropertyResolutionUtil {
-    private static final String PROP_FILTER = "^javax.persistence.(.*)|^eclipselink.(.*)|^hibernate.(.*)|^openjpa.(.)*";
+    private static final String PROP_FILTER = "^jakarta.persistence.(.*)|^eclipselink.(.*)|^hibernate.(.*)|^openjpa.(.)*";
 
     /**
      * Resolves a Union of System.env and System.getProperties() where the KeyValue-Pairs of the later have precedence.
      *
      * @return Map or null if none of the following Properties exists:
-     * javax.persistence.jdbc.driver,javax.persistence.jdbc.url, javax.persistence.jdbc.user, javax.persistence.jdbc.password
+     * jakarta.persistence.jdbc.driver,jakarta.persistence.jdbc.url, jakarta.persistence.jdbc.user, jakarta.persistence.jdbc.password
      */
     @SuppressWarnings("unchecked")
-    public Map<String, Object> getSystemJavaxPersistenceOverrides() {
+    public Map<String, Object> getSystemjakartaPersistenceOverrides() {
         if (propertyOverridesExist()) {
             // we make use of a type cast hack to convert Properties to a Map
             return mergeFilteredMaps(castMap(System.getenv()), (Map) System.getProperties());
@@ -56,18 +56,18 @@ public class PropertyResolutionUtil {
         }
         Map<String, Object> overridingProperttiesCopy = new HashMap<>(overridingProperties);
 
-        return mergeFilteredMaps(getSystemJavaxPersistenceOverrides(), overridingProperttiesCopy);
+        return mergeFilteredMaps(getSystemjakartaPersistenceOverrides(), overridingProperttiesCopy);
     }
 
     boolean propertyOverridesExist() {
-        return System.getProperties().containsKey("javax.persistence.jdbc.url")
-                || System.getProperties().containsKey("javax.persistence.jdbc.user")
-                || System.getProperties().containsKey("javax.persistence.jdbc.password")
-                || System.getProperties().containsKey("javax.persistence.jdbc.driver")
-                || System.getenv().containsKey("javax.persistence.jdbc.url")
-                || System.getenv().containsKey("javax.persistence.jdbc.user")
-                || System.getenv().containsKey("javax.persistence.jdbc.password")
-                || System.getenv().containsKey("javax.persistence.jdbc.driver");
+        return System.getProperties().containsKey("jakarta.persistence.jdbc.url")
+                || System.getProperties().containsKey("jakarta.persistence.jdbc.user")
+                || System.getProperties().containsKey("jakarta.persistence.jdbc.password")
+                || System.getProperties().containsKey("jakarta.persistence.jdbc.driver")
+                || System.getenv().containsKey("jakarta.persistence.jdbc.url")
+                || System.getenv().containsKey("jakarta.persistence.jdbc.user")
+                || System.getenv().containsKey("jakarta.persistence.jdbc.password")
+                || System.getenv().containsKey("jakarta.persistence.jdbc.driver");
     }
 
 

@@ -1,6 +1,6 @@
 package com.github.database.rider.cdi.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * Created by pestano on 22/07/15.

@@ -12,8 +12,8 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.annotation.EnableTransactionManagement
 import java.util.Properties
-import javax.persistence.EntityManagerFactory
-import javax.sql.DataSource
+import jakarta.persistence.EntityManagerFactory
+import jakarta.sql.DataSource
 
 @EnableJpaRepositories
 @EnableTransactionManagement
@@ -50,7 +50,7 @@ class H2JPAConfig {
     private fun hibernateProperties(): Properties {
         val properties = Properties()
         properties[AvailableSettings.DIALECT] = org.hibernate.dialect.H2Dialect::class.qualifiedName
-        properties["javax.persistence.schema-generation.database.action"] = "drop-and-create"
+        properties["jakarta.persistence.schema-generation.database.action"] = "drop-and-create"
         properties[AvailableSettings.PHYSICAL_NAMING_STRATEGY] = CamelCaseToUnderscoresNamingStrategy::class.qualifiedName
         properties[AvailableSettings.IMPLICIT_NAMING_STRATEGY] = SpringImplicitNamingStrategy::class.qualifiedName
         return properties

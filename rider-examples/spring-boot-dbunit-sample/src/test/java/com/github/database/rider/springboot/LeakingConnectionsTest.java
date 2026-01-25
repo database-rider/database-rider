@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 
-import javax.sql.DataSource;
+import jakarta.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.*;
 import java.util.Map;

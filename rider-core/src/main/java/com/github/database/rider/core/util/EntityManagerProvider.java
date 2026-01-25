@@ -1,17 +1,16 @@
 package com.github.database.rider.core.util;
 
 import org.hibernate.Session;
-import org.hibernate.internal.SessionImpl;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Persistence;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -102,7 +101,7 @@ public class EntityManagerProvider implements TestRule {
         return newInstance(unitName, new HashMap<String, Object>());
     }
 
-    private void init(String unitName, Map<String, Object> props) {
+    private void init(String unitName, Map<String, Object> props) throws SQLException {
         if (emf == null) {
             log.debug("creating emf for unit {}", unitName);
             Map<String, Object> dbConfig = propertyResolutionUtil.persistencePropertiesOverrides(props);
@@ -117,11 +116,13 @@ public class EntityManagerProvider implements TestRule {
         emf.getCache().evictAll();
     }
 
-    private Connection createConnection(EntityManager em) {
+    private Connection createConnection(EntityManager em) throws SQLException {
         Connection connection;
         final EntityTransaction tx = em.getTransaction();
         if (isHibernateOnClasspath() && em.getDelegate() instanceof Session) {
-            connection = ((SessionImpl) em.unwrap(Session.class)).connection();
+            connection = em.unwrap(org.hibernate.engine.spi.SessionImplementor.class).getJdbcCoordinator()
+                                                                                      .getLogicalConnection()
+                                                                                      .getPhysicalConnection();
         } else {
             /**
              * see here:http://wiki.eclipse.org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager

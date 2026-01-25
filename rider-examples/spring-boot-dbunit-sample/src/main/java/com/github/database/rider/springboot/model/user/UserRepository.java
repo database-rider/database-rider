@@ -1,6 +1,6 @@
 package com.github.database.rider.springboot.model.user;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.springframework.data.repository.CrudRepository;
 

@@ -1,6 +1,6 @@
 package com.github.database.rider.junit5.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;

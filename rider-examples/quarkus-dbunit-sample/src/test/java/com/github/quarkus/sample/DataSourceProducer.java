@@ -14,7 +14,7 @@ public class DataSourceProducer {
 
     @Produces
     @RiderPU("secondary")
-    public javax.sql.DataSource produceSecondary() {
+    public jakarta.sql.DataSource produceSecondary() {
         return secondaryDataSource;
     }*/
 

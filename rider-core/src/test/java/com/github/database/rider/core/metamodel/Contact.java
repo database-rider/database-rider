@@ -1,6 +1,6 @@
 package com.github.database.rider.core.metamodel;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Calendar;
 import java.util.Date;
 

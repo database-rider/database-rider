@@ -6,7 +6,7 @@ import io.micronaut.inject.qualifiers.Qualifiers;
 import io.micronaut.test.extensions.junit5.MicronautJunit5Extension;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-import javax.sql.DataSource;
+import jakarta.sql.DataSource;
 import java.util.Optional;
 
 import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;

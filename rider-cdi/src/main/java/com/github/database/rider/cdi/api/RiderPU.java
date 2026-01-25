@@ -1,8 +1,8 @@
 package com.github.database.rider.cdi.api;
 
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Default;
-import javax.inject.Qualifier;
+import jakarta.enterprise.inject.Any;
+import jakarta.enterprise.inject.Default;
+import jakarta.inject.Qualifier;
 import java.lang.annotation.*;
 
 /**

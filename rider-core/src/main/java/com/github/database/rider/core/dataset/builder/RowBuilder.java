@@ -4,7 +4,7 @@ import com.github.database.rider.core.configuration.DBUnitConfig;
 import com.github.database.rider.core.configuration.DataSetConfig;
 import org.dbunit.dataset.IDataSet;
 
-import javax.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.Attribute;
 import java.util.Calendar;
 import java.util.Date;
 

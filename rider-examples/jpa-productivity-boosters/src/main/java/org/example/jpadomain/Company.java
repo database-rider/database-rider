@@ -1,6 +1,6 @@
 package org.example.jpadomain;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 /**
  * @author Matti Tahvonen

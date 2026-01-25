@@ -4,7 +4,7 @@ import java.lang.annotation.Annotation;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.sql.DataSource;
+import jakarta.sql.DataSource;
 
 import com.github.database.rider.core.api.connection.ConnectionHolder;
 import org.springframework.context.ApplicationContext;

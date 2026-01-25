@@ -11,8 +11,8 @@ import org.example.service.deltaspike.DeltaSpikeContactService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 import java.util.Comparator;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -1,7 +1,7 @@
 package com.github.database.rider.cdi.api;
 
-import javax.enterprise.util.AnnotationLiteral;
-import javax.inject.Named;
+import jakarta.enterprise.util.AnnotationLiteral;
+import jakarta.inject.Named;
 
 public class RiderPUAnnotation extends AnnotationLiteral<RiderPU> implements RiderPU {
 

@@ -4,8 +4,8 @@ import org.apache.deltaspike.jpa.api.transaction.Transactional;
 import org.example.jpadomain.Company;
 import org.example.jpadomain.Contact;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 import java.util.List;
 
 /**
