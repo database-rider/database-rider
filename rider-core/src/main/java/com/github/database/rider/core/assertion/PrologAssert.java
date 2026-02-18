@@ -9,6 +9,7 @@ import it.unibo.tuprolog.solve.classic.ClassicSolverFactory;
 import it.unibo.tuprolog.theory.Theory;
 import it.unibo.tuprolog.theory.parsing.ClausesReader;
 import org.dbunit.DatabaseUnitException;
+import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
@@ -42,9 +43,11 @@ public class PrologAssert {
             ITable expectedTable = expected.getTable(tableName);
             ITable actualTable = current.getTable(tableName);
 
-            sbDatabaseFacts.append(createActualTableFacts(actualTable));
+            Column[] actualColumns = actualTable.getTableMetaData().getColumns();
 
-            queryTerms.addAll(createQueryTermsFromExpectedTable(expectedTable, actualTable));
+            sbDatabaseFacts.append(createActualTableFacts(actualTable, actualColumns));
+
+            queryTerms.addAll(createQueryTermsFromExpectedTable(expectedTable, actualTable, actualColumns));
         }
 
         final String databaseFacts = sbDatabaseFacts.toString();
@@ -59,17 +62,29 @@ public class PrologAssert {
      * Transform table rows/entries to a fact per row.
      *
      * @param actualTable actual table
+     * @param actualColumns columns of actual table (needed extra to ensure the order)
      * @return list of facts as string separated by newlines.
      * @throws DataSetException
      */
-    private static String createActualTableFacts(final ITable actualTable) throws DataSetException {
+    private static String createActualTableFacts(final ITable actualTable, final Column[] actualColumns) throws DataSetException {
         StringBuilder sbTableFacts = new StringBuilder();
+        // add comment describing the table and order of columns in particular (helpful for large tables with many columns of same data type)
+        // see https://www.swi-prolog.org/pldoc/man?section=pldoc-comments
+        sbTableFacts.append("/* ");
+        sbTableFacts.append(tableToRelationName(actualTable));
+        sbTableFacts.append("(");
+        sbTableFacts.append(
+                Arrays.stream(actualColumns).map(Column::getColumnName).collect(Collectors.joining(", "))
+        );
+        sbTableFacts.append(")");
+        sbTableFacts.append(" */\n");
+        // add facts
         for (int i = 0; i < actualTable.getRowCount(); i++) {
             sbTableFacts.append(tableToRelationName(actualTable));
             sbTableFacts.append("(");
             int finalI = i;
             sbTableFacts.append(
-                    Arrays.stream(actualTable.getTableMetaData().getColumns())
+                    Arrays.stream(actualColumns)
                             .map(column -> {
                                 try {
                                     return actualTable.getValue(finalI, column.getColumnName());
@@ -93,11 +108,11 @@ public class PrologAssert {
      * <br/>
      *
      * @param expectedTable specified expectation
-     * @param actualTable   actual table, needed to ensure all columns are present and their order is the same
+     * @param actualColumns   columns of actual table, needed to ensure all columns are present and their order is the same
      * @return list of query terms
      * @throws DataSetException
      */
-    private static List<String> createQueryTermsFromExpectedTable(ITable expectedTable, ITable actualTable) throws DataSetException {
+    private static List<String> createQueryTermsFromExpectedTable(ITable expectedTable, ITable actualTable, final Column[] actualColumns) throws DataSetException {
         List<String> queryTerms = new ArrayList<>();
         for (int i = 0; i < expectedTable.getRowCount(); i++) {
             StringBuilder sbQuery = new StringBuilder();
@@ -105,7 +120,7 @@ public class PrologAssert {
             sbQuery.append("(");
             int finalI = i;
             sbQuery.append(
-                    Arrays.stream(actualTable.getTableMetaData().getColumns())
+                    Arrays.stream(actualColumns)
                             .map(column -> {
                                 try {
                                     return expectedTable.getValue(finalI, column.getColumnName());
@@ -147,7 +162,7 @@ public class PrologAssert {
         Iterator<Solution> si = solver.solve(query, SolveOptions.allLazilyWithTimeout(prologTimeout)).iterator();
 
         if (!si.hasNext() || si.next().isNo()) {
-            throw new DataSetException("Could not find a solution to theory: " + theory + " given query: " + query);
+            throw new DataSetException("Could not find a solution to facts: " + databaseFacts + " of theory: " + theory + " given query: " + query);
         }
     }
 

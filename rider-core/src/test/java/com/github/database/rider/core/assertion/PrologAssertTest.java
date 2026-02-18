@@ -7,6 +7,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.regex.Pattern;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
@@ -87,7 +89,7 @@ public class PrologAssertTest {
             PrologAssert.compareProlog(currentDataSet, expectedDataSet, new String[]{"USER", "TWEET"}, 1_000L);
             fail();
         } catch (DatabaseUnitException e) {
-            assertThat(e.getMessage()).contains("Could not find a solution to theory");
+            assertThat(e.getMessage()).matches(Pattern.compile("Could not find a solution to facts.* of theory.*", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL));
         }
     }
 
