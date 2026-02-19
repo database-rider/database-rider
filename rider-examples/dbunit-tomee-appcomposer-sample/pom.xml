@@ -39,7 +39,7 @@
         <dependency>
             <groupId>org.glassfish.corba</groupId> <!-- jdk 11 support -->
             <artifactId>glassfish-corba-omgapi</artifactId>
-            <version>4.2.1</version>
+            <version>4.2.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
