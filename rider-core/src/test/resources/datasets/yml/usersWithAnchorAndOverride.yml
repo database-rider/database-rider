@@ -1,0 +1,6 @@
+USER:
+  - &U1
+    ID: 1
+    NAME: "@realpestano"
+  - <<: *U1
+    ID: 2

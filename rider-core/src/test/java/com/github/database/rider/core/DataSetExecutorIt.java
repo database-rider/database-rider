@@ -182,4 +182,17 @@ public class DataSetExecutorIt {
         executor.compareCurrentDataSetWith(ExpectedDataSetConfig, null, null, new String[] {"name"});
     }
 
+    @Test
+    public void shouldSupportAnchorsAndOverridesInYaml() {
+        DataSetConfig DataSetConfig = new DataSetConfig("datasets/yml/usersWithAnchorAndOverride.yml");
+        executor.createDataSet(DataSetConfig);
+        List<User> users = EntityManagerProvider.clear().em().createQuery("select u from User u", User.class).getResultList();
+        assertThat(users).isNotNull();
+        assertThat(users.size()).isEqualTo(2);
+        assertThat(users.get(0).getId()).isEqualTo(1);
+        assertThat(users.get(0).getName()).isEqualTo("@realpestano");
+        assertThat(users.get(1).getId()).isEqualTo(2);
+        assertThat(users.get(1).getName()).isEqualTo("@realpestano");
+    }
+
 }
