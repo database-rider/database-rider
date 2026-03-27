@@ -1,5 +1,5 @@
 # order: 5
-Feature: Dynamic data using scritable datasets
+Feature: Dynamic data using scriptable datasets
 ====
 [quote]
 ____
@@ -9,7 +9,7 @@ I want to use scripts in DBUnit datasets.
 ____
 ====
 
-Scritable datasets are backed by JSR 223.footnote:[Scripting for the Java Platform, for more information access the official https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/prog_guide/api.html[docs here^]].
+Scriptable datasets are backed by JSR 223.footnote:[Scripting for the Java Platform, for more information access the official https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/prog_guide/api.html[docs here^]].
 
 TIP: Complete source code of examples below can be https://github.com/database-rider/database-rider/blob/master/rider-core/src/test/java/com/github/database/rider/core/ScriptReplacementsIt.java#L18[found here^].
 
