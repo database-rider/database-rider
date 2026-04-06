@@ -339,4 +339,26 @@ public class ExpectedDataSetIt {
         emProvider.tx().commit();
     }
 
+    @Test
+    @DataSet(value = "yml/otherUser.yml", cleanBefore = true, cleanAfter = true)
+    @ExpectedDataSet(value = "yml/user.yml", timeout = 1000)
+    public void shouldMatchUpdatedInitialDatasetInOtherThread() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                emProvider.tx().begin();
+                User user = emProvider.getEm().find(User.class, 2L);
+                user.setName("@dbunit");
+                emProvider.getEm().merge(user);
+                emProvider.tx().commit();
+            }
+        }).start();
+
+    }
+
 }

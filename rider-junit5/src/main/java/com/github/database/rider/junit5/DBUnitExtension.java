@@ -255,7 +255,7 @@ public class DBUnitExtension implements BeforeTestExecutionCallback, AfterTestEx
         dataSetExecutor.setDBUnitConfig(dbUnitConfig);
         dataSetExecutor = resetExecutorConnectionIfNeeded(extensionContext, callbackAnnotation, dbUnitConfig, dataSetExecutor);
         dataSetExecutor.compareCurrentDataSetWith(
-                new DataSetConfig(expectedDataSet.value()).disableConstraints(true).datasetProvider(expectedDataSet.provider()),
+                new DataSetConfig(expectedDataSet.value()).disableConstraints(true).datasetProvider(expectedDataSet.provider()).timeout(expectedDataSet.timeout()),
                 expectedDataSet.ignoreCols(),
                 expectedDataSet.replacers(),
                 expectedDataSet.orderBy(),

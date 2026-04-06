@@ -94,7 +94,8 @@ public class DBUnitInterceptorImpl implements Serializable {
                     dataSetProcessor.compareCurrentDataSetWith(
                             new DataSetConfig(expectedDataSet.value())
                                     .datasetProvider(expectedDataSet.provider())
-                                    .disableConstraints(true),
+                                    .disableConstraints(true)
+                                    .timeout(expectedDataSet.timeout()),
                             expectedDataSet.ignoreCols(),
                             expectedDataSet.replacers(),
                             expectedDataSet.orderBy(),
@@ -140,7 +141,7 @@ public class DBUnitInterceptorImpl implements Serializable {
                 proceed = invocationContext.proceed();
                 if (expectedDataSet != null) {
                     dataSetProcessor.compareCurrentDataSetWith(
-                            new DataSetConfig(expectedDataSet.value()).disableConstraints(true),
+                            new DataSetConfig(expectedDataSet.value()).disableConstraints(true).timeout(expectedDataSet.timeout()),
                             expectedDataSet.ignoreCols(), expectedDataSet.replacers(), expectedDataSet.ignoreCols(), expectedDataSet.compareOperation());
                 }
             } finally {

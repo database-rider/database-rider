@@ -28,12 +28,18 @@ public class DataSetConfig {
     private DataSetProvider provider;
     private String[] skipCleaningFor;
     private Class<? extends Replacer>[] replacers;
+    private int timeout = 0;
 
     public DataSetConfig() {
     }
 
     public DataSetConfig(String... datasets) {
         this.datasets = datasets;
+    }
+
+    public DataSetConfig timeout(int timeout) {
+        this.timeout = timeout;
+        return this;
     }
 
     public DataSetConfig name(String... datasets) {
@@ -161,6 +167,10 @@ public class DataSetConfig {
     public DataSetConfig datasetProvider(DataSetProvider provider) {
         this.provider = provider;
         return this;
+    }
+
+    public int getTimeout() {
+        return timeout;
     }
 
     public String[] getDatasets() {

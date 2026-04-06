@@ -805,11 +805,9 @@ public class DataSetExecutorImpl implements DataSetExecutor {
     @Override
     public void compareCurrentDataSetWith(DataSetConfig expectedDataSetConfig, String[] excludeCols,
                                           Class<? extends Replacer>[] replacers, String[] orderBy, CompareOperation compareOperation) throws DatabaseUnitException {
-        IDataSet current = null;
         IDataSet expected = null;
         List<Replacer> expectedDataSetReplacers = getReplacerInstances(replacers);
         try {
-            current = getRiderDataSource().getDBUnitConnection().createDataSet();
             if (expectedDataSetConfig.hasDataSetProvider()) {
                 expected = loadDataSetFromDataSetProvider(expectedDataSetConfig.getProvider());
             } else if (expectedDataSetConfig.hasDataSets()) {
@@ -829,15 +827,34 @@ public class DataSetExecutorImpl implements DataSetExecutor {
             throw new RuntimeException("Could not extract dataset table names.", e);
         }
 
-        switch (compareOperation) {
-            case PROLOG:
-                PrologAssert.compareProlog(current, expected, tableNames, dbUnitConfig.getPrologTimeout());
-                break;
-            case EQUALS:
-            case CONTAINS:
-                compareClassic(excludeCols, orderBy, compareOperation, current, expected, tableNames);
-                break;
-        }
+        final long eta = System.currentTimeMillis() + expectedDataSetConfig.getTimeout();
+        boolean repeat;
+        do {
+            try {
+                IDataSet current = null;
+                try {
+                    current = getRiderDataSource().getDBUnitConnection().createDataSet();
+                } catch (Exception e) {
+                    throw new RuntimeException("Could not create dataset to compare.", e);
+                }
+                switch (compareOperation) {
+                    case PROLOG:
+                        PrologAssert.compareProlog(current, expected, tableNames, dbUnitConfig.getPrologTimeout());
+                        break;
+                    case EQUALS:
+                    case CONTAINS:
+                        compareClassic(excludeCols, orderBy, compareOperation, current, expected, tableNames);
+                        break;
+                }
+                repeat = false;
+            } catch (AssertionError e) {
+                if (System.currentTimeMillis() < eta) {
+                    repeat = true;
+                } else {
+                    throw e;
+                }
+            }
+        } while (repeat);
     }
 
     private void compareClassic(String[] excludeCols, String[] orderBy, CompareOperation compareOperation, IDataSet current, IDataSet expected, String[] tableNames) throws DatabaseUnitException {

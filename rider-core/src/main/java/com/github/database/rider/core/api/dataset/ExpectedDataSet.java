@@ -43,4 +43,9 @@ public @interface ExpectedDataSet {
    * @return a dataset provider implementation responsible for generating the expected dataset programatically instead of providing an external file defining the dataset.
    */
   Class<? extends DataSetProvider> provider() default DataSetProvider.class;
+
+  /**
+   * @return timeout (in ms)
+   */
+  int timeout() default 0;
 }
