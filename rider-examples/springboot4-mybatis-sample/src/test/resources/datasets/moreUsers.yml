@@ -1,0 +1,8 @@
+users:
+  - id: 4
+    email: "junit5@mail.com"
+    name: "junit5"
+  - id: 5
+    email: "bdd@cucumber.com"
+    name: "cucumber"
+

@@ -1,0 +1,32 @@
+cacheConnection: false
+#cacheTableNames: true
+#leakHunter: false
+#mergeDataSets: false
+#columnSensing: false
+#raiseExceptionOnCleanUp: false
+#disableSequenceFiltering: false
+#alwaysCleanBefore: false
+#alwaysCleanAfter: false
+#caseInsensitiveStrategy: UPPERCASE
+#disablePKCheckFor: []
+#mergingStrategy: METHOD
+expectedDbType: POSTGRESQL
+properties:
+#  batchedStatements: false
+#  qualifiedTableNames: false
+#  schema: "public"
+  caseSensitiveTableNames: true
+#  batchSize: 100
+#  fetchSize: 100
+#  allowEmptyFields: false
+#  replacers: {DateTimeReplacer.class, UnixTimestampReplacer.class, NullReplacer.class}
+#  tableType: ["TABLE"]
+#  prologTimeout: 1_000L
+#  escapePattern: ""
+  datatypeFactory: !!org.dbunit.ext.postgresql.PostgresqlDataTypeFactory {}
+#  metaDataHandler: IMetadataHandler.class
+#connectionConfig:
+#  driver: ""
+#  url: ""
+#  user: ""
+#  password: ""
