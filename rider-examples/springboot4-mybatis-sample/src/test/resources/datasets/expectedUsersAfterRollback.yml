@@ -1,0 +1,10 @@
+users:
+  - id: -1
+    email: "dbunit@gmail.com"
+    name: "dbunit"
+  - id: -2
+    email: "rmpestano@gmail.com"
+    name: "rmpestano"
+  - id: -3
+    email: "springboot@gmail.com"
+    name: "springboot"

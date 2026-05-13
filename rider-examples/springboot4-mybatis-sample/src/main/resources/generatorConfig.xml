@@ -1,0 +1,23 @@
+<!DOCTYPE generatorConfiguration PUBLIC
+ "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+ "https://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+  <context id="company" targetRuntime="MyBatis3">
+    <jdbcConnection driverClass="org.postgresql.Driver"
+        connectionURL="jdbc:postgresql://127.0.0.1:5432/companydb"
+        userId="sa" password="" />
+    <modelGenerator targetPackage="com.github.database.rider.springboot4.entity.company" targetProject="src/main/java"/>
+    <sqlMapGenerator targetPackage="com.github.database.rider.springboot4.mapper.company" targetProject="src/main/resources"/>
+    <clientGenerator type="XMLMAPPER" targetPackage="com.github.database.rider.springboot4.mapper.company" targetProject="src/main/java"/>
+    <table tableName="Company" />
+  </context>
+  <context id="user" targetRuntime="MyBatis3">
+    <jdbcConnection driverClass="org.postgresql.Driver"
+        connectionURL="jdbc:postgresql://127.0.0.1:5432/userdb"
+        userId="sa" password="" />
+    <modelGenerator targetPackage="com.github.database.rider.springboot4.entity.user" targetProject="src/main/java"/>
+    <sqlMapGenerator targetPackage="com.github.database.rider.springboot4.mapper.user" targetProject="src/main/resources"/>
+    <clientGenerator type="XMLMAPPER" targetPackage="com.github.database.rider.springboot4.mapper.user" targetProject="src/main/java"/>
+    <table tableName="Users" />
+  </context>
+</generatorConfiguration>

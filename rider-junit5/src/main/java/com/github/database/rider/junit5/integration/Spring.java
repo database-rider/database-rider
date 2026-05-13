@@ -9,7 +9,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import javax.sql.DataSource;
 
 import static com.github.database.rider.core.util.ClassUtils.isOnClasspath;
-import static com.github.database.rider.junit5.jdbc.ConnectionManager.getConnectionHolder;
+import static com.github.database.rider.junit5.jdbc.SpringConnectionManager.getConnectionHolder;
 
 public class Spring {
 
