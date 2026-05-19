@@ -117,4 +117,43 @@ public class PrologAssertTest {
             fail();
         }
     }
+
+    @Test
+    public void shouldNotFindASolutionOnMismatchNull() {
+        IDataSet currentDataSet = new DataSetBuilder()
+                .table("USER")
+                .row()
+                .column("ID", 1)
+                .column("NAME", "@realpestano")
+                .table("USER")
+                .row()
+                .column("ID", 2)
+                .column("NAME", "@dbunit")
+                .table("TWEET")
+                .row()
+                .column("ID", "abcdef12345")
+                .column("CONTENT", "dbunit rules!")
+                .column("DATE", "[DAY,NOW]")
+                .column("USER_ID", "1")
+                .build();
+
+
+        IDataSet expectedDataSet = new DataSetBuilder()
+                .table("USER")
+                .row()
+                .column("ID", "$$x$$")
+                .column("NAME", "@realpestano")
+                .table("TWEET")
+                .row()
+                .column("CONTENT", (Object) null)
+                .column("USER_ID", "$$x$$")
+                .build();
+
+        try {
+            PrologAssert.compareProlog(currentDataSet, expectedDataSet, new String[]{"USER", "TWEET"}, 1_000L);
+            fail();
+        } catch (DatabaseUnitException e) {
+            assertThat(e.getMessage()).contains("Could not find a solution to theory");
+        }
+    }
 }

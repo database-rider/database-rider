@@ -1,5 +1,6 @@
 package com.github.database.rider.core.assertion;
 
+import com.github.database.rider.core.replacers.NullReplacer;
 import it.unibo.tuprolog.core.parsing.TermParser;
 import it.unibo.tuprolog.solve.Solution;
 import it.unibo.tuprolog.solve.SolveOptions;
@@ -33,6 +34,8 @@ import java.util.stream.Collectors;
 public class PrologAssert {
 
     private static final Logger log = LoggerFactory.getLogger(PrologAssert.class);
+
+    private static final String PROLOG_WILDCARD = "_";
 
     public static void compareProlog(IDataSet current, IDataSet expected, String[] tableNames, Long prologTimeout) throws DatabaseUnitException {
         StringBuilder sbDatabaseFacts = new StringBuilder();
@@ -108,19 +111,31 @@ public class PrologAssert {
                     Arrays.stream(actualTable.getTableMetaData().getColumns())
                             .map(column -> {
                                 try {
-                                    return expectedTable.getValue(finalI, column.getColumnName());
+                                    expectedTable.getTableMetaData().getColumnIndex(column.getColumnName());
                                 } catch (DataSetException e) {
-                                    return null;
+                                    return PROLOG_WILDCARD;
+                                }
+
+                                try {
+                                    Object o = expectedTable.getValue(finalI, column.getColumnName());
+                                    return mapValueToQuery(o);
+                                } catch (DataSetException e) {
+                                    return PROLOG_WILDCARD;
                                 }
                             })
-                            // FIXME: simple #toString() may not work well with all datatypes
-                            .map(o -> o == null ? "_" : (o.toString().startsWith("$$") && o.toString().endsWith("$$")) ? o.toString().replaceAll("\\$\\$", "").toUpperCase() : wrap(escape(o)))
                             .collect(Collectors.joining(","))
             );
             sbQuery.append(")");
             queryTerms.add(sbQuery.toString());
         }
         return queryTerms;
+    }
+
+    private static String mapValueToQuery(Object o) {
+        return (o != null && o.toString().startsWith("$$") && o.toString().endsWith("$$")) ?
+                o.toString().replaceAll("\\$\\$", "").toUpperCase()
+                :
+                wrap(escape(o));
     }
 
     private static String tableToRelationName(ITable expectedTable) {
@@ -158,7 +173,7 @@ public class PrologAssert {
 
     private static String escape(Object o) {
         if (o == null) {
-            return "[null]"; // same as NullReplacer
+            return NullReplacer.NULL; // same as NullReplacer
         }
 
         return (o.toString())

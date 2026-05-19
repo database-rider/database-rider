@@ -9,8 +9,10 @@ import org.dbunit.dataset.ReplacementDataSet;
  */
 public class NullReplacer implements Replacer {
 
+    public static final String NULL = "[null]";
+
     @Override
     public void addReplacements(ReplacementDataSet dataSet) {
-        dataSet.addReplacementObject("[null]", null);
+        dataSet.addReplacementObject(NULL, null);
     }
 }
