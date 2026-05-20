@@ -503,6 +503,12 @@ public class DBUnitConfig {
                     "timescaledb_experimental"
             ));
             SYSTEM_SCHEMAS.put(RiderDataSource.DBType.TIMESCALEDB, Collections.unmodifiableSet(timescaledbSchemas));
+            final Set<String> oracledbSchemas = new HashSet<>(Arrays.asList(
+                "SYS",
+                "SYSTEM",
+                "XDB"
+            ));
+            SYSTEM_SCHEMAS.put(RiderDataSource.DBType.ORACLE, Collections.unmodifiableSet(oracledbSchemas));
 
             Collections.addAll(RESERVED_TABLE_NAMES, DEFAULT_SQL_RESERVED_WORDS.split(","));
             if (System.getProperty("RESERVED_TABLE_NAMES") != null) {
