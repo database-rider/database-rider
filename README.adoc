@@ -209,19 +209,19 @@ As in DBUnit Rule, `dataset executor` just needs a JDBC connection to be instant
 
 [source,java]
 ----
-import static com.github.database.rider.util.EntityManagerProvider.em;
-import static com.github.database.rider.util.EntityManagerProvider.instance;
+import static com.github.database.rider.core.util.EntityManagerProvider.em;
+import static com.github.database.rider.core.util.EntityManagerProvider.instance;
 
 @RunWith(JUnit4.class)
 public class DataSetExecutorIt {
 
-    public EntityManagerProvider emProvider = instance("executor-it");
+    public static EntityManagerProvider emProvider = instance("executor-it");
 
     private static DataSetExecutorImpl executor;
 
     @BeforeClass
     public static void setup() {
-        executor = DataSetExecutorImpl.instance(new ConnectionHolderImpl(emProvider.getConnection()));
+        executor = DataSetExecutorImpl.instance(new ConnectionHolderImpl(emProvider.connection()));
     }
 
     @Test
@@ -245,8 +245,8 @@ Since `v1.13.0` you can use <<RiderDSL>> which provides a fluent api as an alter
 
 [source,java]
 ----
-import static com.github.database.rider.util.EntityManagerProvider.em;
-import static com.github.database.rider.util.EntityManagerProvider.instance;
+import static com.github.database.rider.core.util.EntityManagerProvider.em;
+import static com.github.database.rider.core.util.EntityManagerProvider.instance;
 
 @RunWith(JUnit4.class)
 public class DataSetExecutorIt {
@@ -255,7 +255,7 @@ public class DataSetExecutorIt {
 
     @Test
     public void shouldSeedUserDataSetUsingRiderDSL() {
-         RiderDSL.withConnection(emProvider.getConnection())
+         RiderDSL.withConnection(emProvider.connection())
                  .withDataSetConfig(new DataSetConfig("datasets/yml/users.yml")
                                    .cleanBefore(true))
                  .withDBUnitConfig(new DBUnitConfig()
@@ -376,10 +376,10 @@ connectionConfig:
 <7> Always enables cleanBefore at dbunit level, overriding the default behavior of `@DataSet(cleanBefore)` which is
 false.
 <8> Always enables cleanAfter at dbunit level, overriding the default behavior of `@DataSet(cleanAfter)` which is false.
-<9> Make it possible to define a datatype factory, https://github.com/database-rider/database-rider/issues/30[see
-issue #30^] for details.
-<10> Allows to configure DBUnit escapePattern property. Note that since v`1.28.0` DBRider will discover the
+<9> Allows to configure DBUnit escapePattern property. Note that since v`1.28.0` DBRider will discover the
 escapePattern for each DB without the need to use the escapePattern property in @DBUnit or via dbunit.yml config file. If an espapePattern is provided then it will be used.
+<10> Make it possible to define a datatype factory, https://github.com/database-rider/database-rider/issues/30[see
+issue #30^] for details.
 
 IMPORTANT: `@DBUnit` annotation takes precedence over `dbunit.yml` global configuration which will be used only if the annotation is not present.
 
@@ -445,18 +445,18 @@ Each executor has a JDBC connection so multiple databases can be handled by usin
 
 [source, java]
 ----
-import static com.github.database.rider.util.EntityManagerProvider.instance;
+import static com.github.database.rider.core.util.EntityManagerProvider.instance;
 
 @RunWith(JUnit4.class)
 public class MultipleExecutorsIt {
 
 
-    private static List<DataSetExecutorImpl> executors = new ArrayList<>;
+    private static List<DataSetExecutorImpl> executors = new ArrayList<>();
 
     @BeforeClass
     public static void setup() { <1>
-        executors.add(DataSetExecutorImpl.instance("executor1", new ConnectionHolderImpl(instance("executor1-pu").getConnection())));
-        executors.add(DataSetExecutorImpl.instance("executor2", new ConnectionHolderImpl(instance("executor2-pu").getConnection())));
+        executors.add(DataSetExecutorImpl.instance("executor1", new ConnectionHolderImpl(instance("executor1-pu").connection())));
+        executors.add(DataSetExecutorImpl.instance("executor2", new ConnectionHolderImpl(instance("executor2-pu").connection())));
     }
 
     @Test
@@ -464,7 +464,7 @@ public class MultipleExecutorsIt {
          for (DataSetExecutorImpl executor : executors) {
              DataSetConfig dataSetConfig = new DataSetConfig("datasets/yml/users.yml");
              executor.createDataSet(dataSetConfig);
-                User user = (User) EntityManagerProvider.instance(executor.getId() + "-pu").em().createQuery("select u from User u where u.id = 1").getSingleResult();
+                User user = (User) EntityManagerProvider.instance(executor.getExecutorId() + "-pu").em().createQuery("select u from User u where u.id = 1").getSingleResult();
                 assertThat(user).isNotNull();
                 assertThat(user.getId()).isEqualTo(1);
             }
@@ -487,10 +487,10 @@ Also note that the same can be done using @Rule but pay attention that you must 
     public EntityManagerProvider emProvider2 = EntityManagerProvider.instance("dataset2-pu");
 
     @Rule
-    public DBUnitRule exec1Rule = DBUnitRule.instance("exec1",emProvider1.getConnection());<1>
+    public DBUnitRule exec1Rule = DBUnitRule.instance("exec1",emProvider1.connection());<1>
 
     @Rule
-    public DBUnitRule exec2Rule = DBUnitRule.instance("exec2",emProvider2.getConnection());
+    public DBUnitRule exec2Rule = DBUnitRule.instance("exec2",emProvider2.connection());
 
     @Test
     @DataSet(value = "datasets/yml/users.yml",disableConstraints = true, executorId = "exec1") <2>
@@ -1510,7 +1510,7 @@ NOTE: You can use @BeforeClass instead of junit rule to instantiate the provider
 
 IMPORTANT: EntityManagerProvider will cache entity manager instance to avoid creating database multiple times, you just need to be careful with JPA first level cache between tests (EntityManagerProvider Rule and <<DBUnit Interceptor,CDI interceptor>> clears first level cache before each test).
 
-Now you can use emProvider.getConnection() to retrieve jdbc connection and emProvider.em() to retrieve underlying entityManager.
+Now you can use emProvider.connection() to retrieve jdbc connection and emProvider.em() to retrieve underlying entityManager.
 
 *PU-NAME* refers to test persistence.xml unit name:
 
